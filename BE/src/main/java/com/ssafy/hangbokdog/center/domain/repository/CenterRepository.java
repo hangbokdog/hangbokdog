@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.center.domain.repository;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.domain.Center;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
