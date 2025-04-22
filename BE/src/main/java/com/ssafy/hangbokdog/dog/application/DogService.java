@@ -23,6 +23,7 @@ public class DogService {
 			request.status(),
 			request.centerId(),
 			request.name(),
+			request.breed(),
 			imageUrl,
 			request.color(),
 			request.rescuedDate(),

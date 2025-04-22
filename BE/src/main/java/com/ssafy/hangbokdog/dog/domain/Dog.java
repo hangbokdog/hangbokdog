@@ -15,6 +15,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.Length;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.domain.enums.Gender;
 import com.vladmihalcea.hibernate.type.json.JsonType;
@@ -47,33 +48,38 @@ public class Dog extends BaseEntity {
 	private String profileImage;
 
 	@Type(JsonType.class)
-	@Column(columnDefinition = "json")
+	@Column(nullable = false, columnDefinition = "json")
 	private List<String> color;
 
-	@Column(name = "rescued_date")
+	@Column(nullable = false, name = "rescued_date")
 	private LocalDateTime rescuedDate;
 
-	@Column(name = "weight")
+	@Column(nullable = false, name = "weight")
 	private Double weight;
 
 	@Length(max = 256)
-	@Column(name = "description")
+	@Column(nullable = false, name = "description")
 	private String description;
 
-	@Column(name = "is_star")
+	@Column(nullable = false, name = "is_star")
 	private Boolean isStar;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "gender")
+	@Column(nullable = false, name = "gender")
 	private Gender gender;
 
-	@Column(name = "is_neutered")
+	@Column(nullable = false, name = "is_neutered")
 	private Boolean isNeutered;
+
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false, name = "dog_breed")
+	private DogBreed dogBreed;
 
 	public static Dog createDog(
 		DogStatus status,
 		Long centerId,
 		String name,
+		DogBreed dogBreed,
 		String profileImage,
 		List<String> color,
 		LocalDateTime rescuedDate,
@@ -87,6 +93,7 @@ public class Dog extends BaseEntity {
 			status,
 			centerId,
 			name,
+			dogBreed,
 			profileImage,
 			color,
 			rescuedDate,
@@ -102,6 +109,7 @@ public class Dog extends BaseEntity {
 		DogStatus status,
 		Long centerId,
 		String name,
+		DogBreed dogBreed,
 		String profileImage,
 		List<String> color,
 		LocalDateTime rescuedDate,
@@ -114,6 +122,7 @@ public class Dog extends BaseEntity {
 		this.status = status;
 		this.centerId = centerId;
 		this.name = name;
+		this.dogBreed = dogBreed;
 		this.profileImage = profileImage;
 		this.color = color;
 		this.rescuedDate = rescuedDate;
