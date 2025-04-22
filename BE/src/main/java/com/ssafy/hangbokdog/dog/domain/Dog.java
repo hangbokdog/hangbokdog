@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.dog.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.Length;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
@@ -41,9 +43,12 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "name")
 	private String name;
 
+	@Column(nullable = false, name = "profile_image")
+	private String profileImage;
+
 	@Type(JsonType.class)
 	@Column(columnDefinition = "json")
-	private JsonType color;
+	private List<String> color;
 
 	@Column(name = "rescued_date")
 	private LocalDateTime rescuedDate;
@@ -51,6 +56,7 @@ public class Dog extends BaseEntity {
 	@Column(name = "weight")
 	private Double weight;
 
+	@Length(max = 256)
 	@Column(name = "description")
 	private String description;
 
@@ -63,4 +69,58 @@ public class Dog extends BaseEntity {
 
 	@Column(name = "is_neutered")
 	private Boolean isNeutered;
+
+	public static Dog createDog(
+		DogStatus status,
+		Long centerId,
+		String name,
+		String profileImage,
+		List<String> color,
+		LocalDateTime rescuedDate,
+		Double weight,
+		String description,
+		Boolean isStar,
+		Gender gender,
+		Boolean isNeutered
+	){
+		return new Dog(
+			status,
+			centerId,
+			name,
+			profileImage,
+			color,
+			rescuedDate,
+			weight,
+			description,
+			isStar,
+			gender,
+			isNeutered
+		);
+	}
+
+	private Dog (
+		DogStatus status,
+		Long centerId,
+		String name,
+		String profileImage,
+		List<String> color,
+		LocalDateTime rescuedDate,
+		Double weight,
+		String description,
+		Boolean isStar,
+		Gender gender,
+		Boolean isNeutered
+	) {
+		this.status = status;
+		this.centerId = centerId;
+		this.name = name;
+		this.profileImage = profileImage;
+		this.color = color;
+		this.rescuedDate = rescuedDate;
+		this.weight = weight;
+		this.description = description;
+		this.isStar = isStar;
+		this.gender = gender;
+		this.isNeutered = isNeutered;
+	}
 }
