@@ -23,9 +23,7 @@ public class FavoriteDogService {
 		Long dogId
 	) {
 
-		if (dogRepository.checkDogExistence(dogId)) {
-			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
-		}
+		checkDogExistence(dogId);
 
 		FavoriteDog favoriteDog = FavoriteDog.createFavoriteDog(
 			member.getId(),
@@ -34,4 +32,24 @@ public class FavoriteDogService {
 
 		return favoriteDogRepository.createFavoriteDog(favoriteDog).getId();
 	}
+
+	public void deleteFavoriteDog(
+		Member member,
+		Long dogId
+	) {
+
+		checkDogExistence(dogId);
+
+		favoriteDogRepository.deleteFavoriteDog(
+			dogId,
+			member.getId()
+		);
+	}
+
+	private void checkDogExistence(Long dogId) {
+		if (!dogRepository.checkDogExistence(dogId)) {
+			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
+		}
+	}
+
 }

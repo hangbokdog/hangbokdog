@@ -22,10 +22,10 @@ public class FavoriteDog extends BaseEntity {
 	@Column(name = "favorite_dog_id")
 	private Long id;
 
-	@Column(name = "member_id")
+	@Column(nullable = false, name = "member_id")
 	private Long memberId;
 
-	@Column(name = "dog_id")
+	@Column(nullable = false, name = "dog_id")
 	private Long dogId;
 
 	public static FavoriteDog createFavoriteDog(

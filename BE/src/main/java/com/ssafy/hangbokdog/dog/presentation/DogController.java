@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -95,6 +96,19 @@ public class DogController {
 
 		return ResponseEntity.created(URI.create("/api/v1/dogs/favorite" + favoriteDogId))
 			.build();
+	}
+
+	@DeleteMapping("/{dogId}/favorite")
+	public ResponseEntity<Void> removeFavoriteDog(
+		@AuthMember Member member,
+		@PathVariable(name = "dogId") Long dogId
+	) {
+		favoriteDogService.deleteFavoriteDog(
+			member,
+			dogId
+		);
+
+		return ResponseEntity.noContent().build();
 	}
 
 	private String uploadImageToS3(MultipartFile image) {
