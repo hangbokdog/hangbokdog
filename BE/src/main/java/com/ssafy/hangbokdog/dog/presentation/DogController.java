@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.hangbokdog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
-
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.image.application.S3Service;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
