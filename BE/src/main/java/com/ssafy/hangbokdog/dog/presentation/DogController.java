@@ -22,7 +22,9 @@ import com.ssafy.hangbokdog.image.application.S3Service;
 
 import com.ssafy.hangbokdog.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/dogs")
 @RequiredArgsConstructor
@@ -54,7 +56,7 @@ public class DogController {
 		return ResponseEntity.ok(dogService.getDogDetail(dogId));
 	}
 
-	@PatchMapping("/{dogId}")
+	@PatchMapping("/{dogId}/star")
 	public ResponseEntity<Void> dogToStar(@PathVariable(name = "dogId") Long dogId) {
 		dogService.dogToStar(dogId);
 		return ResponseEntity.noContent().build();
@@ -62,16 +64,15 @@ public class DogController {
 
 	@PatchMapping(value = "/{dogId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> updateDog(
-		@AuthMember Member member,
 		@PathVariable(name = "dogId") Long dogId,
 		@RequestPart(value = "request") DogUpdateRequest request,
-		@RequestPart(value = "imageUrl", required = false) MultipartFile imageUrl
+		@RequestPart(value = "image", required = false) MultipartFile image
 	) {
 
-		String newImageUrl = (imageUrl != null) ? uploadImageToS3(imageUrl) : null;
+		//TODO: 관리자 검증
+		String newImageUrl = (image != null) ? uploadImageToS3(image) : null;
 
 		dogService.updateDog(
-			member,
 			request,
 			newImageUrl,
 			dogId

@@ -11,8 +11,6 @@ import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
-import com.ssafy.hangbokdog.member.domain.Grade;
-import com.ssafy.hangbokdog.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -61,14 +59,10 @@ public class DogService {
 
 	@Transactional
 	public void updateDog(
-		Member member,
 		DogUpdateRequest request,
 		String imageUrl,
 		Long dogId
 	) {
-		if (!member.getGrade().equals(Grade.ADMIN)) {
-			throw new BadRequestException(ErrorCode.NOT_AUTHORIZED_MEMBER);
-		}
 
 		Dog dog = checkDogExistence(dogId);
 
