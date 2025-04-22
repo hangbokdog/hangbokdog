@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
+import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.image.application.S3Service;
 
+import com.ssafy.hangbokdog.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -54,6 +57,26 @@ public class DogController {
 	@PatchMapping("/{dogId}")
 	public ResponseEntity<Void> dogToStar(@PathVariable(name = "dogId") Long dogId) {
 		dogService.dogToStar(dogId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PatchMapping(value = "/{dogId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Void> updateDog(
+		@AuthMember Member member,
+		@PathVariable(name = "dogId") Long dogId,
+		@RequestPart(value = "request") DogUpdateRequest request,
+		@RequestPart(value = "imageUrl", required = false) MultipartFile imageUrl
+	) {
+
+		String newImageUrl = (imageUrl != null) ? uploadImageToS3(imageUrl) : null;
+
+		dogService.updateDog(
+			member,
+			request,
+			newImageUrl,
+			dogId
+		);
+
 		return ResponseEntity.noContent().build();
 	}
 

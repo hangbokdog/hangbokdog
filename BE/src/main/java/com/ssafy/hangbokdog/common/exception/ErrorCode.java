@@ -21,6 +21,7 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(4001, "Internal Server Error"),
 
     MEMBER_NOT_FOUND(5000, "존재하지 않는 유저입니다."),
+    NOT_AUTHORIZED_MEMBER(5001, "유효하지 않은 권한입니다."),
 
     DOG_NOT_FOUND(6000, "존재하지 않는 강아지입니다.");
 

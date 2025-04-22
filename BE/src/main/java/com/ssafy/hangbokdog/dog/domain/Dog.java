@@ -109,6 +109,20 @@ public class Dog extends BaseEntity {
 		);
 	}
 
+	public void updateDog(
+		String name,
+		String profileImageUrl,
+		Double weight,
+		String description,
+		Boolean isNeutered
+	) {
+		this.name = name;
+		this.profileImage = profileImageUrl;
+		this.weight = weight;
+		this.description = description;
+		this.isNeutered = isNeutered;
+	}
+
 	private Dog(
 		DogStatus status,
 		Long centerId,

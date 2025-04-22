@@ -8,8 +8,11 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
+import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
+import com.ssafy.hangbokdog.member.domain.Grade;
+import com.ssafy.hangbokdog.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -54,6 +57,32 @@ public class DogService {
 		Dog dog = checkDogExistence(dogId);
 
 		dog.dogToStar();
+	}
+
+	@Transactional
+	public void updateDog(
+		Member member,
+		DogUpdateRequest request,
+		String imageUrl,
+		Long dogId
+	) {
+		if (!member.getGrade().equals(Grade.ADMIN)) {
+			throw new BadRequestException(ErrorCode.NOT_AUTHORIZED_MEMBER);
+		}
+
+		Dog dog = checkDogExistence(dogId);
+
+		if (imageUrl == null) {
+			imageUrl = dog.getProfileImage();
+		}
+
+		dog.updateDog(
+			request.dogName(),
+			imageUrl,
+			request.weight(),
+			request.description(),
+			request.isNeutered()
+		);
 	}
 
 	private Dog checkDogExistence(Long dogId) {
