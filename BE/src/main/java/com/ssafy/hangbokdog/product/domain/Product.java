@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.product.domain;
 
+import static com.ssafy.hangbokdog.product.domain.ProductStatus.ON_SALE;
+
 import java.util.List;
 
 import jakarta.persistence.Column;
@@ -16,6 +18,7 @@ import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -48,4 +51,20 @@ public class Product extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ProductStatus status;
+
+    @Builder
+    public Product(
+            Long sellerId,
+            String name,
+            int price,
+            String description,
+            List<String> imageUrls
+    ) {
+        this.sellerId = sellerId;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.imageUrls = imageUrls;
+        status = ON_SALE;
+    }
 }
