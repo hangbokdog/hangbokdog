@@ -6,7 +6,7 @@ import java.util.List;
 import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.domain.enums.Gender;
 
-public record DogCreateRequest (
+public record DogCreateRequest(
 	DogStatus status,
 	Long centerId,
 	String name,
@@ -17,5 +17,5 @@ public record DogCreateRequest (
 	Boolean isStar,
 	Gender gender,
 	Boolean isNeutered
-){
+) {
 }

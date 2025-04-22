@@ -82,7 +82,7 @@ public class Dog extends BaseEntity {
 		Boolean isStar,
 		Gender gender,
 		Boolean isNeutered
-	){
+	) {
 		return new Dog(
 			status,
 			centerId,
@@ -98,7 +98,7 @@ public class Dog extends BaseEntity {
 		);
 	}
 
-	private Dog (
+	private Dog(
 		DogStatus status,
 		Long centerId,
 		String name,
