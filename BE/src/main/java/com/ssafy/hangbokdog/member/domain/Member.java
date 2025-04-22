@@ -60,4 +60,12 @@ public class Member {
 
     @Column(name = "profile_image", nullable = false)
     private String profileImage;
+
+    public boolean isAdmin() {
+        return grade == Grade.ADMIN;
+    }
+
+    public boolean isManager() {
+        return grade == Grade.MANAGER;
+    }
 }
