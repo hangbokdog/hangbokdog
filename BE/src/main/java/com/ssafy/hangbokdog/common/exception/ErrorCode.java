@@ -18,7 +18,9 @@ public enum ErrorCode {
     INVALID_ACCESS_TOKEN(3003, "유효하지 않은 Access Token입니다."),
 
     VALIDATION_FAIL(4000, "유효하지 않은 형식입니다."),
-    INTERNAL_SERVER_ERROR(4001, "Internal Server Error");
+    INTERNAL_SERVER_ERROR(4001, "Internal Server Error"),
+
+    MEMBER_NOT_FOUND(5000, "존재하지 않는 유저입니다.");
 
     private final int code;
     private final String message;
