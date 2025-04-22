@@ -75,6 +75,10 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "dog_breed")
 	private DogBreed dogBreed;
 
+	public void dogToStar() {
+		this.isStar = true;
+	}
+
 	public static Dog createDog(
 		DogStatus status,
 		Long centerId,

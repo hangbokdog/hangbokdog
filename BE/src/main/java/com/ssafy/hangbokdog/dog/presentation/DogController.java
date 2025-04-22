@@ -5,6 +5,7 @@ import java.net.URI;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,12 @@ public class DogController {
 	@GetMapping("/{dogId}")
 	public ResponseEntity<DogDetailResponse> getDogDetail(@PathVariable(name = "dogId") Long dogId) {
 		return ResponseEntity.ok(dogService.getDogDetail(dogId));
+	}
+
+	@PatchMapping("/{dogId}")
+	public ResponseEntity<Void> dogToStar(@PathVariable(name = "dogId") Long dogId) {
+		dogService.dogToStar(dogId);
+		return ResponseEntity.noContent().build();
 	}
 
 	private String uploadImageToS3(MultipartFile image) {

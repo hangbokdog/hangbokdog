@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.dog.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
@@ -37,19 +38,26 @@ public class DogService {
 			request.isNeutered()
 		);
 
-		Long dogId = dogRepository.createDog(dog).getId();
-
-		return dogId;
+		return dogRepository.createDog(dog).getId();
 	}
 
 	public DogDetailResponse getDogDetail(Long dogId) {
 
-		if (!dogRepository.checkDogExistence(dogId)) {
-			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
-		}
+		checkDogExistence(dogId);
 
-		DogDetailResponse response = dogRepository.getDogDetail(dogId);
+		return dogRepository.getDogDetail(dogId);
+	}
 
-		return response;
+	@Transactional
+	public void dogToStar(Long dogId) {
+
+		Dog dog = checkDogExistence(dogId);
+
+		dog.dogToStar();
+	}
+
+	private Dog checkDogExistence(Long dogId) {
+		return dogRepository.getDog(dogId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));
 	}
 }

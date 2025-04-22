@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.dog.domain.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.dog.domain.Dog;
@@ -22,7 +24,7 @@ public class DogRepository {
 		return dogJpaRepositoryCustomImpl.getDogDetail(id);
 	}
 
-	public boolean checkDogExistence(Long id) {
-		return dogJpaRepository.existsById(id);
+	public Optional<Dog> getDog(Long id) {
+		return dogJpaRepository.findById(id);
 	}
 }
