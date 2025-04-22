@@ -4,6 +4,8 @@ import java.net.URI;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -13,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.hangbokdog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 
+import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
+import com.ssafy.hangbokdog.image.application.S3Service;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -38,5 +42,10 @@ public class DogController {
 
 		return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId))
 			.build();
+	}
+
+	@GetMapping("/{dogId}")
+	public ResponseEntity<DogDetailResponse> getDogDetail(@PathVariable(name = "dogId") Long dogId) {
+		return ResponseEntity.ok(dogService.getDogDetail(dogId));
 	}
 }
