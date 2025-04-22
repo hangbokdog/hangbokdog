@@ -24,7 +24,8 @@ public class Post extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    @Column(name = "post_id")
+    private Long id;
 
     @Column(nullable = false)
     private Long authorId;

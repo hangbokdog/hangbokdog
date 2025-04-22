@@ -19,7 +19,8 @@ public class PostType extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postTypeId;
+    @Column(name = "post_type_id")
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String postTypeName;
