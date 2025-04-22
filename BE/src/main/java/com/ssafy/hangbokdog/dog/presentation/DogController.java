@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class DogController {
 
 	private final DogService dogService;
+	private final S3Service s3Service;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Long> addDog(
@@ -32,8 +33,8 @@ public class DogController {
 		@RequestPart(value = "image") MultipartFile image
 	) {
 
-		//TODO: S3 연결 + 관리자만 할 수 있게
-		String imageUrl = "test";
+		//TODO: 관리자만 할 수 있게
+		String imageUrl = uploadImageToS3(image);
 
 		Long dogId = dogService.createDog(
 			request,
@@ -47,5 +48,9 @@ public class DogController {
 	@GetMapping("/{dogId}")
 	public ResponseEntity<DogDetailResponse> getDogDetail(@PathVariable(name = "dogId") Long dogId) {
 		return ResponseEntity.ok(dogService.getDogDetail(dogId));
+	}
+
+	private String uploadImageToS3(MultipartFile image) {
+		return s3Service.uploadFile(image);
 	}
 }
