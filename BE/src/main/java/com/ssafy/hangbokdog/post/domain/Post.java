@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import org.hibernate.annotations.Type;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
@@ -54,6 +55,20 @@ public class Post extends BaseEntity {
     ) {
         this.authorId = authorId;
         this.postTypeId = boardTypeId;
+        this.title = title;
+        this.content = content;
+        this.imageUrls = imageUrls;
+    }
+
+    public boolean isAuthor(Member member) {
+        return authorId.equals(member.getId());
+    }
+
+    public void update(
+            String title,
+            String content,
+            List<String> imageUrls
+    ) {
         this.title = title;
         this.content = content;
         this.imageUrls = imageUrls;
