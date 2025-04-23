@@ -54,6 +54,9 @@ dependencies {
 	//s3
 	implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.1000')
 	implementation 'com.amazonaws:aws-java-sdk-s3'
+
+	//redisson
+	implementation 'org.redisson:redisson-spring-boot-starter:3.45.1'
 }
 
 tasks.named('test') {
