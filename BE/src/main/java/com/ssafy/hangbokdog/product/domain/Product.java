@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.product.domain;
 
 import static com.ssafy.hangbokdog.product.domain.ProductStatus.ON_SALE;
 import static com.ssafy.hangbokdog.product.domain.ProductStatus.PENDING;
+import static com.ssafy.hangbokdog.product.domain.ProductStatus.SOLD_OUT;
 
 import java.util.List;
 
@@ -98,5 +99,9 @@ public class Product extends BaseEntity {
 
     public void reserve() {
         status = PENDING;
+    }
+
+    public void complete() {
+        status = SOLD_OUT;
     }
 }
