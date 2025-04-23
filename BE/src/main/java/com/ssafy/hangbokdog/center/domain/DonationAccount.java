@@ -28,7 +28,7 @@ public class DonationAccount extends BaseEntity {
 	@Column(name = "balance", nullable = false)
 	private Long balance;
 
-	@Column(name = "last_updated_key", nullable = false)
+	@Column(name = "last_updated_key")
 	private Long lastUpdatedKey;
 
 	public static DonationAccount createDonationAccount(
