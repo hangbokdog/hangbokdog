@@ -12,9 +12,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.Type;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("deleted = false")
 public class Product extends BaseEntity {
 
     @Id
@@ -52,6 +55,9 @@ public class Product extends BaseEntity {
     @Column(name = "status")
     private ProductStatus status;
 
+    @Column(name = "deleted")
+    private boolean deleted;
+
     @Builder
     public Product(
             Long sellerId,
@@ -65,6 +71,27 @@ public class Product extends BaseEntity {
         this.price = price;
         this.description = description;
         this.imageUrls = imageUrls;
-        status = ON_SALE;
+        this.status = ON_SALE;
+        this.deleted = false;
+    }
+
+    public boolean isSeller(Member seller) {
+        return seller.getId().equals(sellerId);
+    }
+
+    public boolean isOnSale() {
+        return status.equals(ON_SALE);
+    }
+
+    public void update(
+            String name,
+            String description,
+            int price,
+            List<String> imageUrls
+    ) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrls = imageUrls;
     }
 }

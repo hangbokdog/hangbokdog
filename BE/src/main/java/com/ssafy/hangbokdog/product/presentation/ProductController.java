@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +21,7 @@ import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.product.application.ProductService;
 import com.ssafy.hangbokdog.product.dto.request.ProductCreateRequest;
+import com.ssafy.hangbokdog.product.dto.request.ProductUpdateRequest;
 import com.ssafy.hangbokdog.product.dto.response.ProductResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -49,5 +52,27 @@ public class ProductController {
             @RequestParam(required = false, name = "pageToken") String pageToken
     ) {
         return ResponseEntity.ok(productService.findAll(member, pageToken));
+    }
+
+    @PostMapping("/{productId}")
+    public ResponseEntity<Void> update(
+            @AuthMember Member member,
+            @PathVariable(value = "productId") Long productId,
+            @RequestPart(value = "productUpdateRequest") ProductUpdateRequest productUpdateRequest,
+            @RequestPart(value = "files") List<MultipartFile> files
+    ) {
+        // TODO : 나중에 고민해보기 (Notion : A103 - 논의할 부분 - 상품 수정)
+        List<String> imageUrls = s3Service.uploadFiles(files);
+        productService.update(productId, member, productUpdateRequest, imageUrls);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> delete(
+            @AuthMember Member member,
+            @PathVariable(value = "productId") Long productId
+    ) {
+        productService.delete(member, productId);
+        return ResponseEntity.noContent().build();
     }
 }
