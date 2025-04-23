@@ -28,9 +28,11 @@ public enum ErrorCode {
     DOG_NOT_FOUND(6000, "존재하지 않는 강아지입니다."),
 
     PRODUCT_NOT_FOUND(7000, "존재하지 않는 상품입니다."),
-    PRODUCT_NOT_ON_SALE(7001, "현재 판매중인 상품이 아닙니다.");
+    PRODUCT_NOT_ON_SALE(7001, "현재 판매중인 상품이 아닙니다."),
+
+    POST_TYPE_NOT_FOUND(8000, "존재하지 않는 게시판입니다."),
+    POST_NOT_FOUND(8001, "존재하지 않는 게시글입니다.");
 
     private final int code;
     private final String message;
 }
-
