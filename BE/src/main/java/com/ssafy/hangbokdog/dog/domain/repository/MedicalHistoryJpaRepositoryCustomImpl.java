@@ -1,8 +1,8 @@
 package com.ssafy.hangbokdog.dog.domain.repository;
 
 import static com.ssafy.hangbokdog.dog.domain.QMedicalHistory.*;
-import static com.ssafy.hangbokdog.product.domain.QProduct.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -37,8 +37,8 @@ public class MedicalHistoryJpaRepositoryCustomImpl implements MedicalHistoryJpaR
 			))
 			.from(medicalHistory)
 			.where(medicalHistory.dogId.eq(dogId)
-				.and(isInRange(pageToken)))
-			.orderBy(medicalHistory.id.desc())
+					.and(isInRange(pageToken)))
+			.orderBy(medicalHistory.operatedDate.desc())
 			.limit(pageSize + 1)
 			.fetch();
 	}
@@ -48,6 +48,6 @@ public class MedicalHistoryJpaRepositoryCustomImpl implements MedicalHistoryJpaR
 			return null;
 		}
 
-		return medicalHistory.id.lt(Long.valueOf(pageToken));
+		return medicalHistory.operatedDate.lt(LocalDateTime.parse(pageToken));
 	}
 }

@@ -106,6 +106,10 @@ public class DogService {
 		return dogRepository.findAllMedicalHistory(pageToken, dogId);
 	}
 
+	public void deleteMedicalHistory(Long dogId) {
+		dogRepository.deleteMedicalHistory(dogId);
+	}
+
 	private Dog checkDogExistence(Long dogId) {
 		return dogRepository.getDog(dogId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));

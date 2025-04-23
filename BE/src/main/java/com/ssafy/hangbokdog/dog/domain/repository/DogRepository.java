@@ -52,6 +52,10 @@ public class DogRepository {
 			pageToken,
 			DEFAULT_PAGE_SIZE
 		);
-		return PageInfo.of(data, DEFAULT_PAGE_SIZE, MedicalHistoryResponse::id);
+		return PageInfo.of(data, DEFAULT_PAGE_SIZE, MedicalHistoryResponse::operatedDate);
+	}
+
+	public void deleteMedicalHistory(Long id) {
+		medicalHistoryJpaRepository.deleteById(id);
 	}
 }

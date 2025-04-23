@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.dog.presentation;
 
 import java.net.URI;
 
+import org.geolatte.geom.M;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -140,6 +141,16 @@ public class DogController {
 	) {
 		return ResponseEntity.ok(dogService.getMedicalHistories(dogId, pageToken));
 	}
+
+	@DeleteMapping("/{dogId}/medical-history")
+	public ResponseEntity<Void> removeMedicalHistory(
+		@AdminMember Member member,
+		@RequestParam(name = "medicalHistoryId") Long medicalHistoryId
+	) {
+		dogService.deleteMedicalHistory(medicalHistoryId);
+		return ResponseEntity.noContent().build();
+	}
+
 
 	private String uploadImageToS3(MultipartFile image) {
 		return s3Service.uploadFile(image);
