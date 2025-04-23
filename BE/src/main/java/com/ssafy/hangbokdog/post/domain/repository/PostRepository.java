@@ -27,11 +27,19 @@ public class PostRepository {
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, PostResponse::postId);
     }
 
-    public Optional<PostResponse> findById(Long postId) {
+    public Optional<Post> findById(Long postId) {
+        return postJpaRepository.findById(postId);
+    }
+
+    public Optional<PostResponse> findByPostId(Long postId) {
         return postJpaRepository.findByPostId(postId);
     }
 
     public void deleteAllByPostTypeId(Long postTypeId) {
         postJpaRepository.deleteAllByPostTypeId(postTypeId);
+    }
+
+    public void delete(Post post) {
+        postJpaRepository.delete(post);
     }
 }

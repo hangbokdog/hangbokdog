@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.application.PostService;
 import com.ssafy.hangbokdog.post.dto.request.PostCreateRequest;
+import com.ssafy.hangbokdog.post.dto.request.PostUpdateRequest;
 import com.ssafy.hangbokdog.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -60,7 +63,28 @@ public class PostController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> get(@PathVariable Long postId) {
-        PostResponse response = postService.findById(postId);
+        PostResponse response = postService.findByPostId(postId);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping(path = "/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> update(
+            @AuthMember Member member,
+            @PathVariable Long postId,
+            @RequestPart(value = "request") PostUpdateRequest request,
+            @RequestPart(value = "files") List<MultipartFile> images
+    ) {
+        List<String> imageUrls = s3Service.uploadFiles(images);
+        postService.update(member, postId,  request, imageUrls);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> delete(
+            @AuthMember Member member,
+            @PathVariable Long postId
+    ) {
+        postService.delete(member, postId);
+        return ResponseEntity.noContent().build();
     }
 }
