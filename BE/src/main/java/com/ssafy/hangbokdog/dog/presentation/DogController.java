@@ -2,7 +2,6 @@ package com.ssafy.hangbokdog.dog.presentation;
 
 import java.net.URI;
 
-import org.geolatte.geom.M;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,11 +44,11 @@ public class DogController {
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> addDog(
+		@AdminMember Member member,
 		@RequestPart(value = "request") DogCreateRequest request,
 		@RequestPart(value = "image") MultipartFile image
 	) {
 
-		//TODO: 관리자만 할 수 있게
 		String imageUrl = uploadImageToS3(image);
 
 		Long dogId = dogService.createDog(
@@ -67,19 +66,21 @@ public class DogController {
 	}
 
 	@PatchMapping("/{dogId}/star")
-	public ResponseEntity<Void> dogToStar(@PathVariable(name = "dogId") Long dogId) {
+	public ResponseEntity<Void> dogToStar(
+		@AdminMember Member member,
+		@PathVariable(name = "dogId") Long dogId
+	) {
 		dogService.dogToStar(dogId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping(value = "/{dogId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> updateDog(
+		@AdminMember Member member,
 		@PathVariable(name = "dogId") Long dogId,
 		@RequestPart(value = "request") DogUpdateRequest request,
 		@RequestPart(value = "image", required = false) MultipartFile image
 	) {
-
-		//TODO: 관리자 검증
 		String newImageUrl = (image != null) ? uploadImageToS3(image) : null;
 
 		dogService.updateDog(
