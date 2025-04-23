@@ -4,5 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 
-public interface MedicalHistoryJpaRepository extends JpaRepository<MedicalHistory, Long> {
+public interface MedicalHistoryJpaRepository extends JpaRepository<MedicalHistory, Long>,
+	MedicalHistoryJpaRepositoryCustom {
 }

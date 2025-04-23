@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
@@ -13,6 +14,7 @@ import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
+import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -95,6 +97,13 @@ public class DogService {
 
 		// TODO:담당자 이름을 넣어야 될수도 있음
 		return dogRepository.createMedicalHistory(medicalHistory).getId();
+	}
+
+	public PageInfo<MedicalHistoryResponse> getMedicalHistories(
+		Long dogId,
+		String pageToken
+	) {
+		return dogRepository.findAllMedicalHistory(pageToken, dogId);
 	}
 
 	private Dog checkDogExistence(Long dogId) {
