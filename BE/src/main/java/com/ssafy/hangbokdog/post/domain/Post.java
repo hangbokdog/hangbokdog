@@ -14,6 +14,7 @@ import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,19 +28,34 @@ public class Post extends BaseEntity {
     @Column(name = "post_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "author_id", nullable = false)
     private Long authorId;
 
-    @Column(nullable = false)
-    private Long boardTypeId;
+    @Column(name = "post_type_id", nullable = false)
+    private Long postTypeId;
 
     @Column(nullable = false, length = 100)
     private String title;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
-    private List<String> images;
+    private List<String> imageUrls;
 
     @Column(nullable = false)
     private String content;
+
+    @Builder
+    public Post(
+        Long authorId,
+        Long boardTypeId,
+        String title,
+        String content,
+        List<String> imageUrls
+    ) {
+        this.authorId = authorId;
+        this.postTypeId = boardTypeId;
+        this.title = title;
+        this.content = content;
+        this.imageUrls = imageUrls;
+    }
 }
