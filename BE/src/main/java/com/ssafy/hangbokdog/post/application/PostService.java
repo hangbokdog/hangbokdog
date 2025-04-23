@@ -65,6 +65,7 @@ public class PostService {
         }
 
         post.update(
+                request.dogId(),
                 request.title(),
                 request.content(),
                 imageUrls
