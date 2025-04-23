@@ -1,8 +1,10 @@
 package com.ssafy.hangbokdog.post.presentation;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +15,7 @@ import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.application.PostTypeService;
 import com.ssafy.hangbokdog.post.dto.request.PostTypeRequest;
+import com.ssafy.hangbokdog.post.dto.response.PostTypeResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,5 +37,11 @@ public class PostTypeController {
                 .toUri();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostTypeResponse>> getList() {
+        List<PostTypeResponse> postTypeList = postTypeService.findAll();
+        return ResponseEntity.ok(postTypeList);
     }
 }
