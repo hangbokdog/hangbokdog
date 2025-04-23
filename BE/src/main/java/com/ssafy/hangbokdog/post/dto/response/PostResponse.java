@@ -9,6 +9,7 @@ public record PostResponse(
     MemberInfo author,
     PostTypeResponse postType,
     Long postId,
+    Long dogId,
     String title,
     String content,
     List<String> images,
