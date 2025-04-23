@@ -74,4 +74,10 @@ public class ProductService {
                 imageUrls
         );
     }
+
+    @Transactional
+    public void delete(Member member, Long productId) {
+        // TODO: Order 에 관한 변경도 처리
+        productRepository.deleteByIdAndSellerId(productId, member.getId());
+    }
 }
