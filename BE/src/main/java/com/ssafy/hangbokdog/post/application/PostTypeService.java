@@ -40,6 +40,13 @@ public class PostTypeService {
                 .toList();
     }
 
+    public PostTypeResponse findById(Long postTypeId) {
+        PostType postType = postTypeJpaRepository.findById(postTypeId)
+                .orElseThrow(() ->new BadRequestException(ErrorCode.POST_TYPE_NOT_FOUND));
+
+        return PostTypeResponse.from(postType);
+    }
+
     @Transactional
     public void update(Long postTypeId, PostTypeRequest request) {
         PostType postType = postTypeJpaRepository.findById(postTypeId)

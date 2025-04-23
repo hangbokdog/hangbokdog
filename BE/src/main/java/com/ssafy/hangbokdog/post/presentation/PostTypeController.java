@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ssafy.hangbokdog.auth.annotation.AdminMember;
+import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.application.PostTypeService;
 import com.ssafy.hangbokdog.post.dto.request.PostTypeRequest;
@@ -43,9 +44,20 @@ public class PostTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostTypeResponse>> getAll() {
+    public ResponseEntity<List<PostTypeResponse>> getAll(
+            @AuthMember Member member
+    ) {
         List<PostTypeResponse> responses = postTypeService.findAll();
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{postTypeId}")
+    public ResponseEntity<PostTypeResponse> get(
+            @AuthMember Member member,
+            @PathVariable Long postTypeId
+    ) {
+        PostTypeResponse response = postTypeService.findById(postTypeId);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{postTypeId}")
