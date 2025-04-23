@@ -27,4 +27,8 @@ public class DogRepository {
 	public Optional<Dog> getDog(Long id) {
 		return dogJpaRepository.findById(id);
 	}
+
+	public boolean checkDogExistence(Long id) {
+		return dogJpaRepository.existsById(id);
+	}
 }
