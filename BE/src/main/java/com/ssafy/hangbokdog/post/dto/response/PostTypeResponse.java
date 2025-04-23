@@ -8,6 +8,7 @@ import lombok.Builder;
 public record PostTypeResponse(
         Long id,
         String name
+        // TODO: 게시글 수 추가하기
 ) {
     public static PostTypeResponse from(PostType postType) {
         return PostTypeResponse.builder()

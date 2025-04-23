@@ -30,4 +30,8 @@ public class ProductRepository {
     public Optional<Product> findById(Long productId) {
         return productJpaRepository.findById(productId);
     }
+
+    public void deleteByIdAndSellerId(Long productId, Long sellerId) {
+        productJpaRepository.deleteByIdAndSellerId(productId, sellerId);
+    }
 }

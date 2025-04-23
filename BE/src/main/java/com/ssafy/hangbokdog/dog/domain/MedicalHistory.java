@@ -2,9 +2,7 @@ package com.ssafy.hangbokdog.dog.domain;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.Length;
 
-import com.ssafy.hangbokdog.dog.domain.enums.MedicalType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,7 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.dog.domain.enums.MedicalType;
 
 import lombok.AccessLevel;
 import lombok.Getter;

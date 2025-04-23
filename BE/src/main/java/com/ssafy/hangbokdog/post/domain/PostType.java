@@ -28,4 +28,8 @@ public class PostType extends BaseEntity {
     public PostType(String name) {
         this.name = name;
     }
+
+    public void update(String newName) {
+        this.name = newName;
+    }
 }
