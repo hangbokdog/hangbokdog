@@ -27,4 +27,13 @@ public class OrderController {
         Long orderId = orderService.order(member, productId);
         return ResponseEntity.created(URI.create("/api/v1/products/" + productId + "/order/" + orderId)).build();
     }
+
+    @PostMapping("/api/v1/orders/{orderId}/confirm")
+    public ResponseEntity<Void> confirmOrder(
+            @AuthMember Member member,
+            @PathVariable(value = "orderId") Long orderId
+    ) {
+        orderService.confirm(member, orderId);
+        return ResponseEntity.noContent().build();
+    }
 }
