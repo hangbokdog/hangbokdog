@@ -1,9 +1,12 @@
 package com.ssafy.hangbokdog.center.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.domain.Center;
+import com.ssafy.hangbokdog.center.domain.DonationAccount;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
+import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -13,11 +16,18 @@ import lombok.RequiredArgsConstructor;
 public class CenterService {
 
 	private final CenterRepository centerRepository;
+	private final DonationAccountRepository donationAccountRepository;
 
+	@Transactional
 	public Long createCenter(CenterCreateRequest request) {
-		Center center = Center.create(request.name());
 
-		Long centerId = centerRepository.create(center).getId();
+		Long centerId = centerRepository.create(Center.create(request.name())).getId();
+
+		donationAccountRepository.createDonationAccount(DonationAccount.createDonationAccount(
+			centerId,
+			0L,
+			null
+		));
 
 		return centerId;
 	}

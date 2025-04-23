@@ -16,6 +16,10 @@ public class DonationAccountRepository {
 
 	private final DonationAccountJpaRepository donationAccountJpaRepository;
 
+	public DonationAccount createDonationAccount(DonationAccount donationAccount) {
+		return donationAccountJpaRepository.save(donationAccount);
+	}
+
 	public Optional<DonationAccount> getDonationAccountByCenterId(Long centerId) {
 		return donationAccountJpaRepository.findById(centerId);
 	}
