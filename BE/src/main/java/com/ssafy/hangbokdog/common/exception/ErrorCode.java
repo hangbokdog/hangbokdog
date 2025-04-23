@@ -31,7 +31,10 @@ public enum ErrorCode {
     PRODUCT_NOT_ON_SALE(7001, "현재 판매중인 상품이 아닙니다."),
 
     POST_TYPE_NOT_FOUND(8000, "존재하지 않는 게시판입니다."),
-    POST_NOT_FOUND(8001, "존재하지 않는 게시글입니다.");
+    POST_NOT_FOUND(8001, "존재하지 않는 게시글입니다."),
+    NOT_AUTHOR(8002, "해당 게시글의 작성자가 아닙니다."),
+
+    DONATION_ACCOUNT_NOT_FOUND(9000, "존재하지 않는 후원계좌입니다");;
 
     private final int code;
     private final String message;
