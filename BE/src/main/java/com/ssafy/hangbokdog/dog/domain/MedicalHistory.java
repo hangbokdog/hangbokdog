@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.dog.domain;
 
+import java.time.LocalDateTime;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.ssafy.hangbokdog.dog.domain.enums.MedicalType;
@@ -41,17 +43,22 @@ public class MedicalHistory extends BaseEntity {
 	@Column(nullable = false, name = "medical_type")
 	private MedicalType medicalType;
 
+	@Column(nullable = false, name = "operated_date")
+	private LocalDateTime operatedDate;
+
 	public static MedicalHistory createMedicalHistory(
 		Long dogId,
 		String content,
 		Integer medicalPeriod,
-		MedicalType medicalType
+		MedicalType medicalType,
+		LocalDateTime operatedDate
 	) {
 		return new MedicalHistory(
 			dogId,
 			content,
 			medicalPeriod,
-			medicalType
+			medicalType,
+			operatedDate
 		);
 	}
 
@@ -59,12 +66,14 @@ public class MedicalHistory extends BaseEntity {
 		Long dogId,
 		String content,
 		Integer medicalPeriod,
-		MedicalType medicalType
+		MedicalType medicalType,
+		LocalDateTime operatedDate
 	) {
 		this.dogId = dogId;
 		this.content = content;
 		this.medicalPeriod = medicalPeriod;
 		this.medicalType = medicalType;
+		this.operatedDate = operatedDate;
 	}
 }
 

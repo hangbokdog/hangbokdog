@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import com.ssafy.hangbokdog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.application.FavoriteDogService;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
+import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -109,6 +111,20 @@ public class DogController {
 		);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{dogId}/medical-history")
+	public ResponseEntity<Void> addMedicalHistory(
+		@RequestBody MedicalHistoryRequest request,
+		@PathVariable(name = "dogId") Long dogId
+	) {
+		Long medicalHistoryId = dogService.addMedicalHistory(
+			request,
+			dogId
+		);
+
+		return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId + "/medical-history" + medicalHistoryId))
+			.build();
 	}
 
 	private String uploadImageToS3(MultipartFile image) {
