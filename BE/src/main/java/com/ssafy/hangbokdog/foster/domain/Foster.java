@@ -35,6 +35,10 @@ public class Foster extends BaseEntity {
 	@Column(name = "status", nullable = false)
 	private FosterStatus status;
 
+	public void acceptFoster() {
+		this.status = FosterStatus.COMPLETED;
+	}
+
 	public static Foster createFoster(
 		Long memberId,
 		Long dogId,
