@@ -35,6 +35,9 @@ public class Post extends BaseEntity {
     @Column(name = "post_type_id", nullable = false)
     private Long postTypeId;
 
+    @Column(name = "dog_id")
+    private Long dogId;
+
     @Column(nullable = false, length = 100)
     private String title;
 
@@ -49,12 +52,14 @@ public class Post extends BaseEntity {
     public Post(
         Long authorId,
         Long boardTypeId,
+        Long dogId,
         String title,
         String content,
         List<String> imageUrls
     ) {
         this.authorId = authorId;
         this.postTypeId = boardTypeId;
+        this.dogId = dogId;
         this.title = title;
         this.content = content;
         this.imageUrls = imageUrls;
@@ -65,10 +70,12 @@ public class Post extends BaseEntity {
     }
 
     public void update(
+            Long dogId,
             String title,
             String content,
             List<String> imageUrls
     ) {
+        this.dogId = dogId;
         this.title = title;
         this.content = content;
         this.imageUrls = imageUrls;

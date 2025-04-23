@@ -42,6 +42,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                                 postType.name
                         ),
                         post.id,
+                        post.dogId,
                         post.title,
                         post.content,
                         post.imageUrls,
@@ -74,6 +75,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                                 postType.name
                         ),
                         post.id,
+                        post.dogId,
                         post.title,
                         post.content,
                         post.imageUrls,
