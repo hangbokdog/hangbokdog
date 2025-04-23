@@ -30,7 +30,8 @@ public class CenterController {
 	@PostMapping
 	public ResponseEntity<Void> addCenter(
 		@AdminMember Member member,
-		@RequestBody CenterCreateRequest request) {
+		@RequestBody CenterCreateRequest request
+	) {
 		Long centerId = centerService.createCenter(request);
 		return ResponseEntity.created(URI.create("/api/v1/centers/" + centerId))
 			.build();
