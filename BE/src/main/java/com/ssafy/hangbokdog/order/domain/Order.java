@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.order.domain;
 
+import static com.ssafy.hangbokdog.order.domain.OrderStatus.ONGOING;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,8 +32,8 @@ public class Order extends BaseEntity {
     @Column(name = "product_id", nullable = false)
     private Long productId;
 
-    @Column(name = "seller_id", nullable = false)
-    private Long sellerId;
+    @Column(name = "buyer_id", nullable = false)
+    private Long buyerId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -41,12 +43,11 @@ public class Order extends BaseEntity {
     public Order(
             Long id,
             Long productId,
-            Long sellerId,
-            OrderStatus status
+            Long buyerId
     ) {
         this.id = id;
         this.productId = productId;
-        this.sellerId = sellerId;
-        this.status = status;
+        this.buyerId = buyerId;
+        this.status = ONGOING;
     }
 }
