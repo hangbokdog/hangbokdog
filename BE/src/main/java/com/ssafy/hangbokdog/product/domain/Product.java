@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import org.hibernate.annotations.Type;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
@@ -66,5 +67,25 @@ public class Product extends BaseEntity {
         this.description = description;
         this.imageUrls = imageUrls;
         status = ON_SALE;
+    }
+
+    public boolean isSeller(Member seller) {
+        return seller.getId().equals(sellerId);
+    }
+
+    public boolean isOnSale() {
+        return status.equals(ON_SALE);
+    }
+
+    public void update(
+            String name,
+            String description,
+            int price,
+            List<String> imageUrls
+    ) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.imageUrls = imageUrls;
     }
 }

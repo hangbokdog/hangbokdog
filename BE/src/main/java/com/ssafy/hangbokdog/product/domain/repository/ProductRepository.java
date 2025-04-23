@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.product.domain.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -23,5 +25,9 @@ public class ProductRepository {
     public PageInfo<ProductResponse> findAll(String pageToken) {
         var data = productJpaRepository.findAll(pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, ProductResponse::id);
+    }
+
+    public Optional<Product> findById(Long productId) {
+        return productJpaRepository.findById(productId);
     }
 }
