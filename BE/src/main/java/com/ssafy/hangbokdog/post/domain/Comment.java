@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,17 @@ public class Comment extends BaseEntity {
 
     @Column(nullable = false)
     private String content;
+
+    @Builder
+    public Comment(
+            Long authorId,
+            Long postId,
+            Long parentId,
+            String content
+    ) {
+        this.authorId = authorId;
+        this.postId = postId;
+        this.parentId = parentId;
+        this.content = content;
+    }
 }
