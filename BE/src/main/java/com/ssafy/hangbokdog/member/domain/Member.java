@@ -28,9 +28,6 @@ public class Member {
     @Column(name = "age", nullable = false)
     private int age;
 
-    @Column(name = "mileage", nullable = false)
-    private int mileage;
-
     @Column(name = "social_id", nullable = false, length = 32)
     private String socialId;
 
