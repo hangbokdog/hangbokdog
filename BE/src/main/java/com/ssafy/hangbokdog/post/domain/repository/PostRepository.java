@@ -30,4 +30,8 @@ public class PostRepository {
     public Optional<PostResponse> findById(Long postId) {
         return postJpaRepository.findByPostId(postId);
     }
+
+    public void deleteAllByPostTypeId(Long postTypeId) {
+        postJpaRepository.deleteAllByPostTypeId(postTypeId);
+    }
 }
