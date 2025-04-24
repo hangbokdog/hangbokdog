@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.dto.request;
+package com.ssafy.hangbokdog.post.comment.dto;
 
 public record CommentCreateRequest(
         Long parentId,

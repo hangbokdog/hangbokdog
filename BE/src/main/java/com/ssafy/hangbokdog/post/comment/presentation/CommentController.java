@@ -1,8 +1,10 @@
-package com.ssafy.hangbokdog.post.presentation;
+package com.ssafy.hangbokdog.post.comment.presentation;
 
 import java.net.URI;
 
+import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,8 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
-import com.ssafy.hangbokdog.post.application.CommentService;
-import com.ssafy.hangbokdog.post.dto.request.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.application.CommentService;
+import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,5 +39,16 @@ public class CommentController {
                 .toUri();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @PatchMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<Void> update(
+            @AuthMember Member member,
+            @PathVariable("postId") Long postId,
+            @PathVariable("commentId") Long commentId,
+            @RequestBody CommentUpdateRequest request
+    ) {
+        commentService.update(member, commentId, request);
+        return ResponseEntity.noContent().build();
     }
 }

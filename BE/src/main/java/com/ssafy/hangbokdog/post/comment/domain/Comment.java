@@ -1,5 +1,6 @@
-package com.ssafy.hangbokdog.post.domain;
+package com.ssafy.hangbokdog.post.comment.domain;
 
+import com.ssafy.hangbokdog.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,5 +47,13 @@ public class Comment extends BaseEntity {
         this.postId = postId;
         this.parentId = parentId;
         this.content = content;
+    }
+
+    public boolean isAuthor(Member member) {
+        return authorId.equals(member.getId());
+    }
+
+    public void update(String newContent) {
+        this.content = newContent;
     }
 }

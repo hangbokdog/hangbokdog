@@ -1,8 +1,10 @@
-package com.ssafy.hangbokdog.post.domain.repository;
+package com.ssafy.hangbokdog.post.comment.domain.repository;
+
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.hangbokdog.post.domain.Comment;
+import com.ssafy.hangbokdog.post.comment.domain.Comment;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,5 +16,9 @@ public class CommentRepository {
 
     public Comment save(Comment comment) {
         return commentJpaRepository.save(comment);
+    }
+
+    public Optional<Comment> findById(Long commentId) {
+        return commentJpaRepository.findById(commentId);
     }
 }
