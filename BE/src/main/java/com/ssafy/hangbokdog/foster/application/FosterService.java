@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.foster.domain.Foster;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
@@ -16,11 +17,19 @@ import lombok.RequiredArgsConstructor;
 public class FosterService {
 
 	private final FosterRepository fosterRepository;
+	private final DogRepository dogRepository;
 
 	public Long applyFoster(
 		Long memberId,
 		Long dogId
 	) {
+
+		//TODO: 이미 요청이 있는지 확인
+
+		if (!dogRepository.checkDogExistence(dogId)) {
+			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
+		}
+
 		return fosterRepository.createFoster(Foster.createFoster(
 			memberId,
 			dogId,
@@ -30,30 +39,41 @@ public class FosterService {
 	}
 
 	@Transactional
-	public void acceptFosterApplication(Long fosterId) {
+	public void decideFosterApplication(
+		Long fosterId,
+		FosterStatus request
+	) {
 		Foster foster = getFosterById(fosterId);
 
-		foster.checkApplying();
+		switch (request) {
+			case ACCEPTED:
+				if (!foster.checkApplying()) {
+					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+				}
+				foster.acceptFosterApplication();
+				break;
 
-		foster.acceptFoster();
-	}
+			case REJECTED:
+				if (!foster.checkApplying()) {
+					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+				}
+				foster.rejectFosterApplication();
+				break;
 
-	@Transactional
-	public void rejectFosterApplication(Long fosterId) {
-		Foster foster = getFosterById(fosterId);
+			case FOSTERING:
+				if (!foster.checkAccepted()) {
+					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+				}
+				foster.startFoster();
+				break;
 
-		foster.checkApplying();
-
-		foster.rejectFoster();
-	}
-
-	@Transactional
-	public void cancelFosterApplication(Long fosterId) {
-		Foster foster = getFosterById(fosterId);
-
-		foster.checkApplying();
-
-		foster.cancelFoster();
+			case COMPLETED:
+				if (!foster.checkFostering()) {
+					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+				}
+				foster.completeFoster();
+				break;
+		}
 	}
 
 	private Foster getFosterById(Long fosterId) {

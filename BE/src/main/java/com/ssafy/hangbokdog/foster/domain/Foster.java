@@ -43,22 +43,35 @@ public class Foster extends BaseEntity {
 	private FosterStatus status;
 
 	public boolean checkApplying() {
-		if (this.status != FosterStatus.APPLYING) {
-			return false;
-		}
-		return true;
+		return this.status == FosterStatus.APPLYING;
 	}
 
-	public void acceptFoster() {
-		this.status = FosterStatus.COMPLETED;
+	public boolean checkAccepted() {
+		return this.status == FosterStatus.ACCEPTED;
 	}
 
-	public void rejectFoster() {
+	public boolean checkFostering() {
+		return this.status == FosterStatus.FOSTERING;
+	}
+
+	public void acceptFosterApplication() {
+		this.status = FosterStatus.ACCEPTED;
+	}
+
+	public void rejectFosterApplication() {
 		this.status = FosterStatus.REJECTED;
 	}
 
-	public void cancelFoster() {
+	public void cancelFosterApplication() {
 		this.status = FosterStatus.CANCELLED;
+	}
+
+	public void startFoster() {
+		this.status = FosterStatus.FOSTERING;
+	}
+
+	public void completeFoster() {
+		this.status = FosterStatus.COMPLETED;
 	}
 
 	public static Foster createFoster(

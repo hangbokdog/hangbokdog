@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.foster.application.FosterService;
+import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class FosterController {
 
 	private final FosterService fosterService;
 
-	@PostMapping("/dogs/{dogId}/foster")
+	@PostMapping("/dogs/{dogId}/fosters")
 	public ResponseEntity<Void> applyFoster(
 		@AuthMember Member member,
 		@PathVariable Long dogId
@@ -33,36 +35,21 @@ public class FosterController {
 			dogId
 		);
 
-		return ResponseEntity.created(URI.create("/api/v1/dogs/foster" + fosterId))
+		return ResponseEntity.created(URI.create("/api/v1/dogs/fosters" + fosterId))
 			.build();
 	}
 
-	@PatchMapping("/foster/{fosterId}/accept")
-	public ResponseEntity<Void> acceptFosterApplication(
+	@PatchMapping("/fosters/{fosterId}/application")
+	public ResponseEntity<Void> decideFosterApplication(
 		@AdminMember Member member,
-		@PathVariable Long fosterId
+		@PathVariable Long fosterId,
+		@RequestParam FosterStatus request
 	) {
-		fosterService.acceptFosterApplication(fosterId);
 
-		return ResponseEntity.noContent().build();
-	}
-
-	@PatchMapping("/foster/{fosterId}/reject")
-	public ResponseEntity<Void> rejectFosterApplication(
-		@AdminMember Member member,
-		@PathVariable Long fosterId
-	) {
-		fosterService.rejectFosterApplication(fosterId);
-
-		return ResponseEntity.noContent().build();
-	}
-
-	@PatchMapping("/foster/{fosterId}/cancel")
-	public ResponseEntity<Void> cancelFosterApplication(
-		@AuthMember Member member,
-		@PathVariable Long fosterId
-	) {
-		fosterService.cancelFosterApplication(fosterId);
+		fosterService.decideFosterApplication(
+			fosterId,
+			request
+		);
 
 		return ResponseEntity.noContent().build();
 	}

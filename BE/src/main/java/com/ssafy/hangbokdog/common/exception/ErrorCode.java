@@ -28,6 +28,7 @@ public enum ErrorCode {
     DOG_NOT_FOUND(6000, "존재하지 않는 강아지입니다."),
     FOSTER_APPLICATION_NOT_FOUND(6001, "존재하지 않는 임시보호 요청입니다."),
     FOSTER_ALREADY_PROCESSED(6002, "이미 처리된 임시보호 요청입니다."),
+    NOT_VALID_FOSTER_APPLICATION(6003, "유효하지 않은 임시보호 요청입니다."),
 
     PRODUCT_NOT_FOUND(7000, "존재하지 않는 상품입니다."),
     PRODUCT_NOT_ON_SALE(7001, "현재 판매중인 상품이 아닙니다."),
