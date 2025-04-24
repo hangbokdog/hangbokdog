@@ -39,6 +39,16 @@ public class FosterController {
 			.build();
 	}
 
+	@PatchMapping("/fosters/{fosterId}/application/cancel")
+	public ResponseEntity<Void> cancelFosterApplication(
+		@AuthMember Member member,
+		@PathVariable Long fosterId
+	) {
+		fosterService.cancelFosterApplication(fosterId);
+
+		return ResponseEntity.noContent().build();
+	}
+
 	@PatchMapping("/fosters/{fosterId}/application")
 	public ResponseEntity<Void> decideFosterApplication(
 		@AdminMember Member member,

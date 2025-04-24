@@ -39,6 +39,20 @@ public class FosterService {
 	}
 
 	@Transactional
+	public void cancelFosterApplication(
+		Long fosterId
+	) {
+		Foster foster = getFosterById(fosterId);
+
+		//TODO: 내가신청한건지 확인
+		if (!foster.checkApplying()) {
+			throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+		}
+
+		foster.cancelFosterApplication();
+	}
+
+	@Transactional
 	public void decideFosterApplication(
 		Long fosterId,
 		FosterStatus request
