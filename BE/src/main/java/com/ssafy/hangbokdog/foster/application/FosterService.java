@@ -33,9 +33,7 @@ public class FosterService {
 	public void acceptFoster(Long fosterId) {
 		Foster foster = getFosterById(fosterId);
 
-		if (foster.getStatus().equals(FosterStatus.COMPLETED)) {
-			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_ACCEPTED);
-		}
+		foster.checkApplying();
 
 		foster.acceptFoster();
 	}
@@ -44,16 +42,13 @@ public class FosterService {
 	public void rejectFoster(Long fosterId) {
 		Foster foster = getFosterById(fosterId);
 
-		if (foster.getStatus().equals(FosterStatus.REJECTED)) {
-			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_REJECTED);
-		}
+		foster.checkApplying();
 
 		foster.rejectFoster();
 	}
 
 	private Foster getFosterById(Long fosterId) {
-		Foster foster = fosterRepository.findFosterById(fosterId)
+		return fosterRepository.findFosterById(fosterId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FOSTER_APPLICATION_NOT_FOUND));
-		return foster;
 	}
 }

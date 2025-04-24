@@ -42,6 +42,13 @@ public class Foster extends BaseEntity {
 	@Column(name = "status", nullable = false)
 	private FosterStatus status;
 
+	public boolean checkApplying() {
+		if (this.status != FosterStatus.APPLYING) {
+			return false;
+		}
+		return true;
+	}
+
 	public void acceptFoster() {
 		this.status = FosterStatus.COMPLETED;
 	}
