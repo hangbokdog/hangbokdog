@@ -30,7 +30,7 @@ public class FosterService {
 	}
 
 	@Transactional
-	public void acceptFoster(Long fosterId) {
+	public void acceptFosterApplication(Long fosterId) {
 		Foster foster = getFosterById(fosterId);
 
 		foster.checkApplying();
@@ -39,7 +39,7 @@ public class FosterService {
 	}
 
 	@Transactional
-	public void rejectFoster(Long fosterId) {
+	public void rejectFosterApplication(Long fosterId) {
 		Foster foster = getFosterById(fosterId);
 
 		foster.checkApplying();
@@ -48,7 +48,7 @@ public class FosterService {
 	}
 
 	@Transactional
-	public void cancelFoster(Long fosterId) {
+	public void cancelFosterApplication(Long fosterId) {
 		Foster foster = getFosterById(fosterId);
 
 		foster.checkApplying();

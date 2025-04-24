@@ -38,31 +38,31 @@ public class FosterController {
 	}
 
 	@PatchMapping("/foster/{fosterId}/accept")
-	public ResponseEntity<Void> acceptFoster(
+	public ResponseEntity<Void> acceptFosterApplication(
 		@AdminMember Member member,
 		@PathVariable Long fosterId
 	) {
-		fosterService.acceptFoster(fosterId);
+		fosterService.acceptFosterApplication(fosterId);
 
 		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/foster/{fosterId}/reject")
-	public ResponseEntity<Void> rejectFoster(
+	public ResponseEntity<Void> rejectFosterApplication(
 		@AdminMember Member member,
 		@PathVariable Long fosterId
 	) {
-		fosterService.rejectFoster(fosterId);
+		fosterService.rejectFosterApplication(fosterId);
 
 		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/foster/{fosterId}/cancel")
-	public ResponseEntity<Void> cancelFoster(
+	public ResponseEntity<Void> cancelFosterApplication(
 		@AuthMember Member member,
 		@PathVariable Long fosterId
 	) {
-		fosterService.cancelFoster(fosterId);
+		fosterService.cancelFosterApplication(fosterId);
 
 		return ResponseEntity.noContent().build();
 	}
