@@ -42,6 +42,10 @@ public class Foster extends BaseEntity {
 	@Column(name = "status", nullable = false)
 	private FosterStatus status;
 
+	public boolean checkOwner(Long memberId) {
+		return this.memberId.equals(memberId);
+	}
+
 	public boolean checkApplying() {
 		return this.status == FosterStatus.APPLYING;
 	}

@@ -24,7 +24,6 @@ public class FosterService {
 		Long dogId
 	) {
 
-		//TODO: 이미 요청이 있는지 확인
 		if (fosterRepository.checkFosterExistByMemberIdAndDogId(memberId, dogId)) {
 			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_EXISTS);
 		}
@@ -43,12 +42,12 @@ public class FosterService {
 
 	@Transactional
 	public void cancelFosterApplication(
+		Long memberId,
 		Long fosterId
 	) {
 		Foster foster = getFosterById(fosterId);
 
-		//TODO: 내가신청한건지 확인
-		if (!foster.checkApplying()) {
+		if (!foster.checkApplying() && !foster.checkOwner(memberId)) {
 			throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
 		}
 

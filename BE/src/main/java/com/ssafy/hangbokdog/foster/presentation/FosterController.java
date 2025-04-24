@@ -44,7 +44,7 @@ public class FosterController {
 		@AuthMember Member member,
 		@PathVariable Long fosterId
 	) {
-		fosterService.cancelFosterApplication(fosterId);
+		fosterService.cancelFosterApplication(member.getId(), fosterId);
 
 		return ResponseEntity.noContent().build();
 	}
