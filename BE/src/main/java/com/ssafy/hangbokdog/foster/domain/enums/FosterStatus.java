@@ -6,5 +6,6 @@ public enum FosterStatus {
 	ACCEPTED,
 	REJECTED,
 	CANCELLED,
-	FOSTERING
+	FOSTERING,
+	STOPPED
 }

@@ -95,6 +95,15 @@ public class FosterService {
 				foster.completeFoster();
 				dog.goProtected();
 				break;
+
+			case STOPPED:
+				if (!foster.checkFostering()) {
+					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+				}
+				foster.completeFoster();
+				dog.goProtected();
+				//TODO: 기록은 STOPPED으로 기록하기
+				break;
 		}
 	}
 
