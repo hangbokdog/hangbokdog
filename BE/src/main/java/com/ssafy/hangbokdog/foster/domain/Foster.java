@@ -57,6 +57,10 @@ public class Foster extends BaseEntity {
 		this.status = FosterStatus.REJECTED;
 	}
 
+	public void cancelFoster() {
+		this.status = FosterStatus.CANCELLED;
+	}
+
 	public static Foster createFoster(
 		Long memberId,
 		Long dogId,

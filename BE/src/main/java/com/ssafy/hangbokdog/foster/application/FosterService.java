@@ -47,6 +47,15 @@ public class FosterService {
 		foster.rejectFoster();
 	}
 
+	@Transactional
+	public void cancelFoster(Long fosterId) {
+		Foster foster = getFosterById(fosterId);
+
+		foster.checkApplying();
+
+		foster.cancelFoster();
+	}
+
 	private Foster getFosterById(Long fosterId) {
 		return fosterRepository.findFosterById(fosterId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.FOSTER_APPLICATION_NOT_FOUND));
