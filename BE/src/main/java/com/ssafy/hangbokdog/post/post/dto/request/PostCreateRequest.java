@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.dto.request;
+package com.ssafy.hangbokdog.post.post.dto.request;
 
 public record PostCreateRequest(
         Long boardTypeId,

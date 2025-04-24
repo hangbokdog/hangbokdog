@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.application;
+package com.ssafy.hangbokdog.post.post.application;
 
 import java.util.List;
 
@@ -9,11 +9,11 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
-import com.ssafy.hangbokdog.post.domain.Post;
-import com.ssafy.hangbokdog.post.domain.repository.PostRepository;
-import com.ssafy.hangbokdog.post.dto.request.PostCreateRequest;
-import com.ssafy.hangbokdog.post.dto.request.PostUpdateRequest;
-import com.ssafy.hangbokdog.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.domain.Post;
+import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
+import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
+import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
 

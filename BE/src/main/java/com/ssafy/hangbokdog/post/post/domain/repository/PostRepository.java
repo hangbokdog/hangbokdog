@@ -1,12 +1,12 @@
-package com.ssafy.hangbokdog.post.domain.repository;
+package com.ssafy.hangbokdog.post.post.domain.repository;
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
-import com.ssafy.hangbokdog.post.domain.Post;
-import com.ssafy.hangbokdog.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.domain.Post;
+import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
 

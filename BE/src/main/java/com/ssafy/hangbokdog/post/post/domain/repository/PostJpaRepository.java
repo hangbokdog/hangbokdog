@@ -1,11 +1,11 @@
-package com.ssafy.hangbokdog.post.domain.repository;
+package com.ssafy.hangbokdog.post.post.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.ssafy.hangbokdog.post.domain.Post;
+import com.ssafy.hangbokdog.post.post.domain.Post;
 
 
 public interface PostJpaRepository extends JpaRepository<Post, Long>, PostQueryRepository {

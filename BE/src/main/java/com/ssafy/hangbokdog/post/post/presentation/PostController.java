@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.presentation;
+package com.ssafy.hangbokdog.post.post.presentation;
 
 import java.net.URI;
 import java.util.List;
@@ -21,10 +21,10 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
-import com.ssafy.hangbokdog.post.application.PostService;
-import com.ssafy.hangbokdog.post.dto.request.PostCreateRequest;
-import com.ssafy.hangbokdog.post.dto.request.PostUpdateRequest;
-import com.ssafy.hangbokdog.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.application.PostService;
+import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
+import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
 

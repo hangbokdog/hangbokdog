@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.domain.repository;
+package com.ssafy.hangbokdog.post.post.domain.repository;
 
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 import static com.ssafy.hangbokdog.post.domain.QPost.post;
@@ -13,8 +13,8 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
-import com.ssafy.hangbokdog.post.dto.response.PostResponse;
-import com.ssafy.hangbokdog.post.dto.response.PostTypeResponse;
+import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
 
 import lombok.RequiredArgsConstructor;
 

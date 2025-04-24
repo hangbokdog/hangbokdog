@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.dto.response;
+package com.ssafy.hangbokdog.post.post.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;

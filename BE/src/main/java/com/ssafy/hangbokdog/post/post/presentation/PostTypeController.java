@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.presentation;
+package com.ssafy.hangbokdog.post.post.presentation;
 
 import java.net.URI;
 import java.util.List;
@@ -17,9 +17,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
-import com.ssafy.hangbokdog.post.application.PostTypeService;
-import com.ssafy.hangbokdog.post.dto.request.PostTypeRequest;
-import com.ssafy.hangbokdog.post.dto.response.PostTypeResponse;
+import com.ssafy.hangbokdog.post.post.application.PostTypeService;
+import com.ssafy.hangbokdog.post.post.dto.request.PostTypeRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
 
 import lombok.RequiredArgsConstructor;
 
