@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.foster.domain.Foster;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
@@ -61,6 +62,9 @@ public class FosterService {
 	) {
 		Foster foster = getFosterById(fosterId);
 
+		Dog dog = dogRepository.getDog(foster.getDogId())
+			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));
+
 		switch (request) {
 			case ACCEPTED:
 				if (!foster.checkApplying()) {
@@ -81,6 +85,7 @@ public class FosterService {
 					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
 				}
 				foster.startFoster();
+				dog.goFoster();
 				break;
 
 			case COMPLETED:
@@ -88,6 +93,7 @@ public class FosterService {
 					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
 				}
 				foster.completeFoster();
+				dog.goProtected();
 				break;
 		}
 	}

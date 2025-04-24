@@ -75,6 +75,14 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "dog_breed")
 	private DogBreed dogBreed;
 
+	public void goFoster() {
+		this.status = DogStatus.FOSTERED;
+	}
+
+	public void goProtected() {
+		this.status = DogStatus.PROTECTED;
+	}
+
 	public void dogToStar() {
 		this.isStar = true;
 	}
