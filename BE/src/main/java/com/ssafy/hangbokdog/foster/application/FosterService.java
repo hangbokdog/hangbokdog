@@ -31,13 +31,29 @@ public class FosterService {
 
 	@Transactional
 	public void acceptFoster(Long fosterId) {
-		Foster foster = fosterRepository.findFosterById(fosterId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.FOSTER_APPLICATION_NOT_FOUND));
+		Foster foster = getFosterById(fosterId);
 
 		if (foster.getStatus().equals(FosterStatus.COMPLETED)) {
-			throw new BadRequestException(ErrorCode.FOSTER_APPLICATION_NOT_FOUND);
+			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_ACCEPTED);
 		}
 
 		foster.acceptFoster();
+	}
+
+	@Transactional
+	public void rejectFoster(Long fosterId) {
+		Foster foster = getFosterById(fosterId);
+
+		if (foster.getStatus().equals(FosterStatus.REJECTED)) {
+			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_REJECTED);
+		}
+
+		foster.rejectFoster();
+	}
+
+	private Foster getFosterById(Long fosterId) {
+		Foster foster = fosterRepository.findFosterById(fosterId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.FOSTER_APPLICATION_NOT_FOUND));
+		return foster;
 	}
 }

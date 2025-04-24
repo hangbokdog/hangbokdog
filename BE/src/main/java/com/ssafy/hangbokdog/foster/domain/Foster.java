@@ -11,11 +11,18 @@ import jakarta.persistence.Id;
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(
+	name = "foster",
+	uniqueConstraints = {
+		@jakarta.persistence.UniqueConstraint(columnNames = {"member_id", "dog_id"})
+	}
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Foster extends BaseEntity {
@@ -25,10 +32,10 @@ public class Foster extends BaseEntity {
 	@Column(name = "foster_id")
 	private Long id;
 
-	@Column(name = "memberId", nullable = false)
+	@Column(name = "member_id", nullable = false)
 	private Long memberId;
 
-	@Column(name = "dogId", nullable = false)
+	@Column(name = "dog_id", nullable = false)
 	private Long dogId;
 
 	@Enumerated(EnumType.STRING)
@@ -37,6 +44,10 @@ public class Foster extends BaseEntity {
 
 	public void acceptFoster() {
 		this.status = FosterStatus.COMPLETED;
+	}
+
+	public void rejectFoster() {
+		this.status = FosterStatus.REJECTED;
 	}
 
 	public static Foster createFoster(

@@ -46,4 +46,14 @@ public class FosterController {
 
 		return ResponseEntity.noContent().build();
 	}
+
+	@PatchMapping("/foster/{fosterId}/reject")
+	public ResponseEntity<Void> rejectFoster(
+		@AdminMember Member member,
+		@PathVariable Long fosterId
+	) {
+		fosterService.rejectFoster(fosterId);
+
+		return ResponseEntity.noContent().build();
+	}
 }
