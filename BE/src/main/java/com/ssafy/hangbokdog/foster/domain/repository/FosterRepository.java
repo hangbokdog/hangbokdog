@@ -21,4 +21,8 @@ public class FosterRepository {
 	public Optional<Foster> findFosterById(Long fosterId) {
 		return fosterJpaRepository.findById(fosterId);
 	}
+
+	public boolean checkFosterExistByMemberIdAndDogId(Long memberId, Long dogId) {
+		return fosterJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
+	}
 }

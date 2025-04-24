@@ -25,6 +25,9 @@ public class FosterService {
 	) {
 
 		//TODO: 이미 요청이 있는지 확인
+		if (fosterRepository.checkFosterExistByMemberIdAndDogId(memberId, dogId)) {
+			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_EXISTS);
+		}
 
 		if (!dogRepository.checkDogExistence(dogId)) {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
