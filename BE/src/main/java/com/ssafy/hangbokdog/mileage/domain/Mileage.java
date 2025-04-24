@@ -34,4 +34,8 @@ public class Mileage {
         }
         balance -= amount;
     }
+
+    public void charge(int amount) {
+        balance += amount;
+    }
 }
