@@ -1,8 +1,8 @@
 package com.ssafy.hangbokdog.post.post.domain.repository;
 
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
-import static com.ssafy.hangbokdog.post.domain.QPost.post;
-import static com.ssafy.hangbokdog.post.domain.QPostType.postType;
+import static com.ssafy.hangbokdog.post.post.domain.QPost.post;
+import static com.ssafy.hangbokdog.post.post.domain.QPostType.*;
 
 import java.util.List;
 import java.util.Optional;
