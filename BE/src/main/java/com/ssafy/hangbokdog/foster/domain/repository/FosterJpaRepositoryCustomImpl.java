@@ -37,4 +37,19 @@ public class FosterJpaRepositoryCustomImpl implements FosterJpaRepositoryCustom 
 				.and(foster.status.eq(FosterStatus.FOSTERING)))
 			.fetch();
 	}
+
+	@Override
+	public Integer countDogFosters(Long dogId) {
+		return queryFactory
+			.select(foster.count().intValue())
+			.from(foster)
+			.where(
+				foster.dogId.eq(dogId)
+					.and(
+						foster.status.eq(FosterStatus.FOSTERING)
+							.or(foster.status.eq(FosterStatus.ACCEPTED))
+					)
+			)
+			.fetchOne();
+	}
 }

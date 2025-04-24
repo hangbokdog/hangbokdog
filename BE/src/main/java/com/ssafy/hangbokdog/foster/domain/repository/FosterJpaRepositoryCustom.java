@@ -7,4 +7,6 @@ import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 public interface FosterJpaRepositoryCustom {
 
 	List<MyFosterResponse> findMyFosters(Long memberId);
+
+	Integer countDogFosters(Long dogId);
 }

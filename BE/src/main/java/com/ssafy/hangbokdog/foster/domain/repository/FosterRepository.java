@@ -32,4 +32,8 @@ public class FosterRepository {
 	public List<MyFosterResponse> findMyFosters(Long memberId) {
 		return fosterJpaRepositoryCustomImpl.findMyFosters(memberId);
 	}
+
+	public int checkDogFosterCount(Long dogId) {
+		return fosterJpaRepositoryCustomImpl.countDogFosters(dogId);
+	}
 }
