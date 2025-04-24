@@ -12,11 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.Mileage;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
 import com.ssafy.hangbokdog.order.domain.Order;
 import com.ssafy.hangbokdog.order.domain.repository.OrderRepository;
+import com.ssafy.hangbokdog.order.dto.OrderResponse;
 import com.ssafy.hangbokdog.product.domain.Product;
 import com.ssafy.hangbokdog.product.domain.repository.ProductRepository;
 
@@ -90,5 +92,9 @@ public class OrderService {
         product.complete();
 
         // TODO : 로그 테이블 남겨야 함. 나중에 일정 주기로 정산해야 함.
+    }
+
+    public PageInfo<OrderResponse> findAll(Member member, String pageToken) {
+        return orderRepository.findAllByBuyerId(member.getId(), pageToken);
     }
 }

@@ -3,13 +3,17 @@ package com.ssafy.hangbokdog.order.presentation;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.order.application.OrderService;
+import com.ssafy.hangbokdog.order.dto.OrderResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,5 +39,13 @@ public class OrderController {
     ) {
         orderService.confirm(member, orderId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/api/v1/orders")
+    public ResponseEntity<PageInfo<OrderResponse>> findAll(
+            @AuthMember Member member,
+            @RequestParam(required = false, name = "pageToken") String pageToken
+    ) {
+        return ResponseEntity.ok(orderService.findAll(member, pageToken));
     }
 }
