@@ -37,8 +37,17 @@ public enum ErrorCode {
 
     DONATION_ACCOUNT_NOT_FOUND(9000, "존재하지 않는 후원계좌입니다"),
 
-    COMMENT_NOT_FOUND(10000, "존재하지 않는 댓글입니다."),
-    COMMENT_NOT_AUTHOR(10001, "해당 댓글의 작성자가 아닙니다.");
+    ORDER_NOT_FOUND(10000, "존재하지 않는 주문입니다."),
+    UNAUTHORIZED_ORDER_ACCESS(10001, "해당 상품 주문 유저가 아닙니다."),
+
+    MILEAGE_NOT_FOUND(11000, "존재하지 않는 마일리지입니다."),
+    INSUFFICIENT_BALANCE(11001, "잔액이 부족합니다."),
+
+    FAILED_TO_VALIDATE_PAYMENT(12000, "결제 검증에 실패했습니다."),
+    ALREADY_CHARGED_REQUEST(12001, "이미 충전됐습니다."),
+
+    COMMENT_NOT_FOUND(13000, "존재하지 않는 댓글입니다."),
+    COMMENT_NOT_AUTHOR(13001, "해당 댓글의 작성자가 아닙니다.");
 
     private final int code;
     private final String message;

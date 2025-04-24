@@ -22,14 +22,11 @@ public class Member {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "nick_name", nullable = false, length = 64)
+    @Column(name = "nick_name", nullable = false, length = 64, unique = true)
     private String nickName;
 
     @Column(name = "age", nullable = false)
     private int age;
-
-    @Column(name = "mileage", nullable = false)
-    private int mileage;
 
     @Column(name = "social_id", nullable = false, length = 32)
     private String socialId;
