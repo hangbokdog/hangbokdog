@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.foster.domain;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -42,6 +44,9 @@ public class Foster extends BaseEntity {
 	@Column(name = "status", nullable = false)
 	private FosterStatus status;
 
+	@Column(name = "start_date", nullable = false)
+	private LocalDateTime startDate;
+
 	public boolean checkOwner(Long memberId) {
 		return this.memberId.equals(memberId);
 	}
@@ -71,6 +76,7 @@ public class Foster extends BaseEntity {
 	}
 
 	public void startFoster() {
+		this.startDate = LocalDateTime.now();
 		this.status = FosterStatus.FOSTERING;
 	}
 
@@ -98,5 +104,6 @@ public class Foster extends BaseEntity {
 		this.memberId = memberId;
 		this.dogId = dogId;
 		this.status = status;
+		this.startDate = LocalDateTime.now();
 	}
 }

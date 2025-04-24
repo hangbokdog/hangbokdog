@@ -44,7 +44,7 @@ public class FosterHistory extends BaseEntity {
 		Long memberId,
 		Long dogId,
 		FosterStatus status
-	){
+	) {
 		this.memberId = memberId;
 		this.dogId = dogId;
 		this.status = status;

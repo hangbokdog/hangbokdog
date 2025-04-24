@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.foster.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,6 +12,7 @@ import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.foster.domain.Foster;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
+import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -105,6 +108,10 @@ public class FosterService {
 				//TODO: 기록은 STOPPED으로 기록하기
 				break;
 		}
+	}
+
+	public List<MyFosterResponse> getMyFosters(Long memberId) {
+		return fosterRepository.findMyFosters(memberId);
 	}
 
 	private Foster getFosterById(Long fosterId) {

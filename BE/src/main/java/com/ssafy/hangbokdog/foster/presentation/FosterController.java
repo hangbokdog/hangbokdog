@@ -1,8 +1,10 @@
 package com.ssafy.hangbokdog.foster.presentation;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +16,7 @@ import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.foster.application.FosterService;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
+import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -62,5 +65,11 @@ public class FosterController {
 		);
 
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/fosters/my")
+	public ResponseEntity<List<MyFosterResponse>> getMyFosters(@AuthMember Member member) {
+		List<MyFosterResponse> response = fosterService.getMyFosters(member.getId());
+		return ResponseEntity.ok().body(response);
 	}
 }
