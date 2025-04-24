@@ -7,12 +7,16 @@ import static com.ssafy.hangbokdog.common.exception.ErrorCode.ORDER_NOT_FOUND;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.PRODUCT_NOT_FOUND;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.PRODUCT_NOT_ON_SALE;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.UNAUTHORIZED_ORDER_ACCESS;
+import static com.ssafy.hangbokdog.donationhistory.domain.DonationType.PRODUCT_SALE;
+import static com.ssafy.hangbokdog.transaction.domain.TransactionType.PURCHASE;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.donationhistory.domain.DonationHistory;
+import com.ssafy.hangbokdog.donationhistory.domain.repository.DonationHistoryRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.Mileage;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
@@ -21,6 +25,8 @@ import com.ssafy.hangbokdog.order.domain.repository.OrderRepository;
 import com.ssafy.hangbokdog.order.dto.OrderResponse;
 import com.ssafy.hangbokdog.product.domain.Product;
 import com.ssafy.hangbokdog.product.domain.repository.ProductRepository;
+import com.ssafy.hangbokdog.transaction.domain.Transaction;
+import com.ssafy.hangbokdog.transaction.domain.repository.TransactionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +37,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final MileageRepository mileageRepository;
+    private final TransactionRepository transactionRepository;
+    private final DonationHistoryRepository donationHistoryRepository;
 
     /**
      * 동시 주문, 상품 변경과 경합 가능성 존재
@@ -91,7 +99,19 @@ public class OrderService {
         mileage.use(order.getAmount());
         product.complete();
 
-        // TODO : 로그 테이블 남겨야 함. 나중에 일정 주기로 정산해야 함.
+        transactionRepository.save(Transaction.builder()
+                .type(PURCHASE)
+                .amount(order.getAmount())
+                .memberId(member.getId())
+                .build()
+        );
+
+        donationHistoryRepository.save(DonationHistory.builder()
+                .donorId(member.getId())
+                .amount(order.getAmount())
+                .type(PRODUCT_SALE)
+                .build()
+        );
     }
 
     public PageInfo<OrderResponse> findAll(Member member, String pageToken) {
