@@ -37,8 +37,8 @@ public class Order extends BaseEntity {
     @Column(name = "buyer_id", nullable = false)
     private Long buyerId;
 
-    @Column(name = "price", nullable = false)
-    private int price;
+    @Column(name = "amount", nullable = false)
+    private int amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -49,13 +49,13 @@ public class Order extends BaseEntity {
             Long id,
             Long productId,
             Long buyerId,
-            int price
+            int amount
     ) {
         this.id = id;
         this.productId = productId;
         this.buyerId = buyerId;
         this.status = ONGOING;
-        this.price = price;
+        this.amount = amount;
     }
 
     public boolean isBuyer(Member buyer) {

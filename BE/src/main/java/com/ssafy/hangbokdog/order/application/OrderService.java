@@ -59,8 +59,7 @@ public class OrderService {
 
         Order order = Order.builder()
                 .buyerId(member.getId())
-                .productId(product.getId())
-                .price(product.getPrice())
+                .productId(product.getId()).amount(product.getPrice())
                 .build();
 
         return orderRepository.save(order).getId();
@@ -87,7 +86,7 @@ public class OrderService {
                 .orElseThrow(() -> new BadRequestException(MILEAGE_NOT_FOUND));
 
         order.confirm();
-        mileage.use(order.getPrice());
+        mileage.use(order.getAmount());
         product.complete();
 
         // TODO : 로그 테이블 남겨야 함. 나중에 일정 주기로 정산해야 함.
