@@ -8,5 +8,5 @@ public record FosterDiaryCheckResponse(
 	String dogName,
 	Long fosterId,
 	Integer postCount
-){
+) {
 }

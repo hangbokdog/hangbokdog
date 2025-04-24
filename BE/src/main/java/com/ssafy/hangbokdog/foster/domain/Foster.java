@@ -9,11 +9,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

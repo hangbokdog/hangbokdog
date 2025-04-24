@@ -1,6 +1,5 @@
 package com.ssafy.hangbokdog.foster.domain;
 
-import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 
 import lombok.AccessLevel;
 import lombok.Getter;
