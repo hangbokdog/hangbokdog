@@ -10,6 +10,7 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.foster.domain.Foster;
+import com.ssafy.hangbokdog.foster.domain.FosterHistory;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
@@ -39,6 +40,14 @@ public class FosterService {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
 		}
 
+		fosterRepository.createFosterHistory(
+			FosterHistory.createFosterHistory(
+				memberId,
+				dogId,
+				FosterStatus.APPLYING
+			)
+		);
+
 		return fosterRepository.createFoster(Foster.createFoster(
 			memberId,
 			dogId,
@@ -59,6 +68,12 @@ public class FosterService {
 		}
 
 		foster.cancelFosterApplication();
+
+		fosterRepository.createFosterHistory(FosterHistory.createFosterHistory(
+			foster.getMemberId(),
+			foster.getDogId(),
+			FosterStatus.CANCELLED
+		));
 	}
 
 	@Transactional
@@ -111,6 +126,12 @@ public class FosterService {
 				//TODO: 기록은 STOPPED으로 기록하기
 				break;
 		}
+
+		fosterRepository.createFosterHistory(FosterHistory.createFosterHistory(
+			foster.getMemberId(),
+			foster.getDogId(),
+			request
+		));
 	}
 
 	public List<MyFosterResponse> getMyFosters(Long memberId) {
