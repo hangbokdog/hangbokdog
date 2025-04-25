@@ -7,6 +7,7 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
+import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -45,5 +46,25 @@ public class SponsorshipService {
 		sponsorship.validateOwner(memberId);
 
 		sponsorship.cancelSponsorship();
+	}
+
+	@Transactional
+	public void manageSponsorship(Long sponsorshipId, SponsorShipStatus request) {
+		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
+
+		switch (request) {
+			case ACTIVE:
+				sponsorship.activateSponsorship();
+				break;
+
+			case SUSPENDED:
+				sponsorship.suspendSponsorship();
+				break;
+
+			case COMPLETED:
+				sponsorship.completeSponsorship();
+				break;
+		}
 	}
 }

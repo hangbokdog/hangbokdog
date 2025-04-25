@@ -60,6 +60,27 @@ public class Sponsorship extends BaseEntity {
 		this.status = SponsorShipStatus.CANCELLED;
 	}
 
+	public void activateSponsorship() {
+		if (this.status != SponsorShipStatus.PENDING && this.status != SponsorShipStatus.SUSPENDED && this.status != SponsorShipStatus.FAILED) {
+			throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+		}
+		this.status = SponsorShipStatus.ACTIVE;
+	}
+
+	public void suspendSponsorship() {
+		if (this.status != SponsorShipStatus.ACTIVE) {
+			throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+		}
+		this.status = SponsorShipStatus.SUSPENDED;
+	}
+
+	public void completeSponsorship() {
+		if (this.status != SponsorShipStatus.ACTIVE) {
+			throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
+		}
+		this.status = SponsorShipStatus.COMPLETED;
+	}
+
 	public static Sponsorship createSponsorship(
 		Long memberId,
 		Long dogId,
