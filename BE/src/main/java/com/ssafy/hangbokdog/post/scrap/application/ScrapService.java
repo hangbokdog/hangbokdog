@@ -1,16 +1,15 @@
 package com.ssafy.hangbokdog.post.scrap.application;
 
-import com.ssafy.hangbokdog.post.scrap.dto.response.ScrapResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
-import com.ssafy.hangbokdog.post.comment.dto.response.CommentLikeResponse;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 import com.ssafy.hangbokdog.post.scrap.domain.Scrap;
 import com.ssafy.hangbokdog.post.scrap.domain.repository.ScrapJpaRepository;
+import com.ssafy.hangbokdog.post.scrap.dto.response.ScrapResponse;
 
 
 import lombok.RequiredArgsConstructor;

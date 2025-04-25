@@ -180,7 +180,9 @@ public class FosterService {
 				String key = info.memberId() + "-" + info.dogId();
 				int count = countMap.getOrDefault(key, 0);
 
-				if (count >= 3) return null;
+				if (count >= 3) {
+					return null;
+				}
 
 				return new FosterDiaryCheckResponse(
 					info.memberId(),

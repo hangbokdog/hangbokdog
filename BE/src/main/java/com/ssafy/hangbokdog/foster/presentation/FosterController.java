@@ -83,7 +83,7 @@ public class FosterController {
 	}
 
 	@GetMapping("/fosters/check-diaries")
-	public ResponseEntity<List<FosterDiaryCheckResponse>> checkFosterDiaries(@AdminMember Member Member) {
+	public ResponseEntity<List<FosterDiaryCheckResponse>> checkFosterDiaries(@AdminMember Member member) {
 		List<FosterDiaryCheckResponse> response = fosterService.checkFosterDiaries();
 		return ResponseEntity.ok().body(response);
 	}
