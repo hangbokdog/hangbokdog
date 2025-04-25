@@ -21,9 +21,11 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.post.post.application.PostLikeService;
 import com.ssafy.hangbokdog.post.post.application.PostService;
 import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
 import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostLikeResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class PostController {
 
     private final PostService postService;
+    private final PostLikeService postLikeService;
     private final S3Service s3Service;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -90,5 +93,14 @@ public class PostController {
     ) {
         postService.delete(member, postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<PostLikeResponse> toggleLike(
+            @AuthMember Member member,
+            @PathVariable Long postId
+    ) {
+        PostLikeResponse response = postLikeService.toggleLike(postId, member);
+        return ResponseEntity.ok(response);
     }
 }
