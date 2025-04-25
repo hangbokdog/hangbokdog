@@ -2,8 +2,8 @@ package com.ssafy.hangbokdog.post.comment.presentation;
 
 import java.net.URI;
 
-import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +16,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.application.CommentService;
 import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -49,6 +50,16 @@ public class CommentController {
             @RequestBody CommentUpdateRequest request
     ) {
         commentService.update(member, commentId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<Void> delete(
+            @AuthMember Member member,
+            @PathVariable("postId") Long postId,
+            @PathVariable("commentId") Long commentId
+    ) {
+        commentService.delete(member, commentId);
         return ResponseEntity.noContent().build();
     }
 }

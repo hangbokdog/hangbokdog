@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.post.comment.application;
 
-import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
-import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +9,8 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.domain.Comment;
 import com.ssafy.hangbokdog.post.comment.domain.repository.CommentRepository;
 import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,5 +50,22 @@ public class CommentService {
         }
 
         comment.update(request.content());
+    }
+
+    @Transactional
+    public void delete(Member member, Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.COMMENT_NOT_FOUND));
+
+        if (comment.isAuthor(member)) {
+            throw new BadRequestException(ErrorCode.COMMENT_NOT_AUTHOR);
+        }
+
+        if (comment.isDeleted()) {
+            throw new BadRequestException(ErrorCode.COMMENT_ALREADY_DELETED);
+        }
+
+        // 실제 삭제 대신 내용만 변경
+        comment.delete();
     }
 }
