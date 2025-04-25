@@ -39,6 +39,7 @@ public enum ErrorCode {
 
     ORDER_NOT_FOUND(10000, "존재하지 않는 주문입니다."),
     UNAUTHORIZED_ORDER_ACCESS(10001, "해당 상품 주문 유저가 아닙니다."),
+    FAILED_TO_ACCESS_PRODUCT(10002, "상품 접근에 실패했습니다."),
 
     MILEAGE_NOT_FOUND(11000, "존재하지 않는 마일리지입니다."),
     INSUFFICIENT_BALANCE(11001, "잔액이 부족합니다."),
