@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.sponsorship.domain;
 
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,6 +46,19 @@ public class Sponsorship extends BaseEntity {
 
 	@Column(name = "amount", nullable = false)
 	private Integer amount;
+
+	public void validateOwner(Long memberId) {
+		if (memberId.equals(this.memberId)) {
+			throw new BadRequestException(ErrorCode.SPONSORSHIP_NOT_AUTHOR);
+		}
+	}
+
+	public void cancelSponsorship() {
+		if (this.status == SponsorShipStatus.CANCELLED) {
+			throw new BadRequestException(ErrorCode.ALREADY_CANCELLED_SPONSORSHIP);
+		}
+		this.status = SponsorShipStatus.CANCELLED;
+	}
 
 	public static Sponsorship createSponsorship(
 		Long memberId,

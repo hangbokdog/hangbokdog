@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.sponsorship.domain.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
@@ -19,5 +21,9 @@ public class SponsorshipRepository {
 
 	public int countActiveSponsorshipByDogId(Long dogId) {
 		return sponsorshipJpaRepositoryCustom.countActiveSponsorshipByDogId(dogId);
+	}
+
+	public Optional<Sponsorship> findSponsorshipById(Long id) {
+		return sponsorshipJpaRepository.findById(id);
 	}
 }

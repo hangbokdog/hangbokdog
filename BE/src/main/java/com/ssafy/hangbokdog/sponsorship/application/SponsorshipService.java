@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.sponsorship.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
@@ -34,5 +35,15 @@ public class SponsorshipService {
 		);
 
 		return sponsorshipRepository.createSponsorship(sponsorship).getId();
+	}
+
+	@Transactional
+	public void cancelSponsorship(Long memberId, Long sponsorshipId) {
+		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
+
+		sponsorship.validateOwner(memberId);
+
+		sponsorship.cancelSponsorship();
 	}
 }
