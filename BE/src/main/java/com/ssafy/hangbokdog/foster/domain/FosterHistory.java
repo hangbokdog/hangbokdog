@@ -2,6 +2,8 @@ package com.ssafy.hangbokdog.foster.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,6 +31,7 @@ public class FosterHistory extends BaseEntity {
 	@Column(name = "dog_id", nullable = false)
 	private Long dogId;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private FosterStatus status;
 

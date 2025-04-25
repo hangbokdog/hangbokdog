@@ -16,12 +16,15 @@ import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.foster.application.FosterService;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
+import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class FosterController {
@@ -76,6 +79,12 @@ public class FosterController {
 	@GetMapping("/fosters/applications/my")
 	public ResponseEntity<List<MyFosterResponse>> getMyFosterApplications(@AuthMember Member member) {
 		List<MyFosterResponse> response = fosterService.getMyFosterApplications(member.getId());
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/fosters/check-diaries")
+	public ResponseEntity<List<FosterDiaryCheckResponse>> checkFosterDiaries(@AdminMember Member Member) {
+		List<FosterDiaryCheckResponse> response = fosterService.checkFosterDiaries();
 		return ResponseEntity.ok().body(response);
 	}
 }

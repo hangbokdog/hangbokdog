@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.foster.domain.Foster;
 import com.ssafy.hangbokdog.foster.domain.FosterHistory;
+import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,10 @@ public class FosterRepository {
 
 	public boolean checkFosterExistByMemberIdAndDogId(Long memberId, Long dogId) {
 		return fosterJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
+	}
+
+	public List<StartedFosterInfo> findAcceptedFosters() {
+		return fosterJpaRepository.findAcceptedFosters();
 	}
 
 	public List<MyFosterResponse> findMyFosters(Long memberId) {
