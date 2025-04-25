@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.donation.domain.DonationHistory;
 import com.ssafy.hangbokdog.donation.domain.repository.DonationHistoryRepository;
 import com.ssafy.hangbokdog.donation.dto.request.DonationRequest;
+import com.ssafy.hangbokdog.donation.dto.response.DonationHistoryResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.Mileage;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
@@ -49,5 +51,9 @@ public class DonationService {
                         .memberId(member.getId())
                         .build()
         );
+    }
+
+    public PageInfo<DonationHistoryResponse> findAll(Member member, String pageToken) {
+        return donationHistoryRepository.findAllByDonorId(member.getId(), pageToken);
     }
 }
