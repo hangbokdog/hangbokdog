@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.donationhistory.domain;
+package com.ssafy.hangbokdog.donation.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
