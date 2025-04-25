@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.application;
+package com.ssafy.hangbokdog.post.post.application;
 
 import java.util.List;
 
@@ -7,11 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
-import com.ssafy.hangbokdog.post.domain.PostType;
-import com.ssafy.hangbokdog.post.domain.repository.PostRepository;
-import com.ssafy.hangbokdog.post.domain.repository.PostTypeJpaRepository;
-import com.ssafy.hangbokdog.post.dto.request.PostTypeRequest;
-import com.ssafy.hangbokdog.post.dto.response.PostTypeResponse;
+import com.ssafy.hangbokdog.post.post.domain.PostType;
+import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
+import com.ssafy.hangbokdog.post.post.domain.repository.PostTypeJpaRepository;
+import com.ssafy.hangbokdog.post.post.dto.request.PostTypeRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
 
 import lombok.RequiredArgsConstructor;
 

@@ -44,7 +44,11 @@ public enum ErrorCode {
     INSUFFICIENT_BALANCE(11001, "잔액이 부족합니다."),
 
     FAILED_TO_VALIDATE_PAYMENT(12000, "결제 검증에 실패했습니다."),
-    ALREADY_CHARGED_REQUEST(12001, "이미 충전됐습니다.");
+    ALREADY_CHARGED_REQUEST(12001, "이미 충전됐습니다."),
+
+    COMMENT_NOT_FOUND(13000, "존재하지 않는 댓글입니다."),
+    COMMENT_NOT_AUTHOR(13001, "해당 댓글의 작성자가 아닙니다."),
+    COMMENT_ALREADY_DELETED(13002, "이미 삭제된 댓글입니다.");
 
     private final int code;
     private final String message;

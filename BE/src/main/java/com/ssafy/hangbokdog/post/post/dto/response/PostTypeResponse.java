@@ -1,6 +1,6 @@
-package com.ssafy.hangbokdog.post.dto.response;
+package com.ssafy.hangbokdog.post.post.dto.response;
 
-import com.ssafy.hangbokdog.post.domain.PostType;
+import com.ssafy.hangbokdog.post.post.domain.PostType;
 
 import lombok.Builder;
 

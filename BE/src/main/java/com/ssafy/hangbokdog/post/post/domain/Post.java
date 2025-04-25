@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.domain;
+package com.ssafy.hangbokdog.post.post.domain;
 
 import java.util.List;
 

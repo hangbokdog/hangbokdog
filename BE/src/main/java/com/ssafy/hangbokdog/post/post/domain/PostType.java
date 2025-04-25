@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.post.domain;
+package com.ssafy.hangbokdog.post.post.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,22 +15,21 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Comment extends BaseEntity {
+public class PostType extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
+    @Column(name = "post_type_id")
     private Long id;
 
-    @Column(name = "author_id", nullable = false)
-    private Long authorId;
+    @Column(name = "post_type_name", nullable = false, length = 50)
+    private String name;
 
-    @Column(name = "post_id", nullable = false)
-    private Long postId;
+    public PostType(String name) {
+        this.name = name;
+    }
 
-    @Column(name = "parent_comment_id")
-    private Long parentId;
-
-    @Column(nullable = false)
-    private String content;
+    public void update(String newName) {
+        this.name = newName;
+    }
 }
