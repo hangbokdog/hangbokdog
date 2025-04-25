@@ -16,9 +16,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.post.comment.application.CommentLikeService;
 import com.ssafy.hangbokdog.post.comment.application.CommentService;
 import com.ssafy.hangbokdog.post.comment.dto.request.CommentCreateRequest;
 import com.ssafy.hangbokdog.post.comment.dto.request.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.response.CommentLikeResponse;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentWithRepliesResponse;
 
@@ -30,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class CommentController {
 
     private final CommentService commentService;
+    private final CommentLikeService commentLikeService;
 
     @PostMapping("/{postId}/comments")
     public ResponseEntity<Void> create(
@@ -84,5 +87,15 @@ public class CommentController {
     ) {
         commentService.delete(member, commentId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{postId}/comments/{commentId}/like")
+    public ResponseEntity<CommentLikeResponse> toggleLike(
+            @AuthMember Member member,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+    ) {
+        CommentLikeResponse response = commentLikeService.toggleLike(commentId, member);
+        return ResponseEntity.ok(response);
     }
 }
