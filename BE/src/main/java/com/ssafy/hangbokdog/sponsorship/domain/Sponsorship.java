@@ -1,19 +1,28 @@
 package com.ssafy.hangbokdog.sponsorship.domain;
 
-import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(
+	name = "sponsorship",
+	uniqueConstraints = {
+		@jakarta.persistence.UniqueConstraint(columnNames = {"member_id", "dog_id"})
+	}
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Sponsorship extends BaseEntity {
@@ -29,9 +38,29 @@ public class Sponsorship extends BaseEntity {
 	@Column(name = "dog_id", nullable = false)
 	private Long dogId;
 
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private SponsorShipStatus status;
 
 	@Column(name = "amount", nullable = false)
 	private Integer amount;
+
+	public static Sponsorship createSponsorship(
+		Long memberId,
+		Long dogId,
+		Integer amount
+	) {
+		return new Sponsorship(memberId, dogId, amount);
+	}
+
+	private Sponsorship(
+		Long memberId,
+		Long dogId,
+		Integer amount
+	) {
+		this.memberId = memberId;
+		this.dogId = dogId;
+		this.status = SponsorShipStatus.PENDING;
+		this.amount = amount;
+	}
 }

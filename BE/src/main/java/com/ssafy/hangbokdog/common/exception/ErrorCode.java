@@ -54,7 +54,9 @@ public enum ErrorCode {
 
     COMMENT_NOT_FOUND(13000, "존재하지 않는 댓글입니다."),
     COMMENT_NOT_AUTHOR(13001, "해당 댓글의 작성자가 아닙니다."),
-    COMMENT_ALREADY_DELETED(13002, "이미 삭제된 댓글입니다.");
+    COMMENT_ALREADY_DELETED(13002, "이미 삭제된 댓글입니다."),
+
+    FULL_SPONSORSHIP(14000, "이미 결연이 가득 찬 아이입니다.");
 
     private final int code;
     private final String message;

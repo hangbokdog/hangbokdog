@@ -4,5 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 
-public interface SponsorshipJpaRepository extends JpaRepository<Sponsorship, Long> {
+public interface SponsorshipJpaRepository extends JpaRepository<Sponsorship, Long>, SponsorshipJpaRepositoryCustom {
+	int countByDogId(Long dogId);
 }
