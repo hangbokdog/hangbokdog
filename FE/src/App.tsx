@@ -1,10 +1,7 @@
 export default function App() {
 	return (
-		<div>
-			<p className="text-3xl underline font-bold w-[100vw] mx-auto text-center">
-				vite + react + typescript + tailwind + shadcn/ui + biome +
-				pretendard-font
-			</p>
-		</div>
+		<main className="flex-1 overflow-y-auto mb-14">
+			<div>app</div>
+		</main>
 	);
 }
