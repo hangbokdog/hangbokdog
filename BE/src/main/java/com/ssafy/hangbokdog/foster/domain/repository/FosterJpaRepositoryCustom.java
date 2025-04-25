@@ -8,5 +8,7 @@ public interface FosterJpaRepositoryCustom {
 
 	List<MyFosterResponse> findMyFosters(Long memberId);
 
+	List<MyFosterResponse> findMyFosterApplications(Long memberId);
+
 	Integer countDogFosters(Long dogId);
 }

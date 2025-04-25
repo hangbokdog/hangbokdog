@@ -109,21 +109,12 @@ public class FosterService {
 				dog.goFoster();
 				break;
 
-			case COMPLETED:
+			case COMPLETED, STOPPED:
 				if (!foster.checkFostering()) {
 					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
 				}
 				foster.completeFoster();
 				dog.goProtected();
-				break;
-
-			case STOPPED:
-				if (!foster.checkFostering()) {
-					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
-				}
-				foster.completeFoster();
-				dog.goProtected();
-				//TODO: 기록은 STOPPED으로 기록하기
 				break;
 		}
 
@@ -136,6 +127,10 @@ public class FosterService {
 
 	public List<MyFosterResponse> getMyFosters(Long memberId) {
 		return fosterRepository.findMyFosters(memberId);
+	}
+
+	public List<MyFosterResponse> getMyFosterApplications(Long memberId) {
+		return fosterRepository.findMyFosterApplications(memberId);
 	}
 
 	private Foster getFosterById(Long fosterId) {

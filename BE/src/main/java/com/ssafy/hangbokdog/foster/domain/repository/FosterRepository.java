@@ -35,6 +35,10 @@ public class FosterRepository {
 		return fosterJpaRepositoryCustomImpl.findMyFosters(memberId);
 	}
 
+	public List<MyFosterResponse> findMyFosterApplications(Long memberId) {
+		return fosterJpaRepositoryCustomImpl.findMyFosterApplications(memberId);
+	}
+
 	public int checkDogFosterCount(Long dogId) {
 		return fosterJpaRepositoryCustomImpl.countDogFosters(dogId);
 	}

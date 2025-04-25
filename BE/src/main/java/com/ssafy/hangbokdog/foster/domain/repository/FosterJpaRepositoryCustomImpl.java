@@ -28,13 +28,34 @@ public class FosterJpaRepositoryCustomImpl implements FosterJpaRepositoryCustom 
 				dog.id,
 				dog.name,
 				dog.profileImage,
-				foster.startDate
+				foster.startDate,
+				foster.status
 			))
 			.from(foster)
 			.leftJoin(dog)
 			.on(dog.id.eq(foster.dogId))
 			.where(foster.memberId.eq(memberId)
 				.and(foster.status.eq(FosterStatus.FOSTERING)))
+			.fetch();
+	}
+
+	@Override
+	public List<MyFosterResponse> findMyFosterApplications(Long memberId) {
+		return queryFactory.select(
+				Projections.constructor(
+					MyFosterResponse.class,
+					dog.id,
+					dog.name,
+					dog.profileImage,
+					foster.startDate,
+					foster.status
+				))
+			.from(foster)
+			.leftJoin(dog)
+			.on(dog.id.eq(foster.dogId))
+			.where(foster.memberId.eq(memberId)
+				.and(foster.status.eq(FosterStatus.APPLYING))
+				.or(foster.status.eq(FosterStatus.REJECTED)))
 			.fetch();
 	}
 

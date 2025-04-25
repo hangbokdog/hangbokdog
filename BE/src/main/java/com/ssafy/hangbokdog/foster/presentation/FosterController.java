@@ -72,4 +72,10 @@ public class FosterController {
 		List<MyFosterResponse> response = fosterService.getMyFosters(member.getId());
 		return ResponseEntity.ok().body(response);
 	}
+
+	@GetMapping("/fosters/applications/my")
+	public ResponseEntity<List<MyFosterResponse>> getMyFosterApplications(@AuthMember Member member) {
+		List<MyFosterResponse> response = fosterService.getMyFosterApplications(member.getId());
+		return ResponseEntity.ok().body(response);
+	}
 }
