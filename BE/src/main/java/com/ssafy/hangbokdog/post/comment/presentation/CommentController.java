@@ -15,8 +15,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.application.CommentService;
-import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
-import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentUpdateRequest;
 
 import lombok.RequiredArgsConstructor;
 

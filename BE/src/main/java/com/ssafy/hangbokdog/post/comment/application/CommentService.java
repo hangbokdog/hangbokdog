@@ -8,8 +8,8 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.domain.Comment;
 import com.ssafy.hangbokdog.post.comment.domain.repository.CommentRepository;
-import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
-import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentUpdateRequest;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 
 import lombok.RequiredArgsConstructor;
