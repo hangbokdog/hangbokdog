@@ -1,5 +1,10 @@
 package com.ssafy.hangbokdog.post.comment.application;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,9 +13,10 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.domain.Comment;
 import com.ssafy.hangbokdog.post.comment.domain.repository.CommentRepository;
-import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
-import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
-import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
+import com.ssafy.hangbokdog.post.comment.dto.response.CommentWithRepliesResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final PostRepository postRepository;
 
     public Long save(
             Member member,
@@ -34,6 +39,26 @@ public class CommentService {
                 .build();
 
         return commentRepository.save(newComment).getId();
+    }
+
+    public List<CommentWithRepliesResponse> findAllByPostId(Long postId, Member member) {
+        // 1) 평탄화된 댓글 전체 조회
+        List<CommentResponse> flat = commentRepository.findAllByPostId(postId, member.getId());
+
+        // 2) parentId != null 인 댓글만 그룹핑 (null key 처리 회피)
+        Map<Long, List<CommentResponse>> byParent = flat.stream()
+                .filter(cr -> cr.parentId() != null)
+                .collect(Collectors.groupingBy(CommentResponse::parentId));
+
+        // 3) 최상위 댓글(root)만 뽑아서 재귀 빌드
+        return flat.stream()
+                .filter(cr -> cr.parentId() == null)
+                .map(root -> buildTree(root, byParent))
+                .collect(Collectors.toList());
+    }
+
+    public CommentResponse findById(Long commentId, Member member) {
+        return commentRepository.findByCommentId(commentId, member.getId());
     }
 
     @Transactional
@@ -67,5 +92,16 @@ public class CommentService {
 
         // 실제 삭제 대신 내용만 변경
         comment.delete();
+    }
+
+    private CommentWithRepliesResponse buildTree(
+            CommentResponse dto,
+            Map<Long, List<CommentResponse>> byParent
+    ) {
+        List<CommentWithRepliesResponse> replies = byParent.getOrDefault(dto.id(), Collections.emptyList()).stream()
+                .map(child -> buildTree(child, byParent))
+                .collect(Collectors.toList());
+
+        return new CommentWithRepliesResponse(dto, replies);
     }
 }

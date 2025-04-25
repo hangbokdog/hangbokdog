@@ -1,9 +1,11 @@
 package com.ssafy.hangbokdog.post.comment.presentation;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,8 +17,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.application.CommentService;
-import com.ssafy.hangbokdog.post.comment.dto.CommentCreateRequest;
-import com.ssafy.hangbokdog.post.comment.dto.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentCreateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.request.CommentUpdateRequest;
+import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
+import com.ssafy.hangbokdog.post.comment.dto.response.CommentWithRepliesResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +44,25 @@ public class CommentController {
                 .toUri();
 
         return ResponseEntity.created(uri).build();
+    }
+
+    @GetMapping("/{postId}/comments")
+    public ResponseEntity<List<CommentWithRepliesResponse>> list(
+            @PathVariable Long postId,
+            @AuthMember Member member
+    ) {
+        List<CommentWithRepliesResponse> responses = commentService.findAllByPostId(postId, member);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<CommentResponse> get(
+            @AuthMember Member member,
+            @PathVariable Long postId,
+            @PathVariable Long commentId
+    ) {
+        CommentResponse response = commentService.findById(commentId, member);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{postId}/comments/{commentId}")
