@@ -11,8 +11,8 @@ import static com.ssafy.hangbokdog.donationhistory.domain.DonationType.PRODUCT_S
 import static com.ssafy.hangbokdog.transaction.domain.TransactionType.PURCHASE;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.common.annotation.RedisLock;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.donationhistory.domain.DonationHistory;
@@ -40,11 +40,7 @@ public class OrderService {
     private final TransactionRepository transactionRepository;
     private final DonationHistoryRepository donationHistoryRepository;
 
-    /**
-     * 동시 주문, 상품 변경과 경합 가능성 존재
-     * Lock Module 구현하고 추가해야 함.
-     */
-    @Transactional
+    @RedisLock(key = "'productId:' + #productId")
     public Long order(Member member, Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BadRequestException(PRODUCT_NOT_FOUND));
@@ -75,12 +71,7 @@ public class OrderService {
         return orderRepository.save(order).getId();
     }
 
-    /**
-     * TODO
-     * 판매자의 상품 삭제와 충돌할 가능성이 존재함.
-     * 근데 물품 보내놓고 누를 거 같지는 않아서 나중에 생각하기.
-     */
-    @Transactional
+    @RedisLock(key = "'productId:' + #productId")
     public void confirm(Member member, Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new BadRequestException(ORDER_NOT_FOUND));

@@ -7,8 +7,8 @@ import static com.ssafy.hangbokdog.common.exception.ErrorCode.PRODUCT_NOT_ON_SAL
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.common.annotation.RedisLock;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -49,7 +49,7 @@ public class ProductService {
         return productRepository.findAll(pageToken);
     }
 
-    @Transactional
+    @RedisLock(key = "'productId:' + #productId")
     public void update(
             Long productId,
             Member member,
@@ -75,7 +75,7 @@ public class ProductService {
         );
     }
 
-    @Transactional
+    @RedisLock(key = "'productId:' + #productId")
     public void delete(Member member, Long productId) {
         // TODO: Order 에 관한 변경도 처리
         productRepository.deleteByIdAndSellerId(productId, member.getId());
