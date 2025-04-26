@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import { FaMoon } from "react-icons/fa";
 import logo from "@/assets/logo.png";
+import { FaMoon } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function Header() {
 	return (
@@ -8,7 +8,7 @@ export default function Header() {
 			<Link to={"/"}>
 				<div className="flex items-center gap-1.5">
 					<img className="w-8" src={logo} alt="logo" />
-					<p className="text-2xl font-bold text-[20px] text-[#68C2F3]">
+					<p className="text-2xl font-bold text-[20px] text-main">
 						행복하개
 					</p>
 				</div>
