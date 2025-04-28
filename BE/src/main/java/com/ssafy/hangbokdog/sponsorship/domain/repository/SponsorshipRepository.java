@@ -32,4 +32,8 @@ public class SponsorshipRepository {
 	public List<ActiveSponsorshipInfo> getActiveSponsorships() {
 		return sponsorshipJpaRepositoryCustom.getActiveSponsorships();
 	}
+
+	public void bulkUpdateSponsorshipStatus(List<Long> sponsorshipIds) {
+		sponsorshipJpaRepositoryCustom.bulkUpdateSponsorshipStatus(sponsorshipIds);
+	}
 }

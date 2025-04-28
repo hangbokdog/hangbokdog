@@ -94,17 +94,17 @@ public class SponsorshipService {
 
 		int succeededSponsorshipCount = 0;
 		Map<Long, Long> succeededSponsorshipInfos = new HashMap<>();
-		List<FailedSponsorshipInfo> failedSponsorshipList = new ArrayList<>();
+		List<FailedSponsorshipInfo> failedSponsorships = new ArrayList<>();
 
 		for (ActiveSponsorshipInfo info : activeSponsorshipInfos) {
 			if (info.amount() > memberBalance.get(info.memberId())) {
-				failedSponsorshipList.add(new FailedSponsorshipInfo(
+				failedSponsorships.add(new FailedSponsorshipInfo(
 					info.memberId(),
 					info.memberName(),
 					info.dogId(),
 					info.dogName(),
 					info.amount(),
-					info.mileageId()
+					info.sponsorshipId()
 				));
 			} else {
 				succeededSponsorshipCount++;
@@ -120,10 +120,19 @@ public class SponsorshipService {
 			mileageRepository.bulkUpdateMileageBalances(succeededSponsorshipInfos);
 		}
 
+		if (!failedSponsorships.isEmpty()) {
+			sponsorshipRepository.bulkUpdateSponsorshipStatus(
+				failedSponsorships
+					.stream()
+					.map(FailedSponsorshipInfo::sponsorshipId)
+					.collect(Collectors.toList())
+			);
+		}
+
 		return new SponsorshipResponse(
 			succeededSponsorshipCount,
-			failedSponsorshipList.size(),
-			failedSponsorshipList
+			failedSponsorships.size(),
+			failedSponsorships
 		);
 	}
 }

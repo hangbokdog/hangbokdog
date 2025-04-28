@@ -61,4 +61,12 @@ public class SponsorshipJpaRepositoryCustomImpl implements SponsorshipJpaReposit
 			.where(sponsorship.status.eq(SponsorShipStatus.ACTIVE))
 			.fetch();
 	}
+
+	@Override
+	public void bulkUpdateSponsorshipStatus(List<Long> sponsorshipIds) {
+		queryFactory.update(sponsorship)
+			.set(sponsorship.status, SponsorShipStatus.FAILED)
+			.where(sponsorship.id.in(sponsorshipIds))
+			.execute();
+	}
 }

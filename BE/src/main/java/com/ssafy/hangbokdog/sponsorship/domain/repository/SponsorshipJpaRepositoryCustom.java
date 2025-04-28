@@ -9,4 +9,6 @@ public interface SponsorshipJpaRepositoryCustom {
 	int countActiveSponsorshipByDogId(Long dogId);
 
 	List<ActiveSponsorshipInfo> getActiveSponsorships();
+
+	void bulkUpdateSponsorshipStatus(List<Long> sponsorshipIds);
 }
