@@ -14,7 +14,11 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
+import com.ssafy.hangbokdog.sponsorship.domain.SponsorshipHistory;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
+import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorshipHistoryStatus;
+import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipHistoryJdbcRepository;
+import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipHistoryRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.FailedSponsorshipInfo;
@@ -27,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class SponsorshipService {
 
 	private final SponsorshipRepository sponsorshipRepository;
+	private final SponsorshipHistoryRepository sponsorshipHistoryRepository;
 	private final MileageRepository mileageRepository;
 	private final DogRepository dogRepository;
 
@@ -83,6 +88,7 @@ public class SponsorshipService {
 	@Transactional
 	public SponsorshipResponse proceedSponsorship() {
 		List<ActiveSponsorshipInfo> activeSponsorshipInfos = sponsorshipRepository.getActiveSponsorships();
+		List<SponsorshipHistory> sponsorshipHistories = new ArrayList<>();
 
 		Map<Long, Long> memberBalance = activeSponsorshipInfos
 			.stream()
@@ -106,13 +112,31 @@ public class SponsorshipService {
 					info.amount(),
 					info.sponsorshipId()
 				));
+
+				SponsorshipHistory sponsorshipHistory = SponsorshipHistory.createSponsorshipHistory(
+					info.sponsorshipId(),
+					info.amount(),
+					SponsorshipHistoryStatus.FAILED
+				);
+
+				sponsorshipHistories.add(sponsorshipHistory);
 			} else {
 				succeededSponsorshipCount++;
+
 				memberBalance.put(info.memberId(), memberBalance.get(info.memberId()) - info.amount());
+
 				succeededSponsorshipInfos.put(
 					info.memberId(),
 					succeededSponsorshipInfos.getOrDefault(info.memberId(), 0L) + info.amount()
 				);
+
+				SponsorshipHistory sponsorshipHistory = SponsorshipHistory.createSponsorshipHistory(
+					info.sponsorshipId(),
+					info.amount(),
+					SponsorshipHistoryStatus.COMPLETED
+				);
+
+				sponsorshipHistories.add(sponsorshipHistory);
 			}
 		}
 
@@ -128,6 +152,8 @@ public class SponsorshipService {
 					.collect(Collectors.toList())
 			);
 		}
+
+		sponsorshipHistoryRepository.bulkInsertSponsorshipHistory(sponsorshipHistories);
 
 		return new SponsorshipResponse(
 			succeededSponsorshipCount,
