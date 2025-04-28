@@ -3,7 +3,6 @@ package com.ssafy.hangbokdog.volunteer.event.domain;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,12 +11,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import lombok.Builder;
 import org.hibernate.annotations.Type;
 
+import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

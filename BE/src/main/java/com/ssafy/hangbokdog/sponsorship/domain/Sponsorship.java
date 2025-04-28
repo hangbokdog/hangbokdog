@@ -61,7 +61,10 @@ public class Sponsorship extends BaseEntity {
 	}
 
 	public void activateSponsorship() {
-		if (this.status != SponsorShipStatus.PENDING && this.status != SponsorShipStatus.SUSPENDED && this.status != SponsorShipStatus.FAILED) {
+		if (this.status != SponsorShipStatus.PENDING
+			&& this.status != SponsorShipStatus.SUSPENDED
+			&& this.status != SponsorShipStatus.FAILED
+		) {
 			throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
 		}
 		this.status = SponsorShipStatus.ACTIVE;

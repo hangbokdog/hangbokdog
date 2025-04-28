@@ -19,12 +19,13 @@ public class SponsorshipHistoryJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	public void batchInsert(List<SponsorshipHistory> sponsorshipHistories) {
-		String sql = "INSERT INTO sponsorship_history (sponsorship_id, amount, status, created_at, modified_at) VALUES (?, ?, ?, NOW(), NOW())";
+		String sql = "INSERT INTO sponsorship_history (sponsorship_id, amount, status, created_at, modified_at) "
+			+ "VALUES (?, ?, ?, NOW(), NOW())";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				SponsorshipHistory sponsorshipHistory = sponsorshipHistories.get(i);
+			public void setValues(PreparedStatement ps, int idx) throws SQLException {
+				SponsorshipHistory sponsorshipHistory = sponsorshipHistories.get(idx);
 				ps.setLong(1, sponsorshipHistory.getSponsorshipId());
 				ps.setInt(2, sponsorshipHistory.getAmount());
 				ps.setString(3, sponsorshipHistory.getStatus().toString());

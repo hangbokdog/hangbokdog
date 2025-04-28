@@ -19,12 +19,13 @@ public class TransactionJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	public void batchInsert(List<Transaction> transactions) {
-		String sql = "INSERT INTO transaction (member_id, type, amount, created_at, modified_at) VALUES (?, ?, ?, NOW(), NOW())";
+		String sql = "INSERT INTO transaction (member_id, type, amount, created_at, modified_at) "
+			+ "VALUES (?, ?, ?, NOW(), NOW())";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Transaction transaction = transactions.get(i);
+			public void setValues(PreparedStatement ps, int idx) throws SQLException {
+				Transaction transaction = transactions.get(idx);
 				ps.setLong(1, transaction.getMemberId());
 				ps.setString(2, transaction.getType().toString());
 				ps.setInt(3, transaction.getAmount());
