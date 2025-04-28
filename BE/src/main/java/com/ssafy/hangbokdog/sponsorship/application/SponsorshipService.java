@@ -24,6 +24,7 @@ import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.FailedSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
+import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.domain.TransactionType;
@@ -213,5 +214,9 @@ public class SponsorshipService {
 		transactionRepository.save(transaction);
 
 		failedSponsorship.activateSponsorship();
+	}
+
+	public List<MySponsorshipResponse> getMySponsorships(Member member) {
+		return sponsorshipRepository.getMySponsorships(member.getId());
 	}
 }

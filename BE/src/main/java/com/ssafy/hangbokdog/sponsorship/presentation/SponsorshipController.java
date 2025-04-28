@@ -18,6 +18,7 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.sponsorship.application.SponsorshipService;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
+import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -80,5 +81,11 @@ public class SponsorshipController {
 	) {
 		sponsorshipService.payFailedSponsorship(member, sponsorshipId);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/sponsorship/my")
+	public ResponseEntity<List<MySponsorshipResponse>> getMySponsorships(@AuthMember Member member) {
+		List<MySponsorshipResponse> response = sponsorshipService.getMySponsorships(member);
+		return ResponseEntity.ok().body(response);
 	}
 }

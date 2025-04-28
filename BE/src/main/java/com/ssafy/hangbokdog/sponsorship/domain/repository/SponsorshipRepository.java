@@ -9,6 +9,7 @@ import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 
 import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
+import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -40,5 +41,9 @@ public class SponsorshipRepository {
 
 	public List<FailedSponsorshipResponse> getFailedSponsorships(Long memberId) {
 		return sponsorshipJpaRepositoryCustom.getFailedSponsorships(memberId);
+	}
+
+	public List<MySponsorshipResponse> getMySponsorships(Long memberId) {
+		return
 	}
 }
