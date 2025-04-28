@@ -13,6 +13,7 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.mileage.domain.Mileage;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 import com.ssafy.hangbokdog.sponsorship.domain.SponsorshipHistory;
@@ -28,6 +29,7 @@ import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.domain.TransactionType;
 import com.ssafy.hangbokdog.transaction.domain.repository.TransactionJdbcRepository;
 
+import com.ssafy.hangbokdog.transaction.domain.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -39,6 +41,7 @@ public class SponsorshipService {
 	private final MileageRepository mileageRepository;
 	private final DogRepository dogRepository;
 	private final TransactionJdbcRepository transactionJdbcRepository;
+	private final TransactionRepository transactionRepository;
 
 	public Long applySponsorship(Long memberId, Long dogId) {
 
@@ -178,5 +181,37 @@ public class SponsorshipService {
 
 	public List<FailedSponsorshipResponse> getFailedSponsorships(Member member) {
 		return sponsorshipRepository.getFailedSponsorships(member.getId());
+	}
+
+	@Transactional
+	public void payFailedSponsorship(Member member, Long sponsorshipId) {
+		Sponsorship failedSponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
+
+		if (!member.getId().equals(failedSponsorship.getMemberId())) {
+			throw new BadRequestException(ErrorCode.SPONSORSHIP_NOT_AUTHOR);
+		}
+
+		Mileage memberMileage = mileageRepository.findByMemberId(member.getId())
+			.orElseThrow(() -> new BadRequestException(ErrorCode.MILEAGE_NOT_FOUND));
+
+		memberMileage.use(failedSponsorship.getAmount());
+
+		SponsorshipHistory sponsorshipHistory = SponsorshipHistory.createSponsorshipHistory(
+			failedSponsorship.getId(),
+			failedSponsorship.getAmount(),
+			SponsorshipHistoryStatus.COMPLETED
+		);
+
+		Transaction transaction = Transaction.builder()
+			.type(TransactionType.SPONSORSHIP)
+			.amount(failedSponsorship.getAmount())
+			.memberId(member.getId())
+			.build();
+
+		sponsorshipHistoryRepository.saveSponsorshipHistory(sponsorshipHistory);
+		transactionRepository.save(transaction);
+
+		failedSponsorship.activateSponsorship();
 	}
 }

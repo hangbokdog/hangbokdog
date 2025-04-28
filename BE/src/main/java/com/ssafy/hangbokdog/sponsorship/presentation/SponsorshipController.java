@@ -72,4 +72,13 @@ public class SponsorshipController {
 		List<FailedSponsorshipResponse> response = sponsorshipService.getFailedSponsorships(member);
 		return ResponseEntity.ok().body(response);
 	}
+
+	@PatchMapping("/sponsorship/{sponsorshipId}/pay")
+	public ResponseEntity<Void> paySponsorship(
+		@AuthMember Member member,
+		@PathVariable Long sponsorshipId
+	) {
+		sponsorshipService.payFailedSponsorship(member, sponsorshipId);
+		return ResponseEntity.noContent().build();
+	}
 }
