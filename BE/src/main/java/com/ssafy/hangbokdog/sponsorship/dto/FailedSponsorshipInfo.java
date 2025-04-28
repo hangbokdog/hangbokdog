@@ -5,7 +5,7 @@ public record FailedSponsorshipInfo(
 	String memberName,
 	Long dogId,
 	String dogName,
-	Long failedAmount,
+	int failedAmount,
 	Long sponsorshipId
 ) {
 }

@@ -8,6 +8,6 @@ public record ActiveSponsorshipInfo(
 	String dogName,
 	Long mileageId,
 	Long balance,
-	Long amount
+	int amount
 ) {
 }

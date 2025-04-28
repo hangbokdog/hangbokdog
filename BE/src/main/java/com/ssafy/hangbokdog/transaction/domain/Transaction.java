@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.transaction.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,7 +28,7 @@ public class Transaction extends BaseEntity {
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private TransactionType type;
 

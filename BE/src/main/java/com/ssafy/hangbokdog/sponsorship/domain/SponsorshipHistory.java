@@ -29,7 +29,7 @@ public class SponsorshipHistory extends BaseEntity {
 	private Long sponsorshipId;
 
 	@Column(name = "amount", nullable = false)
-	private Long amount;
+	private int amount;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
@@ -37,7 +37,7 @@ public class SponsorshipHistory extends BaseEntity {
 
 	public static SponsorshipHistory createSponsorshipHistory(
 		Long sponsorshipId,
-		Long amount,
+		int amount,
 		SponsorshipHistoryStatus status
 	) {
 		return new SponsorshipHistory(
@@ -49,7 +49,7 @@ public class SponsorshipHistory extends BaseEntity {
 
 	private SponsorshipHistory(
 		Long sponsorshipId,
-		Long amount,
+		int amount,
 		SponsorshipHistoryStatus status
 	) {
 		this.sponsorshipId = sponsorshipId;

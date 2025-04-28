@@ -17,13 +17,14 @@ import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 import com.ssafy.hangbokdog.sponsorship.domain.SponsorshipHistory;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorshipHistoryStatus;
-import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipHistoryJdbcRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipHistoryRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.FailedSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
-
+import com.ssafy.hangbokdog.transaction.domain.Transaction;
+import com.ssafy.hangbokdog.transaction.domain.TransactionType;
+import com.ssafy.hangbokdog.transaction.domain.repository.TransactionJdbcRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,6 +35,7 @@ public class SponsorshipService {
 	private final SponsorshipHistoryRepository sponsorshipHistoryRepository;
 	private final MileageRepository mileageRepository;
 	private final DogRepository dogRepository;
+	private final TransactionJdbcRepository transactionJdbcRepository;
 
 	public Long applySponsorship(Long memberId, Long dogId) {
 
@@ -49,7 +51,7 @@ public class SponsorshipService {
 		Sponsorship sponsorship = Sponsorship.createSponsorship(
 			memberId,
 			dogId,
-			25000L
+			25000
 		);
 
 		return sponsorshipRepository.createSponsorship(sponsorship).getId();
@@ -89,6 +91,7 @@ public class SponsorshipService {
 	public SponsorshipResponse proceedSponsorship() {
 		List<ActiveSponsorshipInfo> activeSponsorshipInfos = sponsorshipRepository.getActiveSponsorships();
 		List<SponsorshipHistory> sponsorshipHistories = new ArrayList<>();
+		List<Transaction> transactions = new ArrayList<>();
 
 		Map<Long, Long> memberBalance = activeSponsorshipInfos
 			.stream()
@@ -136,6 +139,13 @@ public class SponsorshipService {
 					SponsorshipHistoryStatus.COMPLETED
 				);
 
+				Transaction transaction = Transaction.builder()
+					.type(TransactionType.SPONSORSHIP)
+					.amount(info.amount())
+					.memberId(info.memberId())
+					.build();
+
+				transactions.add(transaction);
 				sponsorshipHistories.add(sponsorshipHistory);
 			}
 		}
@@ -154,6 +164,7 @@ public class SponsorshipService {
 		}
 
 		sponsorshipHistoryRepository.bulkInsertSponsorshipHistory(sponsorshipHistories);
+		transactionJdbcRepository.batchInsert(transactions);
 
 		return new SponsorshipResponse(
 			succeededSponsorshipCount,

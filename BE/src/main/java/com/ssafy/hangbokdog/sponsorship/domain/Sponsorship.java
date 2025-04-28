@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.sponsorship.domain;
 
-import com.ssafy.hangbokdog.common.exception.BadRequestException;
-import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 
 import lombok.AccessLevel;
@@ -45,7 +45,7 @@ public class Sponsorship extends BaseEntity {
 	private SponsorShipStatus status;
 
 	@Column(name = "amount", nullable = false)
-	private Long amount;
+	private int amount;
 
 	public void validateOwner(Long memberId) {
 		if (memberId.equals(this.memberId)) {
@@ -84,7 +84,7 @@ public class Sponsorship extends BaseEntity {
 	public static Sponsorship createSponsorship(
 		Long memberId,
 		Long dogId,
-		Long amount
+		int amount
 	) {
 		return new Sponsorship(memberId, dogId, amount);
 	}
@@ -92,7 +92,7 @@ public class Sponsorship extends BaseEntity {
 	private Sponsorship(
 		Long memberId,
 		Long dogId,
-		Long amount
+		int amount
 	) {
 		this.memberId = memberId;
 		this.dogId = dogId;
