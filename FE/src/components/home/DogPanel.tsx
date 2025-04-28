@@ -11,7 +11,7 @@ const dummyDogs = [
 		name: "모리",
 		age: "7개월",
 		imageUrl: dog1,
-		isMale: true,
+		gender: "MALE",
 		isLiked: false,
 	},
 	{
@@ -19,7 +19,7 @@ const dummyDogs = [
 		name: "찬희",
 		age: "6살",
 		imageUrl: dog2,
-		isMale: false,
+		gender: "FEMALE",
 		isLiked: true,
 	},
 	{
@@ -27,7 +27,7 @@ const dummyDogs = [
 		name: "백돌",
 		age: "2개월",
 		imageUrl: dog3,
-		isMale: false,
+		gender: "FEMALE",
 		isLiked: false,
 	},
 ];
@@ -44,7 +44,7 @@ export default function DogPanel() {
 						name={dog.name}
 						age={dog.age}
 						imageUrl={dog.imageUrl}
-						isMale={dog.isMale}
+						gender={dog.gender as "MALE" | "FEMALE"}
 						isLiked={dog.isLiked}
 					/>
 				))}
