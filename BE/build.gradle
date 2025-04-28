@@ -61,6 +61,9 @@ dependencies {
 
 	//Swagger
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
+	//HTML Parser
+	implementation 'org.jsoup:jsoup:1.15.3'
 }
 
 tasks.named('test') {
