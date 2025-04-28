@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 import com.ssafy.hangbokdog.sponsorship.domain.SponsorshipHistory;
@@ -21,6 +22,7 @@ import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipHistoryRepo
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.FailedSponsorshipInfo;
+import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.domain.TransactionType;
@@ -172,5 +174,9 @@ public class SponsorshipService {
 			failedSponsorships.size(),
 			failedSponsorships
 		);
+	}
+
+	public List<FailedSponsorshipResponse> getFailedSponsorships(Member member) {
+		return sponsorshipRepository.getFailedSponsorships(member.getId());
 	}
 }

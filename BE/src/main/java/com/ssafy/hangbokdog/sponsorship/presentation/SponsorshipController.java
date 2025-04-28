@@ -1,8 +1,10 @@
 package com.ssafy.hangbokdog.sponsorship.presentation;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.sponsorship.application.SponsorshipService;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
+import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -59,6 +62,14 @@ public class SponsorshipController {
 	@PatchMapping("/sponsorship/proceed")
 	public ResponseEntity<SponsorshipResponse> proceedSponsorship() {
 		SponsorshipResponse response = sponsorshipService.proceedSponsorship();
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/sponsorship/failed")
+	public ResponseEntity<List<FailedSponsorshipResponse>> getFailedSponsorships(
+		@AuthMember Member member
+	) {
+		List<FailedSponsorshipResponse> response = sponsorshipService.getFailedSponsorships(member);
 		return ResponseEntity.ok().body(response);
 	}
 }

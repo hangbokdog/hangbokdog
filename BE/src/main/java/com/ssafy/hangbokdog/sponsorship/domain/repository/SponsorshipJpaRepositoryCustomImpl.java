@@ -15,6 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 
+import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -68,5 +69,26 @@ public class SponsorshipJpaRepositoryCustomImpl implements SponsorshipJpaReposit
 			.set(sponsorship.status, SponsorShipStatus.FAILED)
 			.where(sponsorship.id.in(sponsorshipIds))
 			.execute();
+	}
+
+	@Override
+	public List<FailedSponsorshipResponse> getFailedSponsorships(Long memberId) {
+		return queryFactory
+			.select(
+				Projections.constructor(
+					FailedSponsorshipResponse.class,
+					sponsorship.id,
+					sponsorship.status,
+					sponsorship.amount,
+					sponsorship.dogId,
+					dog.name,
+					dog.profileImage
+				))
+			.from(sponsorship)
+			.leftJoin(dog)
+			.on(sponsorship.dogId.eq(dog.id))
+			.where(sponsorship.memberId.eq(memberId)
+				.and(sponsorship.status.eq(SponsorShipStatus.FAILED)))
+			.fetch();
 	}
 }
