@@ -10,7 +10,7 @@ export default function Home() {
 			<EmergencyPanel />
 			<VolunteerPanel />
 			<DogPanel />
-			<div className="max-w-[382px] grid grid-cols-2 gap-3">
+			<div className="max-w-[382px] grid grid-cols-2 gap-3 pb-2.5">
 				<DonationPanel />
 				<MyDonationPanel />
 			</div>

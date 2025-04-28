@@ -6,8 +6,9 @@ interface DogCardProps {
 	name: string;
 	age: string;
 	imageUrl: string;
-	isMale: boolean;
+	gender: "MALE" | "FEMALE";
 	isLiked: boolean;
+	bgColor?: string;
 }
 
 export default function DogCard({
@@ -15,19 +16,24 @@ export default function DogCard({
 	name,
 	age,
 	imageUrl,
-	isMale,
+	gender,
 	isLiked,
+	bgColor,
 }: DogCardProps) {
 	return (
 		<Link to={`/dogs/${id}`}>
-			<div className="flex flex-col gap-1">
-				<div className="rounded-xl overflow-hidden relative">
+			<div
+				className={`flex flex-col rounded-xl shadow-custom-sm ${bgColor}`}
+			>
+				<div
+					className={`${bgColor ? "rounded-tl-xl rounded-tr-xl" : "rounded-xl"} overflow-hidden relative`}
+				>
 					<img
 						src={imageUrl}
 						alt={name}
 						className="aspect-square object-cover"
 					/>
-					{isMale ? (
+					{gender === "MALE" ? (
 						<span className="absolute right-1 top-1 px-1.5 text-xs text-white bg-male rounded-full">
 							남아
 						</span>
@@ -37,7 +43,7 @@ export default function DogCard({
 						</span>
 					)}
 				</div>
-				<div className="flex justify-between items-center">
+				<div className="flex justify-between items-center px-1 py-1.5">
 					<div>
 						<p className="text-sm font-medium text-grayText">
 							{name}{" "}
