@@ -1,0 +1,21 @@
+package com.ssafy.hangbokdog.volunteer.event.domain.repository;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
+
+import lombok.RequiredArgsConstructor;
+
+
+@Repository
+@RequiredArgsConstructor
+public class VolunteerSlotRepository {
+
+    private final VolunteerSlotJpaRepository volunteerSlotJpaRepository;
+
+    public void saveAll(List<VolunteerSlot> volunteerSlots) {
+        volunteerSlotJpaRepository.saveAll(volunteerSlots);
+    }
+}
