@@ -7,6 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
+import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
+import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,5 +37,13 @@ public class SponsorshipRepository {
 
 	public void bulkUpdateSponsorshipStatus(List<Long> sponsorshipIds) {
 		sponsorshipJpaRepositoryCustom.bulkUpdateSponsorshipStatus(sponsorshipIds);
+	}
+
+	public List<FailedSponsorshipResponse> getFailedSponsorships(Long memberId) {
+		return sponsorshipJpaRepositoryCustom.getFailedSponsorships(memberId);
+	}
+
+	public List<MySponsorshipResponse> getMySponsorships(Long memberId) {
+		return sponsorshipJpaRepositoryCustom.getMySponsorships(memberId);
 	}
 }

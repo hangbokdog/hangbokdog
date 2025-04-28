@@ -18,4 +18,8 @@ public class SponsorshipHistoryRepository {
 	public void bulkInsertSponsorshipHistory(List<SponsorshipHistory> sponsorshipHistories) {
 		sponsorshipHistoryJdbcRepository.batchInsert(sponsorshipHistories);
 	}
+
+	public void saveSponsorshipHistory(SponsorshipHistory sponsorshipHistory) {
+		sponsorshipHistoryJpaRepository.save(sponsorshipHistory);
+	}
 }

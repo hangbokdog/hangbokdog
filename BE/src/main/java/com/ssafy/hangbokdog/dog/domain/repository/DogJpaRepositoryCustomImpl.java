@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,23 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			.leftJoin(center)
 			.on(dog.centerId.eq(center.id))
 			.where(dog.id.eq(id))
+			.fetchOne();
+	}
+
+	@Override
+	public DogCenterInfo getDogCenterInfo(Long dogId) {
+		return queryFactory
+			.select(
+				Projections.constructor(
+					DogCenterInfo.class,
+					center.id,
+					center.name,
+					center.sponsorAmount
+				))
+			.from(dog)
+			.leftJoin(center)
+			.on(dog.centerId.eq(center.id))
+			.where(dog.id.eq(dogId))
 			.fetchOne();
 	}
 }

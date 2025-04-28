@@ -19,19 +19,24 @@ public class Center extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "center_id")
+	@Column(name = "center_id", nullable = false)
 	private Long id;
 
-	@Column(name = "name")
+	@Column(name = "name", nullable = false)
 	private String name;
 
-	public static Center create(String name) {
-		return new Center(name);
+	@Column(name = "sponsor_amount")
+	private int sponsorAmount;
+
+	public static Center create(String name, int sponsorAmount) {
+		return new Center(name, sponsorAmount);
 	}
 
 	private Center(
-		String name
+		String name,
+		int sponsorAmount
 	) {
 		this.name = name;
+		this.sponsorAmount = sponsorAmount;
 	}
 }

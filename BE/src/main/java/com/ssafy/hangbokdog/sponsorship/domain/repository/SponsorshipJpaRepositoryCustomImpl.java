@@ -14,6 +14,8 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
+import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
+import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -68,5 +70,49 @@ public class SponsorshipJpaRepositoryCustomImpl implements SponsorshipJpaReposit
 			.set(sponsorship.status, SponsorShipStatus.FAILED)
 			.where(sponsorship.id.in(sponsorshipIds))
 			.execute();
+	}
+
+	@Override
+	public List<FailedSponsorshipResponse> getFailedSponsorships(Long memberId) {
+		return queryFactory
+			.select(
+				Projections.constructor(
+					FailedSponsorshipResponse.class,
+					sponsorship.id,
+					sponsorship.status,
+					sponsorship.amount,
+					sponsorship.dogId,
+					dog.name,
+					dog.profileImage
+				))
+			.from(sponsorship)
+			.leftJoin(dog)
+			.on(sponsorship.dogId.eq(dog.id))
+			.where(sponsorship.memberId.eq(memberId)
+				.and(sponsorship.status.eq(SponsorShipStatus.FAILED)))
+			.fetch();
+	}
+
+	@Override
+	public List<MySponsorshipResponse> getMySponsorships(Long memberId) {
+		return queryFactory
+			.select(
+				Projections.constructor(
+					MySponsorshipResponse.class,
+					sponsorship.id,
+					sponsorship.dogId,
+					dog.name,
+					dog.profileImage,
+					sponsorship.createdAt
+				))
+			.from(sponsorship)
+			.leftJoin(dog)
+			.on(sponsorship.dogId.eq(dog.id))
+			.where(sponsorship.memberId.eq(memberId)
+				.and((sponsorship.status.eq(SponsorShipStatus.COMPLETED))
+					.or(sponsorship.status.eq(SponsorShipStatus.FAILED))
+					.or(sponsorship.status.eq(SponsorShipStatus.ACTIVE))))
+			.orderBy(sponsorship.createdAt.desc())
+			.fetch();
 	}
 }
