@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.Mileage;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
@@ -29,8 +30,8 @@ import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.domain.TransactionType;
 import com.ssafy.hangbokdog.transaction.domain.repository.TransactionJdbcRepository;
-
 import com.ssafy.hangbokdog.transaction.domain.repository.TransactionRepository;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -54,11 +55,12 @@ public class SponsorshipService {
 			throw new BadRequestException(ErrorCode.FULL_SPONSORSHIP);
 		}
 
-		//TODO: 센터별 후원금액 가져오기
+		DogCenterInfo dogCenterInfo = dogRepository.getDogCenterInfo(dogId);
+
 		Sponsorship sponsorship = Sponsorship.createSponsorship(
 			memberId,
 			dogId,
-			25000
+			dogCenterInfo.sponsorshipAmount()
 		);
 
 		return sponsorshipRepository.createSponsorship(sponsorship).getId();

@@ -21,7 +21,10 @@ public class CenterService {
 	@Transactional
 	public Long createCenter(CenterCreateRequest request) {
 
-		Long centerId = centerRepository.create(Center.create(request.name())).getId();
+		Long centerId = centerRepository.create(Center.create(
+			request.name(),
+			request.sponsorAmount()
+		)).getId();
 
 		donationAccountRepository.createDonationAccount(DonationAccount.createDonationAccount(
 			centerId,

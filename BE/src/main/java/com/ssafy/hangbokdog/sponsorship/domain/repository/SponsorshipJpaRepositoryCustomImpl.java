@@ -15,8 +15,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
-
 import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository

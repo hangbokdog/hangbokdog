@@ -21,6 +21,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.application.FavoriteDogService;
+import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
@@ -152,6 +153,14 @@ public class DogController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@GetMapping("/{dogId}/center")
+	public ResponseEntity<DogCenterInfo> getDogCenterInfo(
+	 	@AuthMember Member member,
+		@PathVariable Long dogId
+	) {
+		DogCenterInfo response = dogService.getDogCenterInfo(dogId);
+		return ResponseEntity.ok().body(response);
+	}
 
 	private String uploadImageToS3(MultipartFile image) {
 		return s3Service.uploadFile(image);

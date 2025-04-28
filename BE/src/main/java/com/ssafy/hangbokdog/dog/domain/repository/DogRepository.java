@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
+import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 
@@ -57,5 +58,9 @@ public class DogRepository {
 
 	public void deleteMedicalHistory(Long id) {
 		medicalHistoryJpaRepository.deleteById(id);
+	}
+
+	public DogCenterInfo getDogCenterInfo(Long dogId) {
+		return dogJpaRepositoryCustomImpl.getDogCenterInfo(dogId);
 	}
 }

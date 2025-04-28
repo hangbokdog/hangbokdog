@@ -9,6 +9,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
@@ -108,6 +109,10 @@ public class DogService {
 
 	public void deleteMedicalHistory(Long dogId) {
 		dogRepository.deleteMedicalHistory(dogId);
+	}
+
+	public DogCenterInfo getDogCenterInfo(Long dogId) {
+		return dogRepository.getDogCenterInfo(dogId);
 	}
 
 	private Dog checkDogExistence(Long dogId) {
