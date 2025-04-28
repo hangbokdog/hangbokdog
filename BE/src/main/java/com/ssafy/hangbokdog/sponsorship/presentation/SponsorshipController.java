@@ -16,6 +16,7 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.sponsorship.application.SponsorshipService;
 
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
+import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -55,5 +56,9 @@ public class SponsorshipController {
 		return ResponseEntity.noContent().build();
 	}
 
-	//TODO: 결연신청내역 남기기
+	@PatchMapping("/sponsorship/proceed")
+	public ResponseEntity<SponsorshipResponse> proceedSponsorship() {
+		SponsorshipResponse response = sponsorshipService.proceedSponsorship();
+		return ResponseEntity.ok().body(response);
+	}
 }

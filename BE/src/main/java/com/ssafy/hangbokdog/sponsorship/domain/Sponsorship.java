@@ -45,7 +45,7 @@ public class Sponsorship extends BaseEntity {
 	private SponsorShipStatus status;
 
 	@Column(name = "amount", nullable = false)
-	private Integer amount;
+	private Long amount;
 
 	public void validateOwner(Long memberId) {
 		if (memberId.equals(this.memberId)) {
@@ -84,7 +84,7 @@ public class Sponsorship extends BaseEntity {
 	public static Sponsorship createSponsorship(
 		Long memberId,
 		Long dogId,
-		Integer amount
+		Long amount
 	) {
 		return new Sponsorship(memberId, dogId, amount);
 	}
@@ -92,7 +92,7 @@ public class Sponsorship extends BaseEntity {
 	private Sponsorship(
 		Long memberId,
 		Long dogId,
-		Integer amount
+		Long amount
 	) {
 		this.memberId = memberId;
 		this.dogId = dogId;

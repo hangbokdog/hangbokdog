@@ -1,10 +1,12 @@
 package com.ssafy.hangbokdog.sponsorship.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
+import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,5 +27,9 @@ public class SponsorshipRepository {
 
 	public Optional<Sponsorship> findSponsorshipById(Long id) {
 		return sponsorshipJpaRepository.findById(id);
+	}
+
+	public List<ActiveSponsorshipInfo> getActiveSponsorships() {
+		return sponsorshipJpaRepositoryCustom.getActiveSponsorships();
 	}
 }
