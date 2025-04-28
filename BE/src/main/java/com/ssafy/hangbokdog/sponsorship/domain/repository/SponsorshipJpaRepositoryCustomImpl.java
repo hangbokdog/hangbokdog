@@ -101,7 +101,6 @@ public class SponsorshipJpaRepositoryCustomImpl implements SponsorshipJpaReposit
 					MySponsorshipResponse.class,
 					sponsorship.id,
 					sponsorship.dogId,
-					dog.id,
 					dog.name,
 					dog.profileImage,
 					sponsorship.createdAt

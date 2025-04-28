@@ -44,6 +44,6 @@ public class SponsorshipRepository {
 	}
 
 	public List<MySponsorshipResponse> getMySponsorships(Long memberId) {
-		return
+		return sponsorshipJpaRepositoryCustom.getMySponsorships(memberId);
 	}
 }
