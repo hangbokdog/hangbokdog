@@ -14,9 +14,9 @@ import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.sponsorship.application.SponsorshipService;
-
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
