@@ -1,0 +1,175 @@
+package com.ssafy.hangbokdog.sponsorship.application;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
+import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
+import com.ssafy.hangbokdog.sponsorship.domain.SponsorshipHistory;
+import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
+import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorshipHistoryStatus;
+import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipHistoryRepository;
+import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
+import com.ssafy.hangbokdog.sponsorship.dto.ActiveSponsorshipInfo;
+import com.ssafy.hangbokdog.sponsorship.dto.FailedSponsorshipInfo;
+import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
+import com.ssafy.hangbokdog.transaction.domain.Transaction;
+import com.ssafy.hangbokdog.transaction.domain.TransactionType;
+import com.ssafy.hangbokdog.transaction.domain.repository.TransactionJdbcRepository;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class SponsorshipService {
+
+	private final SponsorshipRepository sponsorshipRepository;
+	private final SponsorshipHistoryRepository sponsorshipHistoryRepository;
+	private final MileageRepository mileageRepository;
+	private final DogRepository dogRepository;
+	private final TransactionJdbcRepository transactionJdbcRepository;
+
+	public Long applySponsorship(Long memberId, Long dogId) {
+
+		if (!dogRepository.checkDogExistence(dogId)) {
+			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
+		}
+
+		if (sponsorshipRepository.countActiveSponsorshipByDogId(dogId) >= 2) {
+			throw new BadRequestException(ErrorCode.FULL_SPONSORSHIP);
+		}
+
+		//TODO: 센터별 후원금액 가져오기
+		Sponsorship sponsorship = Sponsorship.createSponsorship(
+			memberId,
+			dogId,
+			25000
+		);
+
+		return sponsorshipRepository.createSponsorship(sponsorship).getId();
+	}
+
+	@Transactional
+	public void cancelSponsorship(Long memberId, Long sponsorshipId) {
+		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
+
+		sponsorship.validateOwner(memberId);
+
+		sponsorship.cancelSponsorship();
+	}
+
+	@Transactional
+	public void manageSponsorship(Long sponsorshipId, SponsorShipStatus request) {
+		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
+
+		switch (request) {
+			case ACTIVE:
+				sponsorship.activateSponsorship();
+				break;
+
+			case SUSPENDED:
+				sponsorship.suspendSponsorship();
+				break;
+
+			case COMPLETED:
+				sponsorship.completeSponsorship();
+				break;
+		}
+	}
+
+	@Transactional
+	public SponsorshipResponse proceedSponsorship() {
+		List<ActiveSponsorshipInfo> activeSponsorshipInfos = sponsorshipRepository.getActiveSponsorships();
+		List<SponsorshipHistory> sponsorshipHistories = new ArrayList<>();
+		List<Transaction> transactions = new ArrayList<>();
+
+		Map<Long, Long> memberBalance = activeSponsorshipInfos
+			.stream()
+			.collect(Collectors.toMap(
+				ActiveSponsorshipInfo::memberId,
+				ActiveSponsorshipInfo::balance,
+				(oldValue, newValue) -> oldValue
+			));
+
+		int succeededSponsorshipCount = 0;
+		Map<Long, Long> succeededSponsorshipInfos = new HashMap<>();
+		List<FailedSponsorshipInfo> failedSponsorships = new ArrayList<>();
+
+		for (ActiveSponsorshipInfo info : activeSponsorshipInfos) {
+			if (info.amount() > memberBalance.get(info.memberId())) {
+				failedSponsorships.add(new FailedSponsorshipInfo(
+					info.memberId(),
+					info.memberName(),
+					info.dogId(),
+					info.dogName(),
+					info.amount(),
+					info.sponsorshipId()
+				));
+
+				SponsorshipHistory sponsorshipHistory = SponsorshipHistory.createSponsorshipHistory(
+					info.sponsorshipId(),
+					info.amount(),
+					SponsorshipHistoryStatus.FAILED
+				);
+
+				sponsorshipHistories.add(sponsorshipHistory);
+			} else {
+				succeededSponsorshipCount++;
+
+				memberBalance.put(info.memberId(), memberBalance.get(info.memberId()) - info.amount());
+
+				succeededSponsorshipInfos.put(
+					info.memberId(),
+					succeededSponsorshipInfos.getOrDefault(info.memberId(), 0L) + info.amount()
+				);
+
+				SponsorshipHistory sponsorshipHistory = SponsorshipHistory.createSponsorshipHistory(
+					info.sponsorshipId(),
+					info.amount(),
+					SponsorshipHistoryStatus.COMPLETED
+				);
+
+				Transaction transaction = Transaction.builder()
+					.type(TransactionType.SPONSORSHIP)
+					.amount(info.amount())
+					.memberId(info.memberId())
+					.build();
+
+				transactions.add(transaction);
+				sponsorshipHistories.add(sponsorshipHistory);
+			}
+		}
+
+		if (!succeededSponsorshipInfos.isEmpty()) {
+			mileageRepository.bulkUpdateMileageBalances(succeededSponsorshipInfos);
+		}
+
+		if (!failedSponsorships.isEmpty()) {
+			sponsorshipRepository.bulkUpdateSponsorshipStatus(
+				failedSponsorships
+					.stream()
+					.map(FailedSponsorshipInfo::sponsorshipId)
+					.collect(Collectors.toList())
+			);
+		}
+
+		sponsorshipHistoryRepository.bulkInsertSponsorshipHistory(sponsorshipHistories);
+		transactionJdbcRepository.batchInsert(transactions);
+
+		return new SponsorshipResponse(
+			succeededSponsorshipCount,
+			failedSponsorships.size(),
+			failedSponsorships
+		);
+	}
+}

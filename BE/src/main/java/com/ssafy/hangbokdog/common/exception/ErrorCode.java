@@ -54,7 +54,13 @@ public enum ErrorCode {
 
     COMMENT_NOT_FOUND(13000, "존재하지 않는 댓글입니다."),
     COMMENT_NOT_AUTHOR(13001, "해당 댓글의 작성자가 아닙니다."),
-    COMMENT_ALREADY_DELETED(13002, "이미 삭제된 댓글입니다.");
+    COMMENT_ALREADY_DELETED(13002, "이미 삭제된 댓글입니다."),
+
+    FULL_SPONSORSHIP(14000, "이미 결연이 가득 찬 아이입니다."),
+    SPONSORSHIP_NOT_FOUND(14001, "존재하지 않는 결연입니다"),
+    SPONSORSHIP_NOT_AUTHOR(14002, "결연 신청자가 아닙니다."),
+    ALREADY_CANCELLED_SPONSORSHIP(14003, "이미 취소된 신청입니다."),
+    NOT_VALID_FOSTER_SPONSORSHIP(14004, "유효하지 않은 결연 요청입니다.");
 
     private final int code;
     private final String message;
