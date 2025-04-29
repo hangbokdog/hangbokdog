@@ -22,7 +22,6 @@ public class DonationAccountController {
 	public ResponseEntity<Void> applyTransactionsToDonationAccount(
 		@AdminMember Member member
 	) {
-		//List<DonationAccountReportResponse> response = donationAccountService.applyTransactionsToDonationAccount(centerId);
 		donationAccountService.applyTransactionsToDonationAccount();
 		return ResponseEntity.noContent().build();
 	}
