@@ -28,8 +28,8 @@ public class DogRepository {
 		return dogJpaRepository.save(dog);
 	}
 
-	public DogDetailResponse getDogDetail(Long id) {
-		return dogJpaRepositoryCustomImpl.getDogDetail(id);
+	public DogDetailResponse getDogDetail(Long id, Long centerId) {
+		return dogJpaRepositoryCustomImpl.getDogDetail(id, centerId);
 	}
 
 	public Optional<Dog> getDog(Long id) {

@@ -47,11 +47,11 @@ public class DogService {
 		return dogRepository.createDog(dog).getId();
 	}
 
-	public DogDetailResponse getDogDetail(Long dogId) {
+	public DogDetailResponse getDogDetail(Long dogId, Long centerId) {
 
 		checkDogExistence(dogId);
 
-		return dogRepository.getDogDetail(dogId);
+		return dogRepository.getDogDetail(dogId, centerId);
 	}
 
 	@Transactional
