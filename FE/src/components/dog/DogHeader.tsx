@@ -1,0 +1,38 @@
+import { FaRegComment, FaRegHeart } from "react-icons/fa";
+import { PiDogFill } from "react-icons/pi";
+
+interface DogHeaderProps {
+	name: string;
+	age: string;
+	likes: number;
+	comments: number;
+}
+
+export default function DogHeader({
+	name,
+	age,
+	likes,
+	comments,
+}: DogHeaderProps) {
+	return (
+		<div className="flex items-center justify-between">
+			<div className="flex gap-2 items-end">
+				<div className="flex gap-2 items-center">
+					<div className="flex">
+						<div className="size-6 flex rounded-full bg-[#FFE6B1] items-center justify-center">
+							<PiDogFill className="size-5 text-[#D46F1D]" />
+						</div>
+					</div>
+					<span className="text-xl font-bold">{name}</span>
+				</div>
+				<span className="font-medium text-blueGray">{age}</span>
+			</div>
+			<div className="flex gap-2 items-center">
+				<FaRegHeart className="size-5 text-blueGray" />
+				<span className="font-medium text-textGray">{likes}</span>
+				<FaRegComment className="size-5 text-blueGray" />
+				<span className="font-medium text-textGray">{comments}</span>
+			</div>
+		</div>
+	);
+}
