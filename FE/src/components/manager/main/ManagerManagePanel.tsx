@@ -3,7 +3,7 @@ import { FaToiletPaper } from "react-icons/fa";
 
 export default function ManagerManagePanel() {
 	return (
-		<div>
+		<div className="pb-2.5">
 			<div className="flex gap-2.5 items-center py-2">
 				<div className="flex rounded-full w-6 h-6 bg-female overflow-hidden justify-center items-center">
 					<FaToiletPaper className="w-6 h-6 text-orange-200" />
