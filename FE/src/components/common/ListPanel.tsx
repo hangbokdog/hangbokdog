@@ -20,7 +20,7 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 
 	return (
 		<div className="flex flex-col">
-			<div className="flex flex-1 flex-col items-center p-2 gap-3 rounded-lg bg-white">
+			<div className="flex flex-1 flex-col items-center p-2 gap-3 rounded-lg bg-white shadow-custom-sm">
 				<div className="relative flex w-full justify-around mb-2">
 					{tabs.map((tab) => (
 						<button
