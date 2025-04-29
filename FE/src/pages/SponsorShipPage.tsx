@@ -178,7 +178,7 @@ export default function SponsorShipPage() {
 	};
 
 	return (
-		<div className="scrollbar-hidden relative flex flex-col gap-3 pt-2.5 pb-2.5">
+		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5 pb-2.5">
 			<span ref={topRef} className="font-bold text-grayText">
 				여러분의 관심이 아이들을 살립니다.
 			</span>

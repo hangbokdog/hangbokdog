@@ -23,31 +23,31 @@ export default function ManagerRequestsPanel() {
 
 	const imboList = [
 		{
-			name: "홍길동",
 			kid: "두리",
+			requestCount: 2,
 			index: 0,
 		},
 		{
-			name: "홍길은",
 			kid: "보리",
+			requestCount: 5,
 			index: 1,
 		},
 	];
 
 	const adoptionList = [
 		{
-			name: "홍길동",
 			kid: "두리",
+			requestCount: 1,
 			index: 0,
 		},
 		{
-			name: "홍길은",
 			kid: "보리",
+			requestCount: 2,
 			index: 1,
 		},
 		{
-			name: "홍길금",
 			kid: "재백",
+			requestCount: 2,
 			index: 2,
 		},
 	];
@@ -55,7 +55,7 @@ export default function ManagerRequestsPanel() {
 	return (
 		<div>
 			<div className="flex gap-2.5 items-center py-2">
-				<div className="flex rounded-full w-6 h-6 bg-[var(--color-blue)] overflow-hidden">
+				<div className="flex rounded-full w-6 h-6 bg-blue overflow-hidden">
 					<img
 						src="/src/assets/images/hand.png"
 						className="w-6 h-6"

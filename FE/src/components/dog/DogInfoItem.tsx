@@ -1,0 +1,20 @@
+interface DogInfoItemProps {
+	label: string;
+	value: string;
+	className?: string;
+}
+
+export default function DogInfoItem({
+	label,
+	value,
+	className = "",
+}: DogInfoItemProps) {
+	return (
+		<div className={`flex gap-4 ${className}`}>
+			<span className="font-medium py-2 px-2 w-20">{label}</span>
+			<span className="flex-1 text-grayText font-semibold bg-background py-2 px-5 rounded-full">
+				{value}
+			</span>
+		</div>
+	);
+}

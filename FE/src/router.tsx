@@ -6,7 +6,10 @@ import DonationLayout from "./layouts/DonationLayout";
 import SponsorShipPage from "./pages/SponsorShipPage";
 import ManagerMainLayout from "./layouts/ManagerMainLayout";
 import ManagerMain from "./pages/manager/ManagerMain";
+import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
+import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -21,6 +24,10 @@ const router = createBrowserRouter([
 				element: <Login />,
 			},
 			{
+				path: "my",
+				element: <My />,
+			},
+			{
 				path: "donations",
 				element: <DonationLayout />,
 				children: [
@@ -31,8 +38,13 @@ const router = createBrowserRouter([
 				],
 			},
 			{
-				path: "my",
-				element: <My />,
+				path: "dogs",
+				children: [
+					{
+						path: ":id",
+						element: <DogDetailPage />,
+					},
+				],
 			},
 		],
 	},
@@ -43,6 +55,11 @@ const router = createBrowserRouter([
 			{
 				index: true,
 				element: <ManagerMain />,
+			},
+			{
+				path: "volunteer",
+				element: <ManagerVolunteer />,
+				handle: { showHeader: false },
 			},
 		],
 	},
