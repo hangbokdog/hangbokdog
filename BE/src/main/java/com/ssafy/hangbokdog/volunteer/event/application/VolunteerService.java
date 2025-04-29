@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
@@ -28,14 +29,18 @@ public class VolunteerService {
 
     private final VolunteerEventRepository eventRepository;
     private final VolunteerSlotRepository slotRepository;
-    private final VolunteerEventRepository volunteerEventRepository;
+    private final CenterRepository centerRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
-    public Long create(VolunteerCreateRequest request) {
+    public Long create(Long centerId, VolunteerCreateRequest request) {
+        centerRepository.findById(centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
+
         List<String> imageUrls = extractTopImageUrls(request.activityLog());
 
         VolunteerEvent event = VolunteerEvent.builder()
+                .centerId(centerId)
                 .title(request.title())
                 .content(request.content())
                 .imageUrls(imageUrls)
@@ -80,8 +85,8 @@ public class VolunteerService {
     }
 
     // TODO: 필요하다면 페이지네이션 추가
-    public List<VolunteerResponses> findAll() {
-        return eventRepository.findAllOpenEvents();
+    public List<VolunteerResponses> findAll(Long centerId) {
+        return eventRepository.findAllOpenEvents(centerId);
     }
 
     public VolunteerResponse findById(Long eventId) {

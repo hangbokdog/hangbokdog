@@ -21,8 +21,8 @@ public class VolunteerEventRepository {
         return volunteerEventJpaRepository.save(event);
     }
 
-    public List<VolunteerResponses> findAllOpenEvents() {
-        return volunteerEventJpaRepository.findAllOpenEvents();
+    public List<VolunteerResponses> findAllOpenEvents(Long centerId) {
+        return volunteerEventJpaRepository.findAllOpenEvents(centerId);
     }
 
     public Optional<VolunteerEvent> findById(Long eventId) {

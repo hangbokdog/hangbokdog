@@ -32,6 +32,9 @@ public class VolunteerEvent extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    private Long centerId;
+
+    @Column(nullable = false)
     private String title;
 
     @Column(nullable = false)
@@ -69,6 +72,7 @@ public class VolunteerEvent extends BaseEntity {
 
     @Builder
     public VolunteerEvent(
+            Long centerId,
             String title,
             String content,
             List<String> imageUrls,
@@ -80,6 +84,7 @@ public class VolunteerEvent extends BaseEntity {
             String precaution,
             String info
     ) {
+        this.centerId = centerId;
         this.title = title;
         this.content = content;
         this.imageUrls = imageUrls;

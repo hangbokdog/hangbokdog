@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -25,7 +26,13 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<VolunteerResponses> findAllOpenEvents() {
+    public List<VolunteerResponses> findAllOpenEvents(Long centerId) {
+        BooleanExpression openCondition = volunteerEvent.status.eq(VolunteerEventStatus.OPEN);
+        // centerId 가 넘어오면 추가 필터
+        BooleanExpression centerCondition = centerId != null
+                ? volunteerEvent.centerId.eq(centerId)
+                : null;
+
         return queryFactory
                 .select(Projections.constructor(
                         VolunteerResponses.class,
@@ -38,7 +45,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.endDate
                 ))
                 .from(volunteerEvent)
-                .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN))
+                .where(openCondition, centerCondition)
                 .fetch();
     }
 
@@ -103,7 +110,8 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 .join(volunteerEvent).on(volunteerSlot.eventId.eq(volunteerEvent.id))
                 .where(
                         volunteerEvent.id.eq(eventId)
-                                .and(volunteerSlot.volunteerDate.between(volunteerEvent.startDate, volunteerEvent.endDate))
+                                .and(volunteerSlot.volunteerDate
+                                        .between(volunteerEvent.startDate, volunteerEvent.endDate))
                 )
                 .groupBy(volunteerSlot.volunteerDate)
                 .orderBy(volunteerSlot.volunteerDate.asc())
