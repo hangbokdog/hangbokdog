@@ -4,6 +4,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import DonationLayout from "./layouts/DonationLayout";
 import SponsorShipPage from "./pages/SponsorShipPage";
+import ManagerMainLayout from "./layouts/ManagerMainLayout";
+import ManagerMain from "./pages/manager/ManagerMain";
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -26,6 +28,16 @@ const router = createBrowserRouter([
 						element: <SponsorShipPage />,
 					},
 				],
+			},
+		],
+	},
+	{
+		path: "/manager",
+		element: <ManagerMainLayout />,
+		children: [
+			{
+				index: true,
+				element: <ManagerMain />,
 			},
 		],
 	},
