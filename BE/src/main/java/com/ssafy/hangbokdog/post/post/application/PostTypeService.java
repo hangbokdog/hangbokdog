@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.post.post.domain.PostType;
@@ -12,6 +13,7 @@ import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostTypeJpaRepository;
 import com.ssafy.hangbokdog.post.post.dto.request.PostTypeRequest;
 import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,10 +23,14 @@ public class PostTypeService {
 
     private final PostTypeJpaRepository postTypeJpaRepository;
     private final PostRepository postRepository;
+    private final CenterRepository centerRepository;
 
-    public Long create(PostTypeRequest request) {
+    public Long create(Long centerId, PostTypeRequest request) {
+        centerRepository.findById(centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
+
         // TODO: 게시판 이름 중복 검사 로직 필요하면 추가
-        PostType newPostType = new PostType(request.name());
+        PostType newPostType = new PostType(request.name(), centerId);
 
         postTypeJpaRepository.save(newPostType);
 
@@ -32,8 +38,8 @@ public class PostTypeService {
     }
 
     // TODO: 게시판 페이지네이션 로직 필요하면 추가
-    public List<PostTypeResponse> findAll() {
-        List<PostType> postTypeList = postTypeJpaRepository.findAll();
+    public List<PostTypeResponse> findAll(Long centerId) {
+        List<PostType> postTypeList = postTypeJpaRepository.findAllByCenterId(centerId);
 
         return postTypeList.stream()
                 .map(PostTypeResponse::from)

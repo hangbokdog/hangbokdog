@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -33,8 +34,10 @@ public class PostTypeController {
     @PostMapping
     public ResponseEntity<Void> create(
             @AdminMember Member admin,
-            @RequestBody PostTypeRequest request) {
-        Long postTypeId = postTypeService.create(request);
+            @RequestParam Long centerId,
+            @RequestBody PostTypeRequest request
+    ) {
+        Long postTypeId = postTypeService.create(centerId, request);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/post-types/{id}")
                 .buildAndExpand(postTypeId)
@@ -45,9 +48,10 @@ public class PostTypeController {
 
     @GetMapping
     public ResponseEntity<List<PostTypeResponse>> getAll(
-            @AuthMember Member member
+            @AuthMember Member member,
+            @RequestParam(required = false) Long centerId
     ) {
-        List<PostTypeResponse> responses = postTypeService.findAll();
+        List<PostTypeResponse> responses = postTypeService.findAll(centerId);
         return ResponseEntity.ok(responses);
     }
 

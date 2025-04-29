@@ -25,8 +25,12 @@ public class PostType extends BaseEntity {
     @Column(name = "post_type_name", nullable = false, length = 50)
     private String name;
 
-    public PostType(String name) {
+    @Column(name = "center_id", nullable = false)
+    private Long centerId;
+
+    public PostType(String name, Long centerId) {
         this.name = name;
+        this.centerId = centerId;
     }
 
     public void update(String newName) {
