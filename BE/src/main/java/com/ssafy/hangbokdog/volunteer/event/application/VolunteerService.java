@@ -1,20 +1,16 @@
 package com.ssafy.hangbokdog.volunteer.event.application;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
-import com.ssafy.hangbokdog.volunteer.event.domain.SlotType;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
@@ -33,13 +29,18 @@ public class VolunteerService {
 
     private final VolunteerEventRepository eventRepository;
     private final VolunteerSlotRepository slotRepository;
+    private final CenterRepository centerRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
-    public Long create(VolunteerCreateRequest request) {
+    public Long create(Long centerId, VolunteerCreateRequest request) {
+        centerRepository.findById(centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
+
         List<String> imageUrls = extractTopImageUrls(request.activityLog());
 
         VolunteerEvent event = VolunteerEvent.builder()
+                .centerId(centerId)
                 .title(request.title())
                 .content(request.content())
                 .imageUrls(imageUrls)
@@ -55,23 +56,37 @@ public class VolunteerService {
         event = eventRepository.save(event);
         Long eventId = event.getId();
 
-        List<VolunteerSlot> slots = request.slots().stream()
-                .map(slotReq -> VolunteerSlot.builder()
-                        .eventId(eventId)
-                        .slotType(slotReq.slotType())
-                        .startTime(slotReq.startTime())
-                        .endTime(slotReq.endTime())
-                        .capacity(slotReq.capacity())
-                        .build())
+        // 날짜 리스트 만들기
+        LocalDate start = request.startDate();
+        LocalDate end   = request.endDate();
+        List<LocalDate> dates = start.datesUntil(end.plusDays(1))
                 .toList();
+
+        // 모든 날짜 × 슬롯 스케줄 매핑
+        List<VolunteerSlot> slots = new ArrayList<>();
+        for (LocalDate date : dates) {
+            for (SlotDto slot : request.slots()) {
+                slots.add(VolunteerSlot.builder()
+                        .eventId(eventId)
+                        .volunteerDate(date)
+                        .slotType(slot.slotType())
+                        .startTime(slot.startTime())
+                        .endTime(slot.endTime())
+                        .capacity(slot.capacity())
+                        .build()
+                );
+            }
+        }
+
+        // 4) 일괄 저장
         slotRepository.saveAll(slots);
 
         return eventId;
     }
 
     // TODO: 필요하다면 페이지네이션 추가
-    public List<VolunteerResponses> findAll() {
-        return eventRepository.findAllOpenEvents();
+    public List<VolunteerResponses> findAll(Long centerId) {
+        return eventRepository.findAllOpenEvents(centerId);
     }
 
     public VolunteerResponse findById(Long eventId) {
@@ -79,34 +94,8 @@ public class VolunteerService {
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
         List<SlotDto> slots = slotRepository.findByEventId(eventId);
-        int morningCapacity = slots.stream()
-                .filter(s -> s.slotType() == SlotType.MORNING)
-                .map(SlotDto::capacity)
-                .findFirst().orElse(0);
-        int afternoonCapacity = slots.stream()
-                .filter(s -> s.slotType() == SlotType.AFTERNOON)
-                .map(SlotDto::capacity)
-                .findFirst().orElse(0);
 
-        List<DailyApplicationInfo> raw = eventRepository.findAllDailyApplications(eventId);
-        Map<LocalDate, DailyApplicationInfo> rawMap = raw.stream()
-                .collect(Collectors.toMap(DailyApplicationInfo::date, Function.identity()));
-
-        // 4) 이벤트 기간 전체 날짜 리스트 생성
-        LocalDate start = event.getStartDate();
-        LocalDate end   = event.getEndDate();
-        long days = ChronoUnit.DAYS.between(start, end) + 1;
-        List<DailyApplicationInfo> applicationInfos =
-                Stream.iterate(start, d -> d.plusDays(1))
-                        .limit(days)
-                        .map(date -> rawMap.getOrDefault(date,
-                                new DailyApplicationInfo(
-                                        date,
-                                        new DailyApplicationInfo.SlotCapacity(0, morningCapacity),
-                                        new DailyApplicationInfo.SlotCapacity(0, afternoonCapacity)
-                                )
-                        ))
-                        .toList();
+        List<DailyApplicationInfo> applicationInfos = eventRepository.findDailyApplications(eventId);
 
         return VolunteerResponse.builder()
                 .id(event.getId())
@@ -118,6 +107,7 @@ public class VolunteerService {
                 .startDate(event.getStartDate())
                 .endDate(event.getEndDate())
                 .slots(slots)
+                .imageUrls(event.getImageUrls())
                 .activityLog(event.getActivityLog())
                 .applicationInfo(applicationInfos)
                 .precaution(event.getPrecaution())

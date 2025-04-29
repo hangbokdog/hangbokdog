@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.volunteer.event.domain;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import jakarta.persistence.Column;
@@ -30,6 +31,9 @@ public class VolunteerSlot extends BaseEntity {
     @Column(name = "volunteer_event_id", nullable = false)
     private Long eventId;
 
+    @Column(name = "volunteer_date", nullable = false)
+    private LocalDate volunteerDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "slot_type", nullable = false)
     private SlotType slotType;
@@ -43,18 +47,24 @@ public class VolunteerSlot extends BaseEntity {
     @Column(nullable = false)
     private int capacity;
 
+    @Column(name = "applicant_count", nullable = false)
+    private int appliedCount;
+
     @Builder
     public VolunteerSlot(
             Long eventId,
+            LocalDate volunteerDate,
             SlotType slotType,
             LocalTime startTime,
             LocalTime endTime,
             int capacity
     ) {
         this.eventId = eventId;
+        this.volunteerDate = volunteerDate;
         this.slotType = slotType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.capacity = capacity;
+        this.appliedCount = 0;
     }
 }

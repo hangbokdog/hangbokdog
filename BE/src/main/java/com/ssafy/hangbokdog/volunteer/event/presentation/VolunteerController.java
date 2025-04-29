@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,9 +38,10 @@ public class VolunteerController {
     @PostMapping
     public ResponseEntity<Void> create(
         @AdminMember Member admin,
+        @RequestParam Long centerId,
         @RequestBody VolunteerCreateRequest request
     ) {
-        Long eventId = volunteerService.create(request);
+        Long eventId = volunteerService.create(centerId, request);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/volunteers/{id}")
                 .buildAndExpand(eventId)
@@ -58,8 +60,11 @@ public class VolunteerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VolunteerResponses>> findAll(@AuthMember Member member) {
-        List<VolunteerResponses> responses = volunteerService.findAll();
+    public ResponseEntity<List<VolunteerResponses>> findAll(
+            @AuthMember Member member,
+            @RequestParam(required = false) Long centerId
+    ) {
+        List<VolunteerResponses> responses = volunteerService.findAll(centerId);
         return ResponseEntity.ok(responses);
     }
 

@@ -20,6 +20,7 @@ public record VolunteerResponse(
         LocalDate startDate,
         LocalDate endDate,
         List<SlotDto> slots,
+        List<String> imageUrls,
         String activityLog,
         List<DailyApplicationInfo> applicationInfo,
         String precaution,

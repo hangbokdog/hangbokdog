@@ -21,15 +21,15 @@ public class VolunteerEventRepository {
         return volunteerEventJpaRepository.save(event);
     }
 
-    public List<VolunteerResponses> findAllOpenEvents() {
-        return volunteerEventJpaRepository.findAllOpenEvents();
+    public List<VolunteerResponses> findAllOpenEvents(Long centerId) {
+        return volunteerEventJpaRepository.findAllOpenEvents(centerId);
     }
 
     public Optional<VolunteerEvent> findById(Long eventId) {
         return volunteerEventJpaRepository.findById(eventId);
     }
 
-    public List<DailyApplicationInfo> findAllDailyApplications(Long eventId) {
+    public List<DailyApplicationInfo> findDailyApplications(Long eventId) {
         return volunteerEventJpaRepository.findDailyApplications(eventId);
     }
 }
