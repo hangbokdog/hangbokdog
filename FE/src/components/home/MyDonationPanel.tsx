@@ -2,7 +2,7 @@ import donation_heart from "@/assets/images/donation_heart.png";
 
 export default function MyDonationPanel() {
 	return (
-		<div className="flex flex-col p-2.5 gap-1 rounded-3xl bg-white shadow-custom-xs items-center">
+		<div className="flex flex-col p-2.5 gap-1 rounded-[8px] bg-white shadow-custom-sm items-center">
 			<span className="font-semibold inline-flex items-center gap-1">
 				나의 후원
 				<img

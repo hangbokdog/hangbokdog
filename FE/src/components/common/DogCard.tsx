@@ -23,7 +23,7 @@ export default function DogCard({
 	return (
 		<Link to={`/dogs/${id}`}>
 			<div
-				className={`flex flex-col rounded-xl shadow-custom-sm ${bgColor}`}
+				className={`flex flex-col rounded-xl ${bgColor && "shadow-custom-sm"}`}
 			>
 				<div
 					className={`${bgColor ? "rounded-tl-xl rounded-tr-xl" : "rounded-xl"} overflow-hidden relative`}
