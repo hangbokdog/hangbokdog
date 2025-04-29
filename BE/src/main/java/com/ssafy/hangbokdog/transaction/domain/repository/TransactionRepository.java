@@ -1,9 +1,11 @@
 package com.ssafy.hangbokdog.transaction.domain.repository;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hangbokdog.center.dto.CenterKeyInfo;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.dto.TransactionInfo;
 
@@ -25,7 +27,7 @@ public class TransactionRepository {
         transactionJdbcRepository.batchInsert(transactions);
     }
 
-    public TransactionInfo getTransactionInfo(long lastUpdatedKey) {
-        return transactionJpaRepositoryCustom.getTransactionInfos(lastUpdatedKey);
+    public Map<Long, TransactionInfo> getTransactionInfoByCenter(List<CenterKeyInfo> centerKeyInfos) {
+        return transactionJpaRepositoryCustom.getTransactionInfosByCenter(centerKeyInfos);
     }
 }

@@ -1,12 +1,15 @@
 package com.ssafy.hangbokdog.center.application;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.domain.DonationAccount;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
+import com.ssafy.hangbokdog.center.dto.CenterKeyInfo;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountBalanceResponse;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountReportResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -31,26 +34,13 @@ public class DonationAccountService {
 	}
 
 	@Transactional
-	public DonationAccountReportResponse applyTransactionsToDonationAccount(Long centerId) {
-		DonationAccount donationAccount = getDonationAccount(centerId);
+	public void applyTransactionsToDonationAccount() {
 
-		//TODO: Center별로 DonationAccount 적용시키고 Transaction에 centerId 추가하기
-		long beforeBalance = donationAccount.getBalance();
-		long lastUpdatedKey = donationAccount.getLastUpdatedKey();
+		List<CenterKeyInfo> centerKeyInfos = donationAccountRepository.getCenterKeyInfos();
 
-		TransactionInfo transactionInfo = transactionRepository.getTransactionInfo(lastUpdatedKey);
+		Map<Long, TransactionInfo> transactionInfos = transactionRepository.getTransactionInfoByCenter(centerKeyInfos);
 
-		Long newBalance = donationAccount.updateBalance(
-			transactionInfo.sum(),
-			transactionInfo.newLastUpdatedKey()
-		);
-
-		return new DonationAccountReportResponse(
-			beforeBalance,
-			newBalance,
-			transactionInfo.count(),
-			LocalDateTime.now()
-		);
+		donationAccountRepository.bulkUpdateDonationAccounts(transactionInfos);
 	}
 
 	private DonationAccount getDonationAccount(Long centerId) {
