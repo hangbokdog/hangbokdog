@@ -34,6 +34,7 @@ public class DonationAccountService {
 	public DonationAccountReportResponse applyTransactionsToDonationAccount(Long centerId) {
 		DonationAccount donationAccount = getDonationAccount(centerId);
 
+		//TODO: Center별로 DonationAccount 적용시키고 Transaction에 centerId 추가하기
 		long beforeBalance = donationAccount.getBalance();
 		long lastUpdatedKey = donationAccount.getLastUpdatedKey();
 
