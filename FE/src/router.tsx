@@ -6,6 +6,8 @@ import DonationLayout from "./layouts/DonationLayout";
 import SponsorShipPage from "./pages/SponsorShipPage";
 import ManagerMainLayout from "./layouts/ManagerMainLayout";
 import ManagerMain from "./pages/manager/ManagerMain";
+import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
+
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -38,6 +40,11 @@ const router = createBrowserRouter([
 			{
 				index: true,
 				element: <ManagerMain />,
+			},
+			{
+				path: "volunteer",
+				element: <ManagerVolunteer />,
+				handle: { showHeader: false },
 			},
 		],
 	},
