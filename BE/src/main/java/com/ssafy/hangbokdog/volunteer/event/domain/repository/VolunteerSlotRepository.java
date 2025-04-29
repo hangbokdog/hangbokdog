@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
+import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 
 import lombok.RequiredArgsConstructor;
-
 
 @Repository
 @RequiredArgsConstructor
@@ -17,5 +17,9 @@ public class VolunteerSlotRepository {
 
     public void saveAll(List<VolunteerSlot> volunteerSlots) {
         volunteerSlotJpaRepository.saveAll(volunteerSlots);
+    }
+
+    public List<SlotDto> findByEventId(Long eventId) {
+        return volunteerSlotJpaRepository.findByEventId(eventId);
     }
 }

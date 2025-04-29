@@ -1,8 +1,11 @@
 package com.ssafy.hangbokdog.volunteer.event.presentation;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +15,13 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ssafy.hangbokdog.auth.annotation.AdminMember;
+import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponses;
 
 import lombok.RequiredArgsConstructor;
 
@@ -49,5 +55,20 @@ public class VolunteerController {
     ) {
         String imageUrl = s3Service.uploadFile(file);
         return ResponseEntity.ok(imageUrl);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<VolunteerResponses>> findAll(@AuthMember Member member) {
+        List<VolunteerResponses> responses = volunteerService.findAll();
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<VolunteerResponse> findById(
+            @AuthMember Member member,
+            @PathVariable Long eventId
+    ) {
+        VolunteerResponse response = volunteerService.findById(eventId);
+        return ResponseEntity.ok(response);
     }
 }

@@ -60,7 +60,9 @@ public enum ErrorCode {
     SPONSORSHIP_NOT_FOUND(14001, "존재하지 않는 결연입니다"),
     SPONSORSHIP_NOT_AUTHOR(14002, "결연 신청자가 아닙니다."),
     ALREADY_CANCELLED_SPONSORSHIP(14003, "이미 취소된 신청입니다."),
-    NOT_VALID_FOSTER_SPONSORSHIP(14004, "유효하지 않은 결연 요청입니다.");
+    NOT_VALID_FOSTER_SPONSORSHIP(14004, "유효하지 않은 결연 요청입니다."),
+
+    VOLUNTEER_NOT_FOUND(15000, "존재하지 않는 봉사입니다.");
 
     private final int code;
     private final String message;
