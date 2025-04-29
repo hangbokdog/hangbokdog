@@ -28,8 +28,7 @@ public class CenterService {
 
 		donationAccountRepository.createDonationAccount(DonationAccount.createDonationAccount(
 			centerId,
-			0L,
-			null
+			0L
 		));
 
 		return centerId;

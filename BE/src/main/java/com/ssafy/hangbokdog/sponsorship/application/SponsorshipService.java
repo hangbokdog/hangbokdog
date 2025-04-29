@@ -42,7 +42,6 @@ public class SponsorshipService {
 	private final SponsorshipHistoryRepository sponsorshipHistoryRepository;
 	private final MileageRepository mileageRepository;
 	private final DogRepository dogRepository;
-	private final TransactionJdbcRepository transactionJdbcRepository;
 	private final TransactionRepository transactionRepository;
 
 	public Long applySponsorship(Long memberId, Long dogId) {
@@ -173,7 +172,7 @@ public class SponsorshipService {
 		}
 
 		sponsorshipHistoryRepository.bulkInsertSponsorshipHistory(sponsorshipHistories);
-		transactionJdbcRepository.batchInsert(transactions);
+		transactionRepository.bulkInsert(transactions);
 
 		return new SponsorshipResponse(
 			succeededSponsorshipCount,
