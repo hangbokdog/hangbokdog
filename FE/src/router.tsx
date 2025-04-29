@@ -7,6 +7,7 @@ import SponsorShipPage from "./pages/SponsorShipPage";
 import ManagerMainLayout from "./layouts/ManagerMainLayout";
 import ManagerMain from "./pages/manager/ManagerMain";
 import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
+import DogDetailPage from "./pages/DogDetailPage";
 
 const router = createBrowserRouter([
 	{
@@ -28,6 +29,15 @@ const router = createBrowserRouter([
 					{
 						index: true,
 						element: <SponsorShipPage />,
+					},
+				],
+			},
+			{
+				path: "dogs",
+				children: [
+					{
+						path: ":id",
+						element: <DogDetailPage />,
 					},
 				],
 			},
