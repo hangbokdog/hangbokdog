@@ -15,11 +15,9 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class DonationHistoryJdbcRepository {
-	
 	private final JdbcTemplate jdbcTemplate;
-	
 	public void batchInsert(List<DonationHistory> donationHistories) {
-		String sql = "INSERT INTO donation_history (donor_id, amount, type, created_at, modified_at)" 
+		String sql = "INSERT INTO donation_history (donor_id, amount, type, created_at, modified_at)"
 			+ " VALUES (?, ?, ?, NOW(), NOW())";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
