@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.donation.domain.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -15,6 +17,7 @@ public class DonationHistoryRepository {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final DonationHistoryJpaRepository donationHistoryJpaRepository;
+    private final DonationHistoryJdbcRepository donationHistoryJdbcRepository;
 
     public DonationHistory save(DonationHistory donationHistory) {
         return donationHistoryJpaRepository.save(donationHistory);
@@ -23,5 +26,9 @@ public class DonationHistoryRepository {
     public PageInfo<DonationHistoryResponse> findAllByDonorId(Long id, String pageToken) {
         var data = donationHistoryJpaRepository.findAllByDonorId(id, pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, DonationHistoryResponse::id);
+    }
+
+    public void bulkInsert(List<DonationHistory> donationHistoryList) {
+        donationHistoryJdbcRepository.batchInsert(donationHistoryList);
     }
 }

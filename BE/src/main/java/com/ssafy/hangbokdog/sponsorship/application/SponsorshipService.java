@@ -13,6 +13,9 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.donation.domain.DonationHistory;
+import com.ssafy.hangbokdog.donation.domain.DonationType;
+import com.ssafy.hangbokdog.donation.domain.repository.DonationHistoryRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.Mileage;
 import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
@@ -29,9 +32,7 @@ import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.domain.TransactionType;
-import com.ssafy.hangbokdog.transaction.domain.repository.TransactionJdbcRepository;
 import com.ssafy.hangbokdog.transaction.domain.repository.TransactionRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -43,6 +44,7 @@ public class SponsorshipService {
 	private final MileageRepository mileageRepository;
 	private final DogRepository dogRepository;
 	private final TransactionRepository transactionRepository;
+	private final DonationHistoryRepository donationHistoryRepository;
 
 	public Long applySponsorship(Long memberId, Long dogId) {
 
@@ -100,6 +102,7 @@ public class SponsorshipService {
 		List<ActiveSponsorshipInfo> activeSponsorshipInfos = sponsorshipRepository.getActiveSponsorships();
 		List<SponsorshipHistory> sponsorshipHistories = new ArrayList<>();
 		List<Transaction> transactions = new ArrayList<>();
+		List<DonationHistory> donationHistories = new ArrayList<>();
 
 		Map<Long, Long> memberBalance = activeSponsorshipInfos
 			.stream()
@@ -147,12 +150,19 @@ public class SponsorshipService {
 					SponsorshipHistoryStatus.COMPLETED
 				);
 
+				DonationHistory donationHistory = DonationHistory.builder()
+					.donorId(info.memberId())
+					.amount(info.amount())
+					.type(DonationType.SPONSORSHIP)
+					.build();
+
 				Transaction transaction = Transaction.builder()
 					.type(TransactionType.SPONSORSHIP)
 					.amount(info.amount())
 					.memberId(info.memberId())
 					.build();
 
+				donationHistories.add(donationHistory);
 				transactions.add(transaction);
 				sponsorshipHistories.add(sponsorshipHistory);
 			}
@@ -171,6 +181,7 @@ public class SponsorshipService {
 			);
 		}
 
+		donationHistoryRepository.bulkInsert(donationHistories);
 		sponsorshipHistoryRepository.bulkInsertSponsorshipHistory(sponsorshipHistories);
 		transactionRepository.bulkInsert(transactions);
 
@@ -211,6 +222,13 @@ public class SponsorshipService {
 			.memberId(member.getId())
 			.build();
 
+		DonationHistory donationHistory = DonationHistory.builder()
+			.type(DonationType.SPONSORSHIP)
+			.amount(failedSponsorship.getAmount())
+			.donorId(member.getId())
+			.build();
+
+		donationHistoryRepository.save(donationHistory);
 		sponsorshipHistoryRepository.saveSponsorshipHistory(sponsorshipHistory);
 		transactionRepository.save(transaction);
 
