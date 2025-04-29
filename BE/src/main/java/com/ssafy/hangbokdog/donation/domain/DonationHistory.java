@@ -22,7 +22,7 @@ public class DonationHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "donation_id")
+    @Column(name = "donation_history_id")
     private Long id;
 
     @Column(name = "donor_id", nullable = false)
