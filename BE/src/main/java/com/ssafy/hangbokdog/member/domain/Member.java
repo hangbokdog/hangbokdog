@@ -1,6 +1,9 @@
 package com.ssafy.hangbokdog.member.domain;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,6 +27,15 @@ public class Member {
 
     @Column(name = "nick_name", nullable = false, length = 64, unique = true)
     private String nickName;
+
+    @Column(nullable = false, length = 64)
+    private String name;
+
+    @Column(nullable = false)
+    private LocalDate birth;
+
+    @Embedded
+    private Phone phone;
 
     @Column(name = "age", nullable = false)
     private int age;
