@@ -1,6 +1,5 @@
 package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 
-import static com.ssafy.hangbokdog.volunteer.application.domain.QVolunteerApplication.volunteerApplication;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
 
@@ -12,7 +11,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.event.domain.SlotType;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEventStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
@@ -46,60 +44,69 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
 
     @Override
     public List<DailyApplicationInfo> findDailyApplications(Long eventId) {
-        // 오전 승인 수 집계
-        NumberExpression<Integer> morningApproved = new CaseBuilder()
-                .when(volunteerSlot.slotType.eq(SlotType.MORNING)
-                        .and(volunteerApplication.status.eq(VolunteerApplicationStatus.APPROVED)))
-                .then(1L).otherwise(0L)
-                .sum().intValue();
+        // 오전 Slot 집계: id, appliedCount, capacity
+        NumberExpression<Long> morningSlotId = new CaseBuilder()
+                .when(volunteerSlot.slotType.eq(SlotType.MORNING))
+                .then(volunteerSlot.id)
+                .otherwise((Long) null)
+                .max();
 
-        // 오후 승인 수 집계
-        NumberExpression<Integer> afternoonApproved = new CaseBuilder()
-                .when(volunteerSlot.slotType.eq(SlotType.AFTERNOON)
-                        .and(volunteerApplication.status.eq(VolunteerApplicationStatus.APPROVED)))
-                .then(1L).otherwise(0L)
-                .sum().intValue();
+        NumberExpression<Integer> morningApplied = new CaseBuilder()
+                .when(volunteerSlot.slotType.eq(SlotType.MORNING))
+                .then(volunteerSlot.appliedCount)
+                .otherwise(0)
+                .sum()
+                .intValue();
 
-        // 오전 정원(capacity)
         NumberExpression<Integer> morningCap = new CaseBuilder()
                 .when(volunteerSlot.slotType.eq(SlotType.MORNING))
-                .then(volunteerSlot.capacity).otherwise(0)
+                .then(volunteerSlot.capacity)
+                .otherwise(0)
                 .sum();
 
-        // 오후 정원
+        // 오후 Slot 집계: id, appliedCount, capacity
+        NumberExpression<Long> afternoonSlotId = new CaseBuilder()
+                .when(volunteerSlot.slotType.eq(SlotType.AFTERNOON))
+                .then(volunteerSlot.id)
+                .otherwise((Long) null)
+                .max();
+
+        NumberExpression<Integer> afternoonApplied = new CaseBuilder()
+                .when(volunteerSlot.slotType.eq(SlotType.AFTERNOON))
+                .then(volunteerSlot.appliedCount)
+                .otherwise(0)
+                .sum()
+                .intValue();
+
         NumberExpression<Integer> afternoonCap = new CaseBuilder()
                 .when(volunteerSlot.slotType.eq(SlotType.AFTERNOON))
-                .then(volunteerSlot.capacity).otherwise(0)
+                .then(volunteerSlot.capacity)
+                .otherwise(0)
                 .sum();
 
         return queryFactory
                 .select(Projections.constructor(
                         DailyApplicationInfo.class,
-                        // (1) 날짜
-                        volunteerApplication.participationDate,
-                        // (2) 오전 SlotCapacity
+                        volunteerSlot.volunteerDate,                                     // (1) date
+                        // (2) morning SlotCapacity
                         Projections.constructor(
                                 DailyApplicationInfo.SlotCapacity.class,
-                                morningApproved,
-                                morningCap
+                                morningSlotId, morningApplied, morningCap
                         ),
-                        // (3) 오후 SlotCapacity
+                        // (3) afternoon SlotCapacity
                         Projections.constructor(
                                 DailyApplicationInfo.SlotCapacity.class,
-                                afternoonApproved,
-                                afternoonCap
+                                afternoonSlotId, afternoonApplied, afternoonCap
                         )
                 ))
-                .from(volunteerEvent)
-                .join(volunteerSlot).on(volunteerSlot.eventId.eq(volunteerEvent.id))
-                .leftJoin(volunteerApplication)
-                .on(volunteerApplication.volunteerId.eq(volunteerSlot.id)
-                        .and(volunteerApplication.status.eq(VolunteerApplicationStatus.APPROVED)))
-                .where(volunteerEvent.id.eq(eventId)
-                        .and(volunteerApplication.participationDate
-                                .between(volunteerEvent.startDate, volunteerEvent.endDate)))
-                .groupBy(volunteerApplication.participationDate)
-                .orderBy(volunteerApplication.participationDate.asc())
+                .from(volunteerSlot)
+                .join(volunteerEvent).on(volunteerSlot.eventId.eq(volunteerEvent.id))
+                .where(
+                        volunteerEvent.id.eq(eventId)
+                                .and(volunteerSlot.volunteerDate.between(volunteerEvent.startDate, volunteerEvent.endDate))
+                )
+                .groupBy(volunteerSlot.volunteerDate)
+                .orderBy(volunteerSlot.volunteerDate.asc())
                 .fetch();
     }
 }

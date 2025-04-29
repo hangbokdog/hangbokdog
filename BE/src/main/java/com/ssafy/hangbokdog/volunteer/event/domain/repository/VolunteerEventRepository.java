@@ -29,7 +29,7 @@ public class VolunteerEventRepository {
         return volunteerEventJpaRepository.findById(eventId);
     }
 
-    public List<DailyApplicationInfo> findAllDailyApplications(Long eventId) {
+    public List<DailyApplicationInfo> findDailyApplications(Long eventId) {
         return volunteerEventJpaRepository.findDailyApplications(eventId);
     }
 }

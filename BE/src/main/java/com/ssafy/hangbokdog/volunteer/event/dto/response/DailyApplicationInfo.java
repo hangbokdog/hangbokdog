@@ -8,6 +8,7 @@ public record DailyApplicationInfo(
         SlotCapacity afternoon
 ) {
     public record SlotCapacity(
+            Long volunteerSlotId,
             int appliedCount,  // 신청된 인원 수
             int capacity       // 총 정원
     ) {

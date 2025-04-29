@@ -28,6 +28,7 @@ public class VolunteerSlotQueryRepositoryImpl implements VolunteerSlotQueryRepos
                         volunteerSlot.endTime,
                         volunteerSlot.capacity
                 ))
+                .distinct()
                 .from(volunteerSlot)
                 .where(volunteerSlot.eventId.eq(eventId))
                 .fetch();
