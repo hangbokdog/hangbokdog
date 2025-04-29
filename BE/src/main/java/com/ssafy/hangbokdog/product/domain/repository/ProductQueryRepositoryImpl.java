@@ -20,7 +20,7 @@ public class ProductQueryRepositoryImpl implements ProductQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ProductResponse> findAll(String pageToken, int pageSize) {
+    public List<ProductResponse> findAll(Long centerId, String pageToken, int pageSize) {
         return queryFactory.select(
                 Projections.constructor(
                         ProductResponse.class,
@@ -29,7 +29,8 @@ public class ProductQueryRepositoryImpl implements ProductQueryRepository {
                         product.imageUrls,
                         product.price
                 )).from(product)
-                .where(isInRange(pageToken))
+                .where(product.centerId.eq(centerId)
+                    .and(isInRange(pageToken)))
                 .orderBy(product.id.desc())
                 .limit(pageSize + 1)
                 .fetch();

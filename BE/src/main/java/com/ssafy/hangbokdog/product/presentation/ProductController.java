@@ -39,10 +39,11 @@ public class ProductController {
     public ResponseEntity<Void> create(
             @AuthMember Member member,
             @RequestPart(value = "productCreateRequest") ProductCreateRequest productCreateRequest,
-            @RequestPart(value = "files") List<MultipartFile> files
+            @RequestPart(value = "files") List<MultipartFile> files,
+            @RequestParam(name = "centerId") Long centerId
     ) {
         List<String> imageUrls = s3Service.uploadFiles(files);
-        Long productId = productService.create(member, productCreateRequest, imageUrls);
+        Long productId = productService.create(member, productCreateRequest, imageUrls, centerId);
 
         return ResponseEntity.created(URI.create("/api/v1/products/" + productId)).build();
     }
@@ -50,9 +51,10 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<PageInfo<ProductResponse>> findAll(
             @AuthMember Member member,
+            @RequestParam(name = "centerId") Long centerId,
             @RequestParam(required = false, name = "pageToken") String pageToken
     ) {
-        return ResponseEntity.ok(productService.findAll(member, pageToken));
+        return ResponseEntity.ok(productService.findAll(member, centerId, pageToken));
     }
 
     @PatchMapping("/{productId}")
