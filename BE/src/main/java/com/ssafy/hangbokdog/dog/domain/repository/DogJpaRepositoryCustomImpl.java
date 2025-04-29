@@ -19,7 +19,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public DogDetailResponse getDogDetail(Long id) {
+	public DogDetailResponse getDogDetail(Long id, Long centerId) {
 		return queryFactory.select(
 			Projections.constructor(
 				DogDetailResponse.class,
@@ -41,7 +41,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			.from(dog)
 			.leftJoin(center)
 			.on(dog.centerId.eq(center.id))
-			.where(dog.id.eq(id))
+			.where(dog.id.eq(id)
+				.and(dog.centerId.eq(centerId)))
 			.fetchOne();
 	}
 

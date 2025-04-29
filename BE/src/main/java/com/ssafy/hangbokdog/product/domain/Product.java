@@ -60,13 +60,17 @@ public class Product extends BaseEntity {
     @Column(name = "deleted")
     private boolean deleted;
 
+    @Column(name = "center_id", nullable = false)
+    private Long centerId;
+
     @Builder
     public Product(
             Long sellerId,
             String name,
             int price,
             String description,
-            List<String> imageUrls
+            List<String> imageUrls,
+            Long centerId
     ) {
         this.sellerId = sellerId;
         this.name = name;
@@ -75,6 +79,7 @@ public class Product extends BaseEntity {
         this.imageUrls = imageUrls;
         this.status = ON_SALE;
         this.deleted = false;
+        this.centerId = centerId;
     }
 
     public boolean isSeller(Member seller) {

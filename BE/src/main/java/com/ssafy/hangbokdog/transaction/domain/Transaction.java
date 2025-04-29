@@ -35,14 +35,19 @@ public class Transaction extends BaseEntity {
     @Column(name = "amount", nullable = false)
     private int amount;
 
+    @Column(name = "center_id", nullable = false)
+    private Long centerId;
+
     @Builder
     public Transaction(
             Long memberId,
             TransactionType type,
-            int amount
+            int amount,
+            Long centerId
     ) {
         this.memberId = memberId;
         this.type = type;
         this.amount = amount;
+        this.centerId = centerId;
     }
 }

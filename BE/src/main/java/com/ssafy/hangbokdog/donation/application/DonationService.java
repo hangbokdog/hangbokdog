@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.donation.application;
 
-import static com.ssafy.hangbokdog.donation.domain.DonationType.DONATION;
+import static com.ssafy.hangbokdog.donation.domain.DonationType.*;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,35 +25,37 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DonationService {
 
-    private final DonationHistoryRepository donationHistoryRepository;
-    private final MileageRepository mileageRepository;
-    private final TransactionRepository transactionRepository;
+	private final DonationHistoryRepository donationHistoryRepository;
+	private final MileageRepository mileageRepository;
+	private final TransactionRepository transactionRepository;
 
-    @Transactional
-    public void donate(Member member, DonationRequest donationRequest) {
-        Mileage mileage = mileageRepository.findByMemberId(member.getId())
-                .orElseThrow(() -> new BadRequestException(ErrorCode.MILEAGE_NOT_FOUND));
+	@Transactional
+	public void donate(Member member, Long centerId, DonationRequest donationRequest) {
+		Mileage mileage = mileageRepository.findByMemberId(member.getId())
+			.orElseThrow(() -> new BadRequestException(ErrorCode.MILEAGE_NOT_FOUND));
 
-        mileage.use(donationRequest.amount());
+		mileage.use(donationRequest.amount());
 
-        donationHistoryRepository.save(
-                DonationHistory.builder()
-                        .donorId(member.getId())
-                        .amount(donationRequest.amount())
-                        .type(DONATION)
-                        .build()
-        );
+		donationHistoryRepository.save(
+			DonationHistory.builder()
+				.donorId(member.getId())
+				.amount(donationRequest.amount())
+				.type(DONATION)
+				.centerId(centerId)
+				.build()
+		);
 
-        transactionRepository.save(
-                Transaction.builder()
-                        .type(TransactionType.DONATION)
-                        .amount(donationRequest.amount())
-                        .memberId(member.getId())
-                        .build()
-        );
-    }
+		transactionRepository.save(
+			Transaction.builder()
+				.type(TransactionType.DONATION)
+				.amount(donationRequest.amount())
+				.memberId(member.getId())
+				.centerId(centerId)
+				.build()
+		);
+	}
 
-    public PageInfo<DonationHistoryResponse> findAll(Member member, String pageToken) {
-        return donationHistoryRepository.findAllByDonorId(member.getId(), pageToken);
-    }
+	public PageInfo<DonationHistoryResponse> findAll(Member member, Long centerId, String pageToken) {
+		return donationHistoryRepository.findAllByDonorId(member.getId(), centerId, pageToken);
+	}
 }

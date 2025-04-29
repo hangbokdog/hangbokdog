@@ -62,8 +62,11 @@ public class DogController {
 	}
 
 	@GetMapping("/{dogId}")
-	public ResponseEntity<DogDetailResponse> getDogDetail(@PathVariable(name = "dogId") Long dogId) {
-		return ResponseEntity.ok(dogService.getDogDetail(dogId));
+	public ResponseEntity<DogDetailResponse> getDogDetail(
+		@PathVariable(name = "dogId") Long dogId,
+		@RequestParam(name  = "centerId") Long centerId
+	) {
+		return ResponseEntity.ok(dogService.getDogDetail(dogId, centerId));
 	}
 
 	@PatchMapping("/{dogId}/star")
