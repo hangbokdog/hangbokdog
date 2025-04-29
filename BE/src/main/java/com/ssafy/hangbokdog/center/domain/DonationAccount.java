@@ -31,25 +31,28 @@ public class DonationAccount extends BaseEntity {
 	@Column(name = "last_updated_key")
 	private Long lastUpdatedKey;
 
+	public Long updateBalance(long amount, Long newLastUpdatedKey) {
+		this.balance += amount;
+		this.lastUpdatedKey = newLastUpdatedKey;
+		return balance;
+	}
+
 	public static DonationAccount createDonationAccount(
 		Long centerId,
-		Long balance,
-		Long lastUpdatedKey
+		Long balance
 	) {
 		return new DonationAccount(
 			centerId,
-			balance,
-			lastUpdatedKey
+			balance
 		);
 	}
 
 	private DonationAccount(
 		Long centerId,
-		Long balance,
-		Long lastUpdatedKey
+		Long balance
 	) {
 		this.centerId = centerId;
 		this.balance = balance;
-		this.lastUpdatedKey = lastUpdatedKey;
+		this.lastUpdatedKey = 0L;
 	}
 }
