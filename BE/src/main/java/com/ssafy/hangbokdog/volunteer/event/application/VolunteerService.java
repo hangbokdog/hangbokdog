@@ -110,6 +110,7 @@ public class VolunteerService {
 
         return VolunteerResponse.builder()
                 .id(event.getId())
+                .status(event.getStatus())
                 .title(event.getTitle())
                 .content(event.getContent())
                 .address(event.getAddress())
