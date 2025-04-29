@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.member.domain;
 
+import static com.ssafy.hangbokdog.member.domain.Grade.USER;
+
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,16 +31,16 @@ public class Member {
     @Column(name = "nick_name", nullable = false, length = 64, unique = true)
     private String nickName;
 
-    @Column(nullable = false, length = 64)
+    @Column(name = "name", length = 64)
     private String name;
 
-    @Column(nullable = false)
+    @Column(name = "birth")
     private LocalDate birth;
 
     @Embedded
     private Phone phone;
 
-    @Column(name = "age", nullable = false)
+    @Column(name = "age")
     private int age;
 
     @Column(name = "social_id", nullable = false, length = 32)
@@ -49,7 +52,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
 
-    @Column(name = "description", length = 1024, nullable = false)
+    @Column(name = "description", length = 1024)
     private String description;
 
     @Column(name = "deleted", nullable = false)
@@ -69,6 +72,34 @@ public class Member {
 
     @Column(name = "profile_image", nullable = false)
     private String profileImage;
+
+    @Builder
+    public Member(
+            Long id,
+            String nickName,
+            String name,
+            LocalDate birth,
+            String socialId,
+            String profileImage,
+            String email,
+            String description,
+            int age
+    ) {
+        this.id = id;
+        this.nickName = nickName;
+        this.name = name;
+        this.birth = birth;
+        this.socialId = socialId;
+        this.profileImage = profileImage;
+        this.email = email;
+        this.emergencyNotificationCheck = true;
+        this.darkModeCheck = false;
+        this.deleted = false;
+        this.status = MemberStatus.INACTIVE;
+        this.description = description;
+        this.grade = USER;
+        this.age = age;
+    }
 
     public boolean isAdmin() {
         return grade == Grade.ADMIN;

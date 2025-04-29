@@ -22,4 +22,12 @@ public class MemberRepository {
     public List<MemberSearchNicknameResponse> findByNickname(String nickname) {
         return memberJpaRepository.findByNickname(nickname);
     }
+
+    public Optional<Member> findBySocialId(String socialId) {
+        return memberJpaRepository.findBySocialId(socialId);
+    }
+
+    public Member save(Member member) {
+        return memberJpaRepository.save(member);
+    }
 }
