@@ -35,14 +35,19 @@ public class DonationHistory extends BaseEntity {
     @Column(name = "type", nullable = false)
     private DonationType type;
 
+    @Column(name = "center_id", nullable = false)
+    private Long centerId;
+
     @Builder
     public DonationHistory(
             Long donorId,
             int amount,
-            DonationType type
+            DonationType type,
+            Long centerId
     ) {
         this.donorId = donorId;
         this.amount = amount;
         this.type = type;
+        this.centerId = centerId;
     }
 }
