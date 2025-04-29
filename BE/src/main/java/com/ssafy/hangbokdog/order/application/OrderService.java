@@ -98,7 +98,7 @@ public class OrderService {
         );
 
         donationHistoryRepository.save(DonationHistory.builder()
-                .donorId(member.getId())
+                .donorId(product.getSellerId())
                 .amount(order.getAmount())
                 .type(PRODUCT_SALE)
                 .build()
