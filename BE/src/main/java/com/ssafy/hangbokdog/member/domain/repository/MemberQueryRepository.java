@@ -2,9 +2,9 @@ package com.ssafy.hangbokdog.member.domain.repository;
 
 import java.util.List;
 
-import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
+import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 public interface MemberQueryRepository {
 
-    List<MemberInfo> findByNickname(String nickname);
+    List<MemberSearchNicknameResponse> findByNickname(String nickname);
 }

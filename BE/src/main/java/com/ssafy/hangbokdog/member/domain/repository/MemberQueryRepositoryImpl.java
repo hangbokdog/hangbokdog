@@ -4,14 +4,13 @@ import static com.ssafy.hangbokdog.member.domain.QMember.member;
 
 import java.util.List;
 
-import com.querydsl.core.types.Projections;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
+import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
-
 
 @Repository
 @RequiredArgsConstructor
@@ -20,13 +19,16 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MemberInfo> findByNickname(String nickname) {
+    public List<MemberSearchNicknameResponse> findByNickname(String nickname) {
         return queryFactory
                 .select(Projections.constructor(
-                        MemberInfo.class,
+                        MemberSearchNicknameResponse.class,
                         member.id,
                         member.nickName,
-                        member.grade.stringValue(),
+                        member.name,
+                        member.phone,
+                        member.age,
+                        member.grade,
                         member.profileImage
                 ))
                 .from(member)

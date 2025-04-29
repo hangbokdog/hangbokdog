@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.member.domain.Member;
-import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
+import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ public class MemberRepository {
         return memberJpaRepository.findById(id);
     }
 
-    public List<MemberInfo> findByNickname(String nickname) {
+    public List<MemberSearchNicknameResponse> findByNickname(String nickname) {
         return memberJpaRepository.findByNickname(nickname);
     }
 }
