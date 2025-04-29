@@ -8,6 +8,8 @@ public record DonationHistoryResponse(
         Long id,
         int amount,
         DonationType donationType,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+		Long centerId,
+		String centerName
 ) {
 }
