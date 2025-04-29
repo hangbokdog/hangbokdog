@@ -6,6 +6,7 @@ import DonationLayout from "./layouts/DonationLayout";
 import SponsorShipPage from "./pages/SponsorShipPage";
 import ManagerMainLayout from "./layouts/ManagerMainLayout";
 import ManagerMain from "./pages/manager/ManagerMain";
+import My from "./pages/My";
 const router = createBrowserRouter([
 	{
 		path: "/",
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
 						element: <SponsorShipPage />,
 					},
 				],
+			},
+			{
+				path: "my",
+				element: <My />,
 			},
 		],
 	},
