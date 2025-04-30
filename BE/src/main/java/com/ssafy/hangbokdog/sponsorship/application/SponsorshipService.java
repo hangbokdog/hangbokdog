@@ -70,6 +70,7 @@ public class SponsorshipService {
 
 	@Transactional
 	public void cancelSponsorship(Long memberId, Long sponsorshipId) {
+		//TODO: 해당 센터 관리자인지 검증
 		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
 
@@ -155,12 +156,14 @@ public class SponsorshipService {
 					.donorId(info.memberId())
 					.amount(info.amount())
 					.type(DonationType.SPONSORSHIP)
+					.centerId(info.centerId())
 					.build();
 
 				Transaction transaction = Transaction.builder()
 					.type(TransactionType.SPONSORSHIP)
 					.amount(info.amount())
 					.memberId(info.memberId())
+					.centerId(info.centerId())
 					.build();
 
 				donationHistories.add(donationHistory);

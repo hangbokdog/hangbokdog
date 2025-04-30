@@ -23,8 +23,8 @@ public class DonationHistoryRepository {
         return donationHistoryJpaRepository.save(donationHistory);
     }
 
-    public PageInfo<DonationHistoryResponse> findAllByDonorId(Long id, String pageToken) {
-        var data = donationHistoryJpaRepository.findAllByDonorId(id, pageToken, DEFAULT_PAGE_SIZE);
+    public PageInfo<DonationHistoryResponse> findAllByDonorId(Long id, Long centerId, String pageToken) {
+        var data = donationHistoryJpaRepository.findAllByDonorId(id, centerId, pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, DonationHistoryResponse::id);
     }
 

@@ -51,7 +51,8 @@ public class SponsorshipJpaRepositoryCustomImpl implements SponsorshipJpaReposit
 				dog.name,
 				mileage.id,
 				mileage.balance,
-				sponsorship.amount
+				sponsorship.amount,
+				dog.centerId
 			))
 			.from(sponsorship)
 			.leftJoin(mileage)

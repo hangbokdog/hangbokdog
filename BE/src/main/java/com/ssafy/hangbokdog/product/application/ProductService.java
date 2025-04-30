@@ -29,7 +29,8 @@ public class ProductService {
     public Long create(
             Member member,
             ProductCreateRequest productCreateRequest,
-            List<String> imageUrls
+            List<String> imageUrls,
+            Long centerId
     ) {
         Product product = Product.builder()
                 .sellerId(member.getId())
@@ -37,6 +38,7 @@ public class ProductService {
                 .name(productCreateRequest.name())
                 .description(productCreateRequest.description())
                 .imageUrls(imageUrls)
+                .centerId(centerId)
                 .build();
 
         return productRepository.save(product).getId();
@@ -44,9 +46,10 @@ public class ProductService {
 
     public PageInfo<ProductResponse> findAll(
             Member member,
+            Long centerId,
             String pageToken
     ) {
-        return productRepository.findAll(pageToken);
+        return productRepository.findAll(centerId, pageToken);
     }
 
     @RedisLock(key = "'productId:' + #productId")

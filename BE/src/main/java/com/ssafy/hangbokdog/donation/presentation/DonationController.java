@@ -25,17 +25,19 @@ public class DonationController {
     @PostMapping("/api/v1/donations")
     public ResponseEntity<Void> donate(
             @AuthMember Member member,
+            @RequestParam(name = "centerId") Long centerId,
             @RequestBody DonationRequest donationRequest
     ) {
-        donationService.donate(member, donationRequest);
+        donationService.donate(member, centerId, donationRequest);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/api/v1/donations")
     public ResponseEntity<PageInfo<DonationHistoryResponse>> findAll(
             @AuthMember Member member,
+            @RequestParam(required = false, name = "centerId") Long centerId,
             @RequestParam(required = false, name = "pageToken") String pageToken
     ) {
-        return ResponseEntity.ok(donationService.findAll(member, pageToken));
+        return ResponseEntity.ok(donationService.findAll(member, centerId, pageToken));
     }
 }

@@ -23,6 +23,14 @@ public class MemberRepository {
         return memberJpaRepository.findByNickname(nickname);
     }
 
+    public Optional<Member> findBySocialId(String socialId) {
+        return memberJpaRepository.findBySocialId(socialId);
+    }
+
+    public Member save(Member member) {
+        return memberJpaRepository.save(member);
+    }
+
     public List<Member> findAllByIds(List<Long> memberIds) {
         return memberJpaRepository.findAllById(memberIds);
     }

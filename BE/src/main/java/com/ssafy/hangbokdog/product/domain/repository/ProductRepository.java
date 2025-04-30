@@ -22,8 +22,8 @@ public class ProductRepository {
         return productJpaRepository.save(product);
     }
 
-    public PageInfo<ProductResponse> findAll(String pageToken) {
-        var data = productJpaRepository.findAll(pageToken, DEFAULT_PAGE_SIZE);
+    public PageInfo<ProductResponse> findAll(Long centerId, String pageToken) {
+        var data = productJpaRepository.findAll(centerId, pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, ProductResponse::id);
     }
 
