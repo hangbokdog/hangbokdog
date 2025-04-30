@@ -60,11 +60,11 @@ public class SponsorshipController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PatchMapping("/sponsorship/proceed")
-	public ResponseEntity<SponsorshipResponse> proceedSponsorship() {
-		SponsorshipResponse response = sponsorshipService.proceedSponsorship();
-		return ResponseEntity.ok().body(response);
-	}
+	// @PatchMapping("/sponsorship/proceed")
+	// public ResponseEntity<SponsorshipResponse> proceedSponsorship() {
+	// 	SponsorshipResponse response = sponsorshipService.proceedSponsorship();
+	// 	return ResponseEntity.ok().body(response);
+	// }
 
 	@GetMapping("/sponsorship/failed")
 	public ResponseEntity<List<FailedSponsorshipResponse>> getFailedSponsorships(
