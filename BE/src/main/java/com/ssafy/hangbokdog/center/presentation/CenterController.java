@@ -4,7 +4,6 @@ import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AdminMember;
+import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.application.CenterService;
 import com.ssafy.hangbokdog.center.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
@@ -44,5 +44,14 @@ public class CenterController {
 		@PathVariable Long centerId
 	) {
 		return ResponseEntity.ok().body(donationAccountService.getBalance(centerId));
+	}
+
+	@PostMapping("/{centerId}/join-request")
+	public ResponseEntity<Void> join(
+			@AuthMember Member member,
+			@PathVariable Long centerId
+	) {
+		centerService.join(member, centerId);
+		return ResponseEntity.noContent().build();
 	}
 }

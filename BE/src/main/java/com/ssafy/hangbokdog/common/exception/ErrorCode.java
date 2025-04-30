@@ -68,7 +68,11 @@ public enum ErrorCode {
     DUPLICATE_APPLICATION(15003, "이미 동일한 날짜·슬롯에 신청했습니다"),
     SLOT_FULL(15004, "해당 봉사 슬롯의 정원이 가득 찼습니다."),
 
-    CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다.");
+    CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다."),
+    ALREADY_JOIN_CENTER(16001, "이미 가입한 센터입니다."),
+    ALREADY_CENTER_JOIN_REQUEST(16002, "이미 센터에 가입 요청을 했습니다."),
+    CENTER_JOIN_REQUEST_NOT_FOUND(16003, "센티 지원 이력이 없습니다."),
+    CENTER_MEMBER_NOT_FOUND(16004, "센터에 가입한 유저가 아닙니다.");
 
     private final int code;
     private final String message;
