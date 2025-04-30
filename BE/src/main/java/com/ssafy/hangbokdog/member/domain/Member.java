@@ -1,9 +1,9 @@
 package com.ssafy.hangbokdog.member.domain;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -76,5 +76,9 @@ public class Member {
 
     public boolean isManager() {
         return grade == Grade.MANAGER;
+    }
+
+    public boolean isAdult() {
+        return Period.between(birth, LocalDate.now()).getYears() >= 20;
     }
 }

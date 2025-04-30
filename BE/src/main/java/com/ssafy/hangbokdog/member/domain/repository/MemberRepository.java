@@ -22,4 +22,8 @@ public class MemberRepository {
     public List<MemberSearchNicknameResponse> findByNickname(String nickname) {
         return memberJpaRepository.findByNickname(nickname);
     }
+
+    public List<Member> findAllByIds(List<Long> memberIds) {
+        return memberJpaRepository.findAllById(memberIds);
+    }
 }

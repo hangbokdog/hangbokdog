@@ -63,6 +63,11 @@ public enum ErrorCode {
     NOT_VALID_FOSTER_SPONSORSHIP(14004, "유효하지 않은 결연 요청입니다."),
 
     VOLUNTEER_NOT_FOUND(15000, "존재하지 않는 봉사입니다."),
+    VOLUNTEER_UNDERAGE(15001, "만 20세 이상만 신청할 수 있습니다."),
+    SLOT_NOT_FOUND(15002, "존재하지 않는 봉사 슬롯입니다."),
+    DUPLICATE_APPLICATION(15003, "이미 동일한 날짜·슬롯에 신청했습니다"),
+    SLOT_FULL(15004, "해당 봉사 슬롯의 정원이 가득 찼습니다."),
+
     CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다.");
 
     private final int code;
