@@ -5,12 +5,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.application.LoginService;
 import com.ssafy.hangbokdog.auth.domain.request.LoginRequest;
@@ -19,7 +19,7 @@ import com.ssafy.hangbokdog.auth.domain.response.AccessTokenResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
-@Service
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class LoginController {
