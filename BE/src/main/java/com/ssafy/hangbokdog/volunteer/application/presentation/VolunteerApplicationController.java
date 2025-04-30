@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,13 +64,13 @@ public class VolunteerApplicationController {
     }
 
     // 유저: 자신의 PENDING 신청 취소
-    @PatchMapping("/{eventId}/applications/{applicationId}/cancel")
+    @DeleteMapping("/{eventId}/applications/{applicationId}/cancel")
     public ResponseEntity<Void> cancel(
             @AuthMember Member member,
             @PathVariable Long eventId,
             @PathVariable Long applicationId
     ) {
-        volunteerApplicationService.updateStatus(applicationId, null);
+        volunteerApplicationService.delete(applicationId);
         return ResponseEntity.noContent().build();
     }
 }

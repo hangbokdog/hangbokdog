@@ -35,4 +35,8 @@ public class VolunteerApplicationRepository {
     public Optional<VolunteerApplication> findById(Long applicationId) {
         return volunteerApplicationJpaRepository.findById(applicationId);
     }
+
+    public void delete(VolunteerApplication application) {
+        volunteerApplicationJpaRepository.delete(application);
+    }
 }

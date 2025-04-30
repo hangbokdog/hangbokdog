@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
-import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
@@ -107,6 +105,7 @@ public class VolunteerApplicationService {
         LocalDate weekStart = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate weekEnd   = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 
+        // TODO: PENDING, APPROVED인 것들만 보여야 할까?
         return volunteerApplicationRepository.findByMemberIdAndParticipationDateBetween(
                 member.getId(),
                 weekStart,
@@ -126,11 +125,29 @@ public class VolunteerApplicationService {
         LocalDate today = LocalDate.now();
         LocalDate eventDate = slot.getVolunteerDate();
         if (eventDate.isBefore(today)) {
-            throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_STATUS_CHANGE_NOT_ALLOWED);
+            throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_PROCESSING_FAILED);
         }
 
-        VolunteerApplicationStatus newStatus = Objects.isNull(request.status())
-                ? VolunteerApplicationStatus.CANCELLED : request.status();
-        application.updateStatus(newStatus);
+        application.updateStatus(request.status());
+    }
+
+    @Transactional
+    public void delete(Long applicationId) {
+        VolunteerApplication application = volunteerApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_NOT_FOUND));
+
+        VolunteerSlot slot = volunteerSlotRepository.findById(application.getVolunteerId())
+                .orElseThrow(() -> new BadRequestException(ErrorCode.SLOT_NOT_FOUND));
+
+        // 신청(이벤트) 날짜가 지났으면 수정 불가
+        LocalDate today = LocalDate.now();
+        LocalDate eventDate = slot.getVolunteerDate();
+        if (eventDate.isBefore(today)) {
+            throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_PROCESSING_FAILED);
+        }
+
+        volunteerApplicationRepository.delete(application);
+
+        slot.decreaseAppliedCount();
     }
 }

@@ -68,7 +68,7 @@ public enum ErrorCode {
     DUPLICATE_APPLICATION(15003, "이미 동일한 날짜·슬롯에 신청했습니다"),
     SLOT_FULL(15004, "해당 봉사 슬롯의 정원이 가득 찼습니다."),
     VOLUNTEER_APPLICATION_NOT_FOUND(15005, "존재하지 않는 봉사 신청입니다."),
-    VOLUNTEER_APPLICATION_STATUS_CHANGE_NOT_ALLOWED(15006, "봉사 신청은 상태 변경에 실패했습니다."),
+    VOLUNTEER_APPLICATION_PROCESSING_FAILED(15006, "신청한 봉사에 대한 처리를 실패했습니다."),
 
     CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다.");
 
