@@ -201,7 +201,7 @@ export default function SponsorShipPage() {
 					/>
 				)}
 			</div>
-			<div className="max-w-[382px] grid grid-cols-3 gap-2.5">
+			<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
 				{dummyDogs.map((dog) => (
 					<DogCard
 						key={dog.id}

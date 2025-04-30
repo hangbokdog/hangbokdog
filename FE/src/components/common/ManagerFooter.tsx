@@ -8,8 +8,18 @@ export default function ManagerFooter() {
 
 	const footerItems = [
 		{ path: "/manager", icon: MdHome, size: 24, label: "메인" },
-		{ path: "/manager/kids-manage", icon: FaDog, size: 20, label: "아이들 관리" },
-		{ path: "/manager/add-kid", icon: FaPlusCircle, size: 20, label: "등록" },
+		{
+			path: "/manager/kids-manage",
+			icon: FaDog,
+			size: 20,
+			label: "아이들 관리",
+		},
+		{
+			path: "/manager/add-kid",
+			icon: FaPlusCircle,
+			size: 20,
+			label: "등록",
+		},
 		{
 			path: "/manager/volunteer",
 			icon: FaToiletPaper,
@@ -19,7 +29,7 @@ export default function ManagerFooter() {
 	];
 
 	return (
-		<footer className="fixed min-w-[402px] h-14 bottom-0 z-10 px-8 flex items-center justify-between bg-background">
+		<footer className="fixed w-full max-w-[440px] h-14 bottom-0 z-10 px-8 flex items-center justify-between bg-background">
 			{footerItems.map((item) => (
 				<ManagerFooterItem
 					key={item.path}

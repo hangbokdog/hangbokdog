@@ -22,7 +22,7 @@ export default function ScrollButton({ targetRef }: ScrollButtonProps) {
 				fixed
 				bg-primary hover:bg-gray-700
 				bottom-16 
-				right-[calc((100vw-402px)/2+10px)]
+				right-[calc((100vw-440px)/2+10px)]
 				size-8
                 rounded-full 
                 flex items-center justify-center
