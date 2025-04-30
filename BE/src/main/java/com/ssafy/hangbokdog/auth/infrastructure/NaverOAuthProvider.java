@@ -55,12 +55,12 @@ public class NaverOAuthProvider {
     }
 
     public NaverMemberInfo getMemberInfo(String naverAccessToken) {
+        log.info("access_token : {}", naverAccessToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(naverAccessToken);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         Map<String, Boolean> params = new HashMap<>();
-        params.put("secure_resource", true);
 
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(headers);
 
@@ -73,6 +73,7 @@ public class NaverOAuthProvider {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("response : {}", response.getBody().toString());
             return response.getBody();
         }
 

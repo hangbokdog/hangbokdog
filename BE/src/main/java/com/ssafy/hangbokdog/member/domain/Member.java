@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.member.domain;
 
-import static com.ssafy.hangbokdog.member.domain.Grade.USER;
-
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -37,13 +35,13 @@ public class Member {
     @Column(name = "birth")
     private LocalDate birth;
 
-    @Column(nullable = false)
+    @Column(name = "phone")
     private String phone;
 
     @Column(name = "age")
     private int age;
 
-    @Column(name = "social_id", nullable = false, length = 32)
+    @Column(name = "social_id", nullable = false, length = 256)
     private String socialId;
 
     @Enumerated(EnumType.STRING)
@@ -97,7 +95,7 @@ public class Member {
         this.deleted = false;
         this.status = MemberStatus.INACTIVE;
         this.description = description;
-        this.grade = USER;
+        this.grade = Grade.GUEST;
         this.age = age;
     }
 
@@ -107,6 +105,25 @@ public class Member {
 
     public boolean isManager() {
         return grade == Grade.MANAGER;
+    }
+
+    public boolean isGuest() {
+        return grade == Grade.GUEST;
+    }
+
+    public void signUp(
+            String name,
+            String nickname,
+            LocalDate birth,
+            int age,
+            String description
+    ) {
+        this.name = name;
+        this.nickName = nickname;
+        this.birth = birth;
+        this.age = age;
+        this.description = description;
+        this.grade = Grade.USER;
     }
 
     public boolean isAdult() {

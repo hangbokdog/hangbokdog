@@ -31,6 +31,10 @@ public class MemberRepository {
         return memberJpaRepository.save(member);
     }
 
+    public boolean existsByNickName(String nickName) {
+        return memberJpaRepository.existsByNickName(nickName);
+    }
+
     public List<Member> findAllByIds(List<Long> memberIds) {
         return memberJpaRepository.findAllById(memberIds);
     }
