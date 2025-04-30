@@ -24,8 +24,8 @@ public class NaverMemberInfo {
         return response.email;
     }
 
-    public String getNickname() {
-        return response.nickname;
+    public String getName() {
+        return response.name;
     }
 
     public String getProfileImageUrl() {
@@ -36,8 +36,8 @@ public class NaverMemberInfo {
         @JsonProperty("email")
         private String email;
 
-        @JsonProperty("nickname")
-        private String nickname;
+        @JsonProperty("name")
+        private String name;
 
         @JsonProperty("profile_image")
         private String profileImage;

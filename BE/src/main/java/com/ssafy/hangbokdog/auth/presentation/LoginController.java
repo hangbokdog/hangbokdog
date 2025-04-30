@@ -54,7 +54,8 @@ public class LoginController {
         return ResponseEntity.ok(
                 LoginResponse.of(
                         loginResponse.accessToken(),
-                        loginResponse.isRegistered()
+                        loginResponse.isRegistered(),
+                        loginResponse.name()
                 )
         );
     }
