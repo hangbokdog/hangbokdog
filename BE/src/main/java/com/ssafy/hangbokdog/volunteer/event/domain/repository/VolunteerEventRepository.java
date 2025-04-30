@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponses;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,7 +21,7 @@ public class VolunteerEventRepository {
         return volunteerEventJpaRepository.save(event);
     }
 
-    public List<VolunteerResponses> findAllOpenEvents(Long centerId) {
+    public List<VolunteerInfo> findAllOpenEvents(Long centerId) {
         return volunteerEventJpaRepository.findAllOpenEvents(centerId);
     }
 

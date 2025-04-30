@@ -18,8 +18,8 @@ import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepos
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponses;
 
 import lombok.RequiredArgsConstructor;
 
@@ -85,7 +85,7 @@ public class VolunteerService {
     }
 
     // TODO: 필요하다면 페이지네이션 추가
-    public List<VolunteerResponses> findAll(Long centerId) {
+    public List<VolunteerInfo> findAll(Long centerId) {
         return eventRepository.findAllOpenEvents(centerId);
     }
 

@@ -1,6 +1,8 @@
 package com.ssafy.hangbokdog.volunteer.application.application;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -14,6 +16,7 @@ import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
@@ -93,5 +96,17 @@ public class VolunteerApplicationService {
 
         // 3) 일괄 저장
         volunteerApplicationRepository.saveAll(toSave);
+    }
+
+    public List<WeeklyApplicationResponse> getWeeklyApplications(Member member, LocalDate date) {
+        // 1) 이번 주 일요일 ~ 토요일 계산
+        LocalDate weekStart = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate weekEnd   = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+        return volunteerApplicationRepository.findByMemberIdAndParticipationDateBetween(
+                member.getId(),
+                weekStart,
+                weekEnd
+        );
     }
 }
