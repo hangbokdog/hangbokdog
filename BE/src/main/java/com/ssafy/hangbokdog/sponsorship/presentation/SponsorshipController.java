@@ -19,7 +19,6 @@ import com.ssafy.hangbokdog.sponsorship.application.SponsorshipService;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
-import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,15 +32,16 @@ public class SponsorshipController {
 	@PostMapping("/dogs/{dogId}/apply-sponsor")
 	public ResponseEntity<Void> applySponsorship(
 		@AuthMember Member member,
-		@PathVariable Long dogId
+		@PathVariable Long dogId,
+		@RequestParam Long centerId
 	) {
-		Long sponsorshipId = sponsorshipService.applySponsorship(member.getId(), dogId);
+		Long sponsorshipId = sponsorshipService.applySponsorship(member.getId(), dogId, centerId);
 
 		return ResponseEntity.created(URI.create("/api/v1/dogs/" + sponsorshipId)).build();
 	}
 
 	@PatchMapping("/sponsorship/{sponsorshipId}")
-	public ResponseEntity<Void> updateSponsorship(
+	public ResponseEntity<Void> cancelSponsorship(
 		@AuthMember Member member,
 		@PathVariable(name = "sponsorshipId") Long sponsorshipId
 	) {
@@ -51,20 +51,15 @@ public class SponsorshipController {
 
 	@PatchMapping("/sponsorship/management/{sponsorshipId}")
 	public ResponseEntity<Void> manageSponsorship(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@PathVariable Long sponsorshipId,
-		@RequestParam SponsorShipStatus request
+		@RequestParam SponsorShipStatus request,
+		@RequestParam Long centerId
 	) {
-		sponsorshipService.manageSponsorship(sponsorshipId, request);
+		sponsorshipService.manageSponsorship(member.getId(), centerId, sponsorshipId, request);
 
 		return ResponseEntity.noContent().build();
 	}
-
-	// @PatchMapping("/sponsorship/proceed")
-	// public ResponseEntity<SponsorshipResponse> proceedSponsorship() {
-	// 	SponsorshipResponse response = sponsorshipService.proceedSponsorship();
-	// 	return ResponseEntity.ok().body(response);
-	// }
 
 	@GetMapping("/sponsorship/failed")
 	public ResponseEntity<List<FailedSponsorshipResponse>> getFailedSponsorships(

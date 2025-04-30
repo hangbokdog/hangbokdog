@@ -1,17 +1,20 @@
 package com.ssafy.hangbokdog.center.application;
 
-import java.time.LocalDateTime;
+import static com.ssafy.hangbokdog.center.domain.QDonationAccount.*;
+
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterGrade;
+import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.DonationAccount;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
 import com.ssafy.hangbokdog.center.dto.CenterKeyInfo;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountBalanceResponse;
-import com.ssafy.hangbokdog.center.dto.response.DonationAccountReportResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.transaction.domain.repository.TransactionRepository;
@@ -25,8 +28,16 @@ public class DonationAccountService {
 
 	private final DonationAccountRepository donationAccountRepository;
 	private final TransactionRepository transactionRepository;
+	private final CenterMemberRepository centerMemberRepository;
 
-	public DonationAccountBalanceResponse getBalance(Long centerId) {
+	public DonationAccountBalanceResponse getBalance(Long memberId, Long centerId) {
+
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
 
 		DonationAccount donationAccount = getDonationAccount(centerId);
 

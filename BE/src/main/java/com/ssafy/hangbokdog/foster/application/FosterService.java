@@ -6,13 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.Dog;
@@ -38,11 +39,15 @@ public class FosterService {
 	private final FosterRepository fosterRepository;
 	private final DogRepository dogRepository;
 	private final PostRepository postRepository;
+	private final CenterMemberRepository centerMemberRepository;
 
 	public Long applyFoster(
+			Long centerId,
 		Long memberId,
 		Long dogId
 	) {
+		CenterMember centerMember = checkCenterMember(centerId, memberId);
+
 		if (fosterRepository.checkFosterExistByMemberIdAndDogId(memberId, dogId)) {
 			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_EXISTS);
 		}
@@ -93,9 +98,17 @@ public class FosterService {
 
 	@Transactional
 	public void decideFosterApplication(
+			Long memberId,
+		Long centerId,
 		Long fosterId,
 		FosterStatus request
 	) {
+		CenterMember centerMember = checkCenterMember(centerId, memberId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
 		Foster foster = getFosterById(fosterId);
 
 		Dog dog = dogRepository.getDog(foster.getDogId())
@@ -148,7 +161,18 @@ public class FosterService {
 		return fosterRepository.findMyFosterApplications(memberId);
 	}
 
-	public List<FosterDiaryCheckResponse> checkFosterDiaries() {
+	public List<FosterDiaryCheckResponse> checkFosterDiaries(
+			Long memberId,
+			Long centerId
+	) {
+
+		CenterMember centerMember = checkCenterMember(centerId, memberId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+
 		LocalDateTime endDate = LocalDateTime.now();
 		LocalDateTime startDate = endDate.minusDays(7);
 
@@ -198,6 +222,10 @@ public class FosterService {
 			.collect(Collectors.toList());
 	}
 
+	private CenterMember checkCenterMember(Long centerId, Long memberId) {
+		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+	}
 
 	private Foster getFosterById(Long fosterId) {
 		return fosterRepository.findFosterById(fosterId)

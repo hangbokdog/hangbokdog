@@ -3,6 +3,9 @@ package com.ssafy.hangbokdog.dog.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterGrade;
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -23,11 +26,20 @@ import lombok.RequiredArgsConstructor;
 public class DogService {
 
 	private final DogRepository dogRepository;
+	private final CenterMemberRepository centerMemberRepository;
 
 	public Long createDog(
+		Long memberId,
 		DogCreateRequest request,
 		String imageUrl
 	) {
+
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, request.centerId())
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
 
 		Dog dog = Dog.createDog(
 			request.status(),
@@ -55,7 +67,14 @@ public class DogService {
 	}
 
 	@Transactional
-	public void dogToStar(Long dogId) {
+	public void dogToStar(Long dogId, Long memberId, Long centerId) {
+
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
 
 		Dog dog = checkDogExistence(dogId);
 
@@ -64,10 +83,19 @@ public class DogService {
 
 	@Transactional
 	public void updateDog(
+		Long memberId,
+		Long centerId,
 		DogUpdateRequest request,
 		String imageUrl,
 		Long dogId
 	) {
+
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
 
 		Dog dog = checkDogExistence(dogId);
 
@@ -85,6 +113,8 @@ public class DogService {
 	}
 
 	public Long addMedicalHistory(
+		Long memberId,
+		Long centerId,
 		MedicalHistoryRequest request,
 		Long dogId
 	) {
@@ -107,8 +137,20 @@ public class DogService {
 		return dogRepository.findAllMedicalHistory(pageToken, dogId);
 	}
 
-	public void deleteMedicalHistory(Long dogId) {
-		dogRepository.deleteMedicalHistory(dogId);
+	public void deleteMedicalHistory(
+		Long memberId,
+		Long centerId,
+		Long medicalHistoryId
+	) {
+
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		dogRepository.deleteMedicalHistory(medicalHistoryId);
 	}
 
 	public DogCenterInfo getDogCenterInfo(Long dogId) {

@@ -34,9 +34,11 @@ public class FosterController {
 	@PostMapping("/dogs/{dogId}/fosters")
 	public ResponseEntity<Void> applyFoster(
 		@AuthMember Member member,
-		@PathVariable Long dogId
+		@PathVariable Long dogId,
+		@RequestParam Long centerId
 	) {
 		Long fosterId = fosterService.applyFoster(
+				centerId,
 			member.getId(),
 			dogId
 		);
@@ -57,12 +59,15 @@ public class FosterController {
 
 	@PatchMapping("/fosters/{fosterId}/application")
 	public ResponseEntity<Void> decideFosterApplication(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@PathVariable Long fosterId,
-		@RequestParam FosterStatus request
+		@RequestParam FosterStatus request,
+		@RequestParam Long centerId
 	) {
 
 		fosterService.decideFosterApplication(
+				member.getId(),
+			centerId,
 			fosterId,
 			request
 		);
@@ -83,8 +88,11 @@ public class FosterController {
 	}
 
 	@GetMapping("/fosters/check-diaries")
-	public ResponseEntity<List<FosterDiaryCheckResponse>> checkFosterDiaries(@AdminMember Member member) {
-		List<FosterDiaryCheckResponse> response = fosterService.checkFosterDiaries();
+	public ResponseEntity<List<FosterDiaryCheckResponse>> checkFosterDiaries(
+			@AuthMember Member member,
+			@RequestParam Long centerId
+	) {
+		List<FosterDiaryCheckResponse> response = fosterService.checkFosterDiaries(member.getId(), centerId);
 		return ResponseEntity.ok().body(response);
 	}
 }
