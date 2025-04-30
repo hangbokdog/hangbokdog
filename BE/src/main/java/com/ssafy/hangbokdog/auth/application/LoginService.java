@@ -108,7 +108,7 @@ public class LoginService {
         Member signUpMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.MEMBER_NOT_FOUND));
 
-        signUpMember.update(
+        signUpMember.signUp(
                 signUpRequest.name(),
                 signUpRequest.nickname(),
                 signUpRequest.birth(),

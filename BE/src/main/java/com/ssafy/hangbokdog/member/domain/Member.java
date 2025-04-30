@@ -112,7 +112,7 @@ public class Member {
         return grade == Grade.GUEST;
     }
 
-    public void update(
+    public void signUp(
             String name,
             String nickname,
             LocalDate birth,
@@ -124,6 +124,7 @@ public class Member {
         this.birth = birth;
         this.age = age;
         this.description = description;
+        this.grade = Grade.USER;
     }
 
     public boolean isAdult() {
