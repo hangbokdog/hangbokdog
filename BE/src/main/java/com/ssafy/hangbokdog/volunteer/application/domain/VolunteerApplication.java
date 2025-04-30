@@ -41,4 +41,8 @@ public class VolunteerApplication extends BaseEntity {
         this.volunteerId = volunteerId;
         this.status = VolunteerApplicationStatus.PENDING;
     }
+
+    public void updateStatus(VolunteerApplicationStatus status) {
+        this.status = status;
+    }
 }

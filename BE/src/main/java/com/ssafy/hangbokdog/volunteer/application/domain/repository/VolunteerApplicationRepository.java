@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.volunteer.application.domain.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -29,5 +30,9 @@ public class VolunteerApplicationRepository {
     ) {
         return volunteerApplicationJpaRepository
                 .findByMemberIdAndParticipationDateBetween(memberId, weekStart, weekEnd);
+    }
+
+    public Optional<VolunteerApplication> findById(Long applicationId) {
+        return volunteerApplicationJpaRepository.findById(applicationId);
     }
 }

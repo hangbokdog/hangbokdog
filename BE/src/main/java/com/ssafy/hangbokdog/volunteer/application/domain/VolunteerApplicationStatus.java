@@ -1,8 +1,8 @@
 package com.ssafy.hangbokdog.volunteer.application.domain;
 
 public enum VolunteerApplicationStatus {
-    PENDING,
-    APPROVED,
-    REJECTED,
-    CANCELLED
+    PENDING,    // 대기중
+    APPROVED,   // 승인
+    REJECTED,   // 거부
+    CANCELLED   // 취소
 }
