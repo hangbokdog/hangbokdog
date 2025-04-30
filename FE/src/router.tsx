@@ -8,6 +8,7 @@ import ManagerMainLayout from "./layouts/ManagerMainLayout";
 import ManagerMain from "./pages/manager/ManagerMain";
 import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
 import DogDetailPage from "./pages/DogDetailPage";
+import My from "./pages/My";
 
 const router = createBrowserRouter([
 	{
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
 			{
 				path: "login",
 				element: <Login />,
+			},
+			{
+				path: "my",
+				element: <My />,
 			},
 			{
 				path: "donations",
