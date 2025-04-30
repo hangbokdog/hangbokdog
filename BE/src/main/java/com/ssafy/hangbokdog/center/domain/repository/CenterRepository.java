@@ -26,4 +26,8 @@ public class CenterRepository {
 	public boolean existsById(Long id) {
 		return centerJpaRepository.existsById(id);
 	}
+
+	public String findNameById(Long id) {
+		return centerJpaRepository.findNameById(id);
+	}
 }

@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.member.domain.repository;
 
+import static com.ssafy.hangbokdog.center.domain.QCenterMember.centerMember;
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 
 import java.util.List;
@@ -33,6 +34,17 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 ))
                 .from(member)
                 .where(member.nickName.containsIgnoreCase(nickname))
+                .fetch();
+    }
+
+    @Override
+    public List<String> findFcmTokensByCenterId(Long centerId) {
+        return queryFactory
+                .select(member.fcmToken)
+                .from(member)
+                .leftJoin(centerMember)
+                .on(member.id.eq(centerMember.memberId))
+                .where(centerMember.centerId.eq(centerId))
                 .fetch();
     }
 }

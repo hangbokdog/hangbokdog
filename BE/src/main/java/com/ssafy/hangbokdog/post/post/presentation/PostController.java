@@ -43,12 +43,13 @@ public class PostController {
     public ResponseEntity<Void> create(
             @AuthMember Member member,
             @RequestPart(value = "request") PostCreateRequest request,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files
+            @RequestPart(value = "files", required = false) List<MultipartFile> files,
+            @RequestParam Long centerId
     ) {
         List<MultipartFile> images = (files != null ? files : List.of());
         List<String> imageUrls = s3Service.uploadFiles(images);
 
-        Long postId = postService.create(member, request, imageUrls);
+        Long postId = postService.create(member, centerId, request, imageUrls);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/posts/{id}")
                 .buildAndExpand(postId)
