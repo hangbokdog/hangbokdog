@@ -9,6 +9,7 @@ import ManagerMain from "./pages/manager/ManagerMain";
 import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
 import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
+import SignUp from "./pages/SignUp";
 
 const router = createBrowserRouter([
 	{
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
 			{
 				path: "login",
 				element: <Login />,
+			},
+			{
+				path: "signup",
+				element: <SignUp />,
 			},
 			{
 				path: "my",
