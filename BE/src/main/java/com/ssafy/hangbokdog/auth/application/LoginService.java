@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.auth.application;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +11,7 @@ import com.ssafy.hangbokdog.auth.domain.RefreshToken;
 import com.ssafy.hangbokdog.auth.domain.repository.RefreshTokenRepository;
 import com.ssafy.hangbokdog.auth.domain.request.LoginRequest;
 import com.ssafy.hangbokdog.auth.domain.request.SignUpRequest;
+import com.ssafy.hangbokdog.auth.domain.response.NicknameCheckResponse;
 import com.ssafy.hangbokdog.auth.infrastructure.NaverMemberInfo;
 import com.ssafy.hangbokdog.auth.infrastructure.NaverOAuthProvider;
 import com.ssafy.hangbokdog.auth.util.JwtUtils;
@@ -36,7 +39,6 @@ public class LoginService {
 
         Member member = findOrCreateMember(
                 memberInfo.getSocialId(),
-                memberInfo.getNickname(),
                 memberInfo.getProfileImageUrl(),
                 memberInfo.getEmail()
         );
@@ -49,24 +51,22 @@ public class LoginService {
 
     private Member findOrCreateMember(
             String socialLoginId,
-            String nickname,
             String profileImageUrl,
             String email
     ) {
         return memberRepository.findBySocialId(socialLoginId)
-                .orElseGet(() -> createMember(socialLoginId, nickname, profileImageUrl, email));
+                .orElseGet(() -> createMember(socialLoginId, profileImageUrl, email));
     }
 
     private Member createMember(
             String socialLoginId,
-            String nickname,
             String profileImageUrl,
             String email
     ) {
         return memberRepository.save(
                 Member.builder()
                         .socialId(socialLoginId)
-                        .nickName(nickname)
+                        .nickName(UUID.randomUUID().toString())
                         .profileImage(profileImageUrl)
                         .email(email)
                         .build()
@@ -106,5 +106,9 @@ public class LoginService {
                 signUpRequest.age(),
                 signUpRequest.description()
         );
+    }
+
+    public NicknameCheckResponse checkNickname(Member member, String nickName) {
+        return NicknameCheckResponse.from(memberRepository.existsByNickName(nickName));
     }
 }

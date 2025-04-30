@@ -30,4 +30,8 @@ public class MemberRepository {
     public Member save(Member member) {
         return memberJpaRepository.save(member);
     }
+
+    public boolean existsByNickName(String nickName) {
+        return memberJpaRepository.existsByNickName(nickName);
+    }
 }

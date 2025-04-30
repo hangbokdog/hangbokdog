@@ -6,10 +6,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
@@ -18,6 +20,7 @@ import com.ssafy.hangbokdog.auth.domain.request.LoginRequest;
 import com.ssafy.hangbokdog.auth.domain.request.SignUpRequest;
 import com.ssafy.hangbokdog.auth.domain.response.AccessTokenResponse;
 import com.ssafy.hangbokdog.auth.domain.response.LoginResponse;
+import com.ssafy.hangbokdog.auth.domain.response.NicknameCheckResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -80,5 +83,13 @@ public class LoginController {
     ) {
         loginService.signUp(member, signUpRequest);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/duplicate-check")
+    public ResponseEntity<NicknameCheckResponse> check(
+            @AuthMember Member member,
+            @RequestParam String nickname
+    ) {
+        return ResponseEntity.ok(loginService.checkNickname(member, nickname));
     }
 }

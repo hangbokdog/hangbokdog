@@ -8,4 +8,6 @@ import com.ssafy.hangbokdog.member.domain.Member;
 
 public interface MemberJpaRepository extends JpaRepository<Member, Long>, MemberQueryRepository {
     Optional<Member> findBySocialId(String socialId);
+
+    boolean existsByNickName(String nickName);
 }
