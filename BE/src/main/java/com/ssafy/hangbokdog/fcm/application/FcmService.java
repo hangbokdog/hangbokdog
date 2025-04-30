@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,6 +35,7 @@ public class FcmService {
 
 	private final MemberRepository memberRepository;
 
+	@Async("fcmExecutor")
 	public void sendMessageTo(
 		String targetToken,
 		String title,
