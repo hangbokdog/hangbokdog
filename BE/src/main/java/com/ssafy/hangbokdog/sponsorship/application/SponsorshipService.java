@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +48,11 @@ public class SponsorshipService {
 	private final DogRepository dogRepository;
 	private final TransactionRepository transactionRepository;
 	private final DonationHistoryRepository donationHistoryRepository;
+	private final CenterMemberRepository centerMemberRepository;
 
-	public Long applySponsorship(Long memberId, Long dogId) {
+	public Long applySponsorship(Long memberId, Long dogId, Long centerId) {
+
+		CenterMember centerMember = checkCenterMember(centerId, memberId);
 
 		if (!dogRepository.checkDogExistence(dogId)) {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
@@ -70,7 +75,7 @@ public class SponsorshipService {
 
 	@Transactional
 	public void cancelSponsorship(Long memberId, Long sponsorshipId) {
-		//TODO: 해당 센터 관리자인지 검증
+
 		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
 
@@ -80,7 +85,19 @@ public class SponsorshipService {
 	}
 
 	@Transactional
-	public void manageSponsorship(Long sponsorshipId, SponsorShipStatus request) {
+	public void manageSponsorship(
+			Long memberId,
+			Long centerId,
+			Long sponsorshipId,
+			SponsorShipStatus request
+	) {
+
+		CenterMember centerMember = checkCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()){
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
 		Sponsorship sponsorship = sponsorshipRepository.findSponsorshipById(sponsorshipId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.SPONSORSHIP_NOT_FOUND));
 
@@ -241,5 +258,10 @@ public class SponsorshipService {
 
 	public List<MySponsorshipResponse> getMySponsorships(Member member) {
 		return sponsorshipRepository.getMySponsorships(member.getId());
+	}
+
+	private CenterMember checkCenterMember(Long centerId, Long memberId) {
+		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 	}
 }

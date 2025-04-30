@@ -32,9 +32,10 @@ public class SponsorshipController {
 	@PostMapping("/dogs/{dogId}/apply-sponsor")
 	public ResponseEntity<Void> applySponsorship(
 		@AuthMember Member member,
-		@PathVariable Long dogId
+		@PathVariable Long dogId,
+		@RequestParam Long centerId
 	) {
-		Long sponsorshipId = sponsorshipService.applySponsorship(member.getId(), dogId);
+		Long sponsorshipId = sponsorshipService.applySponsorship(member.getId(), dogId, centerId);
 
 		return ResponseEntity.created(URI.create("/api/v1/dogs/" + sponsorshipId)).build();
 	}
@@ -50,11 +51,12 @@ public class SponsorshipController {
 
 	@PatchMapping("/sponsorship/management/{sponsorshipId}")
 	public ResponseEntity<Void> manageSponsorship(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@PathVariable Long sponsorshipId,
-		@RequestParam SponsorShipStatus request
+		@RequestParam SponsorShipStatus request,
+		@RequestParam Long centerId
 	) {
-		sponsorshipService.manageSponsorship(sponsorshipId, request);
+		sponsorshipService.manageSponsorship(member.getId(), centerId, sponsorshipId, request);
 
 		return ResponseEntity.noContent().build();
 	}
