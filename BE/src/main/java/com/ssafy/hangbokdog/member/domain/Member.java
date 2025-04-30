@@ -3,9 +3,9 @@ package com.ssafy.hangbokdog.member.domain;
 import static com.ssafy.hangbokdog.member.domain.Grade.USER;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -37,8 +37,8 @@ public class Member {
     @Column(name = "birth")
     private LocalDate birth;
 
-    @Embedded
-    private Phone phone;
+    @Column(nullable = false)
+    private String phone;
 
     @Column(name = "age")
     private int age;
@@ -107,5 +107,9 @@ public class Member {
 
     public boolean isManager() {
         return grade == Grade.MANAGER;
+    }
+
+    public boolean isAdult() {
+        return Period.between(birth, LocalDate.now()).getYears() >= 20;
     }
 }

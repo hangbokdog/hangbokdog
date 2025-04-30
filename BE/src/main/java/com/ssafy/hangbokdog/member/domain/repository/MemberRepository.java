@@ -30,4 +30,8 @@ public class MemberRepository {
     public Member save(Member member) {
         return memberJpaRepository.save(member);
     }
+
+    public List<Member> findAllByIds(List<Long> memberIds) {
+        return memberJpaRepository.findAllById(memberIds);
+    }
 }
