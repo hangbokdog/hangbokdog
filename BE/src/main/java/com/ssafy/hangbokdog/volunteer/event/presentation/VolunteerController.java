@@ -21,8 +21,8 @@ import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponses;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,11 +60,11 @@ public class VolunteerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VolunteerResponses>> findAll(
+    public ResponseEntity<List<VolunteerInfo>> findAll(
             @AuthMember Member member,
             @RequestParam(required = false) Long centerId
     ) {
-        List<VolunteerResponses> responses = volunteerService.findAll(centerId);
+        List<VolunteerInfo> responses = volunteerService.findAll(centerId);
         return ResponseEntity.ok(responses);
     }
 

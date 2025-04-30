@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.ssafy.hangbokdog.volunteer.event.domain.LocationType;
 
 // 접수중인 봉사 활동 목록 조회
-public record VolunteerResponses(
+public record VolunteerInfo(
         Long id,
         String title,
         String content,

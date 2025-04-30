@@ -15,7 +15,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.volunteer.event.domain.SlotType;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEventStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponses;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +26,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<VolunteerResponses> findAllOpenEvents(Long centerId) {
+    public List<VolunteerInfo> findAllOpenEvents(Long centerId) {
         BooleanExpression openCondition = volunteerEvent.status.eq(VolunteerEventStatus.OPEN);
         // centerId 가 넘어오면 추가 필터
         BooleanExpression centerCondition = centerId != null
@@ -35,7 +35,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
 
         return queryFactory
                 .select(Projections.constructor(
-                        VolunteerResponses.class,
+                        VolunteerInfo.class,
                         volunteerEvent.id,
                         volunteerEvent.title,
                         volunteerEvent.content,
