@@ -17,6 +17,7 @@ import com.ssafy.hangbokdog.auth.application.LoginService;
 import com.ssafy.hangbokdog.auth.domain.request.LoginRequest;
 import com.ssafy.hangbokdog.auth.domain.request.SignUpRequest;
 import com.ssafy.hangbokdog.auth.domain.response.AccessTokenResponse;
+import com.ssafy.hangbokdog.auth.domain.response.LoginResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping(value = "/login/naver")
-    public ResponseEntity<AccessTokenResponse> naverLogin(
+    public ResponseEntity<LoginResponse> naverLogin(
             @RequestBody LoginRequest loginRequest,
             HttpServletResponse response
     ) {
@@ -47,7 +48,12 @@ public class LoginController {
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return ResponseEntity.ok(new AccessTokenResponse(loginResponse.accessToken()));
+        return ResponseEntity.ok(
+                LoginResponse.of(
+                        loginResponse.accessToken(),
+                        loginResponse.isRegistered()
+                )
+        );
     }
 
     @PostMapping("/reissue")

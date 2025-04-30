@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.auth.domain.AuthTokens;
+import com.ssafy.hangbokdog.auth.domain.MemberAuthInfo;
 import com.ssafy.hangbokdog.auth.domain.RefreshToken;
 import com.ssafy.hangbokdog.auth.domain.repository.RefreshTokenRepository;
 import com.ssafy.hangbokdog.auth.domain.request.LoginRequest;
@@ -26,7 +27,7 @@ public class LoginService {
     private final JwtUtils jwtUtils;
     private final NaverOAuthProvider naverOAuthProvider;
 
-    public AuthTokens login(LoginRequest loginRequest) {
+    public MemberAuthInfo login(LoginRequest loginRequest) {
         String naverAccessToken = naverOAuthProvider.fetchNaverAccessToken(
                 loginRequest.getCode(),
                 loginRequest.getState()
@@ -43,7 +44,7 @@ public class LoginService {
         AuthTokens authTokens = jwtUtils.createLoginToken(member.getId().toString());
         RefreshToken refreshToken = new RefreshToken(member.getId(), authTokens.refreshToken());
         refreshTokenRepository.save(refreshToken);
-        return authTokens;
+        return MemberAuthInfo.of(authTokens.accessToken(), authTokens.refreshToken(), member.isGuest());
     }
 
     private Member findOrCreateMember(

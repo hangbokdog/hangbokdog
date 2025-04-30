@@ -83,7 +83,8 @@ public class Member {
             String profileImage,
             String email,
             String description,
-            int age
+            int age,
+            Grade grade
     ) {
         this.id = id;
         this.nickName = nickName;
@@ -97,7 +98,7 @@ public class Member {
         this.deleted = false;
         this.status = MemberStatus.INACTIVE;
         this.description = description;
-        this.grade = USER;
+        this.grade = Grade.GUEST;
         this.age = age;
     }
 
@@ -107,6 +108,10 @@ public class Member {
 
     public boolean isManager() {
         return grade == Grade.MANAGER;
+    }
+
+    public boolean isGuest() {
+        return grade == Grade.GUEST;
     }
 
     public void update(

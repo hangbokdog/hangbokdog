@@ -5,5 +5,5 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public enum Grade {
-    ADMIN, MANAGER, USER
+    ADMIN, MANAGER, USER, GUEST
 }
