@@ -45,7 +45,7 @@ public class DogController {
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> addDog(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@RequestPart(value = "request") DogCreateRequest request,
 		@RequestPart(value = "image") MultipartFile image
 	) {
@@ -53,6 +53,7 @@ public class DogController {
 		String imageUrl = uploadImageToS3(image);
 
 		Long dogId = dogService.createDog(
+			member.getId(),
 			request,
 			imageUrl
 		);
@@ -71,23 +72,27 @@ public class DogController {
 
 	@PatchMapping("/{dogId}/star")
 	public ResponseEntity<Void> dogToStar(
-		@AdminMember Member member,
-		@PathVariable(name = "dogId") Long dogId
+		@AuthMember Member member,
+		@PathVariable(name = "dogId") Long dogId,
+		@RequestParam Long centerId
 	) {
-		dogService.dogToStar(dogId);
+		dogService.dogToStar(dogId, member.getId(), centerId);
 		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping(value = "/{dogId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> updateDog(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@PathVariable(name = "dogId") Long dogId,
 		@RequestPart(value = "request") DogUpdateRequest request,
-		@RequestPart(value = "image", required = false) MultipartFile image
+		@RequestPart(value = "image", required = false) MultipartFile image,
+		@RequestParam Long centerId
 	) {
 		String newImageUrl = (image != null) ? uploadImageToS3(image) : null;
 
 		dogService.updateDog(
+			member.getId(),
+			centerId,
 			request,
 			newImageUrl,
 			dogId
@@ -125,11 +130,14 @@ public class DogController {
 
 	@PostMapping("/{dogId}/medical-history")
 	public ResponseEntity<Void> addMedicalHistory(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@RequestBody MedicalHistoryRequest request,
-		@PathVariable(name = "dogId") Long dogId
+		@PathVariable(name = "dogId") Long dogId,
+		@RequestParam Long centerId
 	) {
 		Long medicalHistoryId = dogService.addMedicalHistory(
+			member.getId(),
+			centerId,
 			request,
 			dogId
 		);
@@ -149,10 +157,15 @@ public class DogController {
 
 	@DeleteMapping("/{dogId}/medical-history")
 	public ResponseEntity<Void> removeMedicalHistory(
-		@AdminMember Member member,
-		@RequestParam(name = "medicalHistoryId") Long medicalHistoryId
+		@AuthMember Member member,
+		@RequestParam(name = "medicalHistoryId") Long medicalHistoryId,
+		@RequestParam Long centerId
 	) {
-		dogService.deleteMedicalHistory(medicalHistoryId);
+		dogService.deleteMedicalHistory(
+			member.getId(),
+			centerId,
+			medicalHistoryId
+		);
 		return ResponseEntity.noContent().build();
 	}
 
