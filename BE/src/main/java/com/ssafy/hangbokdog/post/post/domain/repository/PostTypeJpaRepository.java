@@ -15,4 +15,6 @@ public interface PostTypeJpaRepository extends JpaRepository<PostType, Long> {
             where (:centerId is null or p.centerId = :centerId)
             """)
     List<PostType> findAllByCenterId(@Param("centerId") Long centerId);
+
+	String findNameById(Long id);
 }

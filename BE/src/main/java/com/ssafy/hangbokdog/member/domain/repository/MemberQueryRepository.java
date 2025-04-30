@@ -7,4 +7,6 @@ import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 public interface MemberQueryRepository {
 
     List<MemberSearchNicknameResponse> findByNickname(String nickname);
+
+    List<String> findFcmTokensByCenterId(Long centerId);
 }

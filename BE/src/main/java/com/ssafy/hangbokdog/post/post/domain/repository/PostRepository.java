@@ -21,6 +21,7 @@ public class PostRepository {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final PostJpaRepository postJpaRepository;
+    private final PostTypeJpaRepository postTypeJpaRepository;
 
     public Post save(Post post) {
         return postJpaRepository.save(post);
@@ -53,5 +54,9 @@ public class PostRepository {
         LocalDateTime endDate
     ) {
         return postJpaRepository.findFostersWithInsufficientDiaries(infos, startDate, endDate);
+    }
+
+    public String findPostTypeNameByPostTypeId(Long postTypeId) {
+        return postTypeJpaRepository.findNameById(postTypeId);
     }
 }

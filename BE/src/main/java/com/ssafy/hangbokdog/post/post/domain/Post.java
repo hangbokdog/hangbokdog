@@ -32,6 +32,9 @@ public class Post extends BaseEntity {
     @Column(name = "author_id", nullable = false)
     private Long authorId;
 
+    @Column(name = "center_id", nullable = false)
+    private Long centerId;
+
     @Column(name = "post_type_id", nullable = false)
     private Long postTypeId;
 
@@ -50,6 +53,7 @@ public class Post extends BaseEntity {
 
     @Builder
     public Post(
+            Long centerId,
         Long authorId,
         Long boardTypeId,
         Long dogId,
@@ -57,6 +61,7 @@ public class Post extends BaseEntity {
         String content,
         List<String> imageUrls
     ) {
+        this.centerId = centerId;
         this.authorId = authorId;
         this.postTypeId = boardTypeId;
         this.dogId = dogId;
