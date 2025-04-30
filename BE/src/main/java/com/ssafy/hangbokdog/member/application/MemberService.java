@@ -3,10 +3,15 @@ package com.ssafy.hangbokdog.member.application;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.common.annotation.MaskApply;
 import com.ssafy.hangbokdog.common.dto.MaskRequest;
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
+import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -27,5 +32,25 @@ public class MemberService {
             String nickname
     ) {
         return memberRepository.findByNickname(nickname);
+    }
+
+    @Transactional
+    public void saveFcmToken(Long memberId, FcmTokenUpdateRequest request) {
+        //TODO:비동기 처리
+        Member member = getMember(memberId);
+        member.updateFcmToken(request.fcmToken());
+        member.agreeEmergencyNotification();
+    }
+
+    @Transactional
+    public void deleteFcmToken(Long memberId) {
+        Member member = getMember(memberId);
+        member.updateFcmToken(null);
+        member.denyEmergencyNotification();
+    }
+
+    private Member getMember(Long memberId) {
+        return memberRepository.findById(memberId)
+            .orElseThrow(() -> new BadRequestException((ErrorCode.MEMBER_NOT_FOUND)));
     }
 }

@@ -3,6 +3,8 @@ package com.ssafy.hangbokdog.member.domain;
 import java.time.LocalDate;
 import java.time.Period;
 
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -90,7 +92,7 @@ public class Member {
         this.socialId = socialId;
         this.profileImage = profileImage;
         this.email = email;
-        this.emergencyNotificationCheck = true;
+        this.emergencyNotificationCheck = false;
         this.darkModeCheck = false;
         this.deleted = false;
         this.status = MemberStatus.INACTIVE;
@@ -128,5 +130,23 @@ public class Member {
 
     public boolean isAdult() {
         return Period.between(birth, LocalDate.now()).getYears() >= 20;
+    }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
+    public void agreeEmergencyNotification() {
+        if (emergencyNotificationCheck) {
+            throw new BadRequestException(ErrorCode.EMERGENCY_NOTIFICATION_ALREADY_AGREED);
+        }
+        emergencyNotificationCheck = true;
+    }
+
+    public void denyEmergencyNotification() {
+        if (!emergencyNotificationCheck) {
+            throw new BadRequestException(ErrorCode.EMERGENCY_NOTIFICATION_ALREADY_DISAGREED);
+        }
+        emergencyNotificationCheck = false;
     }
 }
