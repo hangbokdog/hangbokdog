@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -21,5 +22,9 @@ public class VolunteerSlotRepository {
 
     public List<SlotDto> findByEventId(Long eventId) {
         return volunteerSlotJpaRepository.findByEventId(eventId);
+    }
+
+    public Optional<VolunteerSlot> findById(Long slotId) {
+        return volunteerSlotJpaRepository.findById(slotId);
     }
 }

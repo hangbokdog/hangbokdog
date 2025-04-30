@@ -18,11 +18,11 @@ public class DonationAccountController {
 
 	private final DonationAccountService donationAccountService;
 
-	@PatchMapping
-	public ResponseEntity<Void> applyTransactionsToDonationAccount(
-		@AdminMember Member member
-	) {
-		donationAccountService.applyTransactionsToDonationAccount();
-		return ResponseEntity.noContent().build();
-	}
+	// @PatchMapping
+	// public ResponseEntity<Void> applyTransactionsToDonationAccount(
+	// 	@AdminMember Member member
+	// ) {
+	// 	donationAccountService.applyTransactionsToDonationAccount();
+	// 	return ResponseEntity.noContent().build();
+	// }
 }

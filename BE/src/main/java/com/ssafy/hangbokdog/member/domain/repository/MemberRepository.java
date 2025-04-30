@@ -34,4 +34,8 @@ public class MemberRepository {
     public boolean existsByNickName(String nickName) {
         return memberJpaRepository.existsByNickName(nickName);
     }
+
+    public List<Member> findAllByIds(List<Long> memberIds) {
+        return memberJpaRepository.findAllById(memberIds);
+    }
 }
