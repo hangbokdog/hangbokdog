@@ -6,9 +6,7 @@ import org.springframework.stereotype.Component;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DonationAccountScheduler {
@@ -18,7 +16,6 @@ public class DonationAccountScheduler {
 	@Scheduled(fixedRate = 300000)
 	@SchedulerLock(name = "donationAccountScheduler", lockAtLeastFor = "290s", lockAtMostFor = "299s")
 	public void applyTransactionsToDonationAccount() {
-		log.info("Applying transactions to DonationAccount");
 		donationAccountService.applyTransactionsToDonationAccount();
 	}
 
