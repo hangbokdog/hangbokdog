@@ -6,15 +6,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.ssafy.hangbokdog.center.domain.CenterMember;
-import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.Dog;
@@ -106,7 +105,7 @@ public class FosterService {
 	) {
 		CenterMember centerMember = checkCenterMember(centerId, memberId);
 
-		if (!centerMember.isManager()){
+		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
@@ -169,7 +168,7 @@ public class FosterService {
 
 		CenterMember centerMember = checkCenterMember(centerId, memberId);
 
-		if (!centerMember.isManager()){
+		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
