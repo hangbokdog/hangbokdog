@@ -66,8 +66,8 @@ dependencies {
 	implementation 'org.jsoup:jsoup:1.15.3'
 
 	//ShedLock
-	implementation 'net.javacrumbs.shedlock:shedlock-spring:5.15.1'
-	implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:5.15.1'
+	implementation 'net.javacrumbs.shedlock:shedlock-spring:5.16.0'
+	implementation 'net.javacrumbs.shedlock:shedlock-provider-redis-spring:5.16.0'
 
 }
 
