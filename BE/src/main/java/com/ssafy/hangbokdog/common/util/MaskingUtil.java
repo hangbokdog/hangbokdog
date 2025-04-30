@@ -32,12 +32,12 @@ public class MaskingUtil {
 
     private static String phoneNumberMaskOf(String value) {
         // 2~3자리 - 3~4자리 - 4자리 형태, 입력에 하이픈이 없어도 매칭
-        Pattern p = Pattern.compile("(\\d{2,3})-?(\\d{3,4})-?(\\d{4})$");
-        Matcher m = p.matcher(value);
-        if (m.find()) {
-            String part1 = m.group(1);
-            String part2 = m.group(2);
-            String part3 = m.group(3);
+        Pattern pattern = Pattern.compile("(\\d{2,3})-?(\\d{3,4})-?(\\d{4})$");
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.find()) {
+            String part1 = matcher.group(1);
+            String part2 = matcher.group(2);
+            String part3 = matcher.group(3);
 
             // 중간 부분만 별표로 대체
             String maskedMid = "*".repeat(part2.length());

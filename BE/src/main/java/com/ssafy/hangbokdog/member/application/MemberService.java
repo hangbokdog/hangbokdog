@@ -2,10 +2,10 @@ package com.ssafy.hangbokdog.member.application;
 
 import java.util.List;
 
-import com.ssafy.hangbokdog.common.annotation.MaskApply;
-import com.ssafy.hangbokdog.common.dto.MaskRequest;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.hangbokdog.common.annotation.MaskApply;
+import com.ssafy.hangbokdog.common.dto.MaskRequest;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 

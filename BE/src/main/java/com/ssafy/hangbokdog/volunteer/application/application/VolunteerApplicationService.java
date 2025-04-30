@@ -49,9 +49,9 @@ public class VolunteerApplicationService {
 
             // 2-2) 날짜별 반복문 내에서 **나이 유효성 검사**
             for (Long pid : pIds) {
-                Member m = memberRepository.findById(pid)
+                Member mem = memberRepository.findById(pid)
                         .orElseThrow(() -> new BadRequestException(ErrorCode.MEMBER_NOT_FOUND, "memberId: " + pid));
-                if (!m.isAdult()) {
+                if (!mem.isAdult()) {
                     throw new BadRequestException(ErrorCode.VOLUNTEER_UNDERAGE, "memberId: " + pid);
                 }
             }
@@ -65,7 +65,8 @@ public class VolunteerApplicationService {
                 for (Long pid : pIds) {
                     boolean already = volunteerApplicationRepository.existsByVolunteerIdAndMemberId(slotId, pid);
                     if (already) {
-                        throw new BadRequestException(ErrorCode.DUPLICATE_APPLICATION, "slotId: " + slotId + ", memberId: " + pid);
+                        throw new BadRequestException(ErrorCode.DUPLICATE_APPLICATION,
+                                "slotId: " + slotId + ", memberId: " + pid);
                     }
                 }
 

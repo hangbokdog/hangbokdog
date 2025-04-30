@@ -1,11 +1,12 @@
 package com.ssafy.hangbokdog.volunteer.application.domain.repository;
 
-import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
+import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor

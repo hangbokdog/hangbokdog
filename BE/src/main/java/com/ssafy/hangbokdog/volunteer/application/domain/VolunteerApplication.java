@@ -1,8 +1,5 @@
 package com.ssafy.hangbokdog.volunteer.application.domain;
 
-import java.time.LocalDate;
-
-import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import com.ssafy.hangbokdog.common.entity.BaseEntity;
 
 import lombok.AccessLevel;
 import lombok.Builder;
