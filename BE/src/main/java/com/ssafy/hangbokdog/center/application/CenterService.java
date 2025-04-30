@@ -4,10 +4,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.domain.Center;
+import com.ssafy.hangbokdog.center.domain.CenterJoinRequest;
+import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.DonationAccount;
+import com.ssafy.hangbokdog.center.domain.repository.CenterJoinRequestRepository;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
+import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 public class CenterService {
 
 	private final CenterRepository centerRepository;
+	private final CenterMemberRepository centerMemberRepository;
+	private final CenterJoinRequestRepository centerJoinRequestRepository;
 	private final DonationAccountRepository donationAccountRepository;
 
 	@Transactional
@@ -32,5 +43,60 @@ public class CenterService {
 		));
 
 		return centerId;
+	}
+
+	public void join(Member member, Long centerId) {
+		if (!centerRepository.existsById(centerId)) {
+			throw new BadRequestException(ErrorCode.CENTER_NOT_FOUND);
+		}
+
+		if (centerMemberRepository.existsByMemberIdAndCenterId(member.getId(), centerId)) {
+			throw new BadRequestException(ErrorCode.ALREADY_JOIN_CENTER);
+		}
+
+		if (centerJoinRequestRepository.existsByMemberIdAndCenterId(member.getId(), centerId)) {
+			throw new BadRequestException(ErrorCode.ALREADY_CENTER_JOIN_REQUEST);
+		}
+
+		centerJoinRequestRepository.save(
+				CenterJoinRequest.builder()
+						.centerId(centerId)
+						.memberId(member.getId())
+						.build()
+		);
+	}
+
+	@Transactional
+	public void approve(Member member, Long centerJoinRequestId) {
+		var centerJoinRequest = centerJoinRequestRepository.findById(centerJoinRequestId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
+
+		Long centerId = centerJoinRequest.getCenterId();
+		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		centerMemberRepository.save(
+				CenterMember.builder()
+						.centerId(centerId)
+						.memberId(centerJoinRequest.getMemberId())
+						.build()
+		);
+
+		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
+	}
+
+	public PageInfo<CenterJoinRequestResponse> findAll(Member member, Long centerId, String pageToken) {
+		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return centerJoinRequestRepository.findAll(centerId, pageToken);
 	}
 }

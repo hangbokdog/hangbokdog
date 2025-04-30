@@ -22,4 +22,8 @@ public class CenterRepository {
 	public Optional<Center> findById(Long centerId) {
 		return centerJpaRepository.findById(centerId);
 	}
+
+	public boolean existsById(Long id) {
+		return centerJpaRepository.existsById(id);
+	}
 }

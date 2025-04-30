@@ -72,7 +72,11 @@ public enum ErrorCode {
     VOLUNTEER_APPLICATION_NOT_FOUND(15005, "존재하지 않는 봉사 신청입니다."),
     VOLUNTEER_APPLICATION_PROCESSING_FAILED(15006, "신청한 봉사에 대한 처리를 실패했습니다."),
 
-    CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다.");
+    CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다."),
+    ALREADY_JOIN_CENTER(16001, "이미 가입한 센터입니다."),
+    ALREADY_CENTER_JOIN_REQUEST(16002, "이미 센터에 가입 요청을 했습니다."),
+    CENTER_JOIN_REQUEST_NOT_FOUND(16003, "센티 지원 이력이 없습니다."),
+    CENTER_MEMBER_NOT_FOUND(16004, "센터에 가입한 유저가 아닙니다.");
 
     private final int code;
     private final String message;
