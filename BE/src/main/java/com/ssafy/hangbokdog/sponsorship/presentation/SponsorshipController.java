@@ -19,7 +19,6 @@ import com.ssafy.hangbokdog.sponsorship.application.SponsorshipService;
 import com.ssafy.hangbokdog.sponsorship.domain.enums.SponsorShipStatus;
 import com.ssafy.hangbokdog.sponsorship.dto.response.FailedSponsorshipResponse;
 import com.ssafy.hangbokdog.sponsorship.dto.response.MySponsorshipResponse;
-import com.ssafy.hangbokdog.sponsorship.dto.response.SponsorshipResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +40,7 @@ public class SponsorshipController {
 	}
 
 	@PatchMapping("/sponsorship/{sponsorshipId}")
-	public ResponseEntity<Void> updateSponsorship(
+	public ResponseEntity<Void> cancelSponsorship(
 		@AuthMember Member member,
 		@PathVariable(name = "sponsorshipId") Long sponsorshipId
 	) {
@@ -59,12 +58,6 @@ public class SponsorshipController {
 
 		return ResponseEntity.noContent().build();
 	}
-
-	// @PatchMapping("/sponsorship/proceed")
-	// public ResponseEntity<SponsorshipResponse> proceedSponsorship() {
-	// 	SponsorshipResponse response = sponsorshipService.proceedSponsorship();
-	// 	return ResponseEntity.ok().body(response);
-	// }
 
 	@GetMapping("/sponsorship/failed")
 	public ResponseEntity<List<FailedSponsorshipResponse>> getFailedSponsorships(

@@ -40,10 +40,10 @@ public class CenterController {
 
 	@GetMapping("/{centerId}/balance")
 	public ResponseEntity<DonationAccountBalanceResponse> getBalance(
-		@AdminMember Member member,
+		@AuthMember Member member,
 		@PathVariable Long centerId
 	) {
-		return ResponseEntity.ok().body(donationAccountService.getBalance(centerId));
+		return ResponseEntity.ok().body(donationAccountService.getBalance(member.getId(), centerId));
 	}
 
 	@PostMapping("/{centerId}/join-request")
