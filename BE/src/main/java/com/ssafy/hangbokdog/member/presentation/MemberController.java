@@ -2,8 +2,13 @@ package com.ssafy.hangbokdog.member.presentation;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,6 +17,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.dto.MaskRequest;
 import com.ssafy.hangbokdog.member.application.MemberService;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -32,5 +38,22 @@ public class MemberController {
         MaskRequest maskRequest = new MaskRequest(false);
         List<MemberSearchNicknameResponse> responses = memberService.findByNickname(maskRequest, nickname);
         return ResponseEntity.ok(responses);
+    }
+
+    @PatchMapping("/fcm-token")
+    public ResponseEntity<Void> saveFcmToken(
+        @AuthMember Member member,
+        @RequestBody @Valid FcmTokenUpdateRequest request
+    ) {
+        memberService.saveFcmToken(member.getId(), request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/fcm-token")
+    public ResponseEntity<Void> deleteFcmToken(
+        @AuthMember Member member
+    ) {
+        memberService.deleteFcmToken(member.getId());
+        return ResponseEntity.noContent().build();
     }
 }
