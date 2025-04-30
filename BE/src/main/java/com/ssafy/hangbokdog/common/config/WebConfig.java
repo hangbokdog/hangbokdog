@@ -9,7 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.ssafy.hangbokdog.auth.resolver.AdminMemberArgumentResolver;
 import com.ssafy.hangbokdog.auth.resolver.AuthUserArgumentResolver;
-import com.ssafy.hangbokdog.auth.resolver.ManagerMemberArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     private final AuthUserArgumentResolver authUserArgumentResolver;
     private final AdminMemberArgumentResolver adminMemberArgumentResolver;
-    private final ManagerMemberArgumentResolver managerMemberArgumentResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -33,7 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
         argumentResolvers.add(authUserArgumentResolver);
-        argumentResolvers.add(managerMemberArgumentResolver);
         argumentResolvers.add(adminMemberArgumentResolver);
     }
 }
