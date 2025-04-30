@@ -11,6 +11,7 @@ import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
+import ManagerEmergency from "./pages/manager/ManagerEmergency";
 
 const router = createBrowserRouter([
 	{
@@ -69,6 +70,11 @@ const router = createBrowserRouter([
 			{
 				path: "volunteer",
 				element: <ManagerVolunteer />,
+				handle: { showHeader: false },
+			},
+			{
+				path: "emergency",
+				element: <ManagerEmergency />,
 				handle: { showHeader: false },
 			},
 		],
