@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.member.domain;
 
-import static com.ssafy.hangbokdog.member.domain.Grade.USER;
-
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -83,7 +81,8 @@ public class Member {
             String profileImage,
             String email,
             String description,
-            int age
+            int age,
+            Grade grade
     ) {
         this.id = id;
         this.nickName = nickName;
@@ -97,7 +96,7 @@ public class Member {
         this.deleted = false;
         this.status = MemberStatus.INACTIVE;
         this.description = description;
-        this.grade = USER;
+        this.grade = Grade.GUEST;
         this.age = age;
     }
 
@@ -107,6 +106,24 @@ public class Member {
 
     public boolean isManager() {
         return grade == Grade.MANAGER;
+    }
+
+    public boolean isGuest() {
+        return grade == Grade.GUEST;
+    }
+
+    public void update(
+            String name,
+            String nickname,
+            LocalDate birth,
+            int age,
+            String description
+    ) {
+        this.name = name;
+        this.nickName = nickname;
+        this.birth = birth;
+        this.age = age;
+        this.description = description;
     }
 
     public boolean isAdult() {
