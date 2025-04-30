@@ -36,7 +36,6 @@ public class MemberService {
 
     @Transactional
     public void saveFcmToken(Long memberId, FcmTokenUpdateRequest request) {
-        //TODO:비동기 처리
         Member member = getMember(memberId);
         member.updateFcmToken(request.fcmToken());
         member.agreeEmergencyNotification();
