@@ -3,8 +3,6 @@ package com.ssafy.hangbokdog.member.domain;
 import java.time.LocalDate;
 import java.time.Period;
 
-import com.ssafy.hangbokdog.common.exception.BadRequestException;
-import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +10,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 
 import lombok.AccessLevel;
 import lombok.Builder;
