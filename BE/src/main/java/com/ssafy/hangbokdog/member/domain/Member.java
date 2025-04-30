@@ -108,4 +108,18 @@ public class Member {
     public boolean isManager() {
         return grade == Grade.MANAGER;
     }
+
+    public void update(
+            String name,
+            String nickname,
+            LocalDate birth,
+            int age,
+            String description
+    ) {
+        this.name = name;
+        this.nickName = nickname;
+        this.birth = birth;
+        this.age = age;
+        this.description = description;
+    }
 }

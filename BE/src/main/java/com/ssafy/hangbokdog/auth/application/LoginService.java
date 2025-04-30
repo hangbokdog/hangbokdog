@@ -1,11 +1,13 @@
 package com.ssafy.hangbokdog.auth.application;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.auth.domain.AuthTokens;
 import com.ssafy.hangbokdog.auth.domain.RefreshToken;
 import com.ssafy.hangbokdog.auth.domain.repository.RefreshTokenRepository;
 import com.ssafy.hangbokdog.auth.domain.request.LoginRequest;
+import com.ssafy.hangbokdog.auth.domain.request.SignUpRequest;
 import com.ssafy.hangbokdog.auth.infrastructure.NaverMemberInfo;
 import com.ssafy.hangbokdog.auth.infrastructure.NaverOAuthProvider;
 import com.ssafy.hangbokdog.auth.util.JwtUtils;
@@ -89,5 +91,19 @@ public class LoginService {
         }
 
         throw new BadRequestException(ErrorCode.FAILED_TO_VALIDATE_TOKEN);
+    }
+
+    @Transactional
+    public void signUp(Member member, SignUpRequest signUpRequest) {
+        Member signUpMember = memberRepository.findById(member.getId())
+                .orElseThrow(() -> new BadRequestException(ErrorCode.MEMBER_NOT_FOUND));
+
+        signUpMember.update(
+                signUpRequest.name(),
+                signUpRequest.nickname(),
+                signUpRequest.birth(),
+                signUpRequest.age(),
+                signUpRequest.description()
+        );
     }
 }
