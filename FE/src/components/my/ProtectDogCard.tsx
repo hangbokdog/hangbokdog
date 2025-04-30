@@ -51,7 +51,7 @@ export default function ProtectDogCard({
 					<span className="font-medium">{name}</span>
 					<span className="text-gray-600 ml-2">{age}</span>
 				</div>
-				<div className="text-sm text-gray-500">
+				<div className="px-1.5 text-sm text-grayText rounded-full bg-gray-50 flex items-center justify-center">
 					{startDate}
 					{endDate ? ` ~ ${endDate}` : " ~"}
 				</div>

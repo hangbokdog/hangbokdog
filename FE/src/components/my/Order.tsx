@@ -3,7 +3,7 @@ import PanelTitle from "../common/PanelTitle";
 
 export default function Order() {
 	return (
-		<div className="pt-2.5 pb-2.5">
+		<div className="pt-2.5 pb-2.5 mx-2.5">
 			<div className="bg-white p-2.5 pb-2.5 pt-2.5 rounded-xl shadow-custom-xs">
 				<PanelTitle title="주문상태" link="/orders" />
 				<div className="flex justify-between items-center">

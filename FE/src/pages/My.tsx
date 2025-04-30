@@ -35,8 +35,3 @@ export default function My() {
 		</div>
 	);
 }
-/*
-function handleEdit(){
-	
-}
-*/
