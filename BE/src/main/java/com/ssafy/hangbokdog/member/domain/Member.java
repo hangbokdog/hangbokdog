@@ -41,7 +41,7 @@ public class Member {
     @Column(name = "age")
     private int age;
 
-    @Column(name = "social_id", nullable = false, length = 32)
+    @Column(name = "social_id", nullable = false, length = 256)
     private String socialId;
 
     @Enumerated(EnumType.STRING)
