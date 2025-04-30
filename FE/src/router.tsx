@@ -10,6 +10,7 @@ import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
 import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
+import NaverCallback from "./pages/NaverCallback";
 
 const router = createBrowserRouter([
 	{
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
 			{
 				path: "signup",
 				element: <SignUp />,
+			},
+			{
+				path: "login/callback",
+				element: <NaverCallback />,
 			},
 			{
 				path: "my",
