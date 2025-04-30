@@ -34,8 +34,8 @@ public class Member {
     @Column(nullable = false)
     private LocalDate birth;
 
-    @Embedded
-    private Phone phone;
+    @Column(nullable = false)
+    private String phone;
 
     @Column(name = "age", nullable = false)
     private int age;

@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.member.presentation;
 
 import java.util.List;
 
+import com.ssafy.hangbokdog.common.dto.MaskRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +28,9 @@ public class MemberController {
             @AuthMember Member member,
             @RequestParam String nickname
     ) {
-        List<MemberSearchNicknameResponse> responses = memberService.findByNickname(nickname);
+        // disableMasking=false 로 넘기면 항상 마스킹
+        MaskRequest maskRequest = new MaskRequest(false);
+        List<MemberSearchNicknameResponse> responses = memberService.findByNickname(maskRequest, nickname);
         return ResponseEntity.ok(responses);
     }
 }
