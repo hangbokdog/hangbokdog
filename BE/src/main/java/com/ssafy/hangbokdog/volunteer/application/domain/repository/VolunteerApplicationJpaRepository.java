@@ -4,7 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 
-public interface VolunteerApplicationJpaRepository extends JpaRepository<VolunteerApplication, Long> {
+public interface VolunteerApplicationJpaRepository
+        extends JpaRepository<VolunteerApplication, Long>, VolunteerApplicationQueryRepository {
 
     boolean existsByVolunteerIdAndMemberId(Long volunteerId, Long memberId);
 }
