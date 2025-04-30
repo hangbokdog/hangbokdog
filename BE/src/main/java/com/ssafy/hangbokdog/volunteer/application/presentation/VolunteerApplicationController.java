@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.application.application.VolunteerApplicationService;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest;
+import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -45,5 +49,28 @@ public class VolunteerApplicationController {
     ) {
         List<WeeklyApplicationResponse> responses = volunteerApplicationService.getWeeklyApplications(member, date);
         return ResponseEntity.ok(responses);
+    }
+
+    // 관리자: PENDING -> APPROVED or REJECTED
+    @PatchMapping("/{eventId}/applications/{applicationId}/status")
+    public ResponseEntity<Void> updateStatus(
+            @AdminMember Member admin,
+            @PathVariable Long eventId,
+            @PathVariable Long applicationId,
+            @RequestBody VolunteerApplicationStatusUpdateRequest request
+    ) {
+        volunteerApplicationService.updateStatus(applicationId, request);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 유저: 자신의 PENDING 신청 취소
+    @DeleteMapping("/{eventId}/applications/{applicationId}/cancel")
+    public ResponseEntity<Void> cancel(
+            @AuthMember Member member,
+            @PathVariable Long eventId,
+            @PathVariable Long applicationId
+    ) {
+        volunteerApplicationService.delete(applicationId);
+        return ResponseEntity.noContent().build();
     }
 }

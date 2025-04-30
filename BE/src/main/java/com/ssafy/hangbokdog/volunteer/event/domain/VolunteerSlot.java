@@ -71,4 +71,8 @@ public class VolunteerSlot extends BaseEntity {
     public void increaseAppliedCount(int headcount) {
         this.appliedCount += headcount;
     }
+
+    public void decreaseAppliedCount() {
+        this.appliedCount--;
+    }
 }
