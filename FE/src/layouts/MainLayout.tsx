@@ -1,5 +1,6 @@
 import Footer from "@/components/common/Footer";
 import Header from "@/components/common/Header";
+import { Toaster } from "@/components/ui/sonner";
 import { Outlet } from "react-router-dom";
 
 export default function MainLayout() {
@@ -12,6 +13,7 @@ export default function MainLayout() {
 				</main>
 			</div>
 			<Footer />
+			<Toaster />
 		</div>
 	);
 }
