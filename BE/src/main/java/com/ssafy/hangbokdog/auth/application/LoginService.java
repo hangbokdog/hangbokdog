@@ -50,7 +50,7 @@ public class LoginService {
         return MemberAuthInfo.of(
                 authTokens.accessToken(),
                 authTokens.refreshToken(),
-                member.isGuest(),
+                !member.isGuest(),
                 member.getName()
         );
     }

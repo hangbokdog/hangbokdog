@@ -81,8 +81,7 @@ public class Member {
             String profileImage,
             String email,
             String description,
-            int age,
-            Grade grade
+            int age
     ) {
         this.id = id;
         this.nickName = nickName;
