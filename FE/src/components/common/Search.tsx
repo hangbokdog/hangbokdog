@@ -84,7 +84,7 @@ export default function Search({
 						<MdFilterAlt className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
 					</DrawerTrigger>
 					<DrawerContent className="bg-white">
-						<div className="mx-auto w-full max-w-[402px]">
+						<div className="mx-auto w-full max-w-[440px]">
 							<DrawerHeader>
 								<div className="flex items-center justify-between">
 									<DrawerTitle className="text-lg">
