@@ -40,28 +40,36 @@ public class LoginService {
         Member member = findOrCreateMember(
                 memberInfo.getSocialId(),
                 memberInfo.getProfileImageUrl(),
-                memberInfo.getEmail()
+                memberInfo.getEmail(),
+                memberInfo.getName()
         );
 
         AuthTokens authTokens = jwtUtils.createLoginToken(member.getId().toString());
         RefreshToken refreshToken = new RefreshToken(member.getId(), authTokens.refreshToken());
         refreshTokenRepository.save(refreshToken);
-        return MemberAuthInfo.of(authTokens.accessToken(), authTokens.refreshToken(), member.isGuest());
+        return MemberAuthInfo.of(
+                authTokens.accessToken(),
+                authTokens.refreshToken(),
+                member.isGuest(),
+                member.getName()
+        );
     }
 
     private Member findOrCreateMember(
             String socialLoginId,
             String profileImageUrl,
-            String email
+            String email,
+            String name
     ) {
         return memberRepository.findBySocialId(socialLoginId)
-                .orElseGet(() -> createMember(socialLoginId, profileImageUrl, email));
+                .orElseGet(() -> createMember(socialLoginId, profileImageUrl, email, name));
     }
 
     private Member createMember(
             String socialLoginId,
             String profileImageUrl,
-            String email
+            String email,
+            String name
     ) {
         return memberRepository.save(
                 Member.builder()
@@ -69,6 +77,7 @@ public class LoginService {
                         .nickName(UUID.randomUUID().toString())
                         .profileImage(profileImageUrl)
                         .email(email)
+                        .name(name)
                         .build()
         );
     }
