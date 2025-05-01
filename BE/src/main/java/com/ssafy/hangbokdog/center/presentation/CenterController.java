@@ -15,6 +15,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.application.CenterService;
 import com.ssafy.hangbokdog.center.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
+import com.ssafy.hangbokdog.center.dto.request.MonthlyChallengeRequest;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountBalanceResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -52,6 +53,16 @@ public class CenterController {
 			@PathVariable Long centerId
 	) {
 		centerService.join(member, centerId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{centerId}/create-monthly-challenge")
+	public ResponseEntity<Void> createMonthlyChallenge(
+		@AuthMember Member member,
+		@PathVariable Long centerId,
+		@RequestBody MonthlyChallengeRequest request
+	) {
+		centerService.createMonthlyChallenge(member, request, centerId);
 		return ResponseEntity.noContent().build();
 	}
 }

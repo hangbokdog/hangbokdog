@@ -7,17 +7,19 @@ import com.ssafy.hangbokdog.center.domain.Center;
 import com.ssafy.hangbokdog.center.domain.CenterJoinRequest;
 import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.DonationAccount;
+import com.ssafy.hangbokdog.center.domain.MonthlyChallenge;
 import com.ssafy.hangbokdog.center.domain.repository.CenterJoinRequestRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
+import com.ssafy.hangbokdog.center.domain.repository.MonthlyChallengeRepository;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
+import com.ssafy.hangbokdog.center.dto.request.MonthlyChallengeRequest;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -28,6 +30,7 @@ public class CenterService {
 	private final CenterMemberRepository centerMemberRepository;
 	private final CenterJoinRequestRepository centerJoinRequestRepository;
 	private final DonationAccountRepository donationAccountRepository;
+	private final MonthlyChallengeRepository monthlyChallengeRepository;
 
 	@Transactional
 	public Long createCenter(CenterCreateRequest request) {
@@ -59,31 +62,31 @@ public class CenterService {
 		}
 
 		centerJoinRequestRepository.save(
-				CenterJoinRequest.builder()
-						.centerId(centerId)
-						.memberId(member.getId())
-						.build()
+			CenterJoinRequest.builder()
+				.centerId(centerId)
+				.memberId(member.getId())
+				.build()
 		);
 	}
 
 	@Transactional
 	public void approve(Member member, Long centerJoinRequestId) {
 		var centerJoinRequest = centerJoinRequestRepository.findById(centerJoinRequestId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
 
 		Long centerId = centerJoinRequest.getCenterId();
 		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
 		centerMemberRepository.save(
-				CenterMember.builder()
-						.centerId(centerId)
-						.memberId(centerJoinRequest.getMemberId())
-						.build()
+			CenterMember.builder()
+				.centerId(centerId)
+				.memberId(centerJoinRequest.getMemberId())
+				.build()
 		);
 
 		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
@@ -91,12 +94,30 @@ public class CenterService {
 
 	public PageInfo<CenterJoinRequestResponse> findAll(Member member, Long centerId, String pageToken) {
 		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
 		return centerJoinRequestRepository.findAll(centerId, pageToken);
+	}
+
+	public void createMonthlyChallenge(Member member, MonthlyChallengeRequest request, Long centerId) {
+
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		MonthlyChallenge challenge = MonthlyChallenge.builder()
+			.targetAmount(request.amount())
+			.centerId(centerId)
+			.title(request.title())
+			.build();
+
+		monthlyChallengeRepository.save(challenge);
 	}
 }
