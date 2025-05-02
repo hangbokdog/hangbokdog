@@ -48,6 +48,7 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
                 .leftJoin(product).on(product.id.eq(order.productId))
                 .leftJoin(member).on(member.id.eq(product.sellerId))
                 .where(order.buyerId.eq(memberId), isInRange(pageToken))
+                .orderBy(order.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
     }
