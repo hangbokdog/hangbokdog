@@ -3,11 +3,17 @@ package com.ssafy.hangbokdog.dog.domain.repository;
 import static com.ssafy.hangbokdog.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.dog.domain.QDog.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -61,5 +67,27 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			.on(dog.centerId.eq(center.id))
 			.where(dog.id.eq(dogId))
 			.fetchOne();
+	}
+
+	@Override
+	public List<DogSummary> getDogSummaries(Long centerId) {
+		return queryFactory
+			.select(Projections.constructor(
+				DogSummary.class,
+				dog.name,
+				dog.profileImage,
+				Expressions.numberTemplate(
+					Integer.class,
+					"timestampdiff(month, {0}, {1})",
+					dog.createdAt,
+					LocalDateTime.now()
+				),
+				dog.gender
+			))
+			.from(dog)
+			.where(dog.centerId.eq(centerId)
+				.and(dog.status.ne(DogStatus.ADOPTED))
+				.and(dog.isStar.eq(false)))
+			.fetch();
 	}
 }
