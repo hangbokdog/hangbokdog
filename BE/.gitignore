@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+*.yml
+.env
+hangbokfog-firebase-adminsdk-fbsvc-86cdf23c75.json
