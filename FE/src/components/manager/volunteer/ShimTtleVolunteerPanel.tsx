@@ -9,8 +9,9 @@ export default function ShimTtleVolunteerPanel() {
 		night: [],
 	};
 
-	const volunteerSchedules: { startDate: string; endDate: string }[] = [
-		{ startDate: "05.01", endDate: "05.03" },
+	const volunteerSchedules: { startDate: Date; endDate: Date }[] = [
+		{ startDate: new Date("2025-05-01"), endDate: new Date("2025-05-03") },
+		{ startDate: new Date("2025-05-14"), endDate: new Date("2025-05-20") },
 	];
 
 	return (

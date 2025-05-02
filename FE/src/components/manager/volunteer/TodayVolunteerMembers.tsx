@@ -1,4 +1,4 @@
-import TodayVolunteerSection from "./TodayVolunteerSection";
+import VolunteerMemberSection from "./VolunteerMemberSection";
 
 interface TodayVolunteerMemberProps {
 	label: string;
@@ -30,20 +30,16 @@ export default function TodayVolunteerMembers({
 				</span>{" "}
 				{"봉사 인원"}
 			</div>
-
-			<TodayVolunteerSection
-				label="종일"
-				colorKey="day"
-				members={members.day}
-			/>
-			<TodayVolunteerSection
+			<VolunteerMemberSection
 				label="오전"
 				colorKey="morning"
+				allDayMembers={members.day}
 				members={members.morning}
 			/>
-			<TodayVolunteerSection
+			<VolunteerMemberSection
 				label="오후"
 				colorKey="night"
+				allDayMembers={members.day}
 				members={members.night}
 			/>
 		</div>
