@@ -15,6 +15,7 @@ import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 import DogRegister from "./pages/manager/DogRegister";
 import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
+import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 
 const router = createBrowserRouter([
 	{
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
 					{
 						index: true,
 						element: <VolunteerSchedulePage />,
+					},
+					{
+						path: ":id",
+						element: <VolunteerDetailPage />,
 					},
 				],
 			},
