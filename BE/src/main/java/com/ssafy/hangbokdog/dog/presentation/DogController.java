@@ -27,6 +27,7 @@ import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
+import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -175,6 +176,13 @@ public class DogController {
 		@PathVariable Long dogId
 	) {
 		DogCenterInfo response = dogService.getDogCenterInfo(dogId);
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/dogCount")
+	public ResponseEntity<ProtectedDogCountResponse> dogCount(@RequestParam Long centerId) {
+		ProtectedDogCountResponse response = dogService.getDogCount(centerId);
+
 		return ResponseEntity.ok().body(response);
 	}
 

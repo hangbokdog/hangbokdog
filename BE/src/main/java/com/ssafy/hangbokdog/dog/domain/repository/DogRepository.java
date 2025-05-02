@@ -63,4 +63,8 @@ public class DogRepository {
 	public DogCenterInfo getDogCenterInfo(Long dogId) {
 		return dogJpaRepositoryCustomImpl.getDogCenterInfo(dogId);
 	}
+
+	public int getDogCount(Long centerId) {
+		return dogJpaRepository.countByCenterId(centerId);
+	}
 }
