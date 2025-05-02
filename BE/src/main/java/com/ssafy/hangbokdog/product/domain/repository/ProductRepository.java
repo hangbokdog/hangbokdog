@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.product.domain.Product;
+import com.ssafy.hangbokdog.product.dto.response.ProductDetailResponse;
 import com.ssafy.hangbokdog.product.dto.response.ProductResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,9 @@ public class ProductRepository {
 
     public void deleteByIdAndSellerId(Long productId, Long sellerId) {
         productJpaRepository.deleteByIdAndSellerId(productId, sellerId);
+    }
+
+    public ProductDetailResponse findDetailById(Long productId) {
+        return productJpaRepository.finDetailById(productId);
     }
 }

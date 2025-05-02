@@ -23,6 +23,7 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.product.application.ProductService;
 import com.ssafy.hangbokdog.product.dto.request.ProductCreateRequest;
 import com.ssafy.hangbokdog.product.dto.request.ProductUpdateRequest;
+import com.ssafy.hangbokdog.product.dto.response.ProductDetailResponse;
 import com.ssafy.hangbokdog.product.dto.response.ProductResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,13 @@ public class ProductController {
     ) {
         productService.delete(member, productId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductDetailResponse> find(
+            @AuthMember Member member,
+            @PathVariable(value = "productId") Long productId
+    ) {
+        return ResponseEntity.ok(productService.find(productId));
     }
 }

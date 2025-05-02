@@ -16,6 +16,7 @@ import com.ssafy.hangbokdog.product.domain.Product;
 import com.ssafy.hangbokdog.product.domain.repository.ProductRepository;
 import com.ssafy.hangbokdog.product.dto.request.ProductCreateRequest;
 import com.ssafy.hangbokdog.product.dto.request.ProductUpdateRequest;
+import com.ssafy.hangbokdog.product.dto.response.ProductDetailResponse;
 import com.ssafy.hangbokdog.product.dto.response.ProductResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -82,5 +83,9 @@ public class ProductService {
     public void delete(Member member, Long productId) {
         // TODO: Order 에 관한 변경도 처리
         productRepository.deleteByIdAndSellerId(productId, member.getId());
+    }
+
+    public ProductDetailResponse find(Long productId) {
+        return productRepository.findDetailById(productId);
     }
 }
