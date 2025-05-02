@@ -88,4 +88,8 @@ public class ProductService {
     public ProductDetailResponse find(Long productId) {
         return productRepository.findDetailById(productId);
     }
+
+    public PageInfo<ProductResponse> searchByWord(String word, String pageToken) {
+        return productRepository.searchByWord(word, pageToken);
+    }
 }

@@ -9,4 +9,6 @@ public interface ProductQueryRepository {
     List<ProductResponse> findAll(Long centerId, String pageToken, int pageSize);
 
     ProductDetailResponse finDetailById(Long productId);
+
+    List<ProductResponse> searchByWord(String word, String pageToken, int defaultPageSize);
 }

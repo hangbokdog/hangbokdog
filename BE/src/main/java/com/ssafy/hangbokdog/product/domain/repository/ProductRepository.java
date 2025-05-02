@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.product.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -38,5 +39,10 @@ public class ProductRepository {
 
     public ProductDetailResponse findDetailById(Long productId) {
         return productJpaRepository.finDetailById(productId);
+    }
+
+    public PageInfo<ProductResponse> searchByWord(String word, String pageToken) {
+        var data = productJpaRepository.searchByWord(word, pageToken, DEFAULT_PAGE_SIZE);
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, ProductResponse::id);
     }
 }

@@ -87,4 +87,13 @@ public class ProductController {
     ) {
         return ResponseEntity.ok(productService.find(productId));
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageInfo<ProductResponse>> search(
+            @AuthMember Member member,
+            @RequestParam String word,
+            @RequestParam(required = false) String pageToken
+    ) {
+        return ResponseEntity.ok(productService.searchByWord(word, pageToken));
+    }
 }

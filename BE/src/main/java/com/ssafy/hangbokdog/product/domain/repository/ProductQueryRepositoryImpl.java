@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.product.domain.ProductStatus;
 import com.ssafy.hangbokdog.product.dto.response.ProductDetailResponse;
 import com.ssafy.hangbokdog.product.dto.response.ProductResponse;
 
@@ -50,6 +51,21 @@ public class ProductQueryRepositoryImpl implements ProductQueryRepository {
                 )).from(product)
                 .where(product.id.eq(productId))
                 .fetchOne();
+    }
+
+    @Override
+    public List<ProductResponse> searchByWord(String word, String pageToken, int defaultPageSize) {
+        return queryFactory.select(
+                Projections.constructor(
+                        ProductResponse.class,
+                        product.id,
+                        product.name,
+                        product.imageUrls,
+                        product.price
+                )).from(product)
+                .where(product.name.contains(word).and(product.status.eq(ProductStatus.ON_SALE)))
+                .orderBy(product.id.desc())
+                .fetch();
     }
 
     private BooleanExpression isInRange(String pageToken) {
