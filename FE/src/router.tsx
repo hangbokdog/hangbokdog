@@ -14,6 +14,9 @@ import NaverCallback from "./pages/NaverCallback";
 import ManagerEmergency from "./pages/manager/ManagerEmergency";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
+import DogRegister from "./pages/manager/DogRegister";
+import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
+import AddVolunteerSchedule from "./pages/manager/AddVolunteerSchedule";
 
 const router = createBrowserRouter([
 	{
@@ -26,7 +29,6 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "login",
-				element: <Login />,
 				children: [
 					{
 						index: true,
@@ -84,6 +86,15 @@ const router = createBrowserRouter([
 					},
 				],
 			},
+			{
+				path: "volunteer",
+				children: [
+					{
+						index: true,
+						element: <VolunteerSchedulePage />,
+					},
+				],
+			},
 		],
 	},
 	{
@@ -96,7 +107,22 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "volunteer",
-				element: <ManagerVolunteer />,
+				children: [
+					{
+						index: true,
+						element: <ManagerVolunteer />,
+						handle: { showHeader: false },
+					},
+					{
+						path: "create",
+						element: <AddVolunteerSchedule />,
+						handle: { showHeader: false },
+					},
+				],
+			},
+			{
+				path: "dog-register",
+				element: <DogRegister />,
 				handle: { showHeader: false },
 			},
 			{

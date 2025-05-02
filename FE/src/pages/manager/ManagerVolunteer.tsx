@@ -5,7 +5,7 @@ import YipYangTtleVolunteerPanel from "@/components/manager/volunteer/YipYangTtl
 
 export default function ManagerVolunteer() {
 	return (
-		<div className="flex flex-col gap-3 text-grayText">
+		<div className="flex flex-col gap-3 text-grayText mx-2.5">
 			<div className="text-xl font-bold">봉사</div>
 			<TabPanel
 				tabs={[

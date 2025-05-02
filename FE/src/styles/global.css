@@ -191,8 +191,67 @@ h1 {
 	.shadow-custom-sm {
 		box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.08);
 	}
+	.bg-custom-gradient {
+		background: linear-gradient(100deg, white 15%, transparent 90%);
+	}
 }
 
 button {
 	cursor: pointer;
+}
+
+.fc table {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+.fc td,
+.fc th {
+	border: none;
+}
+.fc .fc-daygrid-day {
+	border: none;
+}
+.fc .fc-daygrid-day-frame {
+	border: none;
+}
+.fc .fc-daygrid-day-events {
+	border: none;
+}
+.fc .fc-daygrid-day-top {
+	border: none;
+	padding-top: 4px;
+}
+.fc .fc-daygrid-day-number {
+	border: none;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+	margin: 0;
+}
+.fc .fc-scrollgrid {
+	border: none;
+}
+.fc .fc-scrollgrid-section > * {
+	border: none;
+}
+.fc .fc-scrollgrid-section-header {
+	border: none;
+}
+.fc .fc-scrollgrid-section-body {
+	border: none;
+}
+.fc .fc-scrollgrid-section-footer {
+	border: none;
+}
+.fc .fc-scrollgrid-section-liquid {
+	border: none;
+}
+.fc .fc-scrollgrid-section-sticky {
+	border: none;
+}
+.fc .fc-toolbar {
+	display: none;
+}
+.fc .fc-day-today {
+	background: none !important;
 }
