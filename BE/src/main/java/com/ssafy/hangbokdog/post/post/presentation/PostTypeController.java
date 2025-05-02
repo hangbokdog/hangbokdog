@@ -33,11 +33,11 @@ public class PostTypeController {
 
     @PostMapping
     public ResponseEntity<Void> create(
-            @AdminMember Member admin,
+            @AuthMember Member member,
             @RequestParam Long centerId,
             @RequestBody PostTypeRequest request
     ) {
-        Long postTypeId = postTypeService.create(centerId, request);
+        Long postTypeId = postTypeService.create(member.getId(), centerId, request);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/post-types/{id}")
                 .buildAndExpand(postTypeId)
@@ -66,19 +66,21 @@ public class PostTypeController {
 
     @PatchMapping("/{postTypeId}")
     public ResponseEntity<Void> update(
-            @AdminMember Member admin,
+            @AuthMember Member member,
+            @RequestParam Long centerId,
             @PathVariable Long postTypeId,
             @RequestBody PostTypeRequest request) {
-        postTypeService.update(postTypeId, request);
+        postTypeService.update(member.getId(), centerId, postTypeId, request);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{postTypeId}")
     public ResponseEntity<Void> delete(
-            @AdminMember Member admin,
+            @AuthMember Member member,
+            @RequestParam Long centerId,
             @PathVariable Long postTypeId
     ) {
-        postTypeService.delete(postTypeId);
+        postTypeService.delete(member.getId(), centerId, postTypeId);
         return ResponseEntity.noContent().build();
     }
 }

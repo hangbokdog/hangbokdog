@@ -54,12 +54,12 @@ public class VolunteerApplicationController {
     // 관리자: PENDING -> APPROVED or REJECTED
     @PatchMapping("/{eventId}/applications/{applicationId}/status")
     public ResponseEntity<Void> updateStatus(
-            @AdminMember Member admin,
+            @AuthMember Member member,
             @PathVariable Long eventId,
             @PathVariable Long applicationId,
             @RequestBody VolunteerApplicationStatusUpdateRequest request
     ) {
-        volunteerApplicationService.updateStatus(applicationId, request);
+        volunteerApplicationService.updateStatus(member.getId(), applicationId, request);
         return ResponseEntity.noContent().build();
     }
 

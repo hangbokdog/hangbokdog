@@ -6,6 +6,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
@@ -26,6 +28,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CenterRepository centerRepository;
+    private final CenterMemberRepository centerMemberRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     public Long create(
@@ -34,6 +37,9 @@ public class PostService {
             PostCreateRequest request,
             List<String> imageUrls
     ) {
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+            .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
         Post newPost = Post.builder()
                 .centerId(centerId)
                 .authorId(member.getId())
