@@ -25,14 +25,20 @@ const router = createBrowserRouter([
 			{
 				path: "login",
 				element: <Login />,
+				children: [
+					{
+						index: true,
+						element: <Login />,
+					},
+					{
+						path: "callback",
+						element: <NaverCallback />,
+					},
+				],
 			},
 			{
 				path: "signup",
 				element: <SignUp />,
-			},
-			{
-				path: "login/callback",
-				element: <NaverCallback />,
 			},
 			{
 				path: "my",
