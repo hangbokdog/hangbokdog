@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.donation.domain.DonationHistory;
+import com.ssafy.hangbokdog.donation.dto.response.DonationAmountResponse;
 import com.ssafy.hangbokdog.donation.dto.response.DonationHistoryResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,9 @@ public class DonationHistoryRepository {
 
     public void bulkInsert(List<DonationHistory> donationHistoryList) {
         donationHistoryJdbcRepository.batchInsert(donationHistoryList);
+    }
+
+    public DonationAmountResponse getDonationAmountByCenterIdAndMemberId(Long centerId, Long memberId) {
+        return donationHistoryJpaRepository.getDonationAmountByCenterIdAndMemberId(centerId, memberId);
     }
 }

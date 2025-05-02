@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.donation.dto.response.DonationAmountResponse;
 import com.ssafy.hangbokdog.donation.dto.response.DonationHistoryResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,17 @@ public class DonationHistoryQueryRepositoryImpl implements DonationHistoryQueryR
 				centerIdEq(centerId))
 			.limit(pageSize + 1)
 			.fetch();
+	}
+
+	@Override
+	public DonationAmountResponse getDonationAmountByCenterIdAndMemberId(Long centerId, Long memberId) {
+		return queryFactory.select(
+				Projections.constructor(
+						DonationAmountResponse.class,
+						donationHistory.amount.sum().coalesce(0)
+								)).from(donationHistory)
+				.where(donationHistory.centerId.eq(centerId).and(donationHistory.donorId.eq(memberId)))
+				.fetchOne();
 	}
 
 	private BooleanExpression centerIdEq(Long centerId) {
