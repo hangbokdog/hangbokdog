@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.order.domain;
 
+import static com.ssafy.hangbokdog.order.domain.OrderStatus.CANCEL;
 import static com.ssafy.hangbokdog.order.domain.OrderStatus.COMPLETE;
 import static com.ssafy.hangbokdog.order.domain.OrderStatus.ONGOING;
 
@@ -64,5 +65,9 @@ public class Order extends BaseEntity {
 
     public void confirm() {
         status = COMPLETE;
+    }
+
+    public void cancel() {
+        status = CANCEL;
     }
 }

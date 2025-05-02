@@ -34,4 +34,12 @@ public class OrderRepository {
         var orders = orderJpaRepository.findAllByBuyerId(memberId, pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(orders, DEFAULT_PAGE_SIZE, OrderResponse::id);
     }
+
+    public void deleteByProductId(Long productId) {
+        orderJpaRepository.deleteByProductId(productId);
+    }
+
+    public Optional<Order> findByProductId(Long productId) {
+        return orderJpaRepository.findByProductId(productId);
+    }
 }

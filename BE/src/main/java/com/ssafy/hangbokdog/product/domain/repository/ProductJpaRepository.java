@@ -9,6 +9,6 @@ import com.ssafy.hangbokdog.product.domain.Product;
 public interface ProductJpaRepository extends JpaRepository<Product, Long>, ProductQueryRepository {
 
     @Modifying
-    @Query("UPDATE Product p SET p.deleted = true WHERE p.id = :productId AND p.sellerId = :sellerId")
-    void deleteByIdAndSellerId(Long productId, Long sellerId);
+    @Query("UPDATE Product p SET p.deleted = true WHERE p.id = :id")
+    void deleteById(Long id);
 }

@@ -33,8 +33,8 @@ public class ProductRepository {
         return productJpaRepository.findById(productId);
     }
 
-    public void deleteByIdAndSellerId(Long productId, Long sellerId) {
-        productJpaRepository.deleteByIdAndSellerId(productId, sellerId);
+    public void deleteById(Long productId) {
+        productJpaRepository.deleteById(productId);
     }
 
     public ProductDetailResponse findDetailById(Long productId) {
