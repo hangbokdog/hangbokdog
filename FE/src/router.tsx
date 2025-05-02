@@ -11,6 +11,7 @@ import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
+import DogCommentsPage from "./pages/DogCommentsPage";
 
 const router = createBrowserRouter([
 	{
@@ -52,7 +53,20 @@ const router = createBrowserRouter([
 				children: [
 					{
 						path: ":id",
-						element: <DogDetailPage />,
+						children: [
+							{
+								index: true,
+								element: <DogDetailPage />,
+							},
+							{
+								path: "comments",
+								element: <DogCommentsPage />,
+								handle: { showHeader: false },
+							},
+						],
+					},
+				],
+			},
 					},
 				],
 			},
