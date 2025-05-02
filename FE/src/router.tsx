@@ -11,11 +11,13 @@ import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
+import ManagerEmergency from "./pages/manager/ManagerEmergency";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 import DogRegister from "./pages/manager/DogRegister";
 import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
 import AddVolunteerSchedule from "./pages/manager/AddVolunteerSchedule";
+import EmergencyRegister from "./pages/manager/EmergencyRegister";
 
 const router = createBrowserRouter([
 	{
@@ -123,6 +125,20 @@ const router = createBrowserRouter([
 				path: "dog-register",
 				element: <DogRegister />,
 				handle: { showHeader: false },
+			},
+			{
+				path: "emergency",
+				handle: { showHeader: false },
+				children: [
+					{
+						index: true,
+						element: <ManagerEmergency />,
+					},
+					{
+						path: "register",
+						element: <EmergencyRegister />,
+					},
+				],
 			},
 		],
 	},
