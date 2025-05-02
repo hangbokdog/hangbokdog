@@ -18,8 +18,8 @@ import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
-
 import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Service

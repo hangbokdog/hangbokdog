@@ -11,7 +11,6 @@ import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 
-import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
