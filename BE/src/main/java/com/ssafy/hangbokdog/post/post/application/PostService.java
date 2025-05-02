@@ -21,7 +21,9 @@ import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -52,6 +54,7 @@ public class PostService {
         Post post = postRepository.save(newPost);
 
         if (postRepository.findPostTypeNameByPostTypeId(post.getPostTypeId()).equals("긴급")) {
+            log.info("응급알림 발생");
             String centerName = centerRepository.findNameById(post.getCenterId());
             eventPublisher.publishEvent(
                     new EmergencyPostEvent(
@@ -62,6 +65,7 @@ public class PostService {
                             centerName
                     )
             );
+            log.info("응급알림발생 후");
         }
 
         return newPost.getId();
