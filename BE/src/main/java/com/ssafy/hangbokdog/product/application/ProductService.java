@@ -12,6 +12,8 @@ import com.ssafy.hangbokdog.common.annotation.RedisLock;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.order.domain.Order;
+import com.ssafy.hangbokdog.order.domain.repository.OrderRepository;
 import com.ssafy.hangbokdog.product.domain.Product;
 import com.ssafy.hangbokdog.product.domain.repository.ProductRepository;
 import com.ssafy.hangbokdog.product.dto.request.ProductCreateRequest;
@@ -26,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
 
     public Long create(
             Member member,
@@ -81,8 +84,17 @@ public class ProductService {
 
     @RedisLock(key = "'productId:' + #productId")
     public void delete(Member member, Long productId) {
-        // TODO: Order 에 관한 변경도 처리
-        productRepository.deleteByIdAndSellerId(productId, member.getId());
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new BadRequestException(PRODUCT_NOT_FOUND));
+
+        if (!product.isSeller(member)) {
+            throw new BadRequestException(NOT_SELLER);
+        }
+
+        orderRepository.findByProductId(productId)
+                .ifPresent(Order::cancel);
+
+        productRepository.deleteById(productId);
     }
 
     public ProductDetailResponse find(Long productId) {
