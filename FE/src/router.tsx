@@ -13,6 +13,7 @@ import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
+import DogRegister from "./pages/manager/DogRegister";
 
 const router = createBrowserRouter([
 	{
@@ -25,7 +26,6 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "login",
-				element: <Login />,
 				children: [
 					{
 						index: true,
@@ -96,6 +96,11 @@ const router = createBrowserRouter([
 			{
 				path: "volunteer",
 				element: <ManagerVolunteer />,
+				handle: { showHeader: false },
+			},
+			{
+				path: "dog-register",
+				element: <DogRegister />,
 				handle: { showHeader: false },
 			},
 		],

@@ -15,7 +15,7 @@ export default function ManagerFooter() {
 			label: "아이들 관리",
 		},
 		{
-			path: "/manager/add-kid",
+			path: "/manager/dog-register",
 			icon: FaPlusCircle,
 			size: 20,
 			label: "등록",
