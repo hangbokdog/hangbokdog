@@ -20,10 +20,12 @@ pipeline {
                 dir('BE') {
                     withCredentials([
                     file(credentialsId: 'application-yml', variable: 'APPLICATION_YML'),
+                    file(credentialsId: 'fcm-json', variable: 'FCM_JSON')
                     ]) {
                         sh '''
                           mkdir -p src/main/resources
                           chmod -R 700 src/main/resources
+                          cp $FCM_JSON src/main/resources/hangbokfog-firebase-adminsdk-fbsvc-86cdf23c75.json
                           cp $APPLICATION_YML src/main/resources/application.yml
                         '''
                     }
