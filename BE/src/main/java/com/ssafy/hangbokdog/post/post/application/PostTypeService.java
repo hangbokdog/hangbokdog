@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
@@ -24,8 +26,17 @@ public class PostTypeService {
     private final PostTypeJpaRepository postTypeJpaRepository;
     private final PostRepository postRepository;
     private final CenterRepository centerRepository;
+    private final CenterMemberRepository centerMemberRepository;
 
-    public Long create(Long centerId, PostTypeRequest request) {
+    public Long create(Long memberId, Long centerId, PostTypeRequest request) {
+
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
         centerRepository.findById(centerId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
 
@@ -54,7 +65,15 @@ public class PostTypeService {
     }
 
     @Transactional
-    public void update(Long postTypeId, PostTypeRequest request) {
+    public void update(Long memberId, Long centerId, Long postTypeId, PostTypeRequest request) {
+
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+            .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
         PostType postType = postTypeJpaRepository.findById(postTypeId)
                 .orElseThrow(() ->new BadRequestException(ErrorCode.POST_TYPE_NOT_FOUND));
 
@@ -62,7 +81,15 @@ public class PostTypeService {
     }
 
     @Transactional
-    public void delete(Long postTypeId) {
+    public void delete(Long memberId, Long centerId, Long postTypeId) {
+
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+            .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
         PostType postType = postTypeJpaRepository.findById(postTypeId)
                 .orElseThrow(() ->new BadRequestException(ErrorCode.POST_TYPE_NOT_FOUND));
 
