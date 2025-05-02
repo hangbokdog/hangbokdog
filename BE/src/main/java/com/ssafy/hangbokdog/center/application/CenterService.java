@@ -1,8 +1,8 @@
 package com.ssafy.hangbokdog.center.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +14,12 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterJoinRequestRepository
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
+import com.ssafy.hangbokdog.center.dto.CenterJoinSearchInfo;
+import com.ssafy.hangbokdog.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
-import com.ssafy.hangbokdog.center.dto.response.CenterNameResponse;
+import com.ssafy.hangbokdog.center.dto.response.CenterSearchResponse;
+import com.ssafy.hangbokdog.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -104,7 +107,36 @@ public class CenterService {
 		return centerJoinRequestRepository.findAll(centerId, pageToken);
 	}
 
-	public List<CenterNameResponse> getMyCenters(Long memberId) {
+	public List<MyCenterResponse> getMyCenters(Long memberId) {
 		return centerMemberRepository.getMyCenters(memberId);
+	}
+
+	public List<CenterSearchResponse> searchCentersByName(Long memberId, String name) {
+		List<CenterSearchInfo> searchInfos = centerMemberRepository.getCentersByName(name);
+		List<CenterJoinSearchInfo> joinSearchInfos = centerJoinRequestRepository.findCenterIdsByMemberId(memberId);
+		List<CenterMember> centerMemberInfos = centerMemberRepository.getCenterMembersByMemberId(memberId);
+
+		List<CenterSearchResponse> result = new ArrayList<>();
+		for (CenterSearchInfo center : searchInfos) {
+			String status = "가입신청";
+
+			for (CenterJoinSearchInfo joinInfo : joinSearchInfos) {
+				if (joinInfo.centerId().equals(center.id())) {
+					status = "신청중";
+					break;
+				}
+			}
+
+			for (CenterMember memberInfo : centerMemberInfos) {
+				if (memberInfo.getCenterId().equals(center.id())) {
+					status = memberInfo.getGrade().toString();
+					break;
+				}
+			}
+
+			result.add(new CenterSearchResponse(center.id(), center.name(), status));
+		}
+
+		return result;
 	}
 }
