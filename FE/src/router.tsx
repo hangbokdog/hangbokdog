@@ -12,6 +12,7 @@ import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
 import DogCommentsPage from "./pages/DogCommentsPage";
+import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 
 const router = createBrowserRouter([
 	{
@@ -73,6 +74,12 @@ const router = createBrowserRouter([
 					},
 				],
 			},
+			{
+				path: "adoption",
+				children: [
+					{
+						path: "notice",
+						element: <AdoptionNoticePage />,
 					},
 				],
 			},
