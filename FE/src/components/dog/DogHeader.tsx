@@ -1,5 +1,6 @@
 import { FaRegComment, FaRegHeart } from "react-icons/fa";
 import { PiDogFill } from "react-icons/pi";
+import { Link, useParams } from "react-router-dom";
 
 interface DogHeaderProps {
 	name: string;
@@ -14,6 +15,8 @@ export default function DogHeader({
 	likes,
 	comments,
 }: DogHeaderProps) {
+	const { id } = useParams();
+
 	return (
 		<div className="flex items-center justify-between">
 			<div className="flex gap-2 items-end">
@@ -30,8 +33,15 @@ export default function DogHeader({
 			<div className="flex gap-2 items-center">
 				<FaRegHeart className="size-5 text-blueGray" />
 				<span className="font-medium text-textGray">{likes}</span>
-				<FaRegComment className="size-5 text-blueGray" />
-				<span className="font-medium text-textGray">{comments}</span>
+				<Link
+					className="flex gap-2 items-center"
+					to={`/dogs/${id}/comments`}
+				>
+					<FaRegComment className="size-5 text-blueGray" />
+					<span className="font-medium text-textGray">
+						{comments}
+					</span>
+				</Link>
 			</div>
 		</div>
 	);
