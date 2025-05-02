@@ -75,7 +75,7 @@ export default function DogRegister() {
 	};
 
 	return (
-		<div className="flex flex-col gap-5 p-4 text-sm text-grayText">
+		<div className="flex flex-col gap-5 p-4 text-sm text-grayText bg-white">
 			{/* 프로필 이미지 */}
 			<label className="w-full h-48 bg-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
 				{profilePreview ? (
