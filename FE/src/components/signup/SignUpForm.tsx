@@ -4,7 +4,7 @@ import InputField from "@/components/common/InputField";
 
 export default function SignUpForm() {
 	return (
-		<div className="flex flex-col gap-2.5 items-center w-full">
+		<div className="flex flex-col gap-4 items-center w-full">
 			<InputField
 				icon={FaUserTie}
 				placeholder="닉네임을 입력해주세요. (2~10자)"
