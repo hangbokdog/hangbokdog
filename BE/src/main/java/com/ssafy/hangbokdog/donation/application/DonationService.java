@@ -11,6 +11,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.donation.domain.DonationHistory;
 import com.ssafy.hangbokdog.donation.domain.repository.DonationHistoryRepository;
 import com.ssafy.hangbokdog.donation.dto.request.DonationRequest;
+import com.ssafy.hangbokdog.donation.dto.response.DonationAmountResponse;
 import com.ssafy.hangbokdog.donation.dto.response.DonationHistoryResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.mileage.domain.Mileage;
@@ -18,6 +19,7 @@ import com.ssafy.hangbokdog.mileage.domain.repository.MileageRepository;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.domain.TransactionType;
 import com.ssafy.hangbokdog.transaction.domain.repository.TransactionRepository;
+
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,5 +59,9 @@ public class DonationService {
 
 	public PageInfo<DonationHistoryResponse> findAll(Member member, Long centerId, String pageToken) {
 		return donationHistoryRepository.findAllByDonorId(member.getId(), centerId, pageToken);
+	}
+
+	public DonationAmountResponse getDonationAmount(Long centerId, Member member) {
+		return donationHistoryRepository.getDonationAmountByCenterIdAndMemberId(centerId, member.getId());
 	}
 }

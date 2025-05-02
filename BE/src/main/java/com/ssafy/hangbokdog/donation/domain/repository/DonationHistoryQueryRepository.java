@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.donation.domain.repository;
 
 import java.util.List;
 
+import com.ssafy.hangbokdog.donation.dto.response.DonationAmountResponse;
 import com.ssafy.hangbokdog.donation.dto.response.DonationHistoryResponse;
 
 public interface DonationHistoryQueryRepository {
@@ -11,4 +12,6 @@ public interface DonationHistoryQueryRepository {
         String pageToken,
         int pageSize
     );
+
+    DonationAmountResponse getDonationAmountByCenterIdAndMemberId(Long centerId, Long memberId);
 }

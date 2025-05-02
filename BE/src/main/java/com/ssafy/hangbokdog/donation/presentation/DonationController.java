@@ -11,6 +11,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.donation.application.DonationService;
 import com.ssafy.hangbokdog.donation.dto.request.DonationRequest;
+import com.ssafy.hangbokdog.donation.dto.response.DonationAmountResponse;
 import com.ssafy.hangbokdog.donation.dto.response.DonationHistoryResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -39,5 +40,13 @@ public class DonationController {
             @RequestParam(required = false, name = "pageToken") String pageToken
     ) {
         return ResponseEntity.ok(donationService.findAll(member, centerId, pageToken));
+    }
+
+    @GetMapping("/api/v1/donations/total")
+    public ResponseEntity<DonationAmountResponse> getTotalDonationAmount(
+            @RequestParam Long centerId,
+            @AuthMember Member member
+    ) {
+        return ResponseEntity.ok(donationService.getDonationAmount(centerId, member));
     }
 }
