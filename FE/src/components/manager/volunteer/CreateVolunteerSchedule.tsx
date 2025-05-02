@@ -1,4 +1,5 @@
 import { MdAddCircle } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 interface CreateVolunteerScheduleProps {
 	volunteerSchedules: {
@@ -36,7 +37,8 @@ export default function CreateVolunteerSchedule(
 						</div>
 					</div>
 				))}
-				<div
+				<Link
+					to="/manager/volunteer/create"
 					className={`flex text-blueGray justify-center px-4 py-2 rounded-full text-sm font-semibold ${
 						volunteerSchedules.length % 2 === 0
 							? "bg-background"
@@ -44,7 +46,7 @@ export default function CreateVolunteerSchedule(
 					}`}
 				>
 					<MdAddCircle size="16" />
-				</div>
+				</Link>
 			</div>
 		</div>
 	);
