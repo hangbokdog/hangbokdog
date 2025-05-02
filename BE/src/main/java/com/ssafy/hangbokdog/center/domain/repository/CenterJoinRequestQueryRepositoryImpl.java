@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.center.dto.CenterJoinSearchInfo;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,18 @@ public class CenterJoinRequestQueryRepositoryImpl implements CenterJoinRequestQu
                 .where(centerJoinRequest.centerId.eq(centerId), isInRange(pageToken))
                 .limit(pageSize + 1)
                 .orderBy(centerJoinRequest.id.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<CenterJoinSearchInfo> findCenterIdsByMemberId(Long memberId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        CenterJoinSearchInfo.class,
+                        centerJoinRequest.centerId
+                ))
+                .from(centerJoinRequest)
+                .where(centerJoinRequest.memberId.eq(memberId))
                 .fetch();
     }
 

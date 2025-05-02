@@ -6,7 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.domain.CenterMember;
-import com.ssafy.hangbokdog.center.dto.response.CenterNameResponse;
+import com.ssafy.hangbokdog.center.dto.CenterSearchInfo;
+import com.ssafy.hangbokdog.center.dto.response.MyCenterResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +30,15 @@ public class CenterMemberRepository {
         return centerMemberJpaRepository.findByMemberIdAndCenterId(memberId, centerId);
     }
 
-    public List<CenterNameResponse> getMyCenters(Long memberId) {
+    public List<MyCenterResponse> getMyCenters(Long memberId) {
         return centerMemberJpaRepository.getMyCenters(memberId);
+    }
+
+    public List<CenterSearchInfo> getCentersByName(String name) {
+        return centerMemberJpaRepository.searchCentersByName(name);
+    }
+
+    public List<CenterMember> getCenterMembersByMemberId(Long memberId) {
+        return centerMemberJpaRepository.findByMemberId(memberId);
     }
 }

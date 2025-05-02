@@ -17,8 +17,9 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.application.CenterService;
 import com.ssafy.hangbokdog.center.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
-import com.ssafy.hangbokdog.center.dto.response.CenterNameResponse;
+import com.ssafy.hangbokdog.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountBalanceResponse;
+import com.ssafy.hangbokdog.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -59,10 +60,20 @@ public class CenterController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<CenterNameResponse>> getMyCenters(
+	public ResponseEntity<List<MyCenterResponse>> getMyCenters(
 		@AuthMember Member member
 	) {
-		List<CenterNameResponse> myCenters = centerService.getMyCenters(member.getId());
+		List<MyCenterResponse> myCenters = centerService.getMyCenters(member.getId());
 		return ResponseEntity.ok().body(myCenters);
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<List<CenterSearchResponse>> search(
+			@AuthMember Member member,
+			@RequestParam String name
+	) {
+		List<CenterSearchResponse> response = centerService.searchCentersByName(member.getId(), name);
+
+		return ResponseEntity.ok().body(response);
 	}
 }
