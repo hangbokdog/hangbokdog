@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.hangbokdog.center.domain.CenterMember;
 
-public interface CenterMemberJpaRepository extends JpaRepository<CenterMember, Long> {
+public interface CenterMemberJpaRepository extends JpaRepository<CenterMember, Long>, CenterMemberJpaRepositoryCustom {
     boolean existsByMemberIdAndCenterId(Long memberId, Long centerId);
 
     Optional<CenterMember> findByMemberIdAndCenterId(Long memberId, Long centerId);

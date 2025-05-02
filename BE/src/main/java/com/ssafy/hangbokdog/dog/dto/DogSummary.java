@@ -7,4 +7,5 @@ public record DogSummary(
 	String imageUrl,
 	int ageMonth,
 	Gender gender
-) {}
+) {
+}
