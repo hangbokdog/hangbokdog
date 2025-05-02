@@ -1,4 +1,4 @@
-import { FaChevronRight } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import PanelTitle from "@/components/common/PanelTitle";
 import { ProfileInfo } from "@/components/my/ProfileInfo";
 
@@ -20,7 +20,7 @@ export default function FlightVolunteer() {
 					</span>
 					<div className="flex items-center">
 						<span className="text-red text-sm">D-10 시간</span>
-						<FaChevronRight className="w-4 h-4 text-gray-400" />
+						<FaChevronDown className="w-4 h-4 text-gray-400" />
 					</div>
 				</div>
 			</div>

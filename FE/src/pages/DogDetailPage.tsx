@@ -56,7 +56,7 @@ export default function DogDetailPage() {
 				</DogInfoCard>
 				<DogActionButtons
 					sponsorLink="https://www.ihappynanum.com/Nanum/B/21G6PTU1W5?ltclid=6e37156f-0f73-4313-a7af-67fdd2ab06ce&fbclid=PAZXh0bgNhZW0CMTEAAadBxtRn2enWtLqH7SNGEL3WiZ4B7nTUy1REE0aTiW8ixFz2w2IT5PJPw9XdTg_aem_O_6bWU3kjURO35qBLOSEcA"
-					adoptionLink="/"
+					adoptionLink="/adoption/notice"
 				/>
 			</div>
 		</div>
