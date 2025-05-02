@@ -22,7 +22,9 @@ export default function InputField({
 	onChange,
 }: InputFieldProps) {
 	return (
-		<div className="flex flex-1 w-full bg-background rounded-3xl shadow-custom-sm px-3 py-2 transition-all duration-200 hover:shadow-md">
+		<div
+			className={`flex flex-1 w-full rounded-3xl shadow-custom-sm px-3 py-2 transition-all duration-200 hover:shadow-md ${disabled ? "bg-superLightGray" : "bg-background"}`}
+		>
 			<div className="flex items-center justify-center border-r border-grayText p-2">
 				<Icon className="size-5 text-grayText" />
 			</div>
