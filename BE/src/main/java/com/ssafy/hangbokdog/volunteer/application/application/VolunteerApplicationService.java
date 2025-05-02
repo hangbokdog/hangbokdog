@@ -125,7 +125,8 @@ public class VolunteerApplicationService {
         VolunteerEvent volunteerEvent = volunteerEventRepository.findById(application.getVolunteerId())
             .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
-        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, volunteerEvent.getCenterId())
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(
+            memberId, volunteerEvent.getCenterId())
             .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 
         if (!centerMember.isManager()) {
