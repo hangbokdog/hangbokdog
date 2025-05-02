@@ -11,7 +11,7 @@ public interface DogJpaRepository extends JpaRepository<Dog, Long>, DogJpaReposi
 	@Query("""
 			SELECT COUNT(d.id)
    			FROM Dog d
-   			WHERE d.centerId = :centerId AND d.status != 'ADOPTED'
+   			WHERE d.centerId = :centerId AND d.status != 'ADOPTED' AND d.isStar = false
 		""")
 	int countByCenterId(@Param("centerId") Long centerId);
 }

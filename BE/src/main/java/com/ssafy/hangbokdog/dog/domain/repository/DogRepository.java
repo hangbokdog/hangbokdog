@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 
@@ -66,5 +68,9 @@ public class DogRepository {
 
 	public int getDogCount(Long centerId) {
 		return dogJpaRepository.countByCenterId(centerId);
+	}
+
+	public List<DogSummary> getDogSummaries(Long centerId) {
+		return dogJpaRepository.getDogSummaries(centerId);
 	}
 }

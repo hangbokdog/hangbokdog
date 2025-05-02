@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.dog.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +15,7 @@ import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
@@ -160,8 +163,9 @@ public class DogService {
 
 	public ProtectedDogCountResponse getDogCount(Long centerId) {
 		int count = dogRepository.getDogCount(centerId);
+		List<DogSummary> dogSummaries = dogRepository.getDogSummaries(centerId);
 
-		return new ProtectedDogCountResponse(count);
+		return new ProtectedDogCountResponse(count, dogSummaries);
 	}
 
 	private Dog checkDogExistence(Long dogId) {
