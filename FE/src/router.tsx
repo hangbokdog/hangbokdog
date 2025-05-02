@@ -14,6 +14,7 @@ import NaverCallback from "./pages/NaverCallback";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 import DogRegister from "./pages/manager/DogRegister";
+import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
 
 const router = createBrowserRouter([
 	{
@@ -80,6 +81,15 @@ const router = createBrowserRouter([
 					{
 						path: "notice",
 						element: <AdoptionNoticePage />,
+					},
+				],
+			},
+			{
+				path: "volunteer",
+				children: [
+					{
+						index: true,
+						element: <VolunteerSchedulePage />,
 					},
 				],
 			},
