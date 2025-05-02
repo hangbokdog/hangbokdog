@@ -9,10 +9,7 @@ export default function ShimTuhVolunteerPanel() {
 		night: ["이재백 님", "김민지 님"],
 	};
 
-	const volunteerSchedules: { startDate: string; endDate: string }[] = [
-		{ startDate: "05.01", endDate: "05.03" },
-		{ startDate: "05.07", endDate: "05.09" },
-	];
+	const volunteerSchedules: { startDate: Date; endDate: Date }[] = [];
 
 	return (
 		<div className="flex flex-col gap-5">
