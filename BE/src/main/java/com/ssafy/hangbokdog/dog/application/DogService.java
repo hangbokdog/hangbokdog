@@ -65,7 +65,9 @@ public class DogService {
 
 	public DogDetailResponse getDogDetail(Long dogId, Long centerId) {
 
-		checkDogExistence(dogId);
+		if (!dogRepository.existsById(dogId)) {
+			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
+		}
 
 		return dogRepository.getDogDetail(dogId, centerId);
 	}
@@ -80,7 +82,7 @@ public class DogService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
-		Dog dog = checkDogExistence(dogId);
+		Dog dog = findDog(dogId);
 
 		dog.dogToStar();
 	}
@@ -101,7 +103,7 @@ public class DogService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
-		Dog dog = checkDogExistence(dogId);
+		Dog dog = findDog(dogId);
 
 		if (imageUrl == null) {
 			imageUrl = dog.getProfileImage();
@@ -168,7 +170,7 @@ public class DogService {
 		return new ProtectedDogCountResponse(count, dogSummaries);
 	}
 
-	private Dog checkDogExistence(Long dogId) {
+	private Dog findDog(Long dogId) {
 		return dogRepository.getDog(dogId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));
 	}

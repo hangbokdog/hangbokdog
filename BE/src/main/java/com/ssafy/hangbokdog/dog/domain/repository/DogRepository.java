@@ -34,6 +34,10 @@ public class DogRepository {
 		return dogJpaRepositoryCustomImpl.getDogDetail(id, centerId);
 	}
 
+	public boolean existsById(Long id) {
+		return dogJpaRepository.existsById(id);
+	}
+
 	public Optional<Dog> getDog(Long id) {
 		return dogJpaRepository.findById(id);
 	}
