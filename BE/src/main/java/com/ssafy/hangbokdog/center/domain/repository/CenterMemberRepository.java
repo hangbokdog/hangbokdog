@@ -1,10 +1,12 @@
 package com.ssafy.hangbokdog.center.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.dto.response.CenterNameResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,5 +27,9 @@ public class CenterMemberRepository {
 
     public Optional<CenterMember> findByMemberIdAndCenterId(Long memberId, Long centerId) {
         return centerMemberJpaRepository.findByMemberIdAndCenterId(memberId, centerId);
+    }
+
+    public List<CenterNameResponse> getMyCenters(Long memberId) {
+        return centerMemberJpaRepository.getMyCenters(memberId);
     }
 }

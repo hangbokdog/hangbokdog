@@ -1,5 +1,8 @@
 package com.ssafy.hangbokdog.center.application;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
+import com.ssafy.hangbokdog.center.dto.response.CenterNameResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -98,5 +102,9 @@ public class CenterService {
 		}
 
 		return centerJoinRequestRepository.findAll(centerId, pageToken);
+	}
+
+	public List<CenterNameResponse> getMyCenters(Long memberId) {
+		return centerMemberRepository.getMyCenters(memberId);
 	}
 }
