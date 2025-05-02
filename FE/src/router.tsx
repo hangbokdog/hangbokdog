@@ -17,6 +17,7 @@ import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 import DogRegister from "./pages/manager/DogRegister";
 import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
 import AddVolunteerSchedule from "./pages/manager/AddVolunteerSchedule";
+import EmergencyRegister from "./pages/manager/EmergencyRegister";
 
 const router = createBrowserRouter([
 	{
@@ -127,8 +128,17 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "emergency",
-				element: <ManagerEmergency />,
 				handle: { showHeader: false },
+				children: [
+					{
+						index: true,
+						element: <ManagerEmergency />,
+					},
+					{
+						path: "register",
+						element: <EmergencyRegister />,
+					},
+				],
 			},
 		],
 	},
