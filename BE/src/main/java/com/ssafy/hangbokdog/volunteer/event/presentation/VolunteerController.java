@@ -37,11 +37,11 @@ public class VolunteerController {
 
     @PostMapping
     public ResponseEntity<Void> create(
-        @AdminMember Member admin,
+        @AuthMember Member member,
         @RequestParam Long centerId,
         @RequestBody VolunteerCreateRequest request
     ) {
-        Long eventId = volunteerService.create(centerId, request);
+        Long eventId = volunteerService.create(member.getId(), centerId, request);
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/v1/volunteers/{id}")
                 .buildAndExpand(eventId)
