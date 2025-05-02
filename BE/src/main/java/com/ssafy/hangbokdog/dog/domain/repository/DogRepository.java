@@ -11,6 +11,7 @@ import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 
+import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -62,5 +63,9 @@ public class DogRepository {
 
 	public DogCenterInfo getDogCenterInfo(Long dogId) {
 		return dogJpaRepositoryCustomImpl.getDogCenterInfo(dogId);
+	}
+
+	public int getDogCount(Long centerId) {
+		return dogJpaRepository.countByCenterId(centerId);
 	}
 }
