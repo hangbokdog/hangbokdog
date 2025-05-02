@@ -1,11 +1,13 @@
 package com.ssafy.hangbokdog.product.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.product.domain.Product;
+import com.ssafy.hangbokdog.product.dto.response.ProductDetailResponse;
 import com.ssafy.hangbokdog.product.dto.response.ProductResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -33,5 +35,14 @@ public class ProductRepository {
 
     public void deleteByIdAndSellerId(Long productId, Long sellerId) {
         productJpaRepository.deleteByIdAndSellerId(productId, sellerId);
+    }
+
+    public ProductDetailResponse findDetailById(Long productId) {
+        return productJpaRepository.finDetailById(productId);
+    }
+
+    public PageInfo<ProductResponse> searchByWord(String word, String pageToken) {
+        var data = productJpaRepository.searchByWord(word, pageToken, DEFAULT_PAGE_SIZE);
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, ProductResponse::id);
     }
 }
