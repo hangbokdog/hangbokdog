@@ -10,6 +10,8 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -34,6 +36,7 @@ public class VolunteerApplicationService {
     private final VolunteerEventRepository volunteerEventRepository;
     private final VolunteerSlotRepository volunteerSlotRepository;
     private final MemberRepository memberRepository;
+    private final CenterMemberRepository centerMemberRepository;
 
     public void apply(Member member, Long eventId, VolunteerApplicationCreateRequest request) {
         // 1) 이벤트 존재 확인
@@ -114,9 +117,20 @@ public class VolunteerApplicationService {
     }
 
     @Transactional
-    public void updateStatus(Long applicationId, VolunteerApplicationStatusUpdateRequest request) {
+    public void updateStatus(Long memberId, Long applicationId, VolunteerApplicationStatusUpdateRequest request) {
+
         VolunteerApplication application = volunteerApplicationRepository.findById(applicationId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_NOT_FOUND));
+
+        VolunteerEvent volunteerEvent = volunteerEventRepository.findById(application.getVolunteerId())
+            .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
+
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, volunteerEvent.getCenterId())
+            .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
 
         VolunteerSlot slot = volunteerSlotRepository.findById(application.getVolunteerId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.SLOT_NOT_FOUND));
