@@ -19,6 +19,7 @@ import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
 import AddVolunteerSchedule from "./pages/manager/AddVolunteerSchedule";
 import EmergencyRegister from "./pages/manager/EmergencyRegister";
 import VolunteerDetailPage from "./pages/VolunteerDetailPage";
+import VolunteerApplyPage from "./pages/VolunteerApplyPage";
 
 const router = createBrowserRouter([
 	{
@@ -97,7 +98,16 @@ const router = createBrowserRouter([
 					},
 					{
 						path: ":id",
-						element: <VolunteerDetailPage />,
+						children: [
+							{
+								index: true,
+								element: <VolunteerDetailPage />,
+							},
+							{
+								path: "apply",
+								element: <VolunteerApplyPage />,
+							},
+						],
 					},
 				],
 			},
