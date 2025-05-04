@@ -6,12 +6,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-
-interface ScheduleItem {
-	date: string;
-	morning: string;
-	afternoon: string;
-}
+import type { ScheduleItem } from "@/types/volunteer";
+import { Link } from "react-router-dom";
 
 interface ScheduleTableProps {
 	scheduleData: ScheduleItem[];
@@ -24,7 +20,7 @@ export default function ScheduleTable({ scheduleData }: ScheduleTableProps) {
 				<TableHeader>
 					<TableRow className="border-b border-gray-200">
 						<TableHead className="text-center font-medium bg-background py-2.5 text-base">
-							날짜(요일)
+							날짜
 						</TableHead>
 						<TableHead className="text-center font-medium bg-background py-2.5 text-base">
 							오전
@@ -63,12 +59,14 @@ export default function ScheduleTable({ scheduleData }: ScheduleTableProps) {
 			</Table>
 
 			<div className="flex justify-center">
-				<button
-					type="button"
-					className="bg-main text-white rounded-full py-3 px-8"
-				>
-					봉사신청
-				</button>
+				<Link to="apply">
+					<button
+						type="button"
+						className="bg-main text-white rounded-full py-3 px-8"
+					>
+						봉사신청
+					</button>
+				</Link>
 			</div>
 		</div>
 	);
