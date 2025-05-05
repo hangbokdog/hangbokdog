@@ -201,6 +201,10 @@ button {
 	cursor: pointer;
 }
 
+button.cursor-not-allowed {
+	cursor: not-allowed;
+}
+
 .fc table {
 	border-collapse: separate;
 	border-spacing: 0;
