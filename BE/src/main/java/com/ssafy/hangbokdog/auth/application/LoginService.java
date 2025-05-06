@@ -111,9 +111,8 @@ public class LoginService {
         signUpMember.signUp(
                 signUpRequest.name(),
                 signUpRequest.nickname(),
-                signUpRequest.birth(),
-                signUpRequest.age(),
-                signUpRequest.description()
+                signUpRequest.phone(),
+                signUpRequest.birth()
         );
     }
 
