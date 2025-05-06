@@ -5,7 +5,7 @@ const colors = ["검", "흰", "갈"];
 const genders = ["수컷", "암컷"];
 const statuses = ["보호중", "임시보호", "병원", "입원"];
 
-export default function DogRegister() {
+export default function DogRegisterPage() {
 	const [profilePreview, setProfilePreview] = useState<string | null>(null);
 	const [form, setForm] = useState({
 		name: "",
