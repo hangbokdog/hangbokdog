@@ -3,7 +3,7 @@ import ShimTtleVolunteerPanel from "@/components/manager/volunteer/ShimTtleVolun
 import ShimTuhVolunteerPanel from "@/components/manager/volunteer/ShimTuhVolunteerPanel";
 import YipYangTtleVolunteerPanel from "@/components/manager/volunteer/YipYangTtleVolunteerPanel";
 
-export default function ManagerVolunteer() {
+export default function ManagerVolunteerPage() {
 	return (
 		<div className="flex flex-col gap-3 text-grayText mx-2.5">
 			<div className="text-xl font-bold">봉사</div>

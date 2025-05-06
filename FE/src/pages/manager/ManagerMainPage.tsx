@@ -2,7 +2,7 @@ import ManagerEmergencyPanel from "@/components/manager/main/ManagerEmergencyPan
 import ManagerManagePanel from "@/components/manager/main/ManagerManagePanel";
 import ManagerRequestsPanel from "@/components/manager/main/ManagerRequestsPanel";
 
-export default function ManagerMain() {
+export default function ManagerMainPage() {
 	return (
 		<div className="flex flex-col gap-3 mx-2.5">
 			<ManagerEmergencyPanel />

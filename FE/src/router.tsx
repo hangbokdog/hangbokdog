@@ -5,19 +5,19 @@ import Login from "./pages/Login";
 import DonationLayout from "./layouts/DonationLayout";
 import SponsorShipPage from "./pages/SponsorShipPage";
 import ManagerMainLayout from "./layouts/ManagerMainLayout";
-import ManagerMain from "./pages/manager/ManagerMain";
-import ManagerVolunteer from "./pages/manager/ManagerVolunteer";
+import ManagerMainPage from "./pages/manager/ManagerMainPage";
+import ManagerVolunteerPage from "./pages/manager/ManagerVolunteerPage";
 import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
-import ManagerEmergency from "./pages/manager/ManagerEmergency";
+import ManagerEmergencyPage from "./pages/manager/ManagerEmergencyPage";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
-import DogRegister from "./pages/manager/DogRegister";
+import DogRegisterPage from "./pages/manager/DogRegisterPage";
 import VolunteerSchedulePage from "./pages/VolunteerSchedulePage";
-import AddVolunteerSchedule from "./pages/manager/AddVolunteerSchedule";
-import EmergencyRegister from "./pages/manager/EmergencyRegister";
+import AddVolunteerSchedulePage from "./pages/manager/AddVolunteerSchedulePage";
+import EmergencyRegisterPage from "./pages/manager/EmergencyRegisterPage";
 import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
 
@@ -119,26 +119,26 @@ const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: <ManagerMain />,
+				element: <ManagerMainPage />,
 			},
 			{
 				path: "volunteer",
 				children: [
 					{
 						index: true,
-						element: <ManagerVolunteer />,
+						element: <ManagerVolunteerPage />,
 						handle: { showHeader: false },
 					},
 					{
 						path: "create",
-						element: <AddVolunteerSchedule />,
+						element: <AddVolunteerSchedulePage />,
 						handle: { showHeader: false },
 					},
 				],
 			},
 			{
 				path: "dog-register",
-				element: <DogRegister />,
+				element: <DogRegisterPage />,
 				handle: { showHeader: false },
 			},
 			{
@@ -147,11 +147,11 @@ const router = createBrowserRouter([
 				children: [
 					{
 						index: true,
-						element: <ManagerEmergency />,
+						element: <ManagerEmergencyPage />,
 					},
 					{
 						path: "register",
-						element: <EmergencyRegister />,
+						element: <EmergencyRegisterPage />,
 					},
 				],
 			},
