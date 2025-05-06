@@ -128,6 +128,7 @@ public class Member {
         this.birth = birth;
         this.phone = phone;
         this.grade = Grade.USER;
+        this.status = MemberStatus.ACTIVE;
     }
 
     public boolean isAdult() {

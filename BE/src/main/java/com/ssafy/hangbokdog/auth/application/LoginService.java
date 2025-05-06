@@ -108,6 +108,10 @@ public class LoginService {
         Member signUpMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.MEMBER_NOT_FOUND));
 
+        if (!signUpMember.isGuest()) {
+            throw new BadRequestException(ErrorCode.ALREADY_REGISTERED_MEMBER);
+        }
+
         signUpMember.signUp(
                 signUpRequest.name(),
                 signUpRequest.nickname(),
