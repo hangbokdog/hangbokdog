@@ -20,6 +20,7 @@ import AddVolunteerSchedulePage from "./pages/manager/AddVolunteerSchedulePage";
 import EmergencyRegisterPage from "./pages/manager/EmergencyRegisterPage";
 import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
+import AuthenticatedRoute from "./components/auth/AuthenticatedRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const router = createBrowserRouter([
@@ -36,17 +37,29 @@ const router = createBrowserRouter([
 				children: [
 					{
 						index: true,
-						element: <Login />,
+						element: (
+							<AuthenticatedRoute>
+								<Login />
+							</AuthenticatedRoute>
+						),
 					},
 					{
 						path: "callback",
-						element: <NaverCallback />,
+						element: (
+							<AuthenticatedRoute>
+								<NaverCallback />
+							</AuthenticatedRoute>
+						),
 					},
 				],
 			},
 			{
 				path: "signup",
-				element: <SignUp />,
+				element: (
+					<AuthenticatedRoute>
+						<SignUp />
+					</AuthenticatedRoute>
+				),
 			},
 			{
 				path: "my",
