@@ -1,11 +1,17 @@
 import { FaDog, FaHandHoldingHeart, FaUser } from "react-icons/fa";
 import { IoMdHeart } from "react-icons/io";
-import { MdHome } from "react-icons/md";
+import { MdHome, MdLogin } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import FooterItem from "./FooterItem";
+import useAuthStore from "@/lib/store/authStore";
 
 export default function Footer() {
 	const location = useLocation();
+	const { accessToken } = useAuthStore();
+
+	const lastMenuItem = accessToken
+		? { path: "/my", icon: FaUser, size: 20, label: "My" }
+		: { path: "/login", icon: MdLogin, size: 20, label: "로그인" };
 
 	const footerItems = [
 		{ path: "/", icon: MdHome, size: 24, label: "홈" },
@@ -17,7 +23,7 @@ export default function Footer() {
 			size: 20,
 			label: "봉사",
 		},
-		{ path: "/login", icon: FaUser, size: 20, label: "My" },
+		lastMenuItem,
 	];
 
 	return (
