@@ -26,3 +26,23 @@ export const checkNicknameAPI = async (
 	);
 	return response.data;
 };
+
+export const signUpAPI = async ({
+	name,
+	nickname,
+	phoneNumber,
+	birthDate,
+}: {
+	name: string;
+	nickname: string;
+	phoneNumber: string;
+	birthDate: string;
+}) => {
+	const response = await localAxios.post("auth/sign-up", {
+		name,
+		nickname,
+		phoneNumber,
+		birth: birthDate,
+	});
+	return response.data;
+};
