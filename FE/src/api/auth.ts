@@ -46,3 +46,8 @@ export const signUpAPI = async ({
 	});
 	return response.data;
 };
+
+export const logoutAPI = async () => {
+	const response = await localAxios.post("auth/logout");
+	return response.data;
+};
