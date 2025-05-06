@@ -3,3 +3,7 @@ export interface OauthLoginResponse {
 	isRegistered: boolean;
 	name: string;
 }
+
+export interface CheckNicknameResponse {
+	isDuplicated: boolean;
+}

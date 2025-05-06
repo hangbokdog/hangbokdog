@@ -1,4 +1,4 @@
-import type { OauthLoginResponse } from "@/types/auth";
+import type { CheckNicknameResponse, OauthLoginResponse } from "@/types/auth";
 import localAxios from "./http-commons";
 
 export const NaverLoginAPI = async ({
