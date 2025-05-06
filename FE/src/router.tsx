@@ -22,6 +22,8 @@ import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
 import AuthenticatedRoute from "./components/auth/AuthenticatedRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import DogManageMainPage from "./pages/manager/DogManageMainPage";
+import ManagerDogListPage from "./pages/manager/ManagerDogListPage";
 
 const router = createBrowserRouter([
 	{
@@ -176,6 +178,14 @@ const router = createBrowserRouter([
 						element: <EmergencyRegisterPage />,
 					},
 				],
+			},
+			{
+				path: "dog-management",
+				element: <DogManageMainPage />,
+			},
+			{
+				path: "dog-list",
+				element: <ManagerDogListPage />,
 			},
 		],
 	},

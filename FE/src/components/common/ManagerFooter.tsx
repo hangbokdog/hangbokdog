@@ -9,7 +9,7 @@ export default function ManagerFooter() {
 	const footerItems = [
 		{ path: "/manager", icon: MdHome, size: 24, label: "메인" },
 		{
-			path: "/manager/kids-manage",
+			path: "/manager/dog-management",
 			icon: FaDog,
 			size: 20,
 			label: "아이들 관리",
