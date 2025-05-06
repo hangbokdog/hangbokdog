@@ -17,3 +17,12 @@ export const NaverLoginAPI = async ({
 	);
 	return response.data;
 };
+
+export const checkNicknameAPI = async (
+	nickname: string,
+): Promise<CheckNicknameResponse> => {
+	const response = await localAxios.get<CheckNicknameResponse>(
+		`auth/duplicate-check?nickname=${nickname}`,
+	);
+	return response.data;
+};

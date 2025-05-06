@@ -1,8 +1,24 @@
 import { FaBirthdayCake, FaUserTie } from "react-icons/fa";
 import { FaPhone, FaUserAstronaut } from "react-icons/fa6";
 import InputField from "@/components/common/InputField";
+import { checkNicknameAPI } from "@/api/auth";
 
-export default function SignUpForm() {
+	const checkNicknameMutation = useMutation({
+		mutationFn: checkNicknameAPI,
+		onSuccess: (data) => {
+			if (!data.isDuplicated) {
+				setIsNicknameUnique(true);
+				setIsCheckingNickname(false);
+			} else {
+				setIsNicknameUnique(false);
+				setIsCheckingNickname(false);
+			}
+		},
+		onError: () => {
+			setIsNicknameUnique(false);
+			setIsCheckingNickname(false);
+		},
+	});
 	return (
 		<div className="flex flex-col gap-4 items-center w-full">
 			<InputField
@@ -20,9 +36,27 @@ export default function SignUpForm() {
 				/>
 				<button
 					type="button"
-					className="bg-primary text-white rounded-[8px] px-4 py-2 font-bold cursor-pointer"
+					className={`${
+						isNicknameValid &&
+						!isNicknameUnique &&
+						!isCheckingNickname
+							? "bg-primary"
+							: "bg-superLightGray cursor-not-allowed"
+					} text-white rounded-[8px] px-4 py-2 font-bold flex items-center justify-center min-w-[80px]`}
+					onClick={() => checkNicknameDuplicate(nickname)}
+					disabled={
+						!isNicknameValid ||
+						isNicknameUnique ||
+						isCheckingNickname
+					}
 				>
-					중복확인
+					{isCheckingNickname ? (
+						<Spinner size="small" />
+					) : isNicknameUnique ? (
+						"확인완료"
+					) : (
+						"중복확인"
+					)}
 				</button>
 			</div>
 			<InputField
