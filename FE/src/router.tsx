@@ -20,6 +20,7 @@ import AddVolunteerSchedulePage from "./pages/manager/AddVolunteerSchedulePage";
 import EmergencyRegisterPage from "./pages/manager/EmergencyRegisterPage";
 import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 const router = createBrowserRouter([
 	{
@@ -49,7 +50,11 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "my",
-				element: <My />,
+				element: (
+					<ProtectedRoute>
+						<My />
+					</ProtectedRoute>
+				),
 			},
 			{
 				path: "donations",
@@ -105,7 +110,11 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "apply",
-								element: <VolunteerApplyPage />,
+								element: (
+									<ProtectedRoute>
+										<VolunteerApplyPage />
+									</ProtectedRoute>
+								),
 							},
 						],
 					},
