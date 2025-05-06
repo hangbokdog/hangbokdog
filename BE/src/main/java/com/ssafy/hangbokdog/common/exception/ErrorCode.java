@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     MEMBER_NOT_FOUND(5000, "존재하지 않는 유저입니다."),
     NOT_ADMIN_MEMBER(5001, "관리자가 아닙니다."),
+    ALREADY_REGISTERED_MEMBER(5002, "이미 회원가입한 유저입니다."),
     NOT_MANAGER_MEMBER(5002, "매니저가 아닙니다."),
     NOT_SELLER(5003, "해당 상품의 판매자가 아닙니다."),
     EMERGENCY_NOTIFICATION_ALREADY_AGREED(5004, "이미 응급 알림에 동의한 상태입니다."),

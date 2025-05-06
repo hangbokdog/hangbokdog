@@ -38,6 +38,9 @@ public class Member {
     @Column(name = "birth")
     private LocalDate birth;
 
+    /**
+     * TODO : add Phone number validation
+     */
     @Column(name = "phone")
     private String phone;
 
@@ -117,16 +120,15 @@ public class Member {
     public void signUp(
             String name,
             String nickname,
-            LocalDate birth,
-            int age,
-            String description
+            String phone,
+            LocalDate birth
     ) {
         this.name = name;
         this.nickName = nickname;
         this.birth = birth;
-        this.age = age;
-        this.description = description;
+        this.phone = phone;
         this.grade = Grade.USER;
+        this.status = MemberStatus.ACTIVE;
     }
 
     public boolean isAdult() {
