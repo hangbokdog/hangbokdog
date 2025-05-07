@@ -7,9 +7,9 @@ import useAuthStore from "@/lib/store/authStore";
 
 export default function Footer() {
 	const location = useLocation();
-	const { accessToken } = useAuthStore();
+	const { user } = useAuthStore();
 
-	const lastMenuItem = accessToken
+	const lastMenuItem = user.accessToken
 		? { path: "/my", icon: FaUser, size: 20, label: "My" }
 		: { path: "/login", icon: MdLogin, size: 20, label: "로그인" };
 
