@@ -63,7 +63,7 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "is_star")
 	private Boolean isStar;
 
-	@Column(name = "birth", nullable = false)
+	@Column(name = "birth")
 	private LocalDateTime birth;
 
 	@Enumerated(EnumType.STRING)
