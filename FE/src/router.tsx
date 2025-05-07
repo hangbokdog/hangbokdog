@@ -38,9 +38,11 @@ const router = createBrowserRouter([
 		children: [
 			{
 				element: (
-					<CenterProtectedRoute>
-						<CenterLayout />
-					</CenterProtectedRoute>
+					<ProtectedRoute>
+						<CenterProtectedRoute>
+							<CenterLayout />
+						</CenterProtectedRoute>
+					</ProtectedRoute>
 				),
 				children: [
 					{
@@ -50,11 +52,7 @@ const router = createBrowserRouter([
 
 					{
 						path: "my",
-						element: (
-							<ProtectedRoute>
-								<My />
-							</ProtectedRoute>
-						),
+						element: <My />,
 					},
 					{
 						path: "donations",
@@ -95,11 +93,9 @@ const router = createBrowserRouter([
 							{
 								path: "notice",
 								element: (
-									<ProtectedRoute>
-										<CenterMemberProtectedRoute>
-											<AdoptionNoticePage />
-										</CenterMemberProtectedRoute>
-									</ProtectedRoute>
+									<CenterMemberProtectedRoute>
+										<AdoptionNoticePage />
+									</CenterMemberProtectedRoute>
 								),
 							},
 						],
@@ -121,11 +117,9 @@ const router = createBrowserRouter([
 									{
 										path: "apply",
 										element: (
-											<ProtectedRoute>
-												<CenterMemberProtectedRoute>
-													<VolunteerApplyPage />
-												</CenterMemberProtectedRoute>
-											</ProtectedRoute>
+											<CenterMemberProtectedRoute>
+												<VolunteerApplyPage />
+											</CenterMemberProtectedRoute>
 										),
 									},
 								],
