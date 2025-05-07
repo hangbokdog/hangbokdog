@@ -22,13 +22,21 @@ import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
 import AuthenticatedRoute from "./components/auth/AuthenticatedRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import CenterProtectedRoute from "./components/auth/CenterProtectedRoute";
+import CenterMemberProtectedRoute from "./components/auth/CenterMemberProtectedRoute";
 import DogManageMainPage from "./pages/manager/DogManageMainPage";
 import ManagerDogListPage from "./pages/manager/ManagerDogListPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
-		element: <MainLayout />,
+		errorElement: <NotFoundPage />,
+		element: (
+			<CenterProtectedRoute>
+				<MainLayout />
+			</CenterProtectedRoute>
+		),
 		children: [
 			{
 				index: true,
@@ -93,7 +101,11 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "comments",
-								element: <DogCommentsPage />,
+								element: (
+									<CenterMemberProtectedRoute>
+										<DogCommentsPage />
+									</CenterMemberProtectedRoute>
+								),
 								handle: { showHeader: false },
 							},
 						],
@@ -105,7 +117,13 @@ const router = createBrowserRouter([
 				children: [
 					{
 						path: "notice",
-						element: <AdoptionNoticePage />,
+						element: (
+							<ProtectedRoute>
+								<CenterMemberProtectedRoute>
+									<AdoptionNoticePage />
+								</CenterMemberProtectedRoute>
+							</ProtectedRoute>
+						),
 					},
 				],
 			},
@@ -127,7 +145,9 @@ const router = createBrowserRouter([
 								path: "apply",
 								element: (
 									<ProtectedRoute>
-										<VolunteerApplyPage />
+										<CenterMemberProtectedRoute>
+											<VolunteerApplyPage />
+										</CenterMemberProtectedRoute>
 									</ProtectedRoute>
 								),
 							},
@@ -139,6 +159,7 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/manager",
+		errorElement: <NotFoundPage />,
 		element: <ManagerMainLayout />,
 		children: [
 			{

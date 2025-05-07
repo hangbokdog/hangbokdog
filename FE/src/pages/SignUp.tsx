@@ -12,7 +12,7 @@ import { useFormatDate } from "@/lib/hooks/useFormatDate";
 
 export default function SignUp() {
 	const navigate = useNavigate();
-	const { name } = useAuthStore();
+	const { name, tempToken, setToken, setTempToken } = useAuthStore();
 	const [nickname, setNickname] = useState<string>("");
 	const [phoneNumber, setPhoneNumber] = useState<string>("");
 	const [birthDate, setBirthDate] = useState<string>("");
@@ -35,8 +35,12 @@ export default function SignUp() {
 	const signUpMutation = useMutation({
 		mutationFn: signUpAPI,
 		onSuccess: () => {
+			if (tempToken) {
+				setToken(tempToken);
+				setTempToken("");
+			}
 			toast.success("회원가입에 성공했습니다!");
-			navigate("/");
+			navigate("/center-decision");
 		},
 		onError: () => {
 			toast.error("회원가입에 실패했습니다. 다시 시도해주세요.");
