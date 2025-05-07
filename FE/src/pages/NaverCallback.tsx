@@ -8,7 +8,7 @@ import Spinner from "@/components/ui/spinner";
 
 export default function NaverCallback() {
 	const navigate = useNavigate();
-	const { setToken, setName } = useAuthStore();
+	const { setToken, setName, setTempToken } = useAuthStore();
 
 	useEffect(() => {
 		const handleNaverLogin = async () => {
@@ -35,14 +35,14 @@ export default function NaverCallback() {
 						state,
 					});
 
-				setToken(NaverLoginResponse.accessToken);
 				setName(NaverLoginResponse.name);
 
-				toast.success("네이버 로그인에 성공하셨습니다.");
-
 				if (NaverLoginResponse.isRegistered) {
-					navigate("/");
+					setToken(NaverLoginResponse.accessToken);
+					toast.success("네이버 로그인에 성공하셨습니다.");
+					navigate("/center-decision");
 				} else {
+					setTempToken(NaverLoginResponse.accessToken);
 					navigate("/signup");
 				}
 			} catch (error) {
@@ -52,7 +52,7 @@ export default function NaverCallback() {
 		};
 
 		handleNaverLogin();
-	}, [navigate, setToken, setName]);
+	}, [navigate, setToken, setName, setTempToken]);
 
 	return (
 		<div className="flex justify-center items-center flex-col mt-40 gap-5">
