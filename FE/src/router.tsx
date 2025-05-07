@@ -182,7 +182,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "dog-list",
-						element: <ManagerDogListPage />,
+						element: <ManagerDogsPage />,
 					},
 				],
 			},
