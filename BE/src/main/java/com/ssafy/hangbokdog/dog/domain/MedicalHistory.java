@@ -2,7 +2,6 @@ package com.ssafy.hangbokdog.dog.domain;
 
 import java.time.LocalDateTime;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,6 +36,9 @@ public class MedicalHistory extends BaseEntity {
 	@Column(nullable = false, name = "content")
 	private String content;
 
+	@Column(name = "medial_history_image")
+	private String medialHistoryImage;
+
 	@Column(nullable = false, name = "medical_period")
 	private Integer medicalPeriod;
 
@@ -52,14 +54,16 @@ public class MedicalHistory extends BaseEntity {
 		String content,
 		Integer medicalPeriod,
 		MedicalType medicalType,
-		LocalDateTime operatedDate
+		LocalDateTime operatedDate,
+		String medialHistoryImage
 	) {
 		return new MedicalHistory(
 			dogId,
 			content,
 			medicalPeriod,
 			medicalType,
-			operatedDate
+			operatedDate,
+			medialHistoryImage
 		);
 	}
 
@@ -68,13 +72,15 @@ public class MedicalHistory extends BaseEntity {
 		String content,
 		Integer medicalPeriod,
 		MedicalType medicalType,
-		LocalDateTime operatedDate
+		LocalDateTime operatedDate,
+		String medicalHistoryImage
 	) {
 		this.dogId = dogId;
 		this.content = content;
 		this.medicalPeriod = medicalPeriod;
 		this.medicalType = medicalType;
 		this.operatedDate = operatedDate;
+		this.medialHistoryImage = medicalHistoryImage;
 	}
 }
 

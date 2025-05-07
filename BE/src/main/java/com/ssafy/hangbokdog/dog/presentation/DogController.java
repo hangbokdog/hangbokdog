@@ -129,23 +129,23 @@ public class DogController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PostMapping("/{dogId}/medical-history")
-	public ResponseEntity<Void> addMedicalHistory(
-		@AuthMember Member member,
-		@RequestBody MedicalHistoryRequest request,
-		@PathVariable(name = "dogId") Long dogId,
-		@RequestParam Long centerId
-	) {
-		Long medicalHistoryId = dogService.addMedicalHistory(
-			member.getId(),
-			centerId,
-			request,
-			dogId
-		);
-
-		return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId + "/medical-history" + medicalHistoryId))
-			.build();
-	}
+	// @PostMapping("/{dogId}/medical-history")
+	// public ResponseEntity<Void> addMedicalHistory(
+	// 	@AuthMember Member member,
+	// 	@RequestBody MedicalHistoryRequest request,
+	// 	@PathVariable(name = "dogId") Long dogId,
+	// 	@RequestParam Long centerId
+	// ) {
+	// 	Long medicalHistoryId = dogService.addMedicalHistory(
+	// 		member.getId(),
+	// 		centerId,
+	// 		request,
+	// 		dogId
+	// 	);
+	//
+	// 	return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId + "/medical-history" + medicalHistoryId))
+	// 		.build();
+	// }
 
 	@GetMapping("/{dogId}/medical-history")
 	public ResponseEntity<PageInfo<MedicalHistoryResponse>> getMedicalHistories(
