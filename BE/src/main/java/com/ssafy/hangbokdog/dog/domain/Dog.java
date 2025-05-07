@@ -54,7 +54,7 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "rescued_date")
 	private LocalDateTime rescuedDate;
 
-	@Column(nullable = false, name = "weight")
+	@Column(name = "weight")
 	private Double weight;
 
 	@Column(nullable = false, name = "description", length = 8192)
