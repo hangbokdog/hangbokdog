@@ -22,6 +22,7 @@ import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
 import AuthenticatedRoute from "./components/auth/AuthenticatedRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import ManagerDogsPage from "./pages/manager/ManagerDogsPage";
 
 const router = createBrowserRouter([
 	{
@@ -157,6 +158,10 @@ const router = createBrowserRouter([
 						handle: { showHeader: false },
 					},
 				],
+			},
+			{
+				path: "kids-manage",
+				element: <ManagerDogsPage />,
 			},
 			{
 				path: "dog-register",
