@@ -18,11 +18,11 @@ export default function My() {
 					console.log("프로필 수정 클릭됨");
 				}}
 			/>
-			<div className="max-w-[382px] grid grid-cols-2 gap-3">
-				<div className="w-[185px] h-[165px]">
+			<div className="flex justify-center gap-3">
+				<div className="w-[185px] h-[165px] mx-3.5">
 					<MileageCard />
 				</div>
-				<div className="w-[185px] h-[165px]">
+				<div className="w-[185px] h-[165px] mx-3.5">
 					<MileageCard />
 				</div>
 			</div>
