@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, SearchIcon } from "lucide-react";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
@@ -30,25 +30,26 @@ export default function MovingRegister() {
 				<div>
 					<label
 						htmlFor="id"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						아이
 					</label>
-					<div className="flex">
+					<div className="relative">
 						<input
 							type="text"
 							id="id"
 							name="id"
 							value={formData.id}
 							onChange={handleChange}
-							className="flex-grow border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
-							className="border border-gray-300 px-4 py-2 ml-1"
+							className="absolute right-2 top-1/2 transform -translate-y-1/2"
 							onClick={() => console.log("아이 검색")}
+							aria-label="아이 검색"
 						>
-							검색
+							<SearchIcon className="h-5 w-5 text-gray-500" />
 						</button>
 					</div>
 				</div>
@@ -57,25 +58,26 @@ export default function MovingRegister() {
 				<div>
 					<label
 						htmlFor="currentLocation"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						현위치
 					</label>
-					<div className="flex">
+					<div className="relative">
 						<input
 							type="text"
 							id="currentLocation"
 							name="currentLocation"
 							value={formData.currentLocation}
 							onChange={handleChange}
-							className="flex-grow border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
-							className="border border-gray-300 px-4 py-2 ml-1"
+							className="absolute right-2 top-1/2 transform -translate-y-1/2"
 							onClick={() => console.log("현위치 검색")}
+							aria-label="현위치 검색"
 						>
-							검색
+							<SearchIcon className="h-5 w-5 text-gray-500" />
 						</button>
 					</div>
 				</div>
@@ -84,25 +86,26 @@ export default function MovingRegister() {
 				<div>
 					<label
 						htmlFor="destinationLocation"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						이동 위치
 					</label>
-					<div className="flex">
+					<div className="relative">
 						<input
 							type="text"
 							id="destinationLocation"
 							name="destinationLocation"
 							value={formData.destinationLocation}
 							onChange={handleChange}
-							className="flex-grow border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
-							className="border border-gray-300 px-4 py-2 ml-1"
+							className="absolute right-2 top-1/2 transform -translate-y-1/2"
 							onClick={() => console.log("이동 위치 검색")}
+							aria-label="이동 위치 검색"
 						>
-							검색
+							<SearchIcon className="h-5 w-5 text-gray-500" />
 						</button>
 					</div>
 				</div>
@@ -111,7 +114,7 @@ export default function MovingRegister() {
 				<div>
 					<label
 						htmlFor="date"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						일시
 					</label>
@@ -122,12 +125,13 @@ export default function MovingRegister() {
 							name="date"
 							value={formData.date}
 							onChange={handleChange}
-							className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border rounded-xl border-gray-300 p-2"
 						/>
 						<button
 							type="button"
 							className="absolute right-2 top-1/2 transform -translate-y-1/2"
 							onClick={() => console.log("달력 열기")}
+							aria-label="달력 열기"
 						>
 							<CalendarIcon className="h-5 w-5 text-gray-500" />
 						</button>
@@ -138,7 +142,7 @@ export default function MovingRegister() {
 				<div>
 					<label
 						htmlFor="reason"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						사유
 					</label>
@@ -148,7 +152,7 @@ export default function MovingRegister() {
 						value={formData.reason}
 						onChange={handleChange}
 						rows={6}
-						className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 				</div>
 

@@ -29,6 +29,7 @@ import ManagerDogListPage from "./pages/manager/ManagerDogListPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CenterDecisionPage from "./pages/CenterDecisionPage";
 import CenterLayout from "./layouts/CenterLayout";
+import ManagerDogsPage from "./pages/manager/ManagerDogsPage";
 
 const router = createBrowserRouter([
 	{
@@ -181,7 +182,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "dog-list",
-						element: <ManagerDogListPage />,
+						element: <ManagerDogsPage />,
 					},
 				],
 			},
