@@ -2,9 +2,15 @@ type ProfileInfoProps = {
 	name: string;
 	imageUrl?: string;
 	size?: "sm" | "md" | "lg";
+	email: string;
 };
 
-export function ProfileInfo({ name, imageUrl, size = "md" }: ProfileInfoProps) {
+export function ProfileInfo({
+	name,
+	imageUrl,
+	size = "md",
+	email,
+}: ProfileInfoProps) {
 	const sizeClasses = {
 		sm: "w-8 h-8 text-sm",
 		md: "w-10 h-10 text-base",
@@ -26,7 +32,10 @@ export function ProfileInfo({ name, imageUrl, size = "md" }: ProfileInfoProps) {
 					{name.charAt(0)}
 				</div>
 			)}
-			<span className="font-medium text-base">{name}</span>
+			<div className="flex flex-col">
+				<span className="font-medium text-base">{name}</span>
+				<span className="text-sm text-gray-500">{email}</span>
+			</div>
 		</div>
 	);
 }

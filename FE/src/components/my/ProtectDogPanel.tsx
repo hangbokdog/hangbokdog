@@ -39,7 +39,7 @@ export default function ProtectDogPanel() {
 	return (
 		<div className="flex flex-col p-2.5 mx-2.5 rounded-xl bg-white shadow-custom-xs">
 			<PanelTitle title="임보 정보" link="/dogs" />
-			<div className="max-w-[362px] grid grid-rows-3 gap-2.5 pb-2.5">
+			<div className="max-w-[400px] grid grid-rows-3 gap-2.5 pb-2.5">
 				{dummyDogs.map((dog) => (
 					<ProtectDogCard
 						key={dog.id}
