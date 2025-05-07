@@ -182,10 +182,6 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "dog-list",
-								element: <ManagerDogListPage />,
-							},
-							{
-								path: "kids-manage",
 								element: <ManagerDogsPage />,
 							},
 						],

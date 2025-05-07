@@ -4,7 +4,7 @@ import DogManage from "@/components/manager/dogs/DogManage";
 export default function ManagerDogsPage() {
 	return (
 		<div>
-			<DogManage />
+			{/* <DogManage /> */}
 			<DogList />
 		</div>
 	);
