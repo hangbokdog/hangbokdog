@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import DogCard from "@/components/common/DogCard";
+import DogCard from "@/components/manager/dogs/DogCard";
 import Search from "@/components/common/Search";
 import AISearchPanel from "@/components/common/AISearchPanel";
 import ScrollButton from "@/components/common/ScrollButton";
@@ -16,6 +16,7 @@ const dummyDogs = [
 		imageUrl: dog1,
 		gender: "MALE",
 		isLiked: false,
+		needsMedication: true,
 	},
 	{
 		id: 102,
@@ -24,6 +25,7 @@ const dummyDogs = [
 		imageUrl: dog2,
 		gender: "FEMALE",
 		isLiked: true,
+		needsMedication: false,
 	},
 	{
 		id: 103,
@@ -32,6 +34,7 @@ const dummyDogs = [
 		imageUrl: dog3,
 		gender: "FEMALE",
 		isLiked: false,
+		needsMedication: true,
 	},
 	{
 		id: 104,
@@ -40,6 +43,7 @@ const dummyDogs = [
 		imageUrl: dog1,
 		gender: "MALE",
 		isLiked: false,
+		needsMedication: false,
 	},
 	{
 		id: 105,
@@ -48,6 +52,7 @@ const dummyDogs = [
 		imageUrl: dog2,
 		gender: "FEMALE",
 		isLiked: true,
+		needsMedication: true,
 	},
 	{
 		id: 106,
@@ -56,6 +61,7 @@ const dummyDogs = [
 		imageUrl: dog3,
 		gender: "FEMALE",
 		isLiked: false,
+		needsMedication: false,
 	},
 	{
 		id: 107,
@@ -64,6 +70,7 @@ const dummyDogs = [
 		imageUrl: dog1,
 		gender: "MALE",
 		isLiked: false,
+		needsMedication: true,
 	},
 	{
 		id: 108,
@@ -72,6 +79,7 @@ const dummyDogs = [
 		imageUrl: dog2,
 		gender: "FEMALE",
 		isLiked: true,
+		needsMedication: false,
 	},
 	{
 		id: 109,
@@ -80,6 +88,7 @@ const dummyDogs = [
 		imageUrl: dog3,
 		gender: "FEMALE",
 		isLiked: false,
+		needsMedication: true,
 	},
 	{
 		id: 110,
@@ -88,6 +97,7 @@ const dummyDogs = [
 		imageUrl: dog1,
 		gender: "MALE",
 		isLiked: false,
+		needsMedication: false,
 	},
 	{
 		id: 111,
@@ -96,6 +106,7 @@ const dummyDogs = [
 		imageUrl: dog2,
 		gender: "FEMALE",
 		isLiked: true,
+		needsMedication: true,
 	},
 	{
 		id: 112,
@@ -104,6 +115,7 @@ const dummyDogs = [
 		imageUrl: dog3,
 		gender: "FEMALE",
 		isLiked: false,
+		needsMedication: false,
 	},
 	{
 		id: 113,
@@ -112,6 +124,7 @@ const dummyDogs = [
 		imageUrl: dog1,
 		gender: "MALE",
 		isLiked: false,
+		needsMedication: true,
 	},
 	{
 		id: 114,
@@ -120,6 +133,7 @@ const dummyDogs = [
 		imageUrl: dog2,
 		gender: "FEMALE",
 		isLiked: true,
+		needsMedication: false,
 	},
 	{
 		id: 115,
@@ -128,6 +142,7 @@ const dummyDogs = [
 		imageUrl: dog3,
 		gender: "FEMALE",
 		isLiked: false,
+		needsMedication: true,
 	},
 	{
 		id: 116,
@@ -136,6 +151,7 @@ const dummyDogs = [
 		imageUrl: dog1,
 		gender: "MALE",
 		isLiked: false,
+		needsMedication: false,
 	},
 	{
 		id: 117,
@@ -144,6 +160,7 @@ const dummyDogs = [
 		imageUrl: dog2,
 		gender: "FEMALE",
 		isLiked: true,
+		needsMedication: true,
 	},
 	{
 		id: 118,
@@ -152,6 +169,7 @@ const dummyDogs = [
 		imageUrl: dog3,
 		gender: "FEMALE",
 		isLiked: false,
+		needsMedication: false,
 	},
 ];
 
@@ -160,6 +178,7 @@ export default function DogList() {
 	const [showImageSearch, setShowImageSearch] = useState(false);
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [showMedicationNeeded, setShowMedicationNeeded] = useState(true);
 
 	const toggleImageSearch = () => {
 		setIsAnimating(true);
@@ -177,11 +196,13 @@ export default function DogList() {
 		console.log("선택된 파일:", file.name);
 	};
 
+	// 토글 상태에 따라 표시할 강아지 필터링
+	const filteredDogs = showMedicationNeeded
+		? dummyDogs.filter((dog) => dog.needsMedication)
+		: dummyDogs;
+
 	return (
 		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5 pb-2.5">
-			<span ref={topRef} className="font-bold text-grayText">
-				여러분의 관심이 아이들을 살립니다.
-			</span>
 			<div
 				className={`transition-all duration-300 ${isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
 			>
@@ -201,8 +222,30 @@ export default function DogList() {
 					/>
 				)}
 			</div>
+			<div className="flex items-center justify-between">
+				<span ref={topRef} className="font-bold text-grayText">
+					복약이 필요한 아이들
+				</span>
+				<button
+					type="button"
+					className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+						showMedicationNeeded ? "bg-main" : "bg-gray-300"
+					}`}
+					onClick={() =>
+						setShowMedicationNeeded(!showMedicationNeeded)
+					}
+				>
+					<div
+						className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+							showMedicationNeeded
+								? "translate-x-6"
+								: "translate-x-0"
+						}`}
+					/>
+				</button>
+			</div>
 			<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
-				{dummyDogs.map((dog) => (
+				{filteredDogs.map((dog) => (
 					<DogCard
 						key={dog.id}
 						id={dog.id}
