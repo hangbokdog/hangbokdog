@@ -78,7 +78,7 @@ export default function ManagerEmergencyPanel() {
 			</div>
 
 			<ListPanel
-				link={"/emergency"}
+				link={"/manager/emergency"}
 				tabs={[
 					{
 						key: "moving",

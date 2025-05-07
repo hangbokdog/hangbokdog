@@ -133,58 +133,58 @@ const router = createBrowserRouter([
 							},
 						],
 					},
+				],
+			},
+			{
+				path: "/manager",
+				errorElement: <NotFoundPage />,
+				element: <ManagerMainLayout />,
+				children: [
 					{
-						path: "/manager",
-						errorElement: <NotFoundPage />,
-						element: <ManagerMainLayout />,
+						index: true,
+						element: <ManagerMainPage />,
+					},
+					{
+						path: "volunteer",
 						children: [
 							{
 								index: true,
-								element: <ManagerMainPage />,
-							},
-							{
-								path: "volunteer",
-								children: [
-									{
-										index: true,
-										element: <ManagerVolunteerPage />,
-										handle: { showHeader: false },
-									},
-									{
-										path: "create",
-										element: <AddVolunteerSchedulePage />,
-										handle: { showHeader: false },
-									},
-								],
-							},
-							{
-								path: "dog-register",
-								element: <DogRegisterPage />,
+								element: <ManagerVolunteerPage />,
 								handle: { showHeader: false },
 							},
 							{
-								path: "emergency",
+								path: "create",
+								element: <AddVolunteerSchedulePage />,
 								handle: { showHeader: false },
-								children: [
-									{
-										index: true,
-										element: <ManagerEmergencyPage />,
-									},
-									{
-										path: "register",
-										element: <EmergencyRegisterPage />,
-									},
-								],
-							},
-							{
-								path: "dog-management",
-								element: <DogManageMainPage />,
-							},
-							{
-								path: "dog-list",
-								element: <ManagerDogsPage />,
 							},
 						],
+					},
+					{
+						path: "dog-register",
+						element: <DogRegisterPage />,
+						handle: { showHeader: false },
+					},
+					{
+						path: "emergency",
+						handle: { showHeader: false },
+						children: [
+							{
+								index: true,
+								element: <ManagerEmergencyPage />,
+							},
+							{
+								path: "register",
+								element: <EmergencyRegisterPage />,
+							},
+						],
+					},
+					{
+						path: "dog-management",
+						element: <DogManageMainPage />,
+					},
+					{
+						path: "dog-list",
+						element: <ManagerDogsPage />,
 					},
 				],
 			},
