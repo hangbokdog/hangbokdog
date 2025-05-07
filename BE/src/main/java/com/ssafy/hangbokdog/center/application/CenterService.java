@@ -37,12 +37,20 @@ public class CenterService {
 	private final DonationAccountRepository donationAccountRepository;
 
 	@Transactional
-	public Long createCenter(CenterCreateRequest request) {
+	public Long createCenter(Member member, CenterCreateRequest request) {
 
 		Long centerId = centerRepository.create(Center.create(
 			request.name(),
 			request.sponsorAmount()
 		)).getId();
+
+		CenterMember centerMember = CenterMember.builder()
+				.centerId(centerId)
+				.memberId(member.getId())
+				.build();
+
+		centerMember.promote();
+		centerMemberRepository.save(centerMember);
 
 		donationAccountRepository.createDonationAccount(DonationAccount.createDonationAccount(
 			centerId,

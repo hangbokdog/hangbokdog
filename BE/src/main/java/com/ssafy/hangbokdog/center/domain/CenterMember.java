@@ -53,4 +53,8 @@ public class CenterMember extends BaseEntity {
     public boolean isManager() {
         return grade == CenterGrade.MANAGER;
     }
+
+    public void promote() {
+        grade = CenterGrade.MANAGER;
+    }
 }

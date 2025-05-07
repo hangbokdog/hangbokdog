@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.application.CenterService;
 import com.ssafy.hangbokdog.center.application.DonationAccountService;
@@ -34,9 +33,10 @@ public class CenterController {
 
 	@PostMapping
 	public ResponseEntity<Void> addCenter(
+		@AuthMember Member member,
 		@RequestBody CenterCreateRequest request
 	) {
-		Long centerId = centerService.createCenter(request);
+		Long centerId = centerService.createCenter(member, request);
 		return ResponseEntity.created(URI.create("/api/v1/centers/" + centerId))
 			.build();
 	}
