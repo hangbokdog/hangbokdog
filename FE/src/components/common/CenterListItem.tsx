@@ -27,7 +27,12 @@ export default function CenterListItem({
 			centerName,
 			status,
 		});
-		navigate("/");
+
+		if (status === "MANAGER") {
+			navigate("/manager");
+		} else {
+			navigate("/");
+		}
 	};
 
 	return (
@@ -48,15 +53,13 @@ export default function CenterListItem({
 					)}
 				</span>
 				<span>
-					{status === "가입신청" && (
-						<button
-							type="button"
-							className="bg-blueGray rounded-full text-white px-4 py-1 text-sm font-semibold"
-							onClick={handleVisit}
-						>
-							방문하기
-						</button>
-					)}
+					<button
+						type="button"
+						className="bg-blueGray rounded-full text-white px-4 py-1 text-sm font-semibold"
+						onClick={handleVisit}
+					>
+						방문하기
+					</button>
 				</span>
 			</span>
 		</div>
