@@ -118,23 +118,23 @@ public class DogService {
 		);
 	}
 
-	public Long addMedicalHistory(
-		Long memberId,
-		Long centerId,
-		MedicalHistoryRequest request,
-		Long dogId
-	) {
-		MedicalHistory medicalHistory = MedicalHistory.createMedicalHistory(
-			dogId,
-			request.content(),
-			request.medicalPeriod(),
-			request.medicalType(),
-			request.operatedDate()
-		);
-
-		// TODO:담당자 이름을 넣어야 될수도 있음
-		return dogRepository.createMedicalHistory(medicalHistory).getId();
-	}
+	// public Long addMedicalHistory(
+	// 	Long memberId,
+	// 	Long centerId,
+	// 	MedicalHistoryRequest request,
+	// 	Long dogId
+	// ) {
+	// 	MedicalHistory medicalHistory = MedicalHistory.createMedicalHistory(
+	// 		dogId,
+	// 		request.content(),
+	// 		request.medicalPeriod(),
+	// 		request.medicalType(),
+	// 		request.operatedDate()
+	// 	);
+	//
+	// 	// TODO:담당자 이름을 넣어야 될수도 있음
+	// 	return dogRepository.createMedicalHistory(medicalHistory).getId();
+	// }
 
 	public PageInfo<MedicalHistoryResponse> getMedicalHistories(
 		Long dogId,
