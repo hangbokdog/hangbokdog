@@ -54,14 +54,17 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "rescued_date")
 	private LocalDateTime rescuedDate;
 
-	@Column(nullable = false, name = "weight")
+	@Column(name = "weight")
 	private Double weight;
 
-	@Column(nullable = false, name = "description", length = 4096)
+	@Column(nullable = false, name = "description", length = 8192)
 	private String description;
 
 	@Column(nullable = false, name = "is_star")
 	private Boolean isStar;
+
+	@Column(name = "birth")
+	private LocalDateTime birth;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, name = "gender")
