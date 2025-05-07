@@ -44,7 +44,7 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "name")
 	private String name;
 
-	@Column(nullable = false, name = "profile_image")
+	@Column(nullable = false, name = "profile_image", length = 4096)
 	private String profileImage;
 
 	@Type(JsonType.class)
