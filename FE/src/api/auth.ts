@@ -1,5 +1,7 @@
 import type { CheckNicknameResponse, OauthLoginResponse } from "@/types/auth";
 import localAxios from "./http-commons";
+import axios from "axios";
+import useAuthStore from "@/lib/store/authStore";
 
 export const NaverLoginAPI = async ({
 	code,
@@ -38,12 +40,23 @@ export const signUpAPI = async ({
 	phoneNumber: string;
 	birthDate: string;
 }) => {
-	const response = await localAxios.post("auth/sign-up", {
-		name,
-		nickname,
-		phoneNumber,
-		birth: birthDate,
-	});
+	const tempToken = useAuthStore.getState().tempToken;
+	const response = await axios.post(
+		`${import.meta.env.VITE_API_URI}auth/sign-up`,
+		{
+			name,
+			nickname,
+			phoneNumber,
+			birth: birthDate,
+		},
+		{
+			withCredentials: true,
+			headers: {
+				"Content-Type": "application/json;charset=utf-8",
+				Authorization: `Bearer ${tempToken}`,
+			},
+		},
+	);
 	return response.data;
 };
 
