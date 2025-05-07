@@ -34,7 +34,6 @@ public class CenterController {
 
 	@PostMapping
 	public ResponseEntity<Void> addCenter(
-		@AdminMember Member member,
 		@RequestBody CenterCreateRequest request
 	) {
 		Long centerId = centerService.createCenter(request);
