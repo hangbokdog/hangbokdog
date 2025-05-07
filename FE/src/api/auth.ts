@@ -23,8 +23,16 @@ export const NaverLoginAPI = async ({
 export const checkNicknameAPI = async (
 	nickname: string,
 ): Promise<CheckNicknameResponse> => {
-	const response = await localAxios.get<CheckNicknameResponse>(
-		`auth/duplicate-check?nickname=${nickname}`,
+	const tempToken = useAuthStore.getState().tempToken;
+	const response = await axios.get<CheckNicknameResponse>(
+		`${import.meta.env.VITE_API_URI}auth/duplicate-check?nickname=${nickname}`,
+		{
+			withCredentials: true,
+			headers: {
+				"Content-Type": "application/json;charset=utf-8",
+				Authorization: `Bearer ${tempToken}`,
+			},
+		},
 	);
 	return response.data;
 };
