@@ -57,8 +57,7 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "weight")
 	private Double weight;
 
-	@Length(max = 256)
-	@Column(nullable = false, name = "description")
+	@Column(nullable = false, name = "description", length = 4096)
 	private String description;
 
 	@Column(nullable = false, name = "is_star")
