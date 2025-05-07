@@ -3,8 +3,10 @@ import { create } from "zustand";
 interface AuthState {
 	accessToken: string | null;
 	name: string | null;
+	tempToken: string | null;
 	setToken: (token: string) => void;
 	setName: (name: string) => void;
+	setTempToken: (token: string) => void;
 	clearAuth: () => void;
 }
 
@@ -19,6 +21,7 @@ const getStoredName = (): string | null => {
 const useAuthStore = create<AuthState>()((set) => ({
 	accessToken: getStoredToken(),
 	name: getStoredName(),
+	tempToken: null,
 	setToken: (token: string) => {
 		sessionStorage.setItem("accessToken", token);
 		set({ accessToken: token });
@@ -27,10 +30,13 @@ const useAuthStore = create<AuthState>()((set) => ({
 		sessionStorage.setItem("name", name);
 		set({ name });
 	},
+	setTempToken: (token: string) => {
+		set({ tempToken: token });
+	},
 	clearAuth: () => {
 		sessionStorage.removeItem("accessToken");
 		sessionStorage.removeItem("name");
-		set({ accessToken: null, name: null });
+		set({ accessToken: null, name: null, tempToken: null });
 	},
 }));
 
