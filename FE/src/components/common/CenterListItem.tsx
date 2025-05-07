@@ -22,7 +22,11 @@ export default function CenterListItem({
 	};
 
 	const handleVisit = () => {
-		setSelectedCenter(Number(centerId));
+		setSelectedCenter({
+			centerId,
+			centerName,
+			status,
+		});
 		navigate("/");
 	};
 

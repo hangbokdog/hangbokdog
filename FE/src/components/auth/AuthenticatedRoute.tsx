@@ -9,12 +9,12 @@ interface AuthenticatedRouteProps {
 export default function AuthenticatedRoute({
 	children,
 }: AuthenticatedRouteProps) {
-	const { accessToken } = useAuthStore();
+	const { user } = useAuthStore();
 	const location = useLocation();
 
 	const from = location.state?.from?.pathname || "/";
 
-	if (accessToken) {
+	if (user.accessToken) {
 		return <Navigate to={from} replace />;
 	}
 
