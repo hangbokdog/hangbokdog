@@ -1,7 +1,7 @@
 import logo from "@/assets/logo.png";
 import { FaMoon } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
 import { toast } from "sonner";
