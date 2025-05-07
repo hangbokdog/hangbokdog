@@ -56,7 +56,7 @@ export default function Header() {
 						센터 가입하기
 					</button>
 				)}
-				{accessToken && (
+				{accessToken ? (
 					<button
 						type="button"
 						onClick={handleLogout}
@@ -66,6 +66,17 @@ export default function Header() {
 						<MdLogout className="size-5" />
 						<span className="text-sm">로그아웃</span>
 					</button>
+				) : (
+					<Link to={"/login"}>
+						<button
+							type="button"
+							className="flex items-center gap-1 text-grayText hover:text-main"
+							title="로그인"
+						>
+							<MdLogout className="size-5" />
+							<span className="text-sm">로그인</span>
+						</button>
+					</Link>
 				)}
 				<FaMoon className="size-6" />
 			</div>

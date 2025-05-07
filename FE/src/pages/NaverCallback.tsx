@@ -40,7 +40,7 @@ export default function NaverCallback() {
 				if (NaverLoginResponse.isRegistered) {
 					setToken(NaverLoginResponse.accessToken);
 					toast.success("네이버 로그인에 성공하셨습니다.");
-					navigate("/center-decision");
+					navigate("/");
 				} else {
 					setTempToken(NaverLoginResponse.accessToken);
 					navigate("/signup");
