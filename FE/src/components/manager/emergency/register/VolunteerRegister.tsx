@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, SearchIcon } from "lucide-react";
 
 export default function VolunteerRegister() {
 	const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ export default function VolunteerRegister() {
 				<div>
 					<label
 						htmlFor="title"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						제목(사유)
 					</label>
@@ -37,14 +37,15 @@ export default function VolunteerRegister() {
 						name="title"
 						value={formData.title}
 						onChange={handleChange}
-						className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 				</div>
+
 				{/* 목표 인원 필드 */}
 				<div>
 					<label
 						htmlFor="targetPeople"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						목표 인원
 					</label>
@@ -55,42 +56,45 @@ export default function VolunteerRegister() {
 							name="targetPeople"
 							value={formData.targetPeople}
 							onChange={handleChange}
-							className="w-24 border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-24 border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<span className="ml-2 text-gray-700">명</span>
 					</div>
 				</div>
+
 				{/* 위치 필드 */}
 				<div>
 					<label
 						htmlFor="location"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						위치
 					</label>
-					<div className="flex">
+					<div className="relative">
 						<input
 							type="text"
 							id="location"
 							name="location"
 							value={formData.location}
 							onChange={handleChange}
-							className="flex-grow border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
-							className="border border-gray-300 px-4 py-2 ml-1"
-							onClick={() => console.log("위치 검색")}
+							className="absolute right-2 top-1/2 transform -translate-y-1/2"
+							onClick={() => console.log("현위치 검색")}
+							aria-label="현위치 검색"
 						>
-							검색
+							<SearchIcon className="h-5 w-5 text-gray-500" />
 						</button>
 					</div>
 				</div>
+
 				{/* 일시 필드 */}
 				<div>
 					<label
 						htmlFor="date"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						일시
 					</label>
@@ -101,21 +105,19 @@ export default function VolunteerRegister() {
 							name="date"
 							value={formData.date}
 							onChange={handleChange}
-							className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
 							className="absolute right-2 top-1/2 transform -translate-y-1/2"
 							onClick={() => console.log("달력 열기")}
+							aria-label="달력 열기"
 						>
 							<CalendarIcon className="h-5 w-5 text-gray-500" />
 						</button>
 					</div>
 				</div>
-				{/* 빨간 점 표시
-				<div className="flex justify-center">
-					<div className="w-2 h-2 bg-red-500 rounded-full">응급</div>
-				</div> */}
+
 				{/* 등록 버튼 */}
 				<div className="pt-4">
 					<button

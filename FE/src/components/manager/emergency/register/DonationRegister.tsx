@@ -26,7 +26,7 @@ export default function DonationRegister() {
 				<div>
 					<label
 						htmlFor="title"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						제목(사유)
 					</label>
@@ -36,7 +36,7 @@ export default function DonationRegister() {
 						name="title"
 						value={formData.title}
 						onChange={handleChange}
-						className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 				</div>
 
@@ -44,7 +44,7 @@ export default function DonationRegister() {
 				<div>
 					<label
 						htmlFor="targetAmount"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						목표 금액
 					</label>
@@ -55,7 +55,7 @@ export default function DonationRegister() {
 							name="targetAmount"
 							value={formData.targetAmount}
 							onChange={handleChange}
-							className="w-48 border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-48 border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<span className="ml-2 text-gray-700">원</span>
 					</div>
@@ -65,7 +65,7 @@ export default function DonationRegister() {
 				<div>
 					<label
 						htmlFor="date"
-						className="block text-gray-700 text-sm font-medium mb-2"
+						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						일시
 					</label>
@@ -76,7 +76,7 @@ export default function DonationRegister() {
 							name="date"
 							value={formData.date}
 							onChange={handleChange}
-							className="w-full border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+							className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
 						/>
 						<button
 							type="button"
