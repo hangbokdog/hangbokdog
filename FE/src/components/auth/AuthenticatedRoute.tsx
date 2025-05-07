@@ -12,7 +12,7 @@ export default function AuthenticatedRoute({
 	const { accessToken } = useAuthStore();
 	const location = useLocation();
 
-	const from = location.state?.from?.pathname || "/center-decision";
+	const from = location.state?.from?.pathname || "/";
 
 	if (accessToken) {
 		return <Navigate to={from} replace />;
