@@ -13,8 +13,8 @@ export default function ManagerMainLayout() {
 	}, true);
 
 	return (
-		<div className="w-screen h-screen flex justify-center">
-			<div className="flex flex-col h-full w-full max-w-[440px] bg-background shadow-custom-xs">
+		<div className="flex justify-center">
+			<div className="flex flex-col h-full w-full bg-background shadow-custom-xs">
 				{showHeader ? <Header /> : <RouteBackHeader />}
 				<main
 					className={`flex-1 overflow-y-auto pt-2.5 scrollbar-hidden ${showHeader && "mb-14"}`}
