@@ -77,6 +77,9 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "dog_breed")
 	private DogBreed dogBreed;
 
+	@Column(nullable = false, name = "location")
+	private String location;
+
 	public void goFoster() {
 		this.status = DogStatus.FOSTERED;
 	}
