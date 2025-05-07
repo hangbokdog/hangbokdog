@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -22,16 +22,175 @@ import VolunteerDetailPage from "./pages/VolunteerDetailPage";
 import VolunteerApplyPage from "./pages/VolunteerApplyPage";
 import AuthenticatedRoute from "./components/auth/AuthenticatedRoute";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import CenterProtectedRoute from "./components/auth/CenterProtectedRoute";
+import CenterMemberProtectedRoute from "./components/auth/CenterMemberProtectedRoute";
+import DogManageMainPage from "./pages/manager/DogManageMainPage";
+import ManagerDogListPage from "./pages/manager/ManagerDogListPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import CenterDecisionPage from "./pages/CenterDecisionPage";
+import CenterLayout from "./layouts/CenterLayout";
 import ManagerDogsPage from "./pages/manager/ManagerDogsPage";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
+		errorElement: <NotFoundPage />,
 		element: <MainLayout />,
 		children: [
 			{
-				index: true,
-				element: <Home />,
+				element: (
+					<CenterProtectedRoute>
+						<CenterLayout />
+					</CenterProtectedRoute>
+				),
+				children: [
+					{
+						index: true,
+						element: <Home />,
+					},
+
+					{
+						path: "my",
+						element: (
+							<ProtectedRoute>
+								<My />
+							</ProtectedRoute>
+						),
+					},
+					{
+						path: "donations",
+						element: <DonationLayout />,
+						children: [
+							{
+								index: true,
+								element: <SponsorShipPage />,
+							},
+						],
+					},
+					{
+						path: "dogs",
+						children: [
+							{
+								path: ":id",
+								children: [
+									{
+										index: true,
+										element: <DogDetailPage />,
+									},
+									{
+										path: "comments",
+										element: (
+											<CenterMemberProtectedRoute>
+												<DogCommentsPage />
+											</CenterMemberProtectedRoute>
+										),
+										handle: { showHeader: false },
+									},
+								],
+							},
+						],
+					},
+					{
+						path: "adoption",
+						children: [
+							{
+								path: "notice",
+								element: (
+									<ProtectedRoute>
+										<CenterMemberProtectedRoute>
+											<AdoptionNoticePage />
+										</CenterMemberProtectedRoute>
+									</ProtectedRoute>
+								),
+							},
+						],
+					},
+					{
+						path: "volunteer",
+						children: [
+							{
+								index: true,
+								element: <VolunteerSchedulePage />,
+							},
+							{
+								path: ":id",
+								children: [
+									{
+										index: true,
+										element: <VolunteerDetailPage />,
+									},
+									{
+										path: "apply",
+										element: (
+											<ProtectedRoute>
+												<CenterMemberProtectedRoute>
+													<VolunteerApplyPage />
+												</CenterMemberProtectedRoute>
+											</ProtectedRoute>
+										),
+									},
+								],
+							},
+						],
+					},
+					{
+						path: "/manager",
+						errorElement: <NotFoundPage />,
+						element: <ManagerMainLayout />,
+						children: [
+							{
+								index: true,
+								element: <ManagerMainPage />,
+							},
+							{
+								path: "volunteer",
+								children: [
+									{
+										index: true,
+										element: <ManagerVolunteerPage />,
+										handle: { showHeader: false },
+									},
+									{
+										path: "create",
+										element: <AddVolunteerSchedulePage />,
+										handle: { showHeader: false },
+									},
+								],
+							},
+							{
+								path: "dog-register",
+								element: <DogRegisterPage />,
+								handle: { showHeader: false },
+							},
+							{
+								path: "emergency",
+								handle: { showHeader: false },
+								children: [
+									{
+										index: true,
+										element: <ManagerEmergencyPage />,
+									},
+									{
+										path: "register",
+										element: <EmergencyRegisterPage />,
+									},
+								],
+							},
+							{
+								path: "dog-management",
+								element: <DogManageMainPage />,
+							},
+							{
+								path: "dog-list",
+								element: <ManagerDogListPage />,
+							},
+							{
+								path: "kids-manage",
+								element: <ManagerDogsPage />,
+							},
+						],
+					},
+				],
 			},
 			{
 				path: "login",
@@ -63,124 +222,8 @@ const router = createBrowserRouter([
 				),
 			},
 			{
-				path: "my",
-				element: (
-					<ProtectedRoute>
-						<My />
-					</ProtectedRoute>
-				),
-			},
-			{
-				path: "donations",
-				element: <DonationLayout />,
-				children: [
-					{
-						index: true,
-						element: <SponsorShipPage />,
-					},
-				],
-			},
-			{
-				path: "dogs",
-				children: [
-					{
-						path: ":id",
-						children: [
-							{
-								index: true,
-								element: <DogDetailPage />,
-							},
-							{
-								path: "comments",
-								element: <DogCommentsPage />,
-								handle: { showHeader: false },
-							},
-						],
-					},
-				],
-			},
-			{
-				path: "adoption",
-				children: [
-					{
-						path: "notice",
-						element: <AdoptionNoticePage />,
-					},
-				],
-			},
-			{
-				path: "volunteer",
-				children: [
-					{
-						index: true,
-						element: <VolunteerSchedulePage />,
-					},
-					{
-						path: ":id",
-						children: [
-							{
-								index: true,
-								element: <VolunteerDetailPage />,
-							},
-							{
-								path: "apply",
-								element: (
-									<ProtectedRoute>
-										<VolunteerApplyPage />
-									</ProtectedRoute>
-								),
-							},
-						],
-					},
-				],
-			},
-		],
-	},
-	{
-		path: "/manager",
-		element: <ManagerMainLayout />,
-		children: [
-			{
-				index: true,
-				element: <ManagerMainPage />,
-			},
-			{
-				path: "volunteer",
-				children: [
-					{
-						index: true,
-						element: <ManagerVolunteerPage />,
-						handle: { showHeader: false },
-					},
-					{
-						path: "create",
-						element: <AddVolunteerSchedulePage />,
-						handle: { showHeader: false },
-					},
-				],
-			},
-			{
-				path: "kids-manage",
-				element: <ManagerDogsPage />,
-			},
-			{
-				path: "dog-register",
-				element: <DogRegisterPage />,
-				handle: { showHeader: false },
-			},
-			{
-				path: "emergency",
-				handle: { showHeader: false },
-				children: [
-					{
-						index: true,
-						element: <ManagerEmergencyPage />,
-					},
-					{
-						path: "register",
-						element: <EmergencyRegisterPage />,
-					},
-				],
+				path: "center-decision",
+				element: <CenterDecisionPage />,
 			},
 		],
 	},

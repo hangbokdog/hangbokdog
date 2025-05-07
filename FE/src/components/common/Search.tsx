@@ -14,12 +14,14 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 interface SearchProps {
-	onClickAISearch: () => void;
+	onClickAISearch?: () => void;
 	placeholder?: string;
 	maxLength?: number;
 	onSearch?: (query: string) => void;
 	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	filter?: boolean;
+	ai?: boolean;
 }
 
 type FilterTab = "종" | "성별" | "나이" | "중성화" | "보호소" | "기타";
@@ -31,6 +33,8 @@ export default function Search({
 	onSearch,
 	value,
 	onChange,
+	filter = true,
+	ai = true,
 }: SearchProps) {
 	const [selectedTab, setSelectedTab] = useState<FilterTab>("종");
 
@@ -79,87 +83,93 @@ export default function Search({
 			/>
 			<div className="flex items-center justify-center ml-2 border-l border-grayText pl-2 gap-1">
 				<MdSearch className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
-				<Drawer>
-					<DrawerTrigger>
-						<MdFilterAlt className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
-					</DrawerTrigger>
-					<DrawerContent className="bg-white">
-						<div className="mx-auto w-full max-w-[440px]">
-							<DrawerHeader>
-								<div className="flex items-center justify-between">
-									<DrawerTitle className="text-lg">
-										필터
-									</DrawerTitle>
+				{filter && (
+					<Drawer>
+						<DrawerTrigger>
+							<MdFilterAlt className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
+						</DrawerTrigger>
+						<DrawerContent className="bg-white">
+							<div className="mx-auto w-full max-w-[440px]">
+								<DrawerHeader>
+									<div className="flex items-center justify-between">
+										<DrawerTitle className="text-lg">
+											필터
+										</DrawerTitle>
+										<DrawerClose>
+											<button
+												type="button"
+												className="p-1 hover:bg-background rounded-full transition-colors"
+											>
+												<IoClose className="size-6 text-superLightGray" />
+											</button>
+										</DrawerClose>
+									</div>
+									<div className="flex overflow-x-auto gap-4 py-2 scrollbar-hide">
+										{filterTabs.map((tab) => (
+											<button
+												key={tab}
+												onClick={() =>
+													setSelectedTab(tab)
+												}
+												className={cn(
+													"whitespace-nowrap px-2 py-1 rounded-full text-sm",
+													selectedTab === tab
+														? "bg-primary text-white"
+														: "text-grayText hover:bg-background",
+												)}
+												type="button"
+											>
+												{tab}
+											</button>
+										))}
+									</div>
+								</DrawerHeader>
+								<div className="p-4">
+									<div className="flex flex-wrap gap-2">
+										{filterOptions[selectedTab].map(
+											(option) => (
+												<button
+													key={option}
+													className="px-3 py-1 rounded-full bg-gray-100 text-sm hover:bg-gray-200 transition-colors"
+													type="button"
+												>
+													{option}
+												</button>
+											),
+										)}
+									</div>
+								</div>
+								<DrawerFooter className="flex-row justify-end gap-2">
 									<DrawerClose>
 										<button
 											type="button"
-											className="p-1 hover:bg-background rounded-full transition-colors"
+											className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
 										>
-											<IoClose className="size-6 text-superLightGray" />
+											초기화
 										</button>
 									</DrawerClose>
-								</div>
-								<div className="flex overflow-x-auto gap-4 py-2 scrollbar-hide">
-									{filterTabs.map((tab) => (
+									<DrawerClose>
 										<button
-											key={tab}
-											onClick={() => setSelectedTab(tab)}
-											className={cn(
-												"whitespace-nowrap px-2 py-1 rounded-full text-sm",
-												selectedTab === tab
-													? "bg-primary text-white"
-													: "text-grayText hover:bg-background",
-											)}
 											type="button"
+											className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
 										>
-											{tab}
+											검색하기
 										</button>
-									))}
-								</div>
-							</DrawerHeader>
-							<div className="p-4">
-								<div className="flex flex-wrap gap-2">
-									{filterOptions[selectedTab].map(
-										(option) => (
-											<button
-												key={option}
-												className="px-3 py-1 rounded-full bg-gray-100 text-sm hover:bg-gray-200 transition-colors"
-												type="button"
-											>
-												{option}
-											</button>
-										),
-									)}
-								</div>
+									</DrawerClose>
+								</DrawerFooter>
 							</div>
-							<DrawerFooter className="flex-row justify-end gap-2">
-								<DrawerClose>
-									<button
-										type="button"
-										className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-									>
-										초기화
-									</button>
-								</DrawerClose>
-								<DrawerClose>
-									<button
-										type="button"
-										className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
-									>
-										검색하기
-									</button>
-								</DrawerClose>
-							</DrawerFooter>
-						</div>
-					</DrawerContent>
-				</Drawer>
-				<button
-					onClick={onClickAISearch}
-					className="cursor-pointer flex items-center justify-center p-1 rounded-full hover:bg-gray-100 transition-colors active:scale-95"
-					type="button"
-				>
-					<img src={AISearch} alt="AISearch" className="size-5" />
-				</button>
+						</DrawerContent>
+					</Drawer>
+				)}
+				{ai && (
+					<button
+						onClick={onClickAISearch}
+						className="cursor-pointer flex items-center justify-center p-1 rounded-full hover:bg-gray-100 transition-colors active:scale-95"
+						type="button"
+					>
+						<img src={AISearch} alt="AISearch" className="size-5" />
+					</button>
+				)}
 			</div>
 		</div>
 	);

@@ -5,24 +5,23 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { logoutAPI } from "@/api/auth";
 import useAuthStore from "@/lib/store/authStore";
+import useCenterStore from "@/lib/store/centerStore";
 import { toast } from "sonner";
 
 export default function Header() {
 	const navigate = useNavigate();
 	const { accessToken, clearAuth } = useAuthStore();
+	const { selectedCenterId, isCenterMember } = useCenterStore();
 
 	const logoutMutation = useMutation({
 		mutationFn: logoutAPI,
 		onSuccess: () => {
 			clearAuth();
-
 			toast.success("로그아웃되었습니다.");
-
 			navigate("/");
 		},
 		onError: () => {
 			toast.error("로그아웃에 실패했습니다.");
-
 			clearAuth();
 			navigate("/");
 		},
@@ -30,6 +29,11 @@ export default function Header() {
 
 	const handleLogout = () => {
 		logoutMutation.mutate();
+	};
+
+	const handleCenterJoin = () => {
+		// TODO: 센터 가입 API 호출
+		toast.success("보호소 가입이 완료되었습니다.");
 	};
 
 	return (
@@ -43,7 +47,16 @@ export default function Header() {
 				</div>
 			</Link>
 			<div className="flex items-center gap-3">
-				{accessToken && (
+				{accessToken && selectedCenterId && !isCenterMember && (
+					<button
+						type="button"
+						onClick={handleCenterJoin}
+						className="px-3 py-1 bg-main text-white rounded text-sm"
+					>
+						센터 가입하기
+					</button>
+				)}
+				{accessToken ? (
 					<button
 						type="button"
 						onClick={handleLogout}
@@ -53,6 +66,17 @@ export default function Header() {
 						<MdLogout className="size-5" />
 						<span className="text-sm">로그아웃</span>
 					</button>
+				) : (
+					<Link to={"/login"}>
+						<button
+							type="button"
+							className="flex items-center gap-1 text-grayText hover:text-main"
+							title="로그인"
+						>
+							<MdLogout className="size-5" />
+							<span className="text-sm">로그인</span>
+						</button>
+					</Link>
 				)}
 				<FaMoon className="size-6" />
 			</div>
