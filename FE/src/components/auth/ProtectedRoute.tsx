@@ -8,16 +8,16 @@ interface ProtectedRouteProps {
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-	const { accessToken } = useAuthStore();
+	const { user } = useAuthStore();
 	const location = useLocation();
 
 	useEffect(() => {
-		if (!accessToken) {
+		if (!user.accessToken) {
 			toast.error("로그인이 필요한 페이지입니다.");
 		}
-	}, [accessToken]);
+	}, [user.accessToken]);
 
-	if (!accessToken) {
+	if (!user.accessToken) {
 		return <Navigate to="/login" state={{ from: location }} replace />;
 	}
 

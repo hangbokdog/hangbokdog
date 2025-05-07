@@ -9,10 +9,10 @@ interface CenterProtectedRouteProps {
 export default function CenterProtectedRoute({
 	children,
 }: CenterProtectedRouteProps) {
-	const { selectedCenterId } = useCenterStore();
+	const { selectedCenter } = useCenterStore();
 	const location = useLocation();
 
-	if (!selectedCenterId) {
+	if (!selectedCenter?.centerId) {
 		toast.error("보호소를 선택해주세요.");
 		return (
 			<Navigate

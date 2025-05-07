@@ -1,16 +1,22 @@
 import { create } from "zustand";
 
+interface Center {
+	centerId: string;
+	centerName: string;
+	status: string;
+}
+
 interface CenterState {
-	selectedCenterId: number | null;
+	selectedCenter: Center | null;
 	isCenterMember: boolean;
-	setSelectedCenter: (centerId: number) => void;
+	setSelectedCenter: (center: Center) => void;
 	setIsCenterMember: (isMember: boolean) => void;
 	clearSelectedCenter: () => void;
 }
 
-const getStoredCenterId = (): number | null => {
-	const stored = sessionStorage.getItem("selectedCenterId");
-	return stored ? Number(stored) : null;
+const getStoredCenter = (): Center | null => {
+	const stored = sessionStorage.getItem("selectedCenter");
+	return stored ? JSON.parse(stored) : null;
 };
 
 const getStoredCenterMember = (): boolean => {
@@ -19,20 +25,20 @@ const getStoredCenterMember = (): boolean => {
 };
 
 const useCenterStore = create<CenterState>()((set) => ({
-	selectedCenterId: getStoredCenterId(),
+	selectedCenter: getStoredCenter(),
 	isCenterMember: getStoredCenterMember(),
-	setSelectedCenter: (centerId: number) => {
-		sessionStorage.setItem("selectedCenterId", centerId.toString());
-		set({ selectedCenterId: centerId });
+	setSelectedCenter: (center: Center) => {
+		sessionStorage.setItem("selectedCenter", JSON.stringify(center));
+		set({ selectedCenter: center });
 	},
 	setIsCenterMember: (isMember: boolean) => {
 		sessionStorage.setItem("isCenterMember", isMember.toString());
 		set({ isCenterMember: isMember });
 	},
 	clearSelectedCenter: () => {
-		sessionStorage.removeItem("selectedCenterId");
+		sessionStorage.removeItem("selectedCenter");
 		sessionStorage.removeItem("isCenterMember");
-		set({ selectedCenterId: null, isCenterMember: false });
+		set({ selectedCenter: null, isCenterMember: false });
 	},
 }));
 

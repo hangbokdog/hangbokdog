@@ -42,7 +42,7 @@ export default function SignUpForm({
 }: SignUpFormProps) {
 	const [isCheckingNickname, setIsCheckingNickname] =
 		useState<boolean>(false);
-	const name = useAuthStore.getState().name;
+	const name = useAuthStore.getState().user.name;
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const validateNickname = (value: string) => {

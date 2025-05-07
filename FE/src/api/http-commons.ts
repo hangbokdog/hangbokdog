@@ -11,7 +11,7 @@ const localAxios = axios.create({
 
 localAxios.interceptors.request.use(
 	(config) => {
-		let token = useAuthStore.getState().accessToken;
+		let token = useAuthStore.getState().user.accessToken;
 
 		if (!token) {
 			token = sessionStorage.getItem("accessToken");

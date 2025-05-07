@@ -1,9 +1,11 @@
 import { create } from "zustand";
 
 interface AuthState {
-	accessToken: string | null;
-	name: string | null;
-	tempToken: string | null;
+	user: {
+		accessToken: string | null;
+		name: string | null;
+		tempToken: string | null;
+	};
 	setToken: (token: string) => void;
 	setName: (name: string) => void;
 	setTempToken: (token: string) => void;
@@ -19,24 +21,39 @@ const getStoredName = (): string | null => {
 };
 
 const useAuthStore = create<AuthState>()((set) => ({
-	accessToken: getStoredToken(),
-	name: getStoredName(),
-	tempToken: null,
+	user: {
+		accessToken: getStoredToken(),
+		name: getStoredName(),
+		tempToken: null,
+	},
 	setToken: (token: string) => {
 		sessionStorage.setItem("accessToken", token);
-		set({ accessToken: token });
+		set((state) => ({
+			user: { ...state.user, accessToken: token },
+		}));
 	},
 	setName: (name: string) => {
 		sessionStorage.setItem("name", name);
-		set({ name });
+		set((state) => ({
+			user: { ...state.user, name },
+		}));
 	},
 	setTempToken: (token: string) => {
-		set({ tempToken: token });
+		set((state) => ({
+			user: { ...state.user, tempToken: token },
+		}));
 	},
 	clearAuth: () => {
 		sessionStorage.removeItem("accessToken");
 		sessionStorage.removeItem("name");
-		set({ accessToken: null, name: null, tempToken: null });
+		set((state) => ({
+			user: {
+				...state.user,
+				accessToken: null,
+				name: null,
+				tempToken: null,
+			},
+		}));
 	},
 }));
 

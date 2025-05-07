@@ -23,7 +23,7 @@ export const NaverLoginAPI = async ({
 export const checkNicknameAPI = async (
 	nickname: string,
 ): Promise<CheckNicknameResponse> => {
-	const tempToken = useAuthStore.getState().tempToken;
+	const tempToken = useAuthStore.getState().user.tempToken;
 	const response = await axios.get<CheckNicknameResponse>(
 		`${import.meta.env.VITE_API_URI}auth/duplicate-check?nickname=${nickname}`,
 		{
@@ -48,7 +48,7 @@ export const signUpAPI = async ({
 	phoneNumber: string;
 	birthDate: string;
 }) => {
-	const tempToken = useAuthStore.getState().tempToken;
+	const tempToken = useAuthStore.getState().user.tempToken;
 	const response = await axios.post(
 		`${import.meta.env.VITE_API_URI}auth/sign-up`,
 		{

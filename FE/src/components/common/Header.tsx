@@ -1,39 +1,28 @@
 import logo from "@/assets/logo.png";
 import { FaMoon } from "react-icons/fa";
-import { MdLogout } from "react-icons/md";
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { logoutAPI } from "@/api/auth";
+import { IoIosArrowDown } from "react-icons/io";
+import { Link } from "react-router-dom";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
 import { toast } from "sonner";
 
 export default function Header() {
-	const navigate = useNavigate();
-	const { accessToken, clearAuth } = useAuthStore();
-	const { selectedCenterId, isCenterMember } = useCenterStore();
+	const { user } = useAuthStore();
+	const { selectedCenter, clearSelectedCenter } = useCenterStore();
 
-	const logoutMutation = useMutation({
-		mutationFn: logoutAPI,
-		onSuccess: () => {
-			clearAuth();
-			toast.success("로그아웃되었습니다.");
-			navigate("/");
-		},
-		onError: () => {
-			toast.error("로그아웃에 실패했습니다.");
-			clearAuth();
-			navigate("/");
-		},
-	});
-
-	const handleLogout = () => {
-		logoutMutation.mutate();
-	};
-
-	const handleCenterJoin = () => {
-		// TODO: 센터 가입 API 호출
-		toast.success("보호소 가입이 완료되었습니다.");
+	const handleCenterAction = () => {
+		switch (selectedCenter?.status) {
+			case "신청중":
+				// TODO: 신청 취소 API 호출
+				toast.success("가입 신청이 취소되었습니다.");
+				break;
+			case "가입신청":
+				// TODO: 가입 신청 API 호출
+				toast.success("가입 신청이 완료되었습니다.");
+				break;
+			default:
+				break;
+		}
 	};
 
 	return (
@@ -46,38 +35,53 @@ export default function Header() {
 					</p>
 				</div>
 			</Link>
-			<div className="flex items-center gap-3">
-				{accessToken && selectedCenterId && !isCenterMember && (
+			{selectedCenter?.centerName && (
+				<div className="relative group">
 					<button
 						type="button"
-						onClick={handleCenterJoin}
-						className="px-3 py-1 bg-main text-white rounded text-sm"
-					>
-						센터 가입하기
-					</button>
-				)}
-				{accessToken ? (
-					<button
-						type="button"
-						onClick={handleLogout}
 						className="flex items-center gap-1 text-grayText hover:text-main"
-						title="로그아웃"
 					>
-						<MdLogout className="size-5" />
-						<span className="text-sm">로그아웃</span>
+						<span>{selectedCenter.centerName}</span>
+						<IoIosArrowDown className="size-4" />
 					</button>
-				) : (
-					<Link to={"/login"}>
+					<div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded-lg py-2 min-w-[150px]">
 						<button
 							type="button"
-							className="flex items-center gap-1 text-grayText hover:text-main"
-							title="로그인"
+							className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
+							onClick={() => {
+								clearSelectedCenter();
+								toast.success("센터를 변경하였습니다.");
+							}}
 						>
-							<MdLogout className="size-5" />
-							<span className="text-sm">로그인</span>
+							센터 변경하기
 						</button>
-					</Link>
+					</div>
+				</div>
+			)}
+			<div className="flex items-center gap-3">
+				{user.accessToken && selectedCenter?.centerId && (
+					<button
+						type="button"
+						onClick={handleCenterAction}
+						className={`px-3 py-1 rounded text-sm ${
+							selectedCenter.status === "신청중" ||
+							selectedCenter.status === "가입신청"
+								? "bg-main text-white"
+								: "bg-gray-100 text-gray-500"
+						}`}
+						disabled={
+							selectedCenter.status === "회원" ||
+							selectedCenter.status === "매니저"
+						}
+					>
+						{selectedCenter.status === "신청중" && "신청 취소하기"}
+						{selectedCenter.status === "회원" && "회원"}
+						{selectedCenter.status === "매니저" && "매니저"}
+						{selectedCenter.status === "가입신청" &&
+							"가입 신청하기"}
+					</button>
 				)}
+
 				<FaMoon className="size-6" />
 			</div>
 		</header>

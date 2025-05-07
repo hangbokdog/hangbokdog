@@ -22,8 +22,17 @@ export default function CenterListItem({
 	};
 
 	const handleVisit = () => {
-		setSelectedCenter(Number(centerId));
-		navigate("/");
+		setSelectedCenter({
+			centerId,
+			centerName,
+			status,
+		});
+
+		if (status === "MANAGER") {
+			navigate("/manager");
+		} else {
+			navigate("/");
+		}
 	};
 
 	return (
