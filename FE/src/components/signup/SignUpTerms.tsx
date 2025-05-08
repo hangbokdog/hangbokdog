@@ -1,4 +1,12 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
+import TermsContent from "./TermsContent";
 
 interface SignUpTermsProps {
 	isChecked: boolean;
@@ -17,7 +25,20 @@ export default function SignUpTerms({ isChecked, onChange }: SignUpTermsProps) {
 				htmlFor="terms"
 				className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 			>
-				이용약관을 확인하였습니다.
+				<Dialog>
+					<DialogTrigger asChild>
+						<span className="underline cursor-pointer">
+							이용약관
+						</span>
+					</DialogTrigger>
+					<DialogContent className="max-w-3xl">
+						<DialogHeader>
+							<DialogTitle>서비스 이용약관</DialogTitle>
+						</DialogHeader>
+						<TermsContent />
+					</DialogContent>
+				</Dialog>
+				을 확인하였습니다.
 			</label>
 		</div>
 	);
