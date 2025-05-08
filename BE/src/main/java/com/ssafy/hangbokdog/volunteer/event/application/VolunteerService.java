@@ -13,6 +13,7 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
@@ -158,5 +159,9 @@ public class VolunteerService {
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().get(0)))
                 .toList();
+    }
+
+    public PageInfo<VolunteerResponse> findEnded(Long centerId, String pageToken) {
+        return eventRepository.findEndedVolunteerEvent(centerId, pageToken);
     }
 }
