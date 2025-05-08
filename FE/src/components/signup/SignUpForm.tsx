@@ -135,6 +135,7 @@ export default function SignUpForm({
 					value={nickname}
 					onChange={handleNicknameChange}
 					disabled={isNicknameUnique}
+					error={nickname.length > 0 && !isNicknameValid}
 				/>
 				<button
 					type="button"
@@ -167,6 +168,7 @@ export default function SignUpForm({
 				maxLength={11}
 				value={phoneNumber}
 				onChange={handlePhoneNumberChange}
+				error={phoneNumber.length > 0 && !isPhoneValid}
 			/>
 			<InputField
 				icon={FaBirthdayCake}
@@ -174,6 +176,7 @@ export default function SignUpForm({
 				maxLength={6}
 				value={birthDate}
 				onChange={handleBirthDateChange}
+				error={birthDate.length > 0 && !isBirthDateValid}
 			/>
 		</div>
 	);
