@@ -15,13 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -60,25 +59,25 @@ public class VolunteerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VolunteerInfo>> findAll(
+    public ResponseEntity<List<VolunteerResponse>> findAll(
             @AuthMember Member member,
             @RequestParam(required = false) Long centerId
     ) {
-        List<VolunteerInfo> responses = volunteerService.findAll(centerId);
+        List<VolunteerResponse> responses = volunteerService.findAll(centerId);
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<VolunteerResponse> findById(
+    public ResponseEntity<VolunteerDetailResponse> findById(
             @AuthMember Member member,
             @PathVariable Long eventId
     ) {
-        VolunteerResponse response = volunteerService.findById(eventId);
+        VolunteerDetailResponse response = volunteerService.findById(eventId);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<List<VolunteerInfo>> findLatest(
+    public ResponseEntity<List<VolunteerResponse>> findLatest(
             @AuthMember Member member,
             @RequestParam(required = false) Long centerId
     ) {

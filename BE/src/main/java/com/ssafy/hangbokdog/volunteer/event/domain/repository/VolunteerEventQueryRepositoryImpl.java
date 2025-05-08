@@ -43,7 +43,8 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.address,
                         volunteerEvent.locationType,
                         volunteerEvent.startDate,
-                        volunteerEvent.endDate
+                        volunteerEvent.endDate,
+                        volunteerEvent.imageUrls
                 ))
                 .from(volunteerEvent)
                 .where(openCondition, centerCondition)
@@ -129,7 +130,8 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.address,
                         volunteerEvent.locationType,
                         volunteerEvent.startDate,
-                        volunteerEvent.endDate
+                        volunteerEvent.endDate,
+                        volunteerEvent.imageUrls
                 ))
                 .from(volunteerEvent)
                 .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN).and(

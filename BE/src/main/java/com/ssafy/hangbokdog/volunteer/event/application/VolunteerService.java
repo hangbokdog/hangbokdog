@@ -20,7 +20,7 @@ import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepos
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -96,11 +96,21 @@ public class VolunteerService {
     }
 
     // TODO: 필요하다면 페이지네이션 추가
-    public List<VolunteerInfo> findAll(Long centerId) {
-        return eventRepository.findAllOpenEvents(centerId);
+    public List<VolunteerResponse> findAll(Long centerId) {
+        return eventRepository.findLatestVolunteerEvent(centerId).stream()
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.locationType(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().get(0)))
+                .toList();
     }
 
-    public VolunteerResponse findById(Long eventId) {
+    public VolunteerDetailResponse findById(Long eventId) {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
@@ -108,7 +118,7 @@ public class VolunteerService {
 
         List<DailyApplicationInfo> applicationInfos = eventRepository.findDailyApplications(eventId);
 
-        return VolunteerResponse.builder()
+        return VolunteerDetailResponse.builder()
                 .id(event.getId())
                 .status(event.getStatus())
                 .title(event.getTitle())
@@ -136,7 +146,17 @@ public class VolunteerService {
                 .toList();
     }
 
-    public List<VolunteerInfo> findLatest(Long centerId) {
-        return eventRepository.findLatestVolunteerEvent(centerId);
+    public List<VolunteerResponse> findLatest(Long centerId) {
+        return eventRepository.findLatestVolunteerEvent(centerId).stream()
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.locationType(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().get(0)))
+                .toList();
     }
 }

@@ -85,7 +85,8 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                     t.get(volunteerEvent.address),
                     t.get(volunteerEvent.locationType),
                     t.get(volunteerEvent.startDate),
-                    t.get(volunteerEvent.endDate)
+                    t.get(volunteerEvent.endDate),
+                    t.get(volunteerEvent.imageUrls)
             );
 
             // 4) DTO에 추가

@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.volunteer.event.dto.response;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.ssafy.hangbokdog.volunteer.event.domain.LocationType;
 
@@ -12,6 +13,7 @@ public record VolunteerInfo(
         String address,
         LocationType locationType,
         LocalDate startDate,
-        LocalDate endDate
+        LocalDate endDate,
+        List<String> imageUrls
 ) {
 }
