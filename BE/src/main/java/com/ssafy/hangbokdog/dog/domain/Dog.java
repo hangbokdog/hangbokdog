@@ -95,6 +95,7 @@ public class Dog extends BaseEntity {
 			throw new BadRequestException(ErrorCode.DOG_ALREADY_STAR);
 		}
 		this.isStar = true;
+		this.location = "별";
 	}
 
 	public void updateDog(
