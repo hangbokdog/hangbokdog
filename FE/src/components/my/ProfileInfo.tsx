@@ -2,7 +2,7 @@ type ProfileInfoProps = {
 	name: string;
 	imageUrl?: string;
 	size?: "sm" | "md" | "lg";
-	email: string;
+	email?: string;
 };
 
 export function ProfileInfo({
