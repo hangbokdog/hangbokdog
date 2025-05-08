@@ -11,4 +11,6 @@ public interface VolunteerEventQueryRepository {
     List<DailyApplicationInfo> findDailyApplications(Long eventId);
 
     List<VolunteerInfo> findLatestVolunteerEvent(Long centerId);
+
+    List<VolunteerInfo> findAllClosedEvents(Long centerId, String pageToken, int pageSize);
 }

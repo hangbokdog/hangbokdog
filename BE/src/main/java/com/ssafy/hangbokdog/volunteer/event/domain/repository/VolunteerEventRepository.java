@@ -5,15 +5,19 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
 public class VolunteerEventRepository {
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final VolunteerEventJpaRepository volunteerEventJpaRepository;
 
@@ -35,5 +39,22 @@ public class VolunteerEventRepository {
 
     public List<VolunteerInfo> findLatestVolunteerEvent(Long centerId) {
         return volunteerEventJpaRepository.findLatestVolunteerEvent(centerId);
+    }
+
+    public PageInfo<VolunteerResponse> findEndedVolunteerEvent(Long centerId, String pageToken) {
+        var data = volunteerEventJpaRepository.findAllClosedEvents(centerId, pageToken, DEFAULT_PAGE_SIZE)
+                .stream()
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.locationType(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().get(0)))
+                .toList();
+
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, VolunteerResponse::endDate, VolunteerResponse::id);
     }
 }

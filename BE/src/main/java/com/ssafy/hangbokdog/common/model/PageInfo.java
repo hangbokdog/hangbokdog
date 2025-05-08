@@ -21,4 +21,22 @@ public record PageInfo<T>(
         var pageToken = pageTokenFunction.apply(lastValue).toString();
         return new PageInfo<T>(pageToken, data.subList(0, expectedSize), true);
     }
+
+    public static <T> PageInfo<T> of(
+            List<T> data,
+            int expectedSize,
+            Function<T, Object> firstPageTokenFunction,
+            Function<T, Object> secondPageTokenFunction
+    ) {
+        if (data.size() < expectedSize) {
+            return new PageInfo<T>(null, data, false);
+        }
+
+        var lastValue = data.get(expectedSize - 1);
+        var first = firstPageTokenFunction.apply(lastValue).toString();
+        var second = secondPageTokenFunction.apply(lastValue).toString();
+        var pageToken = first + "@" + second;
+
+        return new PageInfo<T>(pageToken, data.subList(0, expectedSize), true);
+    }
 }
