@@ -1,0 +1,91 @@
+export const DogStatus = {
+	HOSPITAL: "HOSPITAL",
+	ADOPTED: "ADOPTED",
+	FOSTERED: "FOSTERED",
+	PROTECTED: "PROTECTED",
+} as const;
+
+export type DogStatus = (typeof DogStatus)[keyof typeof DogStatus];
+
+export const DogLocation = {
+	SHIMTTLE: "쉼뜰",
+	SHIMTUH: "쉼터",
+	STAR: "별",
+};
+
+export const Gender = {
+	MALE: "MALE",
+	FEMALE: "FEMALE",
+} as const;
+
+export type Gender = (typeof Gender)[keyof typeof Gender];
+
+export const DogBreed = {
+	JINDO: "JINDO",
+	POODLE: "POODLE",
+	MALTESE: "MALTESE",
+	SHIH_TZU: "SHIH_TZU",
+	GOLDEN_RETRIEVER: "GOLDEN_RETRIEVER",
+	LABRADOR: "LABRADOR",
+	BEAGLE: "BEAGLE",
+	BICHON: "BICHON",
+	MIXED: "MIXED",
+	DACHSHUND: "DACHSHUND",
+	SCHNAUZER: "SCHNAUZER",
+	SPITZ: "SPITZ",
+	YORKSHIRE_TERRIER: "YORKSHIRE_TERRIER",
+	COCKER_SPANIEL: "COCKER_SPANIEL",
+	PEKINGESE: "PEKINGESE",
+	POMERANIAN: "POMERANIAN",
+	CHIHUAHUA: "CHIHUAHUA",
+	OTHER: "OTHER",
+} as const;
+
+export type DogBreed = (typeof DogBreed)[keyof typeof DogBreed];
+
+export const DogStatusLabel: Record<DogStatus, string> = {
+	HOSPITAL: "병원",
+	ADOPTED: "입양",
+	FOSTERED: "임시보호",
+	PROTECTED: "보호중",
+};
+
+export const GenderLabel: Record<Gender, string> = {
+	FEMALE: "여아",
+	MALE: "남아",
+};
+
+export const DogBreedLabel: Record<DogBreed, string> = {
+	JINDO: "진돗개",
+	POODLE: "푸들",
+	MALTESE: "말티즈",
+	SHIH_TZU: "시츄",
+	GOLDEN_RETRIEVER: "골든리트리버",
+	LABRADOR: "래브라도",
+	BEAGLE: "비글",
+	BICHON: "비숑",
+	MIXED: "믹스",
+	DACHSHUND: "닥스훈트",
+	SCHNAUZER: "슈나우저",
+	SPITZ: "스피츠",
+	YORKSHIRE_TERRIER: "요크셔테리어",
+	COCKER_SPANIEL: "코커스패니얼",
+	PEKINGESE: "페키니즈",
+	POMERANIAN: "포메라니안",
+	CHIHUAHUA: "치와와",
+	OTHER: "기타",
+};
+
+export interface DogCreateRequest {
+	status: DogStatus;
+	centerId: number;
+	name: string;
+	breed: DogBreed;
+	color: string[];
+	rescuedDate: string;
+	weight: number;
+	description: string;
+	gender: Gender;
+	isNeutered: boolean;
+	breedDetail?: string;
+}

@@ -14,10 +14,10 @@ export default function ManagerMainLayout() {
 
 	return (
 		<div className="flex justify-center">
-			<div className="flex flex-col h-full w-full bg-background shadow-custom-xs">
+			<div className="flex flex-col h-full w-full">
 				{showHeader ? <Header /> : <RouteBackHeader />}
 				<main
-					className={`flex-1 overflow-y-auto pt-2.5 scrollbar-hidden ${showHeader && "mb-14"}`}
+					className={`flex-1 overflow-y-auto scrollbar-hidden ${showHeader && "mb-14"}`}
 				>
 					<Outlet />
 				</main>

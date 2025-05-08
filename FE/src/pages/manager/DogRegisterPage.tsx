@@ -1,37 +1,112 @@
 import { useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import {
+	DogStatus,
+	Gender,
+	DogBreed,
+	DogStatusLabel,
+	DogBreedLabel,
+} from "@/types/dog";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import useCenterStore from "@/lib/store/centerStore";
 import axios from "axios";
+import { createDogAPI } from "@/api/dog";
+import { toast } from "sonner";
 
 const colors = ["검", "흰", "갈"];
-const genders = ["수컷", "암컷"];
-const statuses = ["보호중", "임시보호", "병원", "입원"];
 
 export default function DogRegisterPage() {
 	const [profilePreview, setProfilePreview] = useState<string | null>(null);
-	const [form, setForm] = useState({
+	const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+
+	const { selectedCenter } = useCenterStore();
+
+	const [form, setForm] = useState<{
+		name: string;
+		gender: Gender;
+		status: DogStatus;
+		breed: string;
+		breedDetail: DogBreed;
+		weight: string;
+		color: string;
+		neutered: string;
+		features: string;
+		rescueDate: string;
+		isStar: boolean;
+		birth: string;
+		location: string;
+	}>({
 		name: "",
-		gender: "",
-		status: "",
-		age: "",
+		gender: Gender.MALE,
+		status: DogStatus.PROTECTED,
 		breed: "",
-		breedDetail: "",
+		breedDetail: DogBreed.OTHER,
 		weight: "",
 		color: "",
 		neutered: "",
 		features: "",
 		rescueDate: "",
-		foundLocation: "",
-		shelter: "",
-		medDate: "",
-		medInfo: "",
-		medNotes: "",
+		isStar: false,
+		birth: "",
+		location: "",
 	});
 
-	// 이미지 미리보기 (프로필)
+	const { mutate } = useMutation({
+		mutationFn: (formData: FormData) => createDogAPI(formData),
+		onSuccess: () => {
+			toast("강아지 정보 등록");
+		},
+		onError: (error) => {
+			const errorMessage =
+				error.message || "알 수 없는 오류가 발생했습니다.";
+			toast("등록실패 ", { description: errorMessage });
+		},
+	});
+
+	const [updatedFields, setUpdatedFields] = useState<Set<string>>(new Set());
+
 	const handleProfileImageChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
 	) => {
 		const file = e.target.files?.[0];
-		if (file) setProfilePreview(URL.createObjectURL(file));
+		if (file) {
+			setProfilePreview(URL.createObjectURL(file));
+			setProfileImageFile(file);
+		}
+	};
+
+	const DogBreedFromLabel = Object.entries(DogBreedLabel).reduce(
+		(acc, [key, label]) => {
+			acc[label] = key as DogBreed;
+			return acc;
+		},
+		{} as Record<string, DogBreed>,
+	);
+
+	const GenderFromLabel: Record<string, Gender> = {
+		수컷: Gender.MALE,
+		암컷: Gender.FEMALE,
+	};
+
+	const updateFormWithHighlight = (updates: Partial<typeof form>) => {
+		const changed = Object.entries(updates)
+			.filter(([key, val]) => val !== form[key as keyof typeof form])
+			.map(([key]) => key);
+
+		setForm((prev) => ({ ...prev, ...updates }));
+		setUpdatedFields((prev) => {
+			const newSet = new Set(prev);
+			for (const field of changed) {
+				newSet.add(field);
+			}
+			return newSet;
+		});
 	};
 
 	const handleOCRImageAuto = async (
@@ -46,17 +121,19 @@ export default function DogRegisterPage() {
 			formData,
 		);
 		const data = res.data.data;
-		setForm((prev) => ({
-			...prev,
-			gender: data.gender ?? "",
+		const formattedBirth = data.birthYear
+			? `${data.birthYear.match(/\d{4}/)?.[0] || ""}-01-01`
+			: "";
+		updateFormWithHighlight({
+			gender: GenderFromLabel[data.gender] ?? Gender.MALE,
 			neutered: data.neutered ?? "",
 			color: data.color ?? "",
-			age: getAgeFromYear(data.birthYear ?? ""),
+			birth: formattedBirth ?? "",
 			breed: data.animalType ?? "",
-			breedDetail: data.subType ?? "",
+			breedDetail: DogBreedFromLabel[data.subType] ?? DogBreed.OTHER,
 			weight: data.weight ?? "",
 			features: data.features ?? "",
-		}));
+		});
 	};
 
 	const ocrAutoInputRef = useRef<HTMLInputElement>(null);
@@ -64,19 +141,76 @@ export default function DogRegisterPage() {
 		ocrAutoInputRef.current?.click();
 	};
 
-	const getAgeFromYear = (birthYear: string): string => {
-		const match = birthYear.match(/\d{4}/);
-		if (!match) return "";
-		const year = Number.parseInt(match[0]);
-		const now = new Date().getFullYear();
-		const age = now - year;
-		if (age < 0 || age > 30) return "";
-		return age.toString(); // 숫자 나이로 변환해서 저장
+	const highlightClass = (field: string) =>
+		updatedFields.has(field) ? "ring-1 ring-pulse" : "";
+
+	const handleSubmit = () => {
+		if (!profileImageFile) {
+			toast("이미지를 업로드해주세요.");
+			return;
+		}
+		if (!selectedCenter?.centerId) {
+			toast("센터를 선택해주세요.");
+			return;
+		}
+		if (!form.name) {
+			toast("이름을 입력해주세요.");
+			return;
+		}
+		if (!form.gender) {
+			toast("성별을 선택해주세요.");
+			return;
+		}
+		if (!form.status) {
+			toast("보호 상태를 선택해주세요.");
+			return;
+		}
+		if (!form.breedDetail) {
+			toast("견종을 선택해주세요.");
+			return;
+		}
+		if (!form.rescueDate) {
+			toast("구조 일시를 선택해주세요.");
+			return;
+		}
+
+		const requestData = {
+			status: form.status,
+			centerId: selectedCenter.centerId,
+			name: form.name,
+			breed: form.breedDetail,
+			color: form.color ? [form.color] : [],
+			rescuedDate: form.rescueDate ? `${form.rescueDate}T00:00:00` : null,
+			weight: form.weight ? Number(form.weight) : null,
+			description: form.features || null,
+			isStar: form.isStar ?? false,
+			gender: form.gender,
+			isNeutered: form.neutered === "O",
+			birth: form.birth ? `${form.birth}T00:00:00` : null,
+			location: form.location || null,
+		};
+
+		console.log("requestData:", requestData);
+		console.log("Enum values:", {
+			status: form.status,
+			breed: form.breedDetail,
+			gender: form.gender,
+		});
+
+		const formData = new FormData();
+		formData.append(
+			"request",
+			new Blob([JSON.stringify(requestData)], {
+				type: "application/json",
+			}),
+		);
+		formData.append("image", profileImageFile);
+
+		mutate(formData);
 	};
 
 	return (
 		<div className="flex flex-col gap-5 p-4 text-sm text-grayText bg-white">
-			{/* 프로필 이미지 */}
 			<label className="w-full h-48 bg-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
 				{profilePreview ? (
 					<img
@@ -111,7 +245,6 @@ export default function DogRegisterPage() {
 
 			<span className="text-black text-lg font-bold">견적사항</span>
 
-			{/* 이름 + AI 버튼 */}
 			<div className="flex items-center gap-2">
 				<label htmlFor="dog-name" className="w-20">
 					아이 이름
@@ -120,7 +253,7 @@ export default function DogRegisterPage() {
 					id="dog-name"
 					value={form.name}
 					onChange={(e) => setForm({ ...form, name: e.target.value })}
-					className="border px-2 py-1 flex-1 rounded"
+					className={`border text-grayText bg-white px-2 py-1 flex-1 rounded ${highlightClass("name")}`}
 				/>
 				<button
 					type="button"
@@ -130,12 +263,11 @@ export default function DogRegisterPage() {
 				</button>
 			</div>
 
-			{/* 성별 */}
 			<div className="flex gap-2 items-center">
 				<label htmlFor="gender" className="w-20">
 					성별
 				</label>
-				{genders.map((g) => (
+				{Object.values(Gender).map((g) => (
 					<div key={g}>
 						<input
 							type="radio"
@@ -150,22 +282,105 @@ export default function DogRegisterPage() {
 							htmlFor={`gender-${g}`}
 							className={`px-4 py-1 rounded-full cursor-pointer ${
 								form.gender === g
-									? "bg-sky-400 text-white"
+									? form.gender === Gender.FEMALE
+										? "bg-female text-white"
+										: "bg-male text-white"
 									: "bg-gray-200"
-							}`}
+							} ${highlightClass("gender")}`}
 						>
-							{g === "수컷" ? "남아" : "여아"}
+							{g === Gender.MALE ? "남아" : "여아"}
 						</label>
 					</div>
 				))}
 			</div>
 
-			{/* 보호상태 */}
+			<div className="flex gap-2 items-center">
+				<label htmlFor="isStar" className="w-20">
+					별 여부
+				</label>
+				{[
+					{ label: "별이 되지 않았다", value: false },
+					{ label: "별이 되었다", value: true },
+				].map(({ label, value }) => (
+					<div key={label}>
+						<input
+							type="radio"
+							id={`isStar-${value}`}
+							name="isStar"
+							value={String(value)}
+							checked={form.isStar === value}
+							onChange={() => {
+								setForm((prev) => ({
+									...prev,
+									isStar: value,
+									location: value ? "별" : prev.location,
+								}));
+							}}
+							className="hidden"
+						/>
+						<label
+							htmlFor={`isStar-${value}`}
+							className={`px-4 py-1 rounded-full cursor-pointer ${
+								form.isStar === value
+									? "bg-blue-300 text-white"
+									: "bg-gray-200"
+							} ${highlightClass("isStar")}`}
+						>
+							{label}
+						</label>
+					</div>
+				))}
+			</div>
+
+			<div className="flex gap-2 items-center">
+				<label htmlFor="location" className="w-20 shrink-0">
+					소속 위치
+				</label>
+				<div className="flex gap-2 flex-wrap">
+					{(form.isStar
+						? [{ label: "별", value: "별" }]
+						: [
+								{ label: "쉼뜰", value: "쉼뜰" },
+								{ label: "쉼터", value: "쉼터" },
+							]
+					).map(({ label, value }) => (
+						<div key={value}>
+							<input
+								type="radio"
+								id={`location-${value}`}
+								name="location"
+								value={value}
+								checked={form.location === value}
+								onChange={() =>
+									setForm({ ...form, location: value })
+								}
+								className="hidden"
+								disabled={form.isStar}
+							/>
+							<label
+								htmlFor={`location-${value}`}
+								className={`px-4 py-1 rounded-full cursor-pointer ${
+									form.location === value
+										? "bg-indigo-500 text-white"
+										: "bg-gray-200"
+								} ${highlightClass("location")} ${
+									form.isStar
+										? "opacity-50 cursor-not-allowed"
+										: ""
+								}`}
+							>
+								{label}
+							</label>
+						</div>
+					))}
+				</div>
+			</div>
+
 			<div className="flex gap-2 items-center">
 				<label htmlFor="status" className="w-20">
 					보호상태
 				</label>
-				{statuses.map((s) => (
+				{Object.values(DogStatus).map((s) => (
 					<div key={s}>
 						<input
 							type="radio"
@@ -178,44 +393,58 @@ export default function DogRegisterPage() {
 						/>
 						<label
 							htmlFor={`status-${s}`}
-							className={`px-3 py-1 rounded-full cursor-pointer ${form.status === s ? "bg-blue-300 text-white" : "bg-gray-200"}`}
+							className={`px-3 py-1 rounded-full cursor-pointer ${
+								form.status === s
+									? "bg-blue-300 text-white"
+									: "bg-gray-200"
+							}`}
 						>
-							{s}
+							{DogStatusLabel[s]}
 						</label>
 					</div>
 				))}
 			</div>
 
-			{/* 나이*/}
 			<div className="flex items-center gap-2">
-				<label htmlFor="dog-age" className="w-20">
-					나이
+				<label htmlFor="dog-birth" className="w-20">
+					출생년도
 				</label>
 				<input
-					id="dog-age"
-					type="number"
-					value={form.age}
-					onChange={(e) => setForm({ ...form, age: e.target.value })}
-					className="border px-2 py-1 rounded w-18"
+					id="dog-birth"
+					type="date"
+					value={form.birth}
+					onChange={(e) =>
+						setForm({ ...form, birth: e.target.value })
+					}
+					className={`border px-2 py-1 rounded ${highlightClass("birth")}`}
 				/>
-				<span className="text-sm">살</span>
 			</div>
 
 			<div className="flex items-center gap-2">
 				<label htmlFor="dog-breed" className="w-20">
 					종
 				</label>
-				<input
-					id="dog-breed"
+				<Select
 					value={form.breedDetail}
-					onChange={(e) =>
-						setForm({ ...form, breedDetail: e.target.value })
+					onValueChange={(val) =>
+						setForm({ ...form, breedDetail: val as DogBreed })
 					}
-					className="border px-2 py-1 rounded flex-1"
-				/>
+				>
+					<SelectTrigger
+						className={`flex-1 ${highlightClass("breedDetail")}`}
+					>
+						<SelectValue placeholder="종을 선택하세요" />
+					</SelectTrigger>
+					<SelectContent>
+						{Object.values(DogBreed).map((b) => (
+							<SelectItem key={b} value={b}>
+								{DogBreedLabel[b]}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
 			</div>
 
-			{/* 무게 */}
 			<div className="flex items-center gap-2">
 				<label htmlFor="dog-weight" className="w-20">
 					무게
@@ -227,12 +456,11 @@ export default function DogRegisterPage() {
 					onChange={(e) =>
 						setForm({ ...form, weight: e.target.value })
 					}
-					className="border px-2 py-1 rounded w-18"
+					className={`border px-2 py-1 rounded w-18 ${highlightClass("weight")}`}
 				/>
 				<span className="text-sm">kg</span>
 			</div>
 
-			{/* 색상 */}
 			<div className="flex items-center gap-2">
 				<label htmlFor="dog-color" className="w-20">
 					색상
@@ -254,7 +482,7 @@ export default function DogRegisterPage() {
 								form.color === c
 									? "bg-black text-white"
 									: "bg-gray-300"
-							}`}
+							} ${highlightClass("color")}`}
 						>
 							{c}
 						</label>
@@ -262,44 +490,50 @@ export default function DogRegisterPage() {
 				))}
 			</div>
 
-			{/* 중성화 */}
 			<div className="flex gap-2 items-center">
 				<label htmlFor="neutered" className="w-20">
 					중성화
 				</label>
-				<input
-					type="radio"
-					id="neutered-o"
-					name="neutered"
-					value="O"
-					checked={form.neutered === "O"}
-					onChange={() => setForm({ ...form, neutered: "O" })}
-					className="hidden"
-				/>
-				<label
-					htmlFor="neutered-o"
-					className={`px-4 py-1 rounded-full cursor-pointer ${form.neutered === "O" ? "bg-sky-400 text-white" : "bg-gray-200"}`}
-				>
-					O
-				</label>
-				<input
-					type="radio"
-					id="neutered-x"
-					name="neutered"
-					value="X"
-					checked={form.neutered === "X"}
-					onChange={() => setForm({ ...form, neutered: "X" })}
-					className="hidden"
-				/>
-				<label
-					htmlFor="neutered-x"
-					className={`px-4 py-1 rounded-full cursor-pointer ${form.neutered === "X" ? "bg-sky-400 text-white" : "bg-gray-200"}`}
-				>
-					X
-				</label>
+				{["O", "X"].map((val) => (
+					<div key={val}>
+						<input
+							type="radio"
+							id={`neutered-${val}`}
+							name="neutered"
+							value={val}
+							checked={form.neutered === val}
+							onChange={() => setForm({ ...form, neutered: val })}
+							className="hidden"
+						/>
+						<label
+							htmlFor={`neutered-${val}`}
+							className={`px-4 py-1 rounded-full cursor-pointer ${
+								form.neutered === val
+									? "bg-blue-300 text-white"
+									: "bg-gray-200"
+							} ${highlightClass("neutered")}`}
+						>
+							{val}
+						</label>
+					</div>
+				))}
 			</div>
 
-			{/* 특이사항 */}
+			<div className="flex gap-2 items-center">
+				<label htmlFor="rescue-date" className="w-20">
+					구조일시
+				</label>
+				<input
+					id="rescue-date"
+					type="date"
+					value={form.rescueDate}
+					onChange={(e) =>
+						setForm({ ...form, rescueDate: e.target.value })
+					}
+					className="border p-1 rounded"
+				/>
+			</div>
+
 			<div>
 				<label htmlFor="dog-features" className="block mb-1">
 					특이사항
@@ -310,103 +544,13 @@ export default function DogRegisterPage() {
 					onChange={(e) =>
 						setForm({ ...form, features: e.target.value })
 					}
-					className="border w-full h-24 p-2 rounded"
+					className={`border w-full h-24 p-2 rounded ${highlightClass("features")}`}
 				/>
 			</div>
 
-			<span className="text-black text-lg font-bold">기타</span>
-
-			{/* 구조, 보호, 발견 */}
-			<div className="flex flex-col gap-2">
-				<div className="flex gap-2 items-center">
-					<label htmlFor="rescue-date" className="w-20">
-						구조일시
-					</label>
-					<input
-						id="rescue-date"
-						type="date"
-						value={form.rescueDate}
-						onChange={(e) =>
-							setForm({ ...form, rescueDate: e.target.value })
-						}
-						className="border p-1 rounded"
-					/>
-				</div>
-				<div className="flex gap-2 items-center">
-					<label htmlFor="found-location" className="w-20">
-						발견장소
-					</label>
-					<input
-						id="found-location"
-						value={form.foundLocation}
-						onChange={(e) =>
-							setForm({ ...form, foundLocation: e.target.value })
-						}
-						className="border p-1 rounded flex-1"
-					/>
-				</div>
-				<div className="flex gap-2 items-center">
-					<label htmlFor="shelter" className="w-20">
-						보호소
-					</label>
-					<input
-						id="shelter"
-						value={form.shelter}
-						onChange={(e) =>
-							setForm({ ...form, shelter: e.target.value })
-						}
-						className="border p-1 rounded flex-1"
-					/>
-				</div>
-			</div>
-
-			{/* 투약정보 */}
-			<div className="flex flex-col gap-2">
-				<div className="flex gap-2 items-center">
-					<label htmlFor="med-date" className="w-20">
-						투약일시
-					</label>
-					<input
-						id="med-date"
-						type="date"
-						value={form.medDate}
-						onChange={(e) =>
-							setForm({ ...form, medDate: e.target.value })
-						}
-						className="border p-1 rounded"
-					/>
-				</div>
-				<div className="flex gap-2 items-center">
-					<label htmlFor="med-info" className="w-20">
-						투약정보
-					</label>
-					<input
-						id="med-info"
-						value={form.medInfo}
-						onChange={(e) =>
-							setForm({ ...form, medInfo: e.target.value })
-						}
-						className="border p-1 rounded flex-1"
-					/>
-				</div>
-				<div className="flex gap-2 items-center">
-					<label htmlFor="med-notes" className="w-20">
-						특이사항
-					</label>
-					<input
-						id="med-notes"
-						value={form.medNotes}
-						onChange={(e) =>
-							setForm({ ...form, medNotes: e.target.value })
-						}
-						className="border p-1 rounded flex-1"
-					/>
-				</div>
-			</div>
-
-			{/* 등록 버튼 */}
 			<button
 				type="button"
+				onClick={handleSubmit}
 				className="mt-4 w-full py-2 bg-male text-white rounded-full font-bold"
 			>
 				등록하기
