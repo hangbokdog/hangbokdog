@@ -24,9 +24,11 @@ import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DogService {
 
 	private final DogRepository dogRepository;
@@ -172,6 +174,7 @@ public class DogService {
 	public ProtectedDogCountResponse getDogCount(Long centerId) {
 		int count = dogRepository.getDogCount(centerId);
 		List<DogSummary> dogSummaries = dogRepository.getDogSummaries(centerId);
+		log.info("dog count: {}", dogSummaries.size());
 
 		return new ProtectedDogCountResponse(count, dogSummaries);
 	}
