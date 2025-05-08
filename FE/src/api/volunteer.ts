@@ -1,3 +1,4 @@
+import type { Volunteer } from "@/types/volunteer";
 import localAxios from "./http-commons";
 
 export const getLatestVolunteerAPI = async ({

@@ -17,3 +17,14 @@ export interface SelectedSchedule {
 	people: number;
 	participants: Participant[];
 }
+
+export interface Volunteer {
+	id: number;
+	title: string;
+	content: string;
+	address: string;
+	locationType: string;
+	startDate: string;
+	endDate: string;
+	imageUrl: string;
+}
