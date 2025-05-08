@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
@@ -82,5 +83,14 @@ public class VolunteerController {
             @RequestParam(required = false) Long centerId
     ) {
         return ResponseEntity.ok(volunteerService.findLatest(centerId));
+    }
+
+    @GetMapping("/ended")
+    public ResponseEntity<PageInfo<VolunteerResponse>> findEnded(
+            @AuthMember Member member,
+            @RequestParam(required = false) String pageToken,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok(volunteerService.findEnded(centerId, pageToken));
     }
 }
