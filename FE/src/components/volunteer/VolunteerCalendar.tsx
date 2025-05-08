@@ -55,7 +55,7 @@ export default function VolunteerCalendar({ events }: VolunteerCalendarProps) {
 	}, []);
 
 	const renderEventContent = (eventContent: EventContentArg) => (
-		<div className="w-full h-full flex items-center justify-center">
+		<div className="w-full h-full flex items-center justify-center cursor-pointer">
 			<span className="text-xs font-medium">
 				{eventContent.event.title}
 			</span>
@@ -102,6 +102,7 @@ export default function VolunteerCalendar({ events }: VolunteerCalendarProps) {
 					initialView="dayGridMonth"
 					initialDate="2025-05-01"
 					locale={koLocale}
+					firstDay={1}
 					events={events}
 					headerToolbar={false}
 					height="auto"
