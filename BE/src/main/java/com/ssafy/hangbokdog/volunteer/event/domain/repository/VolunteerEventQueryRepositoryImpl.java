@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -132,9 +133,11 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 ))
                 .from(volunteerEvent)
                 .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN).and(
-                        volunteerEvent.centerId.eq(centerId)
-                ))
-                .orderBy(volunteerEvent.id.desc())
+                        volunteerEvent.centerId.eq(centerId)).and(
+                                volunteerEvent.endDate.after((LocalDate.now()))
+                        )
+                )
+                .orderBy(volunteerEvent.endDate.asc())
                 .limit(3)
                 .fetch();
     }
