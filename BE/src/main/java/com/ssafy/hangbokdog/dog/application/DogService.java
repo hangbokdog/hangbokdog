@@ -122,24 +122,25 @@ public class DogService {
 		);
 	}
 
-	// public Long addMedicalHistory(
-	// 	Long memberId,
-	// 	Long centerId,
-	// 	MedicalHistoryRequest request,
-	// 	Long dogId
-	// ) {
-	//
-	// 	MedicalHistory medicalHistory = MedicalHistory.builder()
-	// 		.dogId(dogId)
-	// 		.content(request.content())
-	// 		.medicalPeriod(request.medicalPeriod())
-	// 		.medicalType(request.medicalType())
-	// 		.operatedDate(request.operatedDate())
-	// 		.medicalHistoryImage(r)
-	// 		.build();
-	//
-	// 	return dogRepository.createMedicalHistory(medicalHistory).getId();
-	// }
+	public Long addMedicalHistory(
+		Long memberId,
+		Long centerId,
+		MedicalHistoryRequest request,
+		String imageUrl,
+		Long dogId
+	) {
+
+		MedicalHistory medicalHistory = MedicalHistory.builder()
+			.dogId(dogId)
+			.content(request.content())
+			.medicalPeriod(request.medicalPeriod())
+			.medicalType(request.medicalType())
+			.operatedDate(request.operatedDate())
+			.medicalHistoryImage(imageUrl)
+			.build();
+
+		return dogRepository.createMedicalHistory(medicalHistory).getId();
+	}
 
 	public PageInfo<MedicalHistoryResponse> getMedicalHistories(
 		Long dogId,

@@ -33,7 +33,8 @@ public class MedicalHistoryJpaRepositoryCustomImpl implements MedicalHistoryJpaR
 				medicalHistory.content,
 				medicalHistory.medicalPeriod,
 				medicalHistory.medicalType,
-				medicalHistory.operatedDate
+				medicalHistory.operatedDate,
+				medicalHistory.medicalHistoryImage
 			))
 			.from(medicalHistory)
 			.where(medicalHistory.dogId.eq(dogId)

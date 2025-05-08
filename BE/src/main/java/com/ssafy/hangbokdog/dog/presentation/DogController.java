@@ -129,23 +129,27 @@ public class DogController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// @PostMapping("/{dogId}/medical-history")
-	// public ResponseEntity<Void> addMedicalHistory(
-	// 	@AuthMember Member member,
-	// 	@RequestBody MedicalHistoryRequest request,
-	// 	@PathVariable(name = "dogId") Long dogId,
-	// 	@RequestParam Long centerId
-	// ) {
-	// 	Long medicalHistoryId = dogService.addMedicalHistory(
-	// 		member.getId(),
-	// 		centerId,
-	// 		request,
-	// 		dogId
-	// 	);
-	//
-	// 	return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId + "/medical-history" + medicalHistoryId))
-	// 		.build();
-	// }
+	@PostMapping(value = "/{dogId}/medical-history", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Void> addMedicalHistory(
+		@AuthMember Member member,
+		@PathVariable(name = "dogId") Long dogId,
+		@RequestParam Long centerId,
+		@RequestPart(value = "request") MedicalHistoryRequest request,
+		@RequestPart(value = "image", required = false) MultipartFile image
+	) {
+		String imageUrl = (image != null) ? uploadImageToS3(image) : null;
+
+		Long medicalHistoryId = dogService.addMedicalHistory(
+			member.getId(),
+			centerId,
+			request,
+			imageUrl,
+			dogId
+		);
+
+		return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId + "/medical-history" + medicalHistoryId))
+			.build();
+	}
 
 	@GetMapping("/{dogId}/medical-history")
 	public ResponseEntity<PageInfo<MedicalHistoryResponse>> getMedicalHistories(
