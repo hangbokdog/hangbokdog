@@ -22,7 +22,7 @@ public record DogDetailResponse(
 	Gender gender,
 	Boolean isNeutered,
 	DogBreed breed,
-	LocalDateTime age,
+	Integer age,
 	String location
 ) {
 }

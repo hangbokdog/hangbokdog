@@ -45,7 +45,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.dogBreed,
 				Expressions.numberTemplate(
 					Integer.class,
-					"timestampdiff(YEAR, {0}, {1})",
+					"timestampdiff(MONTH, {0}, {1})",
 					dog.birth, LocalDateTime.now()
 				),
 				dog.location
