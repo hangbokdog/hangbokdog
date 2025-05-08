@@ -45,11 +45,11 @@ export default function My() {
 					console.log("프로필 수정 클릭됨");
 				}}
 			/>
-			<div className="flex justify-center gap-3">
-				<div className="w-[185px] h-[165px] mx-3.5">
+			<div className="grid grid-cols-2 justify-center gap-3 mx-2.5">
+				<div className="h-[165px]">
 					<MileageCard />
 				</div>
-				<div className="w-[185px] h-[165px] mx-3.5">
+				<div className="h-[165px]">
 					<MileageCard />
 				</div>
 			</div>
@@ -59,17 +59,15 @@ export default function My() {
 			<div>
 				<ProtectDogPanel />
 			</div>
-			<div className="flex justify-center p-4 m-2.5 bg-superLightGray rounded-lg text-grayText hover:bg-red hover:text-white transition-all duration-300 cursor-pointer">
-				<button
-					type="button"
-					onClick={handleLogout}
-					className="flex items-center gap-2 px-4 py-2"
-					title="로그아웃"
-				>
-					<MdLogout className="size-5" />
-					<span className="text-sm font-medium">로그아웃</span>
-				</button>
-			</div>
+			<button
+				type="button"
+				onClick={handleLogout}
+				className="flex items-center justify-center gap-2 m-2.5 p-4 bg-superLightGray rounded-lg text-grayText hover:bg-red hover:text-white transition-all duration-300 "
+				title="로그아웃"
+			>
+				<MdLogout className="size-5" />
+				<span className="text-sm font-medium">로그아웃</span>
+			</button>
 		</div>
 	);
 }
