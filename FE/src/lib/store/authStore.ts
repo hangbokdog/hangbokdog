@@ -1,31 +1,29 @@
 import { create } from "zustand";
 
+interface User {
+	accessToken: string | null;
+	name: string | null;
+	tempToken: string | null;
+}
+
 interface AuthState {
-	user: {
-		accessToken: string | null;
-		name: string | null;
-		tempToken: string | null;
-	};
+	user: User;
 	setToken: (token: string) => void;
 	setName: (name: string) => void;
 	setTempToken: (token: string) => void;
 	clearAuth: () => void;
 }
 
-const getStoredToken = (): string | null => {
-	return sessionStorage.getItem("accessToken");
-};
-
-const getStoredName = (): string | null => {
-	return sessionStorage.getItem("name");
+const getStoredUser = (): User => {
+	return {
+		accessToken: sessionStorage.getItem("accessToken"),
+		name: sessionStorage.getItem("name"),
+		tempToken: null,
+	};
 };
 
 const useAuthStore = create<AuthState>()((set) => ({
-	user: {
-		accessToken: getStoredToken(),
-		name: getStoredName(),
-		tempToken: null,
-	},
+	user: getStoredUser(),
 	setToken: (token: string) => {
 		sessionStorage.setItem("accessToken", token);
 		set((state) => ({
@@ -46,14 +44,13 @@ const useAuthStore = create<AuthState>()((set) => ({
 	clearAuth: () => {
 		sessionStorage.removeItem("accessToken");
 		sessionStorage.removeItem("name");
-		set((state) => ({
+		set({
 			user: {
-				...state.user,
 				accessToken: null,
 				name: null,
 				tempToken: null,
 			},
-		}));
+		});
 	},
 }));
 

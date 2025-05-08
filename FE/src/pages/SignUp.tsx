@@ -81,7 +81,7 @@ export default function SignUp() {
 	}, []);
 
 	return (
-		<div className="p-2.5 py-10 flex flex-col items-center gap-5 rounded-[8px] bg-white shadow-custom-xs mx-2.5">
+		<div className="p-2.5 mt-2.5 py-10 flex flex-col items-center gap-5 rounded-[8px] bg-white shadow-custom-xs mx-2.5">
 			<SignUpHeader />
 			<SignUpForm
 				nickname={nickname}

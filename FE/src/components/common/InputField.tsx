@@ -9,6 +9,7 @@ interface InputFieldProps {
 	minLength?: number;
 	type?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	error?: boolean;
 }
 
 export default function InputField({
@@ -20,16 +21,21 @@ export default function InputField({
 	minLength,
 	type = "text",
 	onChange,
+	error = false,
 }: InputFieldProps) {
 	return (
 		<div
-			className={`flex flex-1 w-full rounded-3xl shadow-custom-sm px-3 py-2 transition-all duration-200 hover:shadow-md ${disabled ? "bg-superLightGray" : "bg-background"}`}
+			className={`flex flex-1 w-full rounded-3xl shadow-custom-sm px-3 py-2 transition-all duration-200 hover:shadow-md ${
+				disabled ? "bg-superLightGray" : "bg-background"
+			} ${error ? "border-2 border-red" : ""}`}
 		>
 			<div className="flex items-center justify-center border-r border-grayText p-2">
-				<Icon className="size-5 text-grayText" />
+				<Icon
+					className={`size-5 ${error ? "text-red" : "text-grayText"}`}
+				/>
 			</div>
 			<input
-				className="flex-1 outline-none ml-2"
+				className={`flex-1 outline-none ml-2 ${error ? "text-red" : ""} placeholder:text-grayText`}
 				type={type}
 				placeholder={placeholder}
 				value={value}

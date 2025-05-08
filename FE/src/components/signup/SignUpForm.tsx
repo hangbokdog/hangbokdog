@@ -55,8 +55,20 @@ export default function SignUpForm({
 	};
 
 	const validateBirthDate = (value: string) => {
-		const regex = /^\d{6}$/;
-		return regex.test(value);
+		if (value.length !== 6) return false;
+
+		const month = Number.parseInt(value.substring(2, 4));
+		const day = Number.parseInt(value.substring(4, 6));
+
+		if (month < 1 || month > 12) return false;
+
+		if (day < 1 || day > 31) return false;
+
+		if (month === 2 && day > 29) return false;
+
+		if ([4, 6, 9, 11].includes(month) && day > 30) return false;
+
+		return true;
 	};
 
 	const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,6 +147,7 @@ export default function SignUpForm({
 					value={nickname}
 					onChange={handleNicknameChange}
 					disabled={isNicknameUnique}
+					error={nickname.length > 0 && !isNicknameValid}
 				/>
 				<button
 					type="button"
@@ -167,6 +180,7 @@ export default function SignUpForm({
 				maxLength={11}
 				value={phoneNumber}
 				onChange={handlePhoneNumberChange}
+				error={phoneNumber.length > 0 && !isPhoneValid}
 			/>
 			<InputField
 				icon={FaBirthdayCake}
@@ -174,6 +188,7 @@ export default function SignUpForm({
 				maxLength={6}
 				value={birthDate}
 				onChange={handleBirthDateChange}
+				error={birthDate.length > 0 && !isBirthDateValid}
 			/>
 		</div>
 	);

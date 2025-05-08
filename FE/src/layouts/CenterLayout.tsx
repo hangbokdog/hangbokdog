@@ -39,7 +39,7 @@ export default function CenterLayout() {
 			) : (
 				<RouteBackHeader {...getRouteBackHeaderProps()} />
 			)}
-			<main className="flex-1 overflow-y-auto pt-2.5 scrollbar-hidden">
+			<main className="flex-1 overflow-y-auto pt-2.5 mb-14 scrollbar-hidden">
 				<Outlet />
 			</main>
 			{showHeader && <Footer />}
