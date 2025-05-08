@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.domain.repository;
 
+import static com.ssafy.hangbokdog.center.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.dog.domain.QDog.*;
 
@@ -48,11 +49,13 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					"timestampdiff(MONTH, {0}, {1})",
 					dog.birth, LocalDateTime.now()
 				),
-				dog.location
+				addressBook.addressName
 			))
 			.from(dog)
 			.leftJoin(center)
 			.on(dog.centerId.eq(center.id))
+			.leftJoin(addressBook)
+			.on(dog.locationId.eq(addressBook.id))
 			.where(dog.id.eq(id)
 				.and(dog.centerId.eq(centerId)))
 			.fetchOne();

@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.center.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -8,6 +10,7 @@ import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.dto.request.AddressBookRequest;
+import com.ssafy.hangbokdog.center.dto.response.AddressBookResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 
@@ -44,5 +47,9 @@ public class AddressBookService {
 			.orElseThrow(() -> new BadRequestException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
 
 		addressBook.updateAddress(request.addressName(), addressBook.getAddress());
+	}
+
+	public List<AddressBookResponse> getAddressBooks(Long centerId) {
+		return addressBookRepository.getAddressBookByCenter(centerId);
 	}
 }

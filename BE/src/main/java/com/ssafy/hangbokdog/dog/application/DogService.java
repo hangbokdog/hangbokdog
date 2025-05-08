@@ -24,11 +24,9 @@ import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class DogService {
 
 	private final DogRepository dogRepository;
@@ -59,7 +57,7 @@ public class DogService {
 			.description(request.description())
 			.isStar(request.isStar())
 			.birth(request.birth())
-			.location(request.location())
+			.locationId(request.locationId())
 			.gender(request.gender())
 			.isNeutered(request.isNeutered())
 			.build();
@@ -120,7 +118,7 @@ public class DogService {
 			request.weight(),
 			request.description(),
 			request.isNeutered(),
-			request.location()
+			request.locationId()
 		);
 	}
 
@@ -174,7 +172,6 @@ public class DogService {
 	public ProtectedDogCountResponse getDogCount(Long centerId) {
 		int count = dogRepository.getDogCount(centerId);
 		List<DogSummary> dogSummaries = dogRepository.getDogSummaries(centerId);
-		log.info("dog count: {}", dogSummaries.size());
 
 		return new ProtectedDogCountResponse(count, dogSummaries);
 	}
