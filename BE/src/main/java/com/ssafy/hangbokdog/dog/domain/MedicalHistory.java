@@ -36,7 +36,7 @@ public class MedicalHistory extends BaseEntity {
 	private String content;
 
 	@Column(name = "medical_history_image", length = 8192)
-	private String medialHistoryImage;
+	private String medicalHistoryImage;
 
 	@Column(name = "medical_period")
 	private Integer medicalPeriod;
@@ -54,7 +54,7 @@ public class MedicalHistory extends BaseEntity {
 		Integer medicalPeriod,
 		MedicalType medicalType,
 		LocalDateTime operatedDate,
-		String medialHistoryImage
+		String medicalHistoryImage
 	) {
 		return new MedicalHistory(
 			dogId,
@@ -62,7 +62,7 @@ public class MedicalHistory extends BaseEntity {
 			medicalPeriod,
 			medicalType,
 			operatedDate,
-			medialHistoryImage
+			medicalHistoryImage
 		);
 	}
 
@@ -79,7 +79,7 @@ public class MedicalHistory extends BaseEntity {
 		this.medicalPeriod = medicalPeriod;
 		this.medicalType = medicalType;
 		this.operatedDate = operatedDate;
-		this.medialHistoryImage = medicalHistoryImage;
+		this.medicalHistoryImage = medicalHistoryImage;
 	}
 }
 
