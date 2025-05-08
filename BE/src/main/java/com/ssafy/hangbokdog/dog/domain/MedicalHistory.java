@@ -39,7 +39,7 @@ public class MedicalHistory extends BaseEntity {
 	@Column(name = "medial_history_image")
 	private String medialHistoryImage;
 
-	@Column(nullable = false, name = "medical_period")
+	@Column(name = "medical_period")
 	private Integer medicalPeriod;
 
 	@Enumerated(EnumType.STRING)
