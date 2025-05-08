@@ -94,6 +94,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			.where(dog.centerId.eq(centerId)
 				.and(dog.status.ne(DogStatus.ADOPTED))
 				.and(dog.isStar.eq(false)))
+			.orderBy(dog.createdAt.desc())
+			.limit(3)
 			.fetch();
 	}
 }
