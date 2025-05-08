@@ -184,7 +184,10 @@ public class DogController {
 	}
 
 	@GetMapping("/dogCount")
-	public ResponseEntity<ProtectedDogCountResponse> dogCount(@RequestParam Long centerId) {
+	public ResponseEntity<ProtectedDogCountResponse> dogCount(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
 		ProtectedDogCountResponse response = dogService.getDogCount(centerId);
 
 		return ResponseEntity.ok().body(response);
