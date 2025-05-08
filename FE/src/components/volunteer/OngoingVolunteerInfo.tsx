@@ -17,7 +17,7 @@ export default function OngoingVolunteerInfo({
 				<span className="text-base font-bold">{title}</span>
 				<span className="inline-flex gap-1 items-center">
 					<VscLocation className="size-4 text-blueGray" />
-					<span className="text-sm text-blueGray font-medium">
+					<span className="text-xs text-blueGray font-medium">
 						{location}
 					</span>
 				</span>
