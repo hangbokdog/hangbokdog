@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import StatusTag from "@/components/my/StatusTag";
 import GenderTag from "@/components/my/GenderTag";
 
-interface ProtectDogCardProps {
+export interface ProtectDogCardProps {
 	id: number;
 	name: string;
 	age: string;

@@ -30,6 +30,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import CenterDecisionPage from "./pages/CenterDecisionPage";
 import CenterLayout from "./layouts/CenterLayout";
 import ManagerDogsPage from "./pages/manager/ManagerDogsPage";
+import DogDrugsPage from "./pages/manager/DogDrugsPage";
 
 const router = createBrowserRouter([
 	{
@@ -178,11 +179,20 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "dog-management",
-						element: <DogManageMainPage />,
+						children: [
+							{
+								index: true,
+								element: <DogManageMainPage />,
+							},
+							{
+								path: "button",
+								element: <DogDrugsPage />,
+							},
+						],
 					},
 					{
 						path: "dog-list",
-						element: <ManagerDogsPage />,
+						element: <ManagerDogListPage />,
 					},
 				],
 			},
