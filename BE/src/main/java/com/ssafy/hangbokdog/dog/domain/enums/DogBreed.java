@@ -17,5 +17,6 @@ public enum DogBreed {
 	COCKER_SPANIEL,
 	PEKINGESE,
 	POMERANIAN,
+	CHIHUAHUA,
 	OTHER
 }
