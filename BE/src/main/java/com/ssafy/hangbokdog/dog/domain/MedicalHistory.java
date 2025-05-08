@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.dog.domain.enums.MedicalType;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "medical_history")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class MedicalHistory extends BaseEntity {
