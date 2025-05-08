@@ -9,6 +9,7 @@ public record MedicalHistoryResponse(
 	String content,
 	Integer medicalPeriod,
 	MedicalType medicalType,
-	LocalDateTime operatedDate
+	LocalDateTime operatedDate,
+	String image
 ) {
 }
