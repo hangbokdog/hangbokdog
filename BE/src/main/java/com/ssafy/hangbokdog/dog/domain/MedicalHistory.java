@@ -15,6 +15,7 @@ import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.dog.domain.enums.MedicalType;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -48,25 +49,8 @@ public class MedicalHistory extends BaseEntity {
 	@Column(nullable = false, name = "operated_date")
 	private LocalDateTime operatedDate;
 
-	public static MedicalHistory createMedicalHistory(
-		Long dogId,
-		String content,
-		Integer medicalPeriod,
-		MedicalType medicalType,
-		LocalDateTime operatedDate,
-		String medicalHistoryImage
-	) {
-		return new MedicalHistory(
-			dogId,
-			content,
-			medicalPeriod,
-			medicalType,
-			operatedDate,
-			medicalHistoryImage
-		);
-	}
-
-	private MedicalHistory(
+	@Builder
+	public MedicalHistory(
 		Long dogId,
 		String content,
 		Integer medicalPeriod,

@@ -3,6 +3,8 @@ package com.ssafy.hangbokdog.dog.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.validator.constraints.Length;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.dog.domain.enums.DogBreed;
@@ -21,6 +22,7 @@ import com.ssafy.hangbokdog.dog.domain.enums.Gender;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -89,37 +91,10 @@ public class Dog extends BaseEntity {
 	}
 
 	public void dogToStar() {
+		if (isStar) {
+			throw new BadRequestException(ErrorCode.DOG_ALREADY_STAR);
+		}
 		this.isStar = true;
-	}
-
-	public static Dog createDog(
-		DogStatus status,
-		Long centerId,
-		String name,
-		DogBreed dogBreed,
-		String profileImage,
-		List<String> color,
-		LocalDateTime rescuedDate,
-		Double weight,
-		String description,
-		Boolean isStar,
-		Gender gender,
-		Boolean isNeutered
-	) {
-		return new Dog(
-			status,
-			centerId,
-			name,
-			dogBreed,
-			profileImage,
-			color,
-			rescuedDate,
-			weight,
-			description,
-			isStar,
-			gender,
-			isNeutered
-		);
 	}
 
 	public void updateDog(
@@ -127,16 +102,19 @@ public class Dog extends BaseEntity {
 		String profileImageUrl,
 		Double weight,
 		String description,
-		Boolean isNeutered
+		Boolean isNeutered,
+		String location
 	) {
 		this.name = name;
 		this.profileImage = profileImageUrl;
 		this.weight = weight;
 		this.description = description;
 		this.isNeutered = isNeutered;
+		this.location = location;
 	}
 
-	private Dog(
+	@Builder
+	public Dog(
 		DogStatus status,
 		Long centerId,
 		String name,
@@ -147,6 +125,8 @@ public class Dog extends BaseEntity {
 		Double weight,
 		String description,
 		Boolean isStar,
+		LocalDateTime birth,
+		String location,
 		Gender gender,
 		Boolean isNeutered
 	) {
@@ -162,5 +142,7 @@ public class Dog extends BaseEntity {
 		this.isStar = isStar;
 		this.gender = gender;
 		this.isNeutered = isNeutered;
+		this.birth = birth;
+		this.location = location;
 	}
 }

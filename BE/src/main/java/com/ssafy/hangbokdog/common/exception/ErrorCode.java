@@ -34,6 +34,7 @@ public enum ErrorCode {
     NOT_VALID_FOSTER_APPLICATION(6003, "유효하지 않은 임시보호 요청입니다."),
     FOSTER_ALREADY_EXISTS(6004, "이미 존재하는 임보 요청입니다."),
     FOSTER_ALREADY_FULL(6005, "이미 임시보호 용량이 꽉찼습니다."),
+    DOG_ALREADY_STAR(6006, "이미 별이 된 강아지입니다."),
 
     PRODUCT_NOT_FOUND(7000, "존재하지 않는 상품입니다."),
     PRODUCT_NOT_ON_SALE(7001, "현재 판매중인 상품이 아닙니다."),
