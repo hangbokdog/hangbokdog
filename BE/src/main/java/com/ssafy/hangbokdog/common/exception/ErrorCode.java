@@ -80,7 +80,9 @@ public enum ErrorCode {
     CENTER_JOIN_REQUEST_NOT_FOUND(16003, "센티 지원 이력이 없습니다."),
     CENTER_MEMBER_NOT_FOUND(16004, "센터에 가입한 유저가 아닙니다."),
 
-    ADDRESS_BOOK_NOT_FOUND(17000, "없는 주소입니다.");
+    FAILED_TO_PARSE_TOKEN(17000, "토큰 파싱에 실패했습니다."),
+
+    ADDRESS_BOOK_NOT_FOUND(18000, "없는 주소입니다.");
 
     private final int code;
     private final String message;
