@@ -6,7 +6,7 @@ export default function Login() {
 	const NAVER_REDIRECT_URI = import.meta.env.VITE_NAVER_REDIRECT_URI;
 	const NAVER_STATE = crypto.randomUUID();
 	return (
-		<div className="p-2.5 pt-10 flex flex-col items-center gap-10 rounded-[8px] bg-white shadow-custom-xs mx-2.5">
+		<div className="p-2.5 mt-2.5 pt-10 flex flex-col items-center gap-10 rounded-[8px] bg-white shadow-custom-xs mx-2.5">
 			<span className="text-xl font-bold text-center">
 				통합 플랫폼으로
 				<br />
