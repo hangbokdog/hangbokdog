@@ -18,6 +18,8 @@ public record DogCreateRequest(
 	String description,
 	Boolean isStar,
 	Gender gender,
-	Boolean isNeutered
+	Boolean isNeutered,
+	LocalDateTime birth,
+	String location
 ) {
 }

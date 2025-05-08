@@ -45,20 +45,23 @@ public class DogService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
-		Dog dog = Dog.createDog(
-			request.status(),
-			request.centerId(),
-			request.name(),
-			request.breed(),
-			imageUrl,
-			request.color(),
-			request.rescuedDate(),
-			request.weight(),
-			request.description(),
-			request.isStar(),
-			request.gender(),
-			request.isNeutered()
-		);
+		Dog dog = Dog.builder()
+			.status(request.status())
+			.centerId(request.centerId())
+			.name(request.name())
+			.dogBreed(request.breed())
+			.profileImage(imageUrl)
+			.color(request.color())
+			.rescuedDate(request.rescuedDate())
+			.weight(request.weight())
+			.description(request.description())
+			.isStar(request.isStar())
+			.birth(request.birth())
+			.location(request.location())
+			.gender(request.gender())
+			.isNeutered(request.isNeutered())
+			.build();
+
 
 		return dogRepository.createDog(dog).getId();
 	}
@@ -114,7 +117,8 @@ public class DogService {
 			imageUrl,
 			request.weight(),
 			request.description(),
-			request.isNeutered()
+			request.isNeutered(),
+			request.location()
 		);
 	}
 
@@ -124,15 +128,16 @@ public class DogService {
 	// 	MedicalHistoryRequest request,
 	// 	Long dogId
 	// ) {
-	// 	MedicalHistory medicalHistory = MedicalHistory.createMedicalHistory(
-	// 		dogId,
-	// 		request.content(),
-	// 		request.medicalPeriod(),
-	// 		request.medicalType(),
-	// 		request.operatedDate()
-	// 	);
 	//
-	// 	// TODO:담당자 이름을 넣어야 될수도 있음
+	// 	MedicalHistory medicalHistory = MedicalHistory.builder()
+	// 		.dogId(dogId)
+	// 		.content(request.content())
+	// 		.medicalPeriod(request.medicalPeriod())
+	// 		.medicalType(request.medicalType())
+	// 		.operatedDate(request.operatedDate())
+	// 		.medicalHistoryImage(r)
+	// 		.build();
+	//
 	// 	return dogRepository.createMedicalHistory(medicalHistory).getId();
 	// }
 

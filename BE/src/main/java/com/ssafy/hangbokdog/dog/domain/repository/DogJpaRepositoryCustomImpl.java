@@ -42,7 +42,13 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.isStar,
 				dog.gender,
 				dog.isNeutered,
-				dog.dogBreed
+				dog.dogBreed,
+				Expressions.numberTemplate(
+					Integer.class,
+					"timestampdiff(YEAR, {0}, {1})",
+					dog.birth, LocalDateTime.now()
+				),
+				dog.location
 			))
 			.from(dog)
 			.leftJoin(center)

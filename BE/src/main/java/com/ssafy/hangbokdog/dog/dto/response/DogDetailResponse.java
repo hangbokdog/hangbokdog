@@ -21,6 +21,8 @@ public record DogDetailResponse(
 	Boolean isStar,
 	Gender gender,
 	Boolean isNeutered,
-	DogBreed breed
+	DogBreed breed,
+	LocalDateTime age,
+	String location
 ) {
 }
