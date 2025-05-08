@@ -36,7 +36,7 @@ public class MedicalHistory extends BaseEntity {
 	@Column(name = "content")
 	private String content;
 
-	@Column(name = "medial_history_image")
+	@Column(name = "medical_history_image")
 	private String medialHistoryImage;
 
 	@Column(name = "medical_period")
