@@ -64,7 +64,7 @@
 	--color-lightGray: #a1abb7;
 	--color-superLightGray: #dde0e2;
 	--color-blueGray: #748dae;
-	--color-superLightBlueGray: #F0F2F8;
+	--color-superLightBlueGray: #f0f2f8;
 	--color-naver: #03c75a;
 	--color-day: #e99f71;
 	--color-morning: #ace6ff;
@@ -169,6 +169,20 @@ h1 {
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
+}
+
+@keyframes ring-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 rgba(180, 210, 250, 0.2);
+	}
+	50% {
+		box-shadow: 0 0 0 2px rgba(180, 210, 250, 0.8);
+	}
+}
+
+.ring-pulse {
+	animation: ring-pulse 2.5s ease-in-out infinite;
 }
 
 @layer base {
