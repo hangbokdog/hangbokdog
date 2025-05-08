@@ -9,4 +9,6 @@ public interface VolunteerEventQueryRepository {
     List<VolunteerInfo> findAllOpenEvents(Long centerId);
 
     List<DailyApplicationInfo> findDailyApplications(Long eventId);
+
+    List<VolunteerInfo> findLatestVolunteerEvent(Long centerId);
 }
