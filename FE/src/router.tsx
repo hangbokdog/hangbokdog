@@ -1,4 +1,4 @@
-import { createBrowserRouter, Outlet } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -29,7 +29,6 @@ import ManagerDogListPage from "./pages/manager/ManagerDogListPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CenterDecisionPage from "./pages/CenterDecisionPage";
 import CenterLayout from "./layouts/CenterLayout";
-import ManagerDogsPage from "./pages/manager/ManagerDogsPage";
 import DogDrugsPage from "./pages/manager/DogDrugsPage";
 
 const router = createBrowserRouter([
