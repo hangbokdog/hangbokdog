@@ -9,6 +9,7 @@ import {
 	DrawerHeader,
 	DrawerTitle,
 	DrawerTrigger,
+	DrawerDescription,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -88,20 +89,24 @@ export default function Search({
 						<DrawerTrigger>
 							<MdFilterAlt className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
 						</DrawerTrigger>
-						<DrawerContent className="bg-white">
+						<DrawerContent
+							className="bg-white"
+							aria-describedby="drawer-description"
+						>
 							<div className="mx-auto w-full max-w-[440px]">
 								<DrawerHeader>
 									<div className="flex items-center justify-between">
 										<DrawerTitle className="text-lg">
 											필터
 										</DrawerTitle>
+										<DrawerDescription
+											id="drawer-description"
+											className="sr-only"
+										>
+											필터 옵션을 선택하세요
+										</DrawerDescription>
 										<DrawerClose>
-											<button
-												type="button"
-												className="p-1 hover:bg-background rounded-full transition-colors"
-											>
-												<IoClose className="size-6 text-superLightGray" />
-											</button>
+											<IoClose className="size-6 text-superLightGray" />
 										</DrawerClose>
 									</div>
 									<div className="flex overflow-x-auto gap-4 py-2 scrollbar-hide">
@@ -141,20 +146,14 @@ export default function Search({
 								</div>
 								<DrawerFooter className="flex-row justify-end gap-2">
 									<DrawerClose>
-										<button
-											type="button"
-											className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
-										>
+										<div className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">
 											초기화
-										</button>
+										</div>
 									</DrawerClose>
 									<DrawerClose>
-										<button
-											type="button"
-											className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors"
-										>
+										<div className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer">
 											검색하기
-										</button>
+										</div>
 									</DrawerClose>
 								</DrawerFooter>
 							</div>
