@@ -10,8 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import org.hibernate.validator.constraints.Length;
-
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.dog.domain.enums.MedicalType;
 
