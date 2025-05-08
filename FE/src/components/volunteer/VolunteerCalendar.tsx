@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
 import type { EventContentArg } from "@fullcalendar/core";
 import { MdChevronLeft, MdChevronRight } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 interface CalendarEvent {
 	title: string;
@@ -20,6 +21,7 @@ interface VolunteerCalendarProps {
 }
 
 export default function VolunteerCalendar({ events }: VolunteerCalendarProps) {
+	const navigate = useNavigate();
 	const calendarRef = useRef<FullCalendar>(null);
 	const [currentDate, setCurrentDate] = useState(() => new Date());
 
@@ -106,6 +108,13 @@ export default function VolunteerCalendar({ events }: VolunteerCalendarProps) {
 					eventContent={renderEventContent}
 					dayHeaderFormat={{ weekday: "short" }}
 					fixedWeekCount={false}
+					eventClick={(info) => {
+						const volunteerId =
+							info.event.id || info.event.extendedProps.id;
+						if (volunteerId) {
+							navigate(`/volunteer/${volunteerId}`);
+						}
+					}}
 					dayCellContent={({ date }) => {
 						const today = new Date();
 						const isToday =
