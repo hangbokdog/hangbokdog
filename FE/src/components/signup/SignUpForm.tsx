@@ -55,8 +55,20 @@ export default function SignUpForm({
 	};
 
 	const validateBirthDate = (value: string) => {
-		const regex = /^\d{6}$/;
-		return regex.test(value);
+		if (value.length !== 6) return false;
+
+		const month = Number.parseInt(value.substring(2, 4));
+		const day = Number.parseInt(value.substring(4, 6));
+
+		if (month < 1 || month > 12) return false;
+
+		if (day < 1 || day > 31) return false;
+
+		if (month === 2 && day > 29) return false;
+
+		if ([4, 6, 9, 11].includes(month) && day > 30) return false;
+
+		return true;
 	};
 
 	const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
