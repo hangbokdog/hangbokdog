@@ -97,7 +97,7 @@ public class VolunteerService {
 
     // TODO: 필요하다면 페이지네이션 추가
     public List<VolunteerResponse> findAll(Long centerId) {
-        return eventRepository.findLatestVolunteerEvent(centerId).stream()
+        return eventRepository.findAllOpenEvents(centerId).stream()
                 .map(volunteerInfo -> VolunteerResponse.of(
                         volunteerInfo.id(),
                         volunteerInfo.title(),
