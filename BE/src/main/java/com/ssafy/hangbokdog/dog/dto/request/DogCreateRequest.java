@@ -20,6 +20,6 @@ public record DogCreateRequest(
 	Gender gender,
 	Boolean isNeutered,
 	LocalDateTime birth,
-	String location
+	Long locationId
 ) {
 }

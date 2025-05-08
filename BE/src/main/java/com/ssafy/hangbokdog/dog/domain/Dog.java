@@ -79,8 +79,8 @@ public class Dog extends BaseEntity {
 	@Column(nullable = false, name = "dog_breed")
 	private DogBreed dogBreed;
 
-	@Column(nullable = false, name = "location")
-	private String location;
+	@Column(nullable = false, name = "location_id")
+	private Long locationId;
 
 	public void goFoster() {
 		this.status = DogStatus.FOSTERED;
@@ -95,7 +95,6 @@ public class Dog extends BaseEntity {
 			throw new BadRequestException(ErrorCode.DOG_ALREADY_STAR);
 		}
 		this.isStar = true;
-		this.location = "별";
 	}
 
 	public void updateDog(
@@ -104,14 +103,14 @@ public class Dog extends BaseEntity {
 		Double weight,
 		String description,
 		Boolean isNeutered,
-		String location
+		Long locationId
 	) {
 		this.name = name;
 		this.profileImage = profileImageUrl;
 		this.weight = weight;
 		this.description = description;
 		this.isNeutered = isNeutered;
-		this.location = location;
+		this.locationId = locationId;
 	}
 
 	@Builder
@@ -127,7 +126,7 @@ public class Dog extends BaseEntity {
 		String description,
 		Boolean isStar,
 		LocalDateTime birth,
-		String location,
+		Long locationId,
 		Gender gender,
 		Boolean isNeutered
 	) {
@@ -144,6 +143,6 @@ public class Dog extends BaseEntity {
 		this.gender = gender;
 		this.isNeutered = isNeutered;
 		this.birth = birth;
-		this.location = location;
+		this.locationId = locationId;
 	}
 }

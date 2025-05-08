@@ -5,6 +5,6 @@ public record DogUpdateRequest(
 	Double weight,
 	String description,
 	Boolean isNeutered,
-	String location
+	Long locationId
 ) {
 }
