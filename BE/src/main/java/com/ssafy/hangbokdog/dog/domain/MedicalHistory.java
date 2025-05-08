@@ -32,7 +32,6 @@ public class MedicalHistory extends BaseEntity {
 	@Column(nullable = false, name = "dog_id")
 	private Long dogId;
 
-	@Length(max = 128)
 	@Column(name = "content", length = 8192)
 	private String content;
 
