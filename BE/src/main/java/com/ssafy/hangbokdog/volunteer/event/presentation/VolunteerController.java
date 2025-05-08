@@ -62,7 +62,7 @@ public class VolunteerController {
     @GetMapping
     public ResponseEntity<List<VolunteerInfo>> findAll(
             @AuthMember Member member,
-            @RequestParam(required = false) Long centerId
+            @RequestParam Long centerId
     ) {
         List<VolunteerInfo> responses = volunteerService.findAll(centerId);
         return ResponseEntity.ok(responses);
@@ -80,7 +80,7 @@ public class VolunteerController {
     @GetMapping("/latest")
     public ResponseEntity<List<VolunteerInfo>> findLatest(
             @AuthMember Member member,
-            @RequestParam(required = false) Long centerId
+            @RequestParam Long centerId
     ) {
         return ResponseEntity.ok(volunteerService.findLatest(centerId));
     }

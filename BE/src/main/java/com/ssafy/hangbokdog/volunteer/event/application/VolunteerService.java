@@ -95,7 +95,6 @@ public class VolunteerService {
         return eventId;
     }
 
-    // TODO: 필요하다면 페이지네이션 추가
     public List<VolunteerInfo> findAll(Long centerId) {
         return eventRepository.findAllOpenEvents(centerId);
     }
