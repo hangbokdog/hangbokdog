@@ -3,8 +3,6 @@ package com.ssafy.hangbokdog.dog.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.ssafy.hangbokdog.common.exception.BadRequestException;
-import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -16,6 +14,8 @@ import jakarta.persistence.Id;
 import org.hibernate.annotations.Type;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.domain.enums.Gender;
