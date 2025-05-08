@@ -10,3 +10,14 @@ export const getLatestVolunteerAPI = async ({
 	);
 	return response.data;
 };
+
+export const getVolunteerScheduleAPI = async ({
+	centerId,
+}: {
+	centerId: string;
+}): Promise<Volunteer[]> => {
+	const response = await localAxios.get<Volunteer[]>(
+		`volunteers?centerId=${centerId}`,
+	);
+	return response.data;
+};
