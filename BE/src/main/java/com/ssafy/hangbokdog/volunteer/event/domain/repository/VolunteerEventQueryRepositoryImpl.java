@@ -117,4 +117,25 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 .orderBy(volunteerSlot.volunteerDate.asc())
                 .fetch();
     }
+
+    @Override
+    public List<VolunteerInfo> findLatestVolunteerEvent(Long centerId) {
+        return queryFactory.select(Projections.constructor(
+                        VolunteerInfo.class,
+                        volunteerEvent.id,
+                        volunteerEvent.title,
+                        volunteerEvent.content,
+                        volunteerEvent.address,
+                        volunteerEvent.locationType,
+                        volunteerEvent.startDate,
+                        volunteerEvent.endDate
+                ))
+                .from(volunteerEvent)
+                .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN).and(
+                        volunteerEvent.centerId.eq(centerId)
+                ))
+                .orderBy(volunteerEvent.id.desc())
+                .limit(3)
+                .fetch();
+    }
 }

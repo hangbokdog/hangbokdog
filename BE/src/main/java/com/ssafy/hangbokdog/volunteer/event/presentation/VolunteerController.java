@@ -76,4 +76,12 @@ public class VolunteerController {
         VolunteerResponse response = volunteerService.findById(eventId);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/latest")
+    public ResponseEntity<List<VolunteerInfo>> findLatest(
+            @AuthMember Member member,
+            @RequestParam(required = false) Long centerId
+    ) {
+        return ResponseEntity.ok(volunteerService.findLatest(centerId));
+    }
 }

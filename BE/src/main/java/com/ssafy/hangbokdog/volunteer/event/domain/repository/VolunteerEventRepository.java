@@ -32,4 +32,8 @@ public class VolunteerEventRepository {
     public List<DailyApplicationInfo> findDailyApplications(Long eventId) {
         return volunteerEventJpaRepository.findDailyApplications(eventId);
     }
+
+    public List<VolunteerInfo> findLatestVolunteerEvent(Long centerId) {
+        return volunteerEventJpaRepository.findLatestVolunteerEvent(centerId);
+    }
 }

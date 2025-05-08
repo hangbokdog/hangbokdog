@@ -135,4 +135,8 @@ public class VolunteerService {
                 .distinct()
                 .toList();
     }
+
+    public List<VolunteerInfo> findLatest(Long centerId) {
+        return eventRepository.findLatestVolunteerEvent(centerId);
+    }
 }
