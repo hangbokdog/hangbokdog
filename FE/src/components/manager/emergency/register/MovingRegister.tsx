@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { CalendarIcon, SearchIcon } from "lucide-react";
+import useCenterStore from "@/lib/store/centerStore";
+import { createPostType, createPost } from "@/api/emergencyRegister";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
@@ -10,6 +12,11 @@ export default function MovingRegister() {
 		reason: "",
 	});
 
+	const { selectedCenter } = useCenterStore();
+	const centerId = Number(selectedCenter?.centerId);
+
+	console.log("현재 선택된 센터 ID:", selectedCenter?.centerId);
+
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 	) => {
@@ -17,137 +24,97 @@ export default function MovingRegister() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("제출된 데이터:", formData);
-		// 여기에 데이터 제출 로직 추가
+
+		if (!centerId) {
+			alert("센터가 선택되지 않았습니다.");
+			return;
+		}
+
+		try {
+			// 1. 게시판 생성
+			const postType = await createPostType(centerId, {
+				name: "이동등록",
+				// description: "아이 이동 등록용 게시판입니다.",
+			});
+
+			// 2. 게시글 생성
+			const post = await createPost({
+				postTypeId: postType.id,
+				title: "아이 이동 등록",
+				content: `
+          🐶 아이 ID: ${formData.id}
+          📍 현재 위치: ${formData.currentLocation}
+          🚚 이동 위치: ${formData.destinationLocation}
+          📅 이동 일시: ${formData.date}
+          ✏️ 사유: ${formData.reason}
+        `,
+			});
+
+			console.log("게시글 등록 성공:", post);
+			alert("등록이 완료되었습니다!");
+
+			// 초기화
+			setFormData({
+				id: "",
+				currentLocation: "",
+				destinationLocation: "",
+				date: "",
+				reason: "",
+			});
+		} catch (error) {
+			console.error("등록 실패:", error);
+			alert("등록에 실패했습니다.");
+		}
 	};
 
 	return (
 		<div className="max-w-md mx-auto p-6">
 			<form onSubmit={handleSubmit} className="space-y-6">
-				{/* 아이디 필드 */}
-				<div>
-					<label
-						htmlFor="id"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						아이
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="id"
-							name="id"
-							value={formData.id}
-							onChange={handleChange}
-							className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("아이 검색")}
-							aria-label="아이 검색"
-						>
-							<SearchIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
-				</div>
+				{/* id 필드 */}
+				<Field
+					label="아이"
+					name="id"
+					value={formData.id}
+					onChange={handleChange}
+					onIconClick={() => console.log("아이 검색")}
+				/>
 
-				{/* 현위치 필드 */}
-				<div>
-					<label
-						htmlFor="currentLocation"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						현위치
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="currentLocation"
-							name="currentLocation"
-							value={formData.currentLocation}
-							onChange={handleChange}
-							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("현위치 검색")}
-							aria-label="현위치 검색"
-						>
-							<SearchIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
-				</div>
+				{/* currentLocation 필드 */}
+				<Field
+					label="현위치"
+					name="currentLocation"
+					value={formData.currentLocation}
+					onChange={handleChange}
+					onIconClick={() => console.log("현위치 검색")}
+				/>
 
-				{/* 이동 위치 필드 */}
-				<div>
-					<label
-						htmlFor="destinationLocation"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						이동 위치
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="destinationLocation"
-							name="destinationLocation"
-							value={formData.destinationLocation}
-							onChange={handleChange}
-							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("이동 위치 검색")}
-							aria-label="이동 위치 검색"
-						>
-							<SearchIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
-				</div>
+				{/* destinationLocation 필드 */}
+				<Field
+					label="이동 위치"
+					name="destinationLocation"
+					value={formData.destinationLocation}
+					onChange={handleChange}
+					onIconClick={() => console.log("이동 위치 검색")}
+				/>
 
-				{/* 일시 필드 */}
-				<div>
-					<label
-						htmlFor="date"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						일시
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="date"
-							name="date"
-							value={formData.date}
-							onChange={handleChange}
-							className="w-full border rounded-xl border-gray-300 p-2"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("달력 열기")}
-							aria-label="달력 열기"
-						>
-							<CalendarIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
-				</div>
+				{/* date 필드 */}
+				<Field
+					label="일시"
+					name="date"
+					value={formData.date}
+					onChange={handleChange}
+					icon={<CalendarIcon className="h-5 w-5 text-gray-500" />}
+					onIconClick={() => console.log("달력 열기")}
+				/>
 
-				{/* 사유 필드 */}
+				{/* reason 필드 */}
 				<div>
-					<label
-						htmlFor="reason"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
+					<div className="block text-gray-700 text-lg font-medium mb-2">
 						사유
-					</label>
+					</div>
 					<textarea
-						id="reason"
 						name="reason"
 						value={formData.reason}
 						onChange={handleChange}
@@ -156,7 +123,6 @@ export default function MovingRegister() {
 					/>
 				</div>
 
-				{/* 등록 버튼 */}
 				<div className="pt-4">
 					<button
 						type="submit"
@@ -166,6 +132,52 @@ export default function MovingRegister() {
 					</button>
 				</div>
 			</form>
+		</div>
+	);
+}
+
+// 🔧 공통 input 필드 컴포넌트
+function Field({
+	label,
+	name,
+	value,
+	onChange,
+	icon = <SearchIcon className="h-5 w-5 text-gray-500" />,
+	onIconClick,
+}: {
+	label: string;
+	name: string;
+	value: string;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	icon?: React.ReactNode;
+	onIconClick: () => void;
+}) {
+	return (
+		<div>
+			<label
+				htmlFor={name}
+				className="block text-gray-700 text-lg font-medium mb-2"
+			>
+				{label}
+			</label>
+			<div className="relative">
+				<input
+					type="text"
+					id={name}
+					name={name}
+					value={value}
+					onChange={onChange}
+					className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+				<button
+					type="button"
+					className="absolute right-2 top-1/2 transform -translate-y-1/2"
+					onClick={onIconClick}
+					aria-label={`${label} 검색`}
+				>
+					{icon}
+				</button>
+			</div>
 		</div>
 	);
 }
