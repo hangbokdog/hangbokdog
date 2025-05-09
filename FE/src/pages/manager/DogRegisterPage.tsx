@@ -18,12 +18,16 @@ import useCenterStore from "@/lib/store/centerStore";
 import axios from "axios";
 import { createDogAPI } from "@/api/dog";
 import { toast } from "sonner";
+import useManagerStore from "@/lib/store/managerStore";
+import { useNavigate } from "react-router-dom";
 
 const colors = ["검", "흰", "갈"];
 
 export default function DogRegisterPage() {
 	const [profilePreview, setProfilePreview] = useState<string | null>(null);
 	const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+	const { addressBook } = useManagerStore();
+	const navigate = useNavigate();
 
 	const { selectedCenter } = useCenterStore();
 
@@ -40,7 +44,7 @@ export default function DogRegisterPage() {
 		rescueDate: string;
 		isStar: boolean;
 		birth: string;
-		location: string;
+		locationId: number;
 	}>({
 		name: "",
 		gender: Gender.MALE,
@@ -54,13 +58,14 @@ export default function DogRegisterPage() {
 		rescueDate: "",
 		isStar: false,
 		birth: "",
-		location: "",
+		locationId: -1,
 	});
 
 	const { mutate } = useMutation({
 		mutationFn: (formData: FormData) => createDogAPI(formData),
-		onSuccess: () => {
+		onSuccess: (dogId) => {
 			toast("강아지 정보 등록");
+			navigate(`/dogs/${dogId}`);
 		},
 		onError: (error) => {
 			const errorMessage =
@@ -187,7 +192,7 @@ export default function DogRegisterPage() {
 			gender: form.gender,
 			isNeutered: form.neutered === "O",
 			birth: form.birth ? `${form.birth}T00:00:00` : null,
-			location: form.location || null,
+			locationId: form.locationId || -1,
 		};
 
 		console.log("requestData:", requestData);
@@ -313,7 +318,7 @@ export default function DogRegisterPage() {
 								setForm((prev) => ({
 									...prev,
 									isStar: value,
-									location: value ? "별" : prev.location,
+									location: value ? "별" : prev.locationId,
 								}));
 							}}
 							className="hidden"
@@ -337,42 +342,51 @@ export default function DogRegisterPage() {
 					소속 위치
 				</label>
 				<div className="flex gap-2 flex-wrap">
-					{(form.isStar
-						? [{ label: "별", value: "별" }]
-						: [
-								{ label: "쉼뜰", value: "쉼뜰" },
-								{ label: "쉼터", value: "쉼터" },
-							]
-					).map(({ label, value }) => (
-						<div key={value}>
+					{form.isStar ? (
+						<div>
 							<input
 								type="radio"
-								id={`location-${value}`}
+								id="location-star"
 								name="location"
-								value={value}
-								checked={form.location === value}
-								onChange={() =>
-									setForm({ ...form, location: value })
-								}
+								value="-1"
+								checked={form.locationId === -1}
+								readOnly
 								className="hidden"
-								disabled={form.isStar}
 							/>
 							<label
-								htmlFor={`location-${value}`}
-								className={`px-4 py-1 rounded-full cursor-pointer ${
-									form.location === value
-										? "bg-indigo-500 text-white"
-										: "bg-gray-200"
-								} ${highlightClass("location")} ${
-									form.isStar
-										? "opacity-50 cursor-not-allowed"
-										: ""
-								}`}
+								htmlFor="location-star"
+								className="px-4 py-1 rounded-full bg-indigo-400 text-white cursor-not-allowed opacity-60"
 							>
-								{label}
+								별
 							</label>
 						</div>
-					))}
+					) : (
+						addressBook.map(({ id, addressName }) => (
+							<div key={id}>
+								<input
+									type="radio"
+									id={`location-${id}`}
+									name="location"
+									value={id}
+									checked={form.locationId === id}
+									onChange={() =>
+										setForm({ ...form, locationId: id })
+									}
+									className="hidden"
+								/>
+								<label
+									htmlFor={`location-${id}`}
+									className={`px-4 py-1 rounded-full cursor-pointer ${
+										form.locationId === id
+											? "bg-indigo-500 text-white"
+											: "bg-gray-200"
+									} ${highlightClass("locationId")}`}
+								>
+									{addressName}
+								</label>
+							</div>
+						))
+					)}
 				</div>
 			</div>
 
