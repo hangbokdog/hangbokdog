@@ -25,6 +25,7 @@ import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
+import com.ssafy.hangbokdog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
@@ -45,7 +46,7 @@ public class DogController {
 	private final FavoriteDogService favoriteDogService;
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<Void> addDog(
+	public ResponseEntity<DogCreateResponse> addDog(
 		@AuthMember Member member,
 		@RequestPart(value = "request") DogCreateRequest request,
 		@RequestPart(value = "image") MultipartFile image
@@ -53,14 +54,13 @@ public class DogController {
 
 		String imageUrl = uploadImageToS3(image);
 
-		Long dogId = dogService.createDog(
+		DogCreateResponse response = dogService.createDog(
 			member.getId(),
 			request,
 			imageUrl
 		);
 
-		return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId))
-			.build();
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{dogId}")
