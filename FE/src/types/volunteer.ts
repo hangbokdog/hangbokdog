@@ -28,3 +28,9 @@ export interface Volunteer {
 	endDate: string;
 	imageUrl: string;
 }
+
+export interface ClosedVolunteerResponse {
+	pageToken: string;
+	data: Volunteer[];
+	hasNext: boolean;
+}
