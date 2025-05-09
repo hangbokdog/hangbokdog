@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
+import com.ssafy.hangbokdog.dog.comment.application.DogCommentLikeService;
 import com.ssafy.hangbokdog.dog.comment.application.DogCommentService;
 import com.ssafy.hangbokdog.dog.comment.dto.request.DogCommentCreateRequest;
 import com.ssafy.hangbokdog.dog.comment.dto.request.DogCommentUpdateRequest;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class DogCommentController {
 
 	private final DogCommentService dogCommentService;
+	private final DogCommentLikeService dogCommentLikeService;
 
 	@PostMapping("/{dogId}/comments")
 	public ResponseEntity<DogCommentCreateResponse> create(
@@ -65,6 +67,16 @@ public class DogCommentController {
 		@PathVariable("dogCommentId") Long dogCommentId
 	) {
 		dogCommentService.delete(member, dogCommentId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/{dogId}/comments/{dogCommentId}")
+	public ResponseEntity<Void> toggleLike(
+		@AuthMember Member member,
+		@PathVariable("dogId") Long dogId,
+		@PathVariable("dogCommentId") Long dogCommentId
+	) {
+		dogCommentLikeService.toggleLike(dogCommentId, member);
 		return ResponseEntity.noContent().build();
 	}
 }

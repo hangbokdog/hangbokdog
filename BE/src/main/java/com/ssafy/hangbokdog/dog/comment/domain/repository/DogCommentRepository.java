@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DogCommentRepository {
 	private final DogCommentJpaRepository dogCommentJpaRepository;
-	private final DogCommentLikeJpaRepository dogCommentLikeJpaRepository;
 
 	public DogComment save(DogComment dogComment) {
 		return dogCommentJpaRepository.save(dogComment);
@@ -34,5 +33,9 @@ public class DogCommentRepository {
 
 	public int countByDogId(Long dogId) {
 		return dogCommentJpaRepository.countByDogId(dogId);
+	}
+
+	public boolean existsByDogCommentId(Long dogCommentId) {
+		return dogCommentJpaRepository.existsById(dogCommentId);
 	}
 }

@@ -20,6 +20,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.post.application.PostTypeService;
 import com.ssafy.hangbokdog.post.post.dto.request.PostTypeRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostTypeCreateResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -32,18 +33,14 @@ public class PostTypeController {
     private final PostTypeService postTypeService;
 
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<PostTypeCreateResponse> create(
             @AuthMember Member member,
             @RequestParam Long centerId,
             @RequestBody PostTypeRequest request
     ) {
-        Long postTypeId = postTypeService.create(member.getId(), centerId, request);
-        URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/api/v1/post-types/{id}")
-                .buildAndExpand(postTypeId)
-                .toUri();
+        PostTypeCreateResponse response = postTypeService.create(member.getId(), centerId, request);
 
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
