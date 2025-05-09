@@ -2,7 +2,7 @@ package com.ssafy.hangbokdog.dog.dog.domain.repository;
 
 import static com.ssafy.hangbokdog.center.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.center.domain.QCenter.*;
-import static com.ssafy.hangbokdog.dog.domain.QDog.*;
+import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.dog.dog.domain.repository;
 
-import static com.ssafy.hangbokdog.dog.domain.QMedicalHistory.*;
+import static com.ssafy.hangbokdog.dog.dog.domain.QMedicalHistory.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

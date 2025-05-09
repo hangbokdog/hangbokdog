@@ -70,7 +70,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (comment.isAuthor(member)) {
+        if (!comment.isAuthor(member)) {
             throw new BadRequestException(ErrorCode.COMMENT_NOT_AUTHOR);
         }
 
@@ -82,7 +82,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.COMMENT_NOT_FOUND));
 
-        if (comment.isAuthor(member)) {
+        if (!comment.isAuthor(member)) {
             throw new BadRequestException(ErrorCode.COMMENT_NOT_AUTHOR);
         }
 

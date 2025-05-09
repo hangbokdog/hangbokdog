@@ -50,7 +50,7 @@ public class CommentController {
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommentWithRepliesResponse>> list(
+    public ResponseEntity<List<CommentWithRepliesResponse>> getComments(
             @PathVariable Long postId,
             @AuthMember Member member
     ) {

@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.foster.domain.repository;
 
-import static com.ssafy.hangbokdog.dog.domain.QDog.*;
+import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
 import static com.ssafy.hangbokdog.foster.domain.QFoster.*;
 import static com.ssafy.hangbokdog.member.domain.QMember.*;
 
