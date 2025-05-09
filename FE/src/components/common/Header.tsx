@@ -81,8 +81,6 @@ export default function Header() {
 							"가입 신청하기"}
 					</button>
 				)}
-
-				<FaMoon className="size-6" />
 			</div>
 		</header>
 	);
