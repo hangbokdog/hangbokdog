@@ -12,6 +12,7 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
@@ -39,6 +40,7 @@ public class DogService {
 	private final CenterMemberRepository centerMemberRepository;
 	private final FavoriteDogRepository favoriteDogRepository;
 	private final SponsorshipRepository sponsorshipRepository;
+	private final DogCommentRepository dogCommentRepository;
 
 	public DogCreateResponse createDog(
 		Long memberId,
@@ -84,8 +86,9 @@ public class DogService {
 		boolean isFavorite = favoriteDogRepository.existsByDogIdAndMemberId(centerId, memberId);
 		int favoriteCount = favoriteDogRepository.getFavoriteCountByDogId(dogId).intValue();
 		int sponsorCount = sponsorshipRepository.countActiveSponsorshipByDogId(dogId);
+		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
 
-		return DogDetailResponse.from(dogDetailInfo, isFavorite, favoriteCount, sponsorCount);
+		return DogDetailResponse.from(dogDetailInfo, isFavorite, favoriteCount, sponsorCount, dogCommentCount);
 	}
 
 	@Transactional

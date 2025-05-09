@@ -31,4 +31,8 @@ public class DogCommentRepository {
 	public List<DogCommentResponse> findAllByDogId(Long dogId, Long loginId) {
 		return dogCommentJpaRepository.findAllByDogId(dogId, loginId);
 	}
+
+	public int countByDogId(Long dogId) {
+		return dogCommentJpaRepository.countByDogId(dogId);
+	}
 }
