@@ -31,4 +31,12 @@ public class FavoriteDogRepository {
 	public List<Long> getFavoriteDogIds(Long memberId) {
 		return favoriteDogJpaRepository.getFavoriteDogIdsByMemberId(memberId);
 	}
+
+	public boolean existsByDogIdAndMemberId(Long dogId, Long memberId) {
+		return favoriteDogJpaRepository.existsFavoriteDogByDogId(dogId, memberId);
+	}
+
+	public Long getFavoriteCountByDogId(Long dogId) {
+		return favoriteDogJpaRepository.getFavoriteDogCountByDogId(dogId);
+	}
 }

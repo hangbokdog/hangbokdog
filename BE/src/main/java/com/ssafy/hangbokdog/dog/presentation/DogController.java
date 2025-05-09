@@ -64,10 +64,11 @@ public class DogController {
 
 	@GetMapping("/{dogId}")
 	public ResponseEntity<DogDetailResponse> getDogDetail(
+		@AuthMember Member member,
 		@PathVariable(name = "dogId") Long dogId,
 		@RequestParam(name  = "centerId") Long centerId
 	) {
-		return ResponseEntity.ok(dogService.getDogDetail(dogId, centerId));
+		return ResponseEntity.ok(dogService.getDogDetail(dogId, centerId, member.getId()));
 	}
 
 	@PatchMapping("/{dogId}/star")

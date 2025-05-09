@@ -17,6 +17,7 @@ import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.domain.repository.FavoriteDogRepository;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
@@ -26,6 +27,7 @@ import com.ssafy.hangbokdog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
+import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +38,7 @@ public class DogService {
 	private final DogRepository dogRepository;
 	private final CenterMemberRepository centerMemberRepository;
 	private final FavoriteDogRepository favoriteDogRepository;
+	private final SponsorshipRepository sponsorshipRepository;
 
 	public DogCreateResponse createDog(
 		Long memberId,
@@ -71,13 +74,18 @@ public class DogService {
 		return new DogCreateResponse(dogRepository.createDog(dog).getId());
 	}
 
-	public DogDetailResponse getDogDetail(Long dogId, Long centerId) {
+	public DogDetailResponse getDogDetail(Long dogId, Long centerId, Long memberId) {
 
 		if (!dogRepository.existsById(dogId)) {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
 		}
 
-		return dogRepository.getDogDetail(dogId, centerId);
+		DogDetailInfo dogDetailInfo = dogRepository.getDogDetail(dogId, centerId);
+		boolean isFavorite = favoriteDogRepository.existsByDogIdAndMemberId(centerId, memberId);
+		int favoriteCount = favoriteDogRepository.getFavoriteCountByDogId(dogId).intValue();
+		int sponsorCount = sponsorshipRepository.countActiveSponsorshipByDogId(dogId);
+
+		return DogDetailResponse.from(dogDetailInfo, isFavorite, favoriteCount, sponsorCount);
 	}
 
 	@Transactional
