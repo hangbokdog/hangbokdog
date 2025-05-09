@@ -6,9 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import com.ssafy.hangbokdog.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,15 +30,18 @@ public class Center extends BaseEntity {
 	@Column(name = "sponsor_amount")
 	private int sponsorAmount;
 
-	public static Center create(String name, int sponsorAmount) {
-		return new Center(name, sponsorAmount);
-	}
+	@Column(name = "cneter_city", nullable = false)
+	private CenterCity centerCity;
 
-	private Center(
+
+	@Builder
+	public Center(
 		String name,
-		int sponsorAmount
+		int sponsorAmount,
+		CenterCity centerCity
 	) {
 		this.name = name;
 		this.sponsorAmount = sponsorAmount;
+		this.centerCity = centerCity;
 	}
 }

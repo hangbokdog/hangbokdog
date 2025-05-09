@@ -39,10 +39,13 @@ public class CenterService {
 	@Transactional
 	public Long createCenter(Member member, CenterCreateRequest request) {
 
-		Long centerId = centerRepository.create(Center.create(
-			request.name(),
-			request.sponsorAmount()
-		)).getId();
+		Center center = Center.builder()
+			.name(request.name())
+			.centerCity(request.centerCity())
+			.sponsorAmount(request.sponsorAmount())
+			.build();
+
+		Long centerId = centerRepository.create(center).getId();
 
 		CenterMember centerMember = CenterMember.builder()
 				.centerId(centerId)
