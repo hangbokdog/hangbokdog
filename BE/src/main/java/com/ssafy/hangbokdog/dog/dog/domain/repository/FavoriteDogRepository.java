@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.dog.dog.domain.FavoriteDog;
+import com.ssafy.hangbokdog.dog.dog.dto.FavoriteDogCount;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,5 +39,9 @@ public class FavoriteDogRepository {
 
 	public Long getFavoriteCountByDogId(Long dogId) {
 		return favoriteDogJpaRepository.getFavoriteDogCountByDogId(dogId);
+	}
+
+	public List<FavoriteDogCount> getFavoriteCountByDogIds(List<Long> dogIds) {
+		return favoriteDogJpaRepository.getFavoriteCountByDogIds(dogIds);
 	}
 }

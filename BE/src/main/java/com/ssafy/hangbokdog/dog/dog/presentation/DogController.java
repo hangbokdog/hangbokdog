@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.dog.dog.presentation;
 
 import java.net.URI;
+import java.time.LocalDateTime;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +20,15 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.dog.application.FavoriteDogService;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
+import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.ProtectedDogCountResponse;
 import com.ssafy.hangbokdog.image.application.S3Service;
@@ -189,6 +193,36 @@ public class DogController {
 	) {
 		ProtectedDogCountResponse response = dogService.getDogCount(centerId, member.getId());
 
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<PageInfo<DogSearchResponse>> search(
+		@AuthMember Member member,
+		@RequestParam(value = "name", required = false) String name,
+		@RequestParam(value = "breed", required = false) DogBreed breed,
+		@RequestParam(value = "gender", required = false) Gender gender,
+		@RequestParam(value = "start", required = false) LocalDateTime start,
+		@RequestParam(value = "end", required = false) LocalDateTime end,
+		@RequestParam(value = "isNeutered", required = false) Boolean isNeutered,
+		@RequestParam(value = "location", required = false) String location,
+		@RequestParam(value = "isStar", required = false) Boolean isStar,
+		@RequestParam(value = "centerId") Long centerId,
+		@RequestParam(required = false) String pageToken
+	) {
+		PageInfo<DogSearchResponse> response = dogService.searchDogs(
+			member.getId(),
+			name,
+			breed,
+			gender,
+			start,
+			end,
+			isNeutered,
+			location,
+			isStar,
+			centerId,
+			pageToken
+		);
 		return ResponseEntity.ok().body(response);
 	}
 

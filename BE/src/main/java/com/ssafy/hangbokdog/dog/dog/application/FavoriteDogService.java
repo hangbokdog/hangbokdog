@@ -47,7 +47,7 @@ public class FavoriteDogService {
 	}
 
 	private void checkDogExistence(Long dogId) {
-		if (!dogRepository.checkDogExistence(dogId)) {
+		if (!dogRepository.existsById(dogId)) {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
 		}
 	}
