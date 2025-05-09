@@ -75,3 +75,7 @@ export function LoadingMoreSkeleton() {
 		</div>
 	);
 }
+
+export function NoMoreDataMessage({ message }: { message: string }) {
+	return <p className="py-4 text-center text-gray-500">{message}</p>;
+}
