@@ -103,3 +103,15 @@ export interface DogSummary {
 	gender: string;
 	isFavorite: boolean;
 }
+
+export const MedicalType = {
+	SURGERY: "SURGERY",
+	MEDICATION: "MEDICATION",
+};
+
+export type MedicalType = (typeof MedicalType)[keyof typeof MedicalType];
+
+export const MedicalTypeLabel: Record<MedicalType, string> = {
+	SURGERY: "수술",
+	MEDICATION: "약물치료",
+};
