@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 
+import static com.ssafy.hangbokdog.center.domain.QAddressBook.addressBook;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
 
@@ -43,7 +44,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.title,
                         volunteerEvent.content,
                         volunteerEvent.address,
-                        volunteerEvent.locationType,
+                        volunteerEvent.addressName,
                         volunteerEvent.startDate,
                         volunteerEvent.endDate,
                         volunteerEvent.imageUrls
@@ -130,7 +131,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.title,
                         volunteerEvent.content,
                         volunteerEvent.address,
-                        volunteerEvent.locationType,
+                        volunteerEvent.addressName,
                         volunteerEvent.startDate,
                         volunteerEvent.endDate,
                         volunteerEvent.imageUrls
@@ -154,7 +155,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 volunteerEvent.title,
                 volunteerEvent.content,
                 volunteerEvent.address,
-                volunteerEvent.locationType,
+                volunteerEvent.addressName,
                 volunteerEvent.startDate,
                 volunteerEvent.endDate,
                 volunteerEvent.imageUrls
@@ -166,6 +167,47 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 .limit(pageSize)
                 .fetch();
 
+    }
+
+    @Override
+    public List<VolunteerInfo> findAllOpenEventsInAddressBook(Long addressBookId) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerInfo.class,
+                volunteerEvent.id,
+                volunteerEvent.title,
+                volunteerEvent.content,
+                volunteerEvent.address,
+                volunteerEvent.addressName,
+                volunteerEvent.startDate,
+                volunteerEvent.endDate,
+                volunteerEvent.imageUrls
+        )).from(volunteerEvent)
+                .leftJoin(addressBook).on(addressBook.id.eq(volunteerEvent.addressBookId))
+                .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN).and(
+                        volunteerEvent.addressBookId.eq(addressBookId)
+                ))
+                .fetch();
+    }
+
+    @Override
+    public List<VolunteerInfo> findAllClosedEventsInAddressBook(Long addressBookId, String pageToken, int pageSize) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerInfo.class,
+                volunteerEvent.id,
+                volunteerEvent.title,
+                volunteerEvent.content,
+                volunteerEvent.address,
+                volunteerEvent.addressName,
+                volunteerEvent.startDate,
+                volunteerEvent.endDate,
+                volunteerEvent.imageUrls
+        )).from(volunteerEvent)
+                .leftJoin(addressBook).on(addressBook.id.eq(volunteerEvent.addressBookId))
+                .where(volunteerEvent.status.eq(VolunteerEventStatus.CLOSED).and(
+                        volunteerEvent.addressBookId.eq(addressBookId)), isInRange(pageToken))
+                .orderBy(volunteerEvent.endDate.desc())
+                .limit(pageSize)
+                .fetch();
     }
 
     private BooleanExpression isInRange(String pageToken) {

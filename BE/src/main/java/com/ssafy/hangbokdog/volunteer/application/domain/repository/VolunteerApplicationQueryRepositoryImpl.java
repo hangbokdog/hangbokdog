@@ -43,7 +43,6 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                         volunteerEvent.title,
                         volunteerEvent.content,
                         volunteerEvent.address,
-                        volunteerEvent.locationType,
                         volunteerEvent.startDate,
                         volunteerEvent.endDate
                 )
@@ -83,7 +82,7 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                     t.get(volunteerEvent.title),
                     t.get(volunteerEvent.content),
                     t.get(volunteerEvent.address),
-                    t.get(volunteerEvent.locationType),
+                    t.get(volunteerEvent.addressName),
                     t.get(volunteerEvent.startDate),
                     t.get(volunteerEvent.endDate),
                     t.get(volunteerEvent.imageUrls)

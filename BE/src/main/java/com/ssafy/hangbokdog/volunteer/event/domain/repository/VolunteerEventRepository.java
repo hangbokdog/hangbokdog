@@ -49,7 +49,29 @@ public class VolunteerEventRepository {
                         volunteerInfo.title(),
                         volunteerInfo.content(),
                         volunteerInfo.address(),
-                        volunteerInfo.locationType(),
+                        volunteerInfo.addressName(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().get(0)))
+                .toList();
+
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, VolunteerResponse::endDate, VolunteerResponse::id);
+    }
+
+    public List<VolunteerInfo> findAllOpenEventsInAddressBook(Long addressBookId) {
+        return volunteerEventJpaRepository.findAllOpenEventsInAddressBook(addressBookId);
+    }
+
+    public PageInfo<VolunteerResponse> findEndedVolunteerEventInAddressBook(Long addressBookId, String pageToken) {
+        var data = volunteerEventJpaRepository
+                .findAllClosedEventsInAddressBook(addressBookId, pageToken, DEFAULT_PAGE_SIZE)
+                .stream()
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().get(0)))

@@ -57,7 +57,6 @@ public class VolunteerService {
                 .content(request.content())
                 .imageUrls(imageUrls)
                 .address(request.address())
-                .locationType(request.locationType())
                 .startDate(request.startDate())
                 .endDate(request.endDate())
                 .activityLog(request.activityLog())
@@ -104,7 +103,7 @@ public class VolunteerService {
                         volunteerInfo.title(),
                         volunteerInfo.content(),
                         volunteerInfo.address(),
-                        volunteerInfo.locationType(),
+                        volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().get(0)))
@@ -125,7 +124,7 @@ public class VolunteerService {
                 .title(event.getTitle())
                 .content(event.getContent())
                 .address(event.getAddress())
-                .locationType(event.getLocationType())
+                .addressName(event.getAddressName())
                 .startDate(event.getStartDate())
                 .endDate(event.getEndDate())
                 .slots(slots)
@@ -154,7 +153,7 @@ public class VolunteerService {
                         volunteerInfo.title(),
                         volunteerInfo.content(),
                         volunteerInfo.address(),
-                        volunteerInfo.locationType(),
+                        volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().get(0)))
@@ -163,5 +162,23 @@ public class VolunteerService {
 
     public PageInfo<VolunteerResponse> findEnded(Long centerId, String pageToken) {
         return eventRepository.findEndedVolunteerEvent(centerId, pageToken);
+    }
+
+    public List<VolunteerResponse> findOngoingVolunteersInAddressBook(Long addressBookId) {
+        return eventRepository.findAllOpenEventsInAddressBook(addressBookId).stream()
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.addressName(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().get(0)))
+                .toList();
+    }
+
+    public PageInfo<VolunteerResponse> findEndedVolunteersInAddressBook(Long addressBookId, String pageToken) {
+        return eventRepository.findEndedVolunteerEventInAddressBook(addressBookId, pageToken);
     }
 }
