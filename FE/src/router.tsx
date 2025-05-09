@@ -32,6 +32,7 @@ import CenterLayout from "./layouts/CenterLayout";
 import DogDrugsPage from "./pages/manager/DogDrugsPage";
 import ClosedVolunteerListPage from "./pages/ClosedVolunteerListPage";
 import CenterManagerMainPage from "./pages/manager/CenterManagerMainPage";
+import DogListPage from "./pages/DogListPage";
 
 const router = createBrowserRouter([
 	{
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
 					{
 						path: "dogs",
 						children: [
+							{
+								index: true,
+								element: <DogListPage />,
+							},
 							{
 								path: ":id",
 								children: [
