@@ -14,6 +14,7 @@ import com.ssafy.hangbokdog.post.post.domain.PostType;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostTypeJpaRepository;
 import com.ssafy.hangbokdog.post.post.dto.request.PostTypeRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostTypeCreateResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
 
 
@@ -28,7 +29,7 @@ public class PostTypeService {
     private final CenterRepository centerRepository;
     private final CenterMemberRepository centerMemberRepository;
 
-    public Long create(Long memberId, Long centerId, PostTypeRequest request) {
+    public PostTypeCreateResponse create(Long memberId, Long centerId, PostTypeRequest request) {
 
         CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
@@ -43,9 +44,9 @@ public class PostTypeService {
         // TODO: 게시판 이름 중복 검사 로직 필요하면 추가
         PostType newPostType = new PostType(request.name(), centerId);
 
-        postTypeJpaRepository.save(newPostType);
+        PostType postType = postTypeJpaRepository.save(newPostType);
 
-        return newPostType.getId();
+        return new PostTypeCreateResponse(postType.getId());
     }
 
     // TODO: 게시판 페이지네이션 로직 필요하면 추가
