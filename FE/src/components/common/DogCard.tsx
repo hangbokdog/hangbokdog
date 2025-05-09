@@ -9,6 +9,7 @@ interface DogCardProps {
 	gender: "MALE" | "FEMALE";
 	isFavorite: boolean;
 	bgColor?: string;
+	isManager?: boolean;
 }
 
 export default function DogCard({
@@ -19,9 +20,11 @@ export default function DogCard({
 	gender,
 	isFavorite,
 	bgColor,
+	isManager = false,
 }: DogCardProps) {
+	const managerUrl = isManager ? "/manager" : "";
 	return (
-		<Link to={`/dogs/${dogId}`}>
+		<Link to={`${managerUrl}/dogs/${dogId}`}>
 			<div
 				className={`flex flex-col rounded-xl ${bgColor && "shadow-custom-sm"}`}
 			>
