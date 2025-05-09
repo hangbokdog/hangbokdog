@@ -1,4 +1,3 @@
-// src/api/post.ts
 import localAxios from "@/api/http-commons";
 
 export interface CreatePostType {
