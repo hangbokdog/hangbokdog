@@ -25,6 +25,7 @@ public class CenterMemberJpaRepositoryCustomImpl implements CenterMemberJpaRepos
 		return queryFactory
 			.select(Projections.constructor(
 				MyCenterResponse.class,
+				center.id,
 				center.name,
 				centerMember.grade,
 				centerMember.createdAt
