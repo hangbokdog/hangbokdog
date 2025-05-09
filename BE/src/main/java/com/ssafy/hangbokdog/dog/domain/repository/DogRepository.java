@@ -10,6 +10,7 @@ import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.DogSummary;
+import com.ssafy.hangbokdog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 
@@ -74,7 +75,7 @@ public class DogRepository {
 		return dogJpaRepository.countByCenterId(centerId);
 	}
 
-	public List<DogSummary> getDogSummaries(Long centerId) {
+	public List<DogSummaryInfo> getDogSummaries(Long centerId) {
 		return dogJpaRepository.getDogSummaries(centerId);
 	}
 }

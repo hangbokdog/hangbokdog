@@ -3,7 +3,7 @@ package com.ssafy.hangbokdog.dog.domain.repository;
 import java.util.List;
 
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
-import com.ssafy.hangbokdog.dog.dto.DogSummary;
+import com.ssafy.hangbokdog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
 public interface DogJpaRepositoryCustom {
@@ -12,5 +12,5 @@ public interface DogJpaRepositoryCustom {
 
 	DogCenterInfo getDogCenterInfo(Long id);
 
-	List<DogSummary> getDogSummaries(Long centerId);
+	List<DogSummaryInfo> getDogSummaries(Long centerId);
 }
