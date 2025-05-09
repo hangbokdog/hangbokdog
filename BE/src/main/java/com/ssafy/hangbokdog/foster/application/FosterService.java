@@ -24,6 +24,7 @@ import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.foster.dto.FosterDiaryCheckQuery;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
+import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
@@ -220,6 +221,14 @@ public class FosterService {
 			})
 			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
+	}
+
+	public List<DogFosterResponse> getFostersByDogId(Long dogId) {
+		if (!dogRepository.existsById(dogId)) {
+			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
+		}
+
+		return fosterRepository.getFostersByDogId(dogId);
 	}
 
 	private CenterMember checkCenterMember(Long centerId, Long memberId) {

@@ -12,6 +12,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
+import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -96,5 +97,22 @@ public class FosterJpaRepositoryCustomImpl implements FosterJpaRepositoryCustom 
 					)
 			)
 			.fetchOne();
+	}
+
+	@Override
+	public List<DogFosterResponse> getFostersByDogId(Long dogId) {
+		return queryFactory
+			.select(Projections.constructor(
+				DogFosterResponse.class,
+				foster.memberId,
+				member.nickName,
+				member.profileImage,
+				foster.startDate
+			))
+			.from(foster)
+			.leftJoin(member).on(foster.memberId.eq(member.id))
+			.where(foster.dogId.eq(dogId)
+				.and(foster.status.eq(FosterStatus.FOSTERING)))
+			.fetch();
 	}
 }
