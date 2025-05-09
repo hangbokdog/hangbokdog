@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CalendarIcon, SearchIcon } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
-import { createPostType, createPost } from "@/api/emergencyRegister";
+import { createPostTypeAPI, createPostAPI } from "@/api/emergencyRegister";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
@@ -34,13 +34,13 @@ export default function MovingRegister() {
 
 		try {
 			// 1. 게시판 생성
-			const postType = await createPostType(centerId, {
+			const postType = await createPostTypeAPI(centerId, {
 				name: "이동등록",
 				// description: "아이 이동 등록용 게시판입니다.",
 			});
 
 			// 2. 게시글 생성
-			const post = await createPost({
+			const post = await createPostAPI({
 				postTypeId: postType.id,
 				title: "아이 이동 등록",
 				content: `

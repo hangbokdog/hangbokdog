@@ -11,6 +11,11 @@ export interface CreatePostTypeResponse {
 	description?: string;
 }
 
+export interface CreatePost {
+	postTypeId: number;
+	title: string;
+	content: string;
+}
 // export const createPostType = async (
 // 	centerId: number,
 // 	data: CreatePostType,
@@ -23,7 +28,7 @@ export interface CreatePostTypeResponse {
 // 	return response.data;
 // };
 
-export const createPostType = async (
+export const createPostTypeAPI = async (
 	centerId: number,
 	data: { name: string },
 ) => {
@@ -33,13 +38,7 @@ export const createPostType = async (
 	return response.data;
 };
 
-export interface CreatePost {
-	postTypeId: number;
-	title: string;
-	content: string;
-}
-
-export const createPost = async (data: CreatePost) => {
+export const createPostAPI = async (data: CreatePost) => {
 	const response = await localAxios.post("/posts", data);
 	return response.data;
 };
