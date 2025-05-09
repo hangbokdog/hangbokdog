@@ -17,8 +17,8 @@ public interface FavoriteDogJpaRepository extends JpaRepository<FavoriteDog, Lon
 	void deleteFavoriteDogByDogIdAndMemberId(Long dogId, Long memberId);
 
 	@Query("""
-			SELECT f.dogId 
-			FROM FavoriteDog f 
+			SELECT f.dogId
+			FROM FavoriteDog f
 			WHERE f.memberId = :memberId
 			""")
 	List<Long> getFavoriteDogIdsByMemberId(Long memberId);
