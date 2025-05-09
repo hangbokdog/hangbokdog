@@ -30,6 +30,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import CenterDecisionPage from "./pages/CenterDecisionPage";
 import CenterLayout from "./layouts/CenterLayout";
 import DogDrugsPage from "./pages/manager/DogDrugsPage";
+import ClosedVolunteerListPage from "./pages/ClosedVolunteerListPage";
 
 const router = createBrowserRouter([
 	{
@@ -124,6 +125,10 @@ const router = createBrowserRouter([
 										),
 									},
 								],
+							},
+							{
+								path: "closed",
+								element: <ClosedVolunteerListPage />,
 							},
 						],
 					},
