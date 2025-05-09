@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterSearchResponse;
+import com.ssafy.hangbokdog.center.dto.response.ExistingCenterCityResponse;
 import com.ssafy.hangbokdog.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
@@ -149,5 +150,9 @@ public class CenterService {
 		}
 
 		return result;
+	}
+
+	public ExistingCenterCityResponse getExistingCity() {
+		return new ExistingCenterCityResponse(centerRepository.getExistingCities());
 	}
 }
