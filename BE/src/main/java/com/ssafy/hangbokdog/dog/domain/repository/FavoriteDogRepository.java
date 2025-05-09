@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.dog.domain.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.dog.domain.FavoriteDog;
@@ -24,5 +26,9 @@ public class FavoriteDogRepository {
 			dogId,
 			memberId
 		);
+	}
+
+	public List<Long> getFavoriteDogIds(Long memberId) {
+		return favoriteDogJpaRepository.getFavoriteDogIdsByMemberId(memberId);
 	}
 }

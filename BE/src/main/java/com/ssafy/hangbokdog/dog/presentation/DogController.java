@@ -187,7 +187,7 @@ public class DogController {
 		@AuthMember Member member,
 		@RequestParam Long centerId
 	) {
-		ProtectedDogCountResponse response = dogService.getDogCount(centerId);
+		ProtectedDogCountResponse response = dogService.getDogCount(centerId, member.getId());
 
 		return ResponseEntity.ok().body(response);
 	}

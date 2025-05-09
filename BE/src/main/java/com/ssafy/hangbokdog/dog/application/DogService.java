@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -14,8 +15,10 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.dog.domain.repository.FavoriteDogRepository;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dto.DogSummary;
+import com.ssafy.hangbokdog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
@@ -32,6 +35,7 @@ public class DogService {
 
 	private final DogRepository dogRepository;
 	private final CenterMemberRepository centerMemberRepository;
+	private final FavoriteDogRepository favoriteDogRepository;
 
 	public DogCreateResponse createDog(
 		Long memberId,
@@ -170,9 +174,36 @@ public class DogService {
 		return dogRepository.getDogCenterInfo(dogId);
 	}
 
-	public ProtectedDogCountResponse getDogCount(Long centerId) {
+	public ProtectedDogCountResponse getDogCount(Long centerId, Long memberId) {
 		int count = dogRepository.getDogCount(centerId);
-		List<DogSummary> dogSummaries = dogRepository.getDogSummaries(centerId);
+		List<DogSummaryInfo> dogSummaryInfos = dogRepository.getDogSummaries(centerId);
+		List<DogSummary> dogSummaries = new ArrayList<>();
+
+		if (memberId == null) {
+			for (DogSummaryInfo info : dogSummaryInfos) {
+				dogSummaries.add(new DogSummary(
+					info.dogId(),
+					info.name(),
+					info.imageUrl(),
+					info.ageMonth(),
+					info.gender(),
+					false
+				));
+			}
+		} else {
+			List<Long> favoriteDogIds = favoriteDogRepository.getFavoriteDogIds(memberId);
+			for (DogSummaryInfo info : dogSummaryInfos) {
+				boolean isFavorite = favoriteDogIds.contains(info.dogId());
+				dogSummaries.add(new DogSummary(
+					info.dogId(),
+					info.name(),
+					info.imageUrl(),
+					info.ageMonth(),
+					info.gender(),
+					isFavorite
+				));
+			}
+		}
 
 		return new ProtectedDogCountResponse(count, dogSummaries);
 	}
