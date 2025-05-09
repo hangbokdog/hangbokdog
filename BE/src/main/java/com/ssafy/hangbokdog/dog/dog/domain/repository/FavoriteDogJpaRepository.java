@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.dog.dog.domain.FavoriteDog;
 
-public interface FavoriteDogJpaRepository extends JpaRepository<FavoriteDog, Long> {
+public interface FavoriteDogJpaRepository extends JpaRepository<FavoriteDog, Long>, FavoriteDogJpaRepositoryCustom {
 
 	@Modifying(clearAutomatically = true)
 	@Transactional

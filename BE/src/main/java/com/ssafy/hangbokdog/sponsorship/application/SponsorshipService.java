@@ -54,7 +54,7 @@ public class SponsorshipService {
 
 		CenterMember centerMember = checkCenterMember(centerId, memberId);
 
-		if (!dogRepository.checkDogExistence(dogId)) {
+		if (!dogRepository.existsById(dogId)) {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
 		}
 

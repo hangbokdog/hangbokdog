@@ -1,7 +1,10 @@
 package com.ssafy.hangbokdog.dog.dog.application;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,17 +18,21 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.MedicalHistory;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.FavoriteDogRepository;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
+import com.ssafy.hangbokdog.dog.dog.dto.FavoriteDogCount;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
+import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.ProtectedDogCountResponse;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
@@ -218,6 +225,62 @@ public class DogService {
 
 		return new ProtectedDogCountResponse(count, dogSummaries);
 	}
+
+	public PageInfo<DogSearchResponse> searchDogs(
+		Long memberId,
+		String name,
+		DogBreed breed,
+		Gender gender,
+		LocalDateTime start,
+		LocalDateTime end,
+		Boolean isNeutered,
+		String location,
+		Boolean isStar,
+		Long centerId,
+		String pageToken
+	) {
+		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchDogs(
+			name,
+			breed,
+			gender,
+			start,
+			end,
+			isNeutered,
+			location,
+			isStar,
+			centerId,
+			pageToken
+		);
+
+		List<Long> dogIds = dogSummaryInfos.data().stream()
+			.map(DogSummaryInfo::dogId)
+			.toList();
+
+		List<Long> favoriteDogIds = favoriteDogRepository.getFavoriteDogIds(memberId);
+
+		List<FavoriteDogCount> favoriteDogCounts = favoriteDogRepository.getFavoriteCountByDogIds(dogIds);
+
+		Map<Long, Integer> favoriteCountMap = favoriteDogCounts.stream()
+			.collect(Collectors.toMap(
+				FavoriteDogCount::dogId,
+				FavoriteDogCount::count
+			));
+
+		List<DogSearchResponse> responses = dogSummaryInfos.data().stream()
+			.map(dog -> new DogSearchResponse(
+				dog.dogId(),
+				dog.name(),
+				dog.imageUrl(),
+				dog.ageMonth(),
+				dog.gender(),
+				favoriteDogIds.contains(dog.dogId()),
+				favoriteCountMap.getOrDefault(dog.dogId(), 0)
+			))
+			.toList();
+
+		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
+	}
+
 
 	private Dog findDog(Long dogId) {
 		return dogRepository.getDog(dogId)
