@@ -31,6 +31,7 @@ import CenterDecisionPage from "./pages/CenterDecisionPage";
 import CenterLayout from "./layouts/CenterLayout";
 import DogDrugsPage from "./pages/manager/DogDrugsPage";
 import ClosedVolunteerListPage from "./pages/ClosedVolunteerListPage";
+import CenterManagerMainPage from "./pages/manager/CenterManagerMainPage";
 
 const router = createBrowserRouter([
 	{
@@ -197,6 +198,34 @@ const router = createBrowserRouter([
 					{
 						path: "dog-list",
 						element: <ManagerDogListPage />,
+					},
+					{
+						path: "dogs",
+						children: [
+							{
+								path: ":id",
+								children: [
+									{
+										index: true,
+										element: <DogDetailPage />,
+										handle: { showHeader: false },
+									},
+									{
+										path: "comments",
+										element: (
+											<CenterMemberProtectedRoute>
+												<DogCommentsPage />
+											</CenterMemberProtectedRoute>
+										),
+										handle: { showHeader: false },
+									},
+								],
+							},
+						],
+					},
+					{
+						path: "center",
+						element: <CenterManagerMainPage />,
 					},
 				],
 			},

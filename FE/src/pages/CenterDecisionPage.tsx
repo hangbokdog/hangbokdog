@@ -1,35 +1,24 @@
-import localAxios from "@/api/http-commons";
 import Search from "@/components/common/Search";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { debounce } from "lodash";
 import CenterListItem from "@/components/common/CenterListItem";
 import Header from "@/components/common/Header";
+import { fetchCenters, fetchMyCenters } from "@/api/center";
+import useCenterStore from "@/lib/store/centerStore";
+import { createCenter } from "@/api/center";
 
-interface responseData {
+interface centerResponseData {
 	centerId: string;
 	centerName: string;
 	status: string;
 }
 
-interface centerCreateRequest {
-	name: string;
-	sponsorAmount: number;
+interface myCenterResponseData {
+	centerId: string;
+	centerName: string;
+	centerGrade: string;
 }
-
-const fetchCenters = async (name: string) => {
-	const response = await localAxios.get("/centers/search", {
-		params: { name },
-	});
-	console.log(response);
-	console.log(name);
-	return response.data;
-};
-
-const createCenter = async (data: centerCreateRequest) => {
-	const response = await localAxios.post("/centers", data);
-	return response.data;
-};
 
 const debouncedSearch = debounce((val: string, setter: (s: string) => void) => {
 	setter(val);
@@ -37,11 +26,19 @@ const debouncedSearch = debounce((val: string, setter: (s: string) => void) => {
 
 export default function CenterDecisionPage() {
 	const [query, setQuery] = useState("");
+	const { selectedCenter } = useCenterStore();
+	const queryClient = useQueryClient();
 
-	const { data, isLoading } = useQuery({
+	const { data: searchResults, isLoading } = useQuery({
 		queryKey: ["centerSearch", query],
 		queryFn: () => fetchCenters(query),
 		enabled: query.length > 0,
+		staleTime: 0,
+	});
+
+	const { data: myCenters } = useQuery({
+		queryKey: ["myCenters", selectedCenter],
+		queryFn: () => fetchMyCenters(),
 		staleTime: 0,
 	});
 
@@ -50,6 +47,7 @@ export default function CenterDecisionPage() {
 		mutationFn: createCenter,
 		onSuccess: (data) => {
 			console.log(data);
+			queryClient.invalidateQueries({ queryKey: ["myCenters"] });
 		},
 		onError: (error) => {
 			console.error("Error creating center:", error);
@@ -84,21 +82,41 @@ export default function CenterDecisionPage() {
 				</div>
 				<div>
 					{isLoading && <p>검색 중...</p>}
-					{data?.map((center: responseData, index: number) => (
-						<CenterListItem
-							key={center.centerId}
-							centerId={center.centerId}
-							centerName={center.centerName}
-							status={center.status}
-							index={index}
-						/>
-					))}
-					{data?.length === 0 && <p>검색 결과가 없습니다.</p>}
+					{searchResults?.map(
+						(center: centerResponseData, index: number) => (
+							<CenterListItem
+								key={center.centerId}
+								centerId={center.centerId}
+								centerName={center.centerName}
+								status={center.status}
+								index={index}
+							/>
+						),
+					)}
+					{searchResults?.length === 0 && (
+						<p>검색 결과가 없습니다.</p>
+					)}
 				</div>
 			</div>
 			<div className="flex flex-col p-4 gap-4 bg-white rounded-lg shadow-custom-sm w-full">
 				<div className="rounded-full w-full py-1 bg-superLightGray text-center font-medium">
 					가입한 보호소
+				</div>
+				<div>
+					{myCenters?.map(
+						(center: myCenterResponseData, index: number) => (
+							<CenterListItem
+								key={`my-center-${center.centerId}-${index}`}
+								centerId={center.centerId}
+								centerName={center.centerName}
+								status={center.centerGrade}
+								index={index}
+							/>
+						),
+					)}
+					{myCenters?.length === 0 && (
+						<p>가입한 보호소가 없습니다.</p>
+					)}
 				</div>
 			</div>
 			<div className="flex flex-col p-4 gap-4 bg-white rounded-lg shadow-custom-sm w-full">

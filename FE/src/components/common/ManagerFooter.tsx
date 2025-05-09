@@ -21,10 +21,10 @@ export default function ManagerFooter() {
 			label: "등록",
 		},
 		{
-			path: "/manager/volunteer",
+			path: "/manager/center",
 			icon: FaToiletPaper,
 			size: 20,
-			label: "지원",
+			label: "센터",
 		},
 	];
 
