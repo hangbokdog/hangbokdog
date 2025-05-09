@@ -37,3 +37,16 @@ export function OngoingVolunteerSkeleton() {
 		</div>
 	);
 }
+
+export function ClosedVolunteerSkeleton() {
+	return (
+		<div>
+			<div className="mb-2">
+				<Skeleton className="h-7 w-40 bg-gray-200" />
+			</div>
+			<Skeleton className="h-24 w-full my-2 rounded-lg bg-gray-200" />
+			<Skeleton className="h-24 w-full my-2 rounded-lg bg-gray-200" />
+			<Skeleton className="h-24 w-full my-2 rounded-lg bg-gray-200" />
+		</div>
+	);
+}
