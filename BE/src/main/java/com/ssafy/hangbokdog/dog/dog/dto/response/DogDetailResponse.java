@@ -23,17 +23,20 @@ public record DogDetailResponse(
 	Gender gender,
 	Boolean isNeutered,
 	DogBreed breed,
-	Integer age,
+	int age,
 	String location,
 	boolean isLiked,
 	int favoriteCount,
-	Integer currentSponsorCount
+	int currentSponsorCount,
+	int dogCommentCount
+
 ) {
 	public static DogDetailResponse from(
 		DogDetailInfo info,
 		boolean isLiked,
 		int favoriteCount,
-		int currentSponsorCount
+		int currentSponsorCount,
+		int dogCommentCount
 	) {
 		return new DogDetailResponse(
 			info.dogId(),
@@ -54,7 +57,8 @@ public record DogDetailResponse(
 			info.location(),
 			isLiked,
 			favoriteCount,
-			currentSponsorCount
+			currentSponsorCount,
+			dogCommentCount
 		);
 	}
 }
