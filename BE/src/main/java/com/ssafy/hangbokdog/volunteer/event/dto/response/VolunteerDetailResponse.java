@@ -3,7 +3,6 @@ package com.ssafy.hangbokdog.volunteer.event.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.ssafy.hangbokdog.volunteer.event.domain.LocationType;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEventStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 
@@ -16,7 +15,7 @@ public record VolunteerDetailResponse(
         String title,
         String content,
         String address,
-        LocationType locationType,
+        String addressName,
         LocalDate startDate,
         LocalDate endDate,
         List<SlotDto> slots,

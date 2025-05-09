@@ -44,12 +44,11 @@ public class VolunteerEvent extends BaseEntity {
     @Column(columnDefinition = "json")
     private List<String> imageUrls;     // 활동 일지에서 추출한 이미지들
 
-    @Column(nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "location_type", nullable = false)
-    private LocationType locationType;
+    @Column(name = "address_name", nullable = false)
+    private String addressName;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
@@ -77,7 +76,6 @@ public class VolunteerEvent extends BaseEntity {
             String content,
             List<String> imageUrls,
             String address,
-            LocationType locationType,
             LocalDate startDate,
             LocalDate endDate,
             String activityLog,
@@ -89,7 +87,6 @@ public class VolunteerEvent extends BaseEntity {
         this.content = content;
         this.imageUrls = imageUrls;
         this.address = address;
-        this.locationType = locationType;
         this.startDate = startDate;
         this.endDate = endDate;
         this.activityLog = activityLog;

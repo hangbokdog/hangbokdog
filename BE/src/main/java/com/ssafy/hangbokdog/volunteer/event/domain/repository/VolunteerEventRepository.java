@@ -49,7 +49,7 @@ public class VolunteerEventRepository {
                         volunteerInfo.title(),
                         volunteerInfo.content(),
                         volunteerInfo.address(),
-                        volunteerInfo.locationType(),
+                        volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().get(0)))

@@ -43,7 +43,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.title,
                         volunteerEvent.content,
                         volunteerEvent.address,
-                        volunteerEvent.locationType,
+                        volunteerEvent.addressName,
                         volunteerEvent.startDate,
                         volunteerEvent.endDate,
                         volunteerEvent.imageUrls
@@ -130,7 +130,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.title,
                         volunteerEvent.content,
                         volunteerEvent.address,
-                        volunteerEvent.locationType,
+                        volunteerEvent.addressName,
                         volunteerEvent.startDate,
                         volunteerEvent.endDate,
                         volunteerEvent.imageUrls
@@ -154,7 +154,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 volunteerEvent.title,
                 volunteerEvent.content,
                 volunteerEvent.address,
-                volunteerEvent.locationType,
+                volunteerEvent.addressName,
                 volunteerEvent.startDate,
                 volunteerEvent.endDate,
                 volunteerEvent.imageUrls
