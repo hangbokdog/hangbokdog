@@ -67,3 +67,11 @@ export function ClosedVolunteerListSkeleton() {
 		</div>
 	);
 }
+
+export function LoadingMoreSkeleton() {
+	return (
+		<div className="h-20 flex items-center justify-center">
+			<Skeleton className="h-24 w-full rounded-lg bg-gray-200" />
+		</div>
+	);
+}
