@@ -23,4 +23,17 @@ public interface FavoriteDogJpaRepository extends JpaRepository<FavoriteDog, Lon
 			""")
 	List<Long> getFavoriteDogIdsByMemberId(Long memberId);
 
+	@Query("""
+			SELECT COUNT(f) > 0
+			FROM FavoriteDog f
+			WHERE f.dogId = :dogId AND f.memberId = :memberId
+			""")
+	boolean existsFavoriteDogByDogId(Long dogId, Long memberId);
+
+	@Query("""
+			SELECT COUNT(f)
+			FROM FavoriteDog f
+			WHERE f.dogId = :dogId
+			""")
+	Long getFavoriteDogCountByDogId(Long dogId);
 }

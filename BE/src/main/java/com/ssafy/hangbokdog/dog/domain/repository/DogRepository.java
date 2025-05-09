@@ -9,6 +9,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
@@ -31,7 +32,7 @@ public class DogRepository {
 		return dogJpaRepository.save(dog);
 	}
 
-	public DogDetailResponse getDogDetail(Long id, Long centerId) {
+	public DogDetailInfo getDogDetail(Long id, Long centerId) {
 		return dogJpaRepositoryCustomImpl.getDogDetail(id, centerId);
 	}
 

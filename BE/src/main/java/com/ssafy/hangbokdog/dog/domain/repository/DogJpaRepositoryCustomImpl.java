@@ -14,8 +14,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dto.DogCenterInfo;
+import com.ssafy.hangbokdog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dto.DogSummaryInfo;
-import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,10 +26,10 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public DogDetailResponse getDogDetail(Long id, Long centerId) {
+	public DogDetailInfo getDogDetail(Long id, Long centerId) {
 		return queryFactory.select(
 			Projections.constructor(
-				DogDetailResponse.class,
+				DogDetailInfo.class,
 				dog.id,
 				dog.status,
 				dog.centerId,

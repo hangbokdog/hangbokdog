@@ -6,6 +6,7 @@ import java.util.List;
 import com.ssafy.hangbokdog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.domain.enums.Gender;
+import com.ssafy.hangbokdog.dog.dto.DogDetailInfo;
 
 public record DogDetailResponse(
 	Long dogId,
@@ -23,6 +24,37 @@ public record DogDetailResponse(
 	Boolean isNeutered,
 	DogBreed breed,
 	Integer age,
-	String location
+	String location,
+	boolean isLiked,
+	int favoriteCount,
+	Integer currentSponsorCount
 ) {
+	public static DogDetailResponse from(
+		DogDetailInfo info,
+		boolean isLiked,
+		int favoriteCount,
+		int currentSponsorCount
+	) {
+		return new DogDetailResponse(
+			info.dogId(),
+			info.dogStatus(),
+			info.centerId(),
+			info.centerName(),
+			info.dogName(),
+			info.profileImageUrl(),
+			info.color(),
+			info.rescuedDate(),
+			info.weight(),
+			info.description(),
+			info.isStar(),
+			info.gender(),
+			info.isNeutered(),
+			info.breed(),
+			info.age(),
+			info.location(),
+			isLiked,
+			favoriteCount,
+			currentSponsorCount
+		);
+	}
 }
