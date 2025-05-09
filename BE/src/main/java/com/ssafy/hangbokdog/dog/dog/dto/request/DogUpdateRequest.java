@@ -1,0 +1,10 @@
+package com.ssafy.hangbokdog.dog.dog.dto.request;
+
+public record DogUpdateRequest(
+	String dogName,
+	Double weight,
+	String description,
+	Boolean isNeutered,
+	Long locationId
+) {
+}
