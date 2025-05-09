@@ -1,11 +1,13 @@
 package com.ssafy.hangbokdog.center.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.domain.Center;
 
+import com.ssafy.hangbokdog.center.domain.enums.CenterCity;
 import lombok.RequiredArgsConstructor;
 
 
@@ -29,5 +31,9 @@ public class CenterRepository {
 
 	public String findNameById(Long id) {
 		return centerJpaRepository.findNameById(id);
+	}
+
+	public List<CenterCity> getExistingCities() {
+		return centerJpaRepository.getExistingCities();
 	}
 }

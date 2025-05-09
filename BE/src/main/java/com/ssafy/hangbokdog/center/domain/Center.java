@@ -2,6 +2,8 @@ package com.ssafy.hangbokdog.center.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,7 +32,8 @@ public class Center extends BaseEntity {
 	@Column(name = "sponsor_amount")
 	private int sponsorAmount;
 
-	@Column(name = "cneter_city", nullable = false)
+	@Enumerated(EnumType.STRING)
+	@Column(name = "center_city", nullable = false)
 	private CenterCity centerCity;
 
 

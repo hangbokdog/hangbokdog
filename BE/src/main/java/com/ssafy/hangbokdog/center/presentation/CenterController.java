@@ -18,6 +18,7 @@ import com.ssafy.hangbokdog.center.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountBalanceResponse;
+import com.ssafy.hangbokdog.center.dto.response.ExistingCenterCityResponse;
 import com.ssafy.hangbokdog.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -73,6 +74,12 @@ public class CenterController {
 	) {
 		List<CenterSearchResponse> response = centerService.searchCentersByName(member.getId(), name);
 
+		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/existing-cities")
+	public ResponseEntity<ExistingCenterCityResponse> getExistingCities() {
+		ExistingCenterCityResponse response = centerService.getExistingCity();
 		return ResponseEntity.ok().body(response);
 	}
 }
