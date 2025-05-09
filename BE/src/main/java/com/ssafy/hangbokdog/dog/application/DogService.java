@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.dog.dto.DogSummary;
 import com.ssafy.hangbokdog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dto.request.MedicalHistoryRequest;
+import com.ssafy.hangbokdog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dto.response.ProtectedDogCountResponse;
@@ -32,7 +33,7 @@ public class DogService {
 	private final DogRepository dogRepository;
 	private final CenterMemberRepository centerMemberRepository;
 
-	public Long createDog(
+	public DogCreateResponse createDog(
 		Long memberId,
 		DogCreateRequest request,
 		String imageUrl
@@ -63,7 +64,7 @@ public class DogService {
 			.build();
 
 
-		return dogRepository.createDog(dog).getId();
+		return new DogCreateResponse(dogRepository.createDog(dog).getId());
 	}
 
 	public DogDetailResponse getDogDetail(Long dogId, Long centerId) {
