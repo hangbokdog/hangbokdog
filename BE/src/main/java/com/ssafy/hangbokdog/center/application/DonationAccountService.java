@@ -1,14 +1,12 @@
 package com.ssafy.hangbokdog.center.application;
 
-import static com.ssafy.hangbokdog.center.domain.QDonationAccount.*;
-
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.hangbokdog.center.domain.CenterGrade;
+import com.ssafy.hangbokdog.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.DonationAccount;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;

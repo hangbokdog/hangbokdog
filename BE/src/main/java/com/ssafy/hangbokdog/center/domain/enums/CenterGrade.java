@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.center.domain;
+package com.ssafy.hangbokdog.center.domain.enums;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

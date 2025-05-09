@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.center.domain;
 
+import com.ssafy.hangbokdog.center.domain.enums.CenterGrade;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
