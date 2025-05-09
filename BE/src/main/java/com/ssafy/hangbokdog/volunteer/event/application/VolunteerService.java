@@ -163,4 +163,22 @@ public class VolunteerService {
     public PageInfo<VolunteerResponse> findEnded(Long centerId, String pageToken) {
         return eventRepository.findEndedVolunteerEvent(centerId, pageToken);
     }
+
+    public List<VolunteerResponse> findOngoingVolunteersInAddressBook(Long addressBookId) {
+        return eventRepository.findAllOpenEventsInAddressBook(addressBookId).stream()
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.addressName(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().get(0)))
+                .toList();
+    }
+
+    public PageInfo<VolunteerResponse> findEndedVolunteersInAddressBook(Long addressBookId, String pageToken) {
+        return eventRepository.findEndedVolunteerEventInAddressBook(addressBookId, pageToken);
+    }
 }

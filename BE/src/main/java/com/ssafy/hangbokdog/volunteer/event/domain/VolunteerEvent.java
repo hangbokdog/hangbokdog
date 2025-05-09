@@ -50,6 +50,9 @@ public class VolunteerEvent extends BaseEntity {
     @Column(name = "address_name", nullable = false)
     private String addressName;
 
+    @Column(name = "address_book_id", nullable = false)
+    private Long addressBookId;
+
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 

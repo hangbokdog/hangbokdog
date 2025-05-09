@@ -93,4 +93,21 @@ public class VolunteerController {
     ) {
         return ResponseEntity.ok(volunteerService.findEnded(centerId, pageToken));
     }
+
+    @GetMapping("/{addressBookId}/addressBooks")
+    public ResponseEntity<List<VolunteerResponse>> findOngoingVolunteersInAddressBook(
+            @AuthMember Member member,
+            @PathVariable Long addressBookId
+    ) {
+        return ResponseEntity.ok(volunteerService.findOngoingVolunteersInAddressBook(addressBookId));
+    }
+
+    @GetMapping("/{addressBookId}/addressBooks/ended")
+    public ResponseEntity<PageInfo<VolunteerResponse>> findendedVolunteerInAddressBook(
+            @AuthMember Member member,
+            @RequestParam(required = false) String pageToken,
+            @PathVariable Long addressBookId
+    ) {
+        return ResponseEntity.ok(volunteerService.findEndedVolunteersInAddressBook(addressBookId, pageToken));
+    }
 }
