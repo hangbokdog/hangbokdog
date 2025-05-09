@@ -16,6 +16,7 @@ import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.foster.application.FosterService;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
+import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -95,4 +96,14 @@ public class FosterController {
 		List<FosterDiaryCheckResponse> response = fosterService.checkFosterDiaries(member.getId(), centerId);
 		return ResponseEntity.ok().body(response);
 	}
+
+	@GetMapping("/dogs/fosters/{dogId}")
+	public ResponseEntity<List<DogFosterResponse>> getFostersByDogId(
+		@AuthMember Member member,
+		@PathVariable Long dogId
+	) {
+		List<DogFosterResponse> response = fosterService.getFostersByDogId(dogId);
+		return ResponseEntity.ok().body(response);
+	}
+
 }
