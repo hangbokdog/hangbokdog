@@ -50,3 +50,20 @@ export function ClosedVolunteerSkeleton() {
 		</div>
 	);
 }
+
+export function ClosedVolunteerListSkeleton() {
+	return (
+		<div className="flex flex-col w-full">
+			<span className="text-xl font-bold mb-2.5 flex">
+				<Skeleton className="h-7 w-40 bg-gray-200" />
+			</span>
+			{Array.from({ length: 3 }).map((_, idx) => (
+				<Skeleton
+					// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+					key={`closed-list-skeleton-${idx}`}
+					className="h-24 w-full my-2 rounded-lg bg-gray-200"
+				/>
+			))}
+		</div>
+	);
+}
