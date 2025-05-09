@@ -89,3 +89,17 @@ export interface DogCreateRequest {
 	isNeutered: boolean;
 	breedDetail?: string;
 }
+
+export interface DogLatestResponse {
+	count: number;
+	dogSummaries: DogSummary[];
+}
+
+export interface DogSummary {
+	dogId: number;
+	name: string;
+	imageUrl: string;
+	ageMonth: number;
+	gender: string;
+	isFavorite: boolean;
+}
