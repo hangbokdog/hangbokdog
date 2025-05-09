@@ -15,3 +15,12 @@ export function VolunteerPanelSkeleton() {
 		</div>
 	);
 }
+
+export function CalendarSkeleton() {
+	return (
+		<div className="rounded-lg overflow-hidden">
+			<Skeleton className="h-8 w-40 bg-gray-200" />
+			<Skeleton className="h-64 w-full mt-2 bg-gray-200" />
+		</div>
+	);
+}
