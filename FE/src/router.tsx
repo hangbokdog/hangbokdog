@@ -260,7 +260,11 @@ const router = createBrowserRouter([
 			},
 			{
 				path: "center-decision",
-				element: <CenterDecisionPage />,
+				element: (
+					<ProtectedRoute>
+						<CenterDecisionPage />
+					</ProtectedRoute>
+				),
 			},
 		],
 	},
