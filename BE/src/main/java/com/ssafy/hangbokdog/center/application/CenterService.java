@@ -165,7 +165,7 @@ public class CenterService {
 		CenterJoinRequest centerJoinRequest = centerJoinRequestRepository.findById(centerJoinRequestId)
 				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
 
-		if (centerJoinRequest.isAuthor(memberId)) {
+		if (!centerJoinRequest.isAuthor(memberId)) {
 			throw new BadRequestException(ErrorCode.NOT_AUTHOR);
 		}
 
