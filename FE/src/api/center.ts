@@ -22,6 +22,11 @@ export const fetchMyCenters = async () => {
 	return response.data;
 };
 
+export const fetchMyJoinRequestCenters = async () => {
+	const response = await localAxios.get("/centerJoinRequests");
+	return response.data;
+};
+
 export const fetchAddressBooks = async (centerId: string) => {
 	const response = await localAxios.get(`/addressbooks/${centerId}`);
 	return response.data;

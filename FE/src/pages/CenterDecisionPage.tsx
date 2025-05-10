@@ -1,10 +1,14 @@
 import Search from "@/components/common/Search";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { debounce } from "lodash";
 import CenterListItem from "@/components/common/CenterListItem";
 import Header from "@/components/common/Header";
-import { fetchCenters, fetchMyCenters } from "@/api/center";
+import {
+	fetchCenters,
+	fetchMyCenters,
+	fetchMyJoinRequestCenters,
+} from "@/api/center";
 import useCenterStore from "@/lib/store/centerStore";
 import { createCenter } from "@/api/center";
 
@@ -12,6 +16,7 @@ interface centerResponseData {
 	centerId: string;
 	centerName: string;
 	status: string;
+	centerJoinRequestId?: string;
 }
 
 interface myCenterResponseData {
@@ -20,13 +25,19 @@ interface myCenterResponseData {
 	centerGrade: string;
 }
 
+interface myJoinRequestCenterResponseData {
+	centerId: string;
+	centerName: string;
+	centerJoinRequestId: string;
+}
+
 const debouncedSearch = debounce((val: string, setter: (s: string) => void) => {
 	setter(val);
 }, 300);
 
 export default function CenterDecisionPage() {
 	const [query, setQuery] = useState("");
-	const { selectedCenter } = useCenterStore();
+	const { selectedCenter, clearSelectedCenter } = useCenterStore();
 	const queryClient = useQueryClient();
 
 	const { data: searchResults, isLoading } = useQuery({
@@ -39,6 +50,12 @@ export default function CenterDecisionPage() {
 	const { data: myCenters } = useQuery({
 		queryKey: ["myCenters", selectedCenter],
 		queryFn: () => fetchMyCenters(),
+		staleTime: 0,
+	});
+
+	const { data: myJoinRequestCenters } = useQuery({
+		queryKey: ["myJoinRequestCenters"],
+		queryFn: () => fetchMyJoinRequestCenters(),
 		staleTime: 0,
 	});
 
@@ -65,6 +82,10 @@ export default function CenterDecisionPage() {
 		debouncedSearch(e.target.value, setQuery);
 	};
 
+	useEffect(() => {
+		clearSelectedCenter();
+	}, [clearSelectedCenter]);
+
 	return (
 		<div className="flex flex-col gap-4.5 text-grayText mx-2.5">
 			<Header />
@@ -86,10 +107,12 @@ export default function CenterDecisionPage() {
 						(center: centerResponseData, index: number) => (
 							<CenterListItem
 								key={center.centerId}
+								centerJoinRequestId={center.centerJoinRequestId}
 								centerId={center.centerId}
 								centerName={center.centerName}
 								status={center.status}
 								index={index}
+								query={query}
 							/>
 						),
 					)}
@@ -116,6 +139,33 @@ export default function CenterDecisionPage() {
 					)}
 					{myCenters?.length === 0 && (
 						<p>가입한 보호소가 없습니다.</p>
+					)}
+				</div>
+			</div>
+
+			<div className="flex flex-col p-4 gap-4 bg-white rounded-lg shadow-custom-sm w-full">
+				<div className="rounded-full w-full py-1 bg-superLightGray text-center font-medium">
+					가입 신청중인 보호소
+				</div>
+				<div>
+					{myJoinRequestCenters?.map(
+						(
+							center: myJoinRequestCenterResponseData,
+							index: number,
+						) => (
+							<CenterListItem
+								key={`my-join-request-center-${center.centerId}-${index}`}
+								centerJoinRequestId={center.centerJoinRequestId}
+								centerId={center.centerId}
+								centerName={center.centerName}
+								status="APPLIED"
+								index={index}
+								query={query}
+							/>
+						),
+					)}
+					{myJoinRequestCenters?.length === 0 && (
+						<p>가입 신청중인 보호소가 없습니다.</p>
 					)}
 				</div>
 			</div>
