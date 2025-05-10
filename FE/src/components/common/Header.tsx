@@ -1,24 +1,66 @@
 import logo from "@/assets/logo.png";
-import { FaMoon } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
 import { toast } from "sonner";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { cancelJoinRequestAPI, registerCenterAPI } from "@/api/center";
 
 export default function Header() {
 	const { user } = useAuthStore();
-	const { selectedCenter, clearSelectedCenter } = useCenterStore();
+	const { selectedCenter, clearSelectedCenter, setSelectedCenter } =
+		useCenterStore();
+	const queryClient = useQueryClient();
+
+	const { mutate: registerCenter } = useMutation({
+		mutationFn: () => registerCenterAPI(selectedCenter?.centerId as string),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: ["myJoinRequestCenters"],
+			});
+			setSelectedCenter({
+				centerId: selectedCenter?.centerId as string,
+				centerName: selectedCenter?.centerName as string,
+				status: "APPLIED",
+				centerJoinRequestId: data.centerJoinRequestId,
+			});
+			toast.success("가입 신청이 완료되었습니다.");
+		},
+		onError: () => {
+			toast.error("가입 신청에 실패했습니다.");
+		},
+	});
+
+	const { mutate: cancelJoinRequest } = useMutation({
+		mutationFn: () =>
+			cancelJoinRequestAPI(selectedCenter?.centerJoinRequestId as string),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["myJoinRequestCenters"],
+			});
+			setSelectedCenter({
+				centerId: selectedCenter?.centerId as string,
+				centerName: selectedCenter?.centerName as string,
+				status: "NONE",
+				centerJoinRequestId: "",
+			});
+			toast.success("가입 신청이 취소되었습니다.");
+		},
+		onError: () => {
+			toast.error("가입 신청 취소에 실패했습니다.");
+		},
+	});
 
 	const handleCenterAction = () => {
 		switch (selectedCenter?.status) {
-			case "신청중":
+			case "APPLIED":
 				// TODO: 신청 취소 API 호출
-				toast.success("가입 신청이 취소되었습니다.");
+				cancelJoinRequest();
 				break;
-			case "가입신청":
+			case "NONE":
 				// TODO: 가입 신청 API 호출
-				toast.success("가입 신청이 완료되었습니다.");
+				registerCenter();
 				break;
 			default:
 				break;
@@ -63,22 +105,21 @@ export default function Header() {
 					<button
 						type="button"
 						onClick={handleCenterAction}
-						className={`px-3 py-1 rounded text-sm ${
-							selectedCenter.status === "신청중" ||
-							selectedCenter.status === "가입신청"
-								? "bg-main text-white"
-								: "bg-gray-100 text-gray-500"
-						}`}
+						className={`px-3 py-1 rounded text-sm 
+							${selectedCenter.status === "NONE" && "bg-main text-white"} 
+							${selectedCenter.status === "APPLIED" && "bg-red text-white"}
+							${selectedCenter.status === "USER" && "bg-gray-100 text-gray-500"}
+							${selectedCenter.status === "MANAGER" && "bg-gray-100 text-gray-500"}
+						`}
 						disabled={
-							selectedCenter.status === "회원" ||
-							selectedCenter.status === "매니저"
+							selectedCenter.status === "USER" ||
+							selectedCenter.status === "MANAGER"
 						}
 					>
-						{selectedCenter.status === "신청중" && "신청 취소하기"}
-						{selectedCenter.status === "회원" && "회원"}
-						{selectedCenter.status === "매니저" && "매니저"}
-						{selectedCenter.status === "가입신청" &&
-							"가입 신청하기"}
+						{selectedCenter.status === "APPLIED" && "신청 취소하기"}
+						{selectedCenter.status === "USER" && "회원"}
+						{selectedCenter.status === "MANAGER" && "매니저"}
+						{selectedCenter.status === "NONE" && "가입 신청하기"}
 					</button>
 				)}
 			</div>

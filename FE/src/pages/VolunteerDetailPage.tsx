@@ -19,7 +19,7 @@ export default function VolunteerDetailPage() {
 	];
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col mt-2.5">
 			<ImageCarousel />
 			<div className="flex flex-col p-2.5 gap-2.5">
 				<VolunteerInfoHeader
