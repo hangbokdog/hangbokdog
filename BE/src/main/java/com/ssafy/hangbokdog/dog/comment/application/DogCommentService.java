@@ -118,7 +118,7 @@ public class DogCommentService {
 		DogComment dogComment = dogCommentRepository.findById(commentId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.COMMENT_NOT_FOUND));
 
-		if (!dogComment.isAuthor(member)) {
+		if (!dogComment.isAuthor(member) && !member.isManager()) {
 			throw new BadRequestException(ErrorCode.COMMENT_NOT_AUTHOR);
 		}
 
