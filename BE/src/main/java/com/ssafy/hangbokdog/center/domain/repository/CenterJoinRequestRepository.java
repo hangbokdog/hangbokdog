@@ -42,11 +42,11 @@ public class CenterJoinRequestRepository {
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, CenterJoinRequestResponse::centerJoinRequestId);
     }
 
-    public List<CenterJoinSearchInfo> findCenterIdsByMemberId(Long memberId) {
-        return centerJoinRequestJpaRepository.findCenterIdsByMemberId(memberId);
-    }
-
     public List<AppliedCenterResponse> getAppliedCentersByMemberId(Long memberId) {
         return centerJoinRequestJpaRepository.getAppliedCentersByMemberId(memberId);
+    }
+
+    public List<CenterJoinRequest> getCenterJoinRequestsByMemberId(Long memberId) {
+        return centerJoinRequestJpaRepository.findByMemberId(memberId);
     }
 }

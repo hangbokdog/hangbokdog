@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.ssafy.hangbokdog.center.domain.Center;
 import com.ssafy.hangbokdog.center.domain.enums.CenterCity;
 
-public interface CenterJpaRepository extends JpaRepository<Center, Long> {
+public interface CenterJpaRepository extends JpaRepository<Center, Long>, CenterJpaRepositoryCustom {
 
 	@Query("""
 			SELECT c.name

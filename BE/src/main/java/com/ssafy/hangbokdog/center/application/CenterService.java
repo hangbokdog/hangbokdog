@@ -2,6 +2,8 @@ package com.ssafy.hangbokdog.center.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +12,12 @@ import com.ssafy.hangbokdog.center.domain.Center;
 import com.ssafy.hangbokdog.center.domain.CenterJoinRequest;
 import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.DonationAccount;
+import com.ssafy.hangbokdog.center.domain.enums.CenterGrade;
+import com.ssafy.hangbokdog.center.domain.enums.CenterStatus;
 import com.ssafy.hangbokdog.center.domain.repository.CenterJoinRequestRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.center.domain.repository.DonationAccountRepository;
-import com.ssafy.hangbokdog.center.dto.CenterJoinSearchInfo;
 import com.ssafy.hangbokdog.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.dto.response.AppliedCenterResponse;
@@ -125,32 +128,54 @@ public class CenterService {
 	}
 
 	public List<CenterSearchResponse> searchCentersByName(Long memberId, String name) {
-		List<CenterSearchInfo> searchInfos = centerMemberRepository.getCentersByName(name);
-		List<CenterJoinSearchInfo> joinSearchInfos = centerJoinRequestRepository.findCenterIdsByMemberId(memberId);
-		List<CenterMember> centerMemberInfos = centerMemberRepository.getCenterMembersByMemberId(memberId);
+		List<CenterSearchInfo> searchInfos = centerRepository.findCentersByName(name);
+		List<CenterMember> centerMemberList = centerMemberRepository.getCenterMembersByMemberId(memberId);
+		List<CenterJoinRequest> centerJoinRequests = centerJoinRequestRepository
+				.getCenterJoinRequestsByMemberId(memberId);
+		List<CenterSearchResponse> searchResponses = new ArrayList<>();
 
-		List<CenterSearchResponse> result = new ArrayList<>();
-		for (CenterSearchInfo center : searchInfos) {
-			String status = "가입신청";
+		Map<Long, CenterGrade> centerGrade = centerMemberList.stream()
+				.collect(Collectors.toMap(
+						CenterMember::getCenterId,
+						CenterMember::getGrade
+				));
 
-			for (CenterJoinSearchInfo joinInfo : joinSearchInfos) {
-				if (joinInfo.centerId().equals(center.id())) {
-					status = "신청중";
-					break;
+		Map<Long, Long> centerJoinRequestIds = centerJoinRequests.stream()
+				.collect(Collectors.toMap(
+						CenterJoinRequest::getCenterId,
+						CenterJoinRequest::getId
+				));
+
+		for (CenterSearchInfo searchInfo : searchInfos) {
+			CenterStatus status = CenterStatus.NONE;
+			Long centerJoinRequestId = null;
+
+			if (centerGrade.containsKey(searchInfo.id())) {
+				CenterGrade grade = centerGrade.get(searchInfo.id());
+
+				if (grade.equals(CenterGrade.USER)) {
+					status = CenterStatus.MEMBER;
+				} else {
+					status = CenterStatus.MANAGER;
 				}
 			}
 
-			for (CenterMember memberInfo : centerMemberInfos) {
-				if (memberInfo.getCenterId().equals(center.id())) {
-					status = memberInfo.getGrade().toString();
-					break;
-				}
+			if (centerJoinRequestIds.containsKey(searchInfo.id())) {
+				centerJoinRequestId = centerJoinRequestIds.get(searchInfo.id());
+				status = CenterStatus.APPLIED;
 			}
 
-			result.add(new CenterSearchResponse(center.id(), center.name(), status));
+			CenterSearchResponse response = new CenterSearchResponse(
+					centerJoinRequestId,
+					searchInfo.id(),
+					searchInfo.name(),
+					searchInfo.centerCity(),
+					status
+			);
+
+			searchResponses.add(response);
 		}
-
-		return result;
+		return searchResponses;
 	}
 
 	public ExistingCenterCityResponse getExistingCity() {
