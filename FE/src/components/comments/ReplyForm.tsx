@@ -1,3 +1,7 @@
+import useAuthStore from "@/lib/store/authStore";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import img from "@/assets/logo.png";
+
 interface ReplyFormProps {
 	replyValue: string;
 	setReplyValue: (value: string) => void;
@@ -15,12 +19,21 @@ export default function ReplyForm({
 	handleReplySubmit,
 	setReplyOpenId,
 }: ReplyFormProps) {
+	const { user } = useAuthStore();
+
 	return (
 		<div className="mt-2 flex flex-col rounded-[8px] bg-background p-2 gap-2">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-1.5">
-					<div className="w-8 h-8 rounded-full bg-grayText flex-shrink-0" />
-					<div className="font-bold text-xs mb-1">최준혁</div>
+					<Avatar className="w-8 h-8 flex justify-center items-center rounded-full">
+						<AvatarImage src={user.profileImage || img} />
+						<AvatarFallback className="text-center bg-superLightGray text-grayText">
+							{user.nickName}
+						</AvatarFallback>
+					</Avatar>
+					<div className="font-bold text-xs mb-1">
+						{user.nickName}
+					</div>
 				</div>
 				<span
 					className={`text-xs ${

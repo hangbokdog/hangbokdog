@@ -1,5 +1,6 @@
 import type {
 	DogBreed,
+	DogCommentItem,
 	DogLatestResponse,
 	DogStatus,
 	Gender,
@@ -45,6 +46,7 @@ export interface DogDetailResponse {
 	isLiked: boolean;
 	favoriteCount: number;
 	currentSponsorCount: number;
+	dogCommentCount: number;
 }
 
 export const fetchDogDetail = async (dogId: number, centerId: string) => {
@@ -79,4 +81,25 @@ export interface MedicalHistoryResponse {
 export const fetchDogMedicalHistory = async (dogId: number) => {
 	const response = await localAxios.get(`/dogs/${dogId}/medical-history`);
 	return response.data as MedicalHistoryResponse[];
+};
+
+export const getDogCommentsAPI = async (
+	dogId: number,
+): Promise<DogCommentItem[]> => {
+	const response = await localAxios.get<DogCommentItem[]>(
+		`/${dogId}/comments`,
+	);
+	return response.data;
+};
+
+export const createDogCommentAPI = async (
+	dogId: number,
+	content: string,
+	parentId: number | null,
+) => {
+	const response = await localAxios.post(`/${dogId}/comments`, {
+		content,
+		parentId,
+	});
+	return response.data;
 };
