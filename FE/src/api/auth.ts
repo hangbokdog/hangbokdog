@@ -1,4 +1,8 @@
-import type { CheckNicknameResponse, OauthLoginResponse } from "@/types/auth";
+import type {
+	CheckNicknameResponse,
+	OauthLoginResponse,
+	UserInfoResponse,
+} from "@/types/auth";
 import localAxios from "./http-commons";
 import axios from "axios";
 import useAuthStore from "@/lib/store/authStore";
