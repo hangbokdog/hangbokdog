@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.domain.CenterJoinRequest;
 import com.ssafy.hangbokdog.center.dto.CenterJoinSearchInfo;
+import com.ssafy.hangbokdog.center.dto.response.AppliedCenterResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 
@@ -43,5 +44,9 @@ public class CenterJoinRequestRepository {
 
     public List<CenterJoinSearchInfo> findCenterIdsByMemberId(Long memberId) {
         return centerJoinRequestJpaRepository.findCenterIdsByMemberId(memberId);
+    }
+
+    public List<AppliedCenterResponse> getAppliedCentersByMemberId(Long memberId) {
+        return centerJoinRequestJpaRepository.getAppliedCentersByMemberId(memberId);
     }
 }
