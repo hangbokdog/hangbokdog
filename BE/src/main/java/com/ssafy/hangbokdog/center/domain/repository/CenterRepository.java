@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.domain.Center;
 import com.ssafy.hangbokdog.center.domain.enums.CenterCity;
+import com.ssafy.hangbokdog.center.dto.CenterSearchInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,5 +36,9 @@ public class CenterRepository {
 
 	public List<CenterCity> getExistingCities() {
 		return centerJpaRepository.getExistingCities();
+	}
+
+	public List<CenterSearchInfo> findCentersByName(String name) {
+		return centerJpaRepository.getCentersByName(name);
 	}
 }
