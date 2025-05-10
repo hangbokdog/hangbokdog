@@ -72,3 +72,8 @@ export const logoutAPI = async () => {
 	const response = await localAxios.post("auth/logout");
 	return response.data;
 };
+
+export const getUserInfoAPI = async (): Promise<UserInfoResponse> => {
+	const response = await localAxios.get<UserInfoResponse>("members/my");
+	return response.data;
+};
