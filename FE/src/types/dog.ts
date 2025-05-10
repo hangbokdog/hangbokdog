@@ -115,3 +115,30 @@ export const MedicalTypeLabel: Record<MedicalType, string> = {
 	SURGERY: "수술",
 	MEDICATION: "약물치료",
 };
+
+export interface DogCommentAuthor {
+	id: number;
+	nickName: string;
+	grade: string;
+	profileImage: string;
+}
+
+export interface DogCommentData {
+	author: DogCommentAuthor;
+	isAuthor: boolean;
+	id: number;
+	parentId: number | null;
+	content: string;
+	isDeleted: boolean;
+	createdAt: string;
+	isLiked: boolean;
+	likeCount: number;
+}
+
+export interface DogCommentItem {
+	dogComment: DogCommentData;
+	replies: {
+		dogComment: DogCommentData;
+		replies: DogCommentItem[];
+	}[];
+}

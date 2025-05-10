@@ -1,5 +1,6 @@
 import type {
 	DogBreed,
+	DogCommentItem,
 	DogLatestResponse,
 	DogStatus,
 	Gender,
@@ -45,6 +46,7 @@ export interface DogDetailResponse {
 	isLiked: boolean;
 	favoriteCount: number;
 	currentSponsorCount: number;
+	dogCommentCount: number;
 }
 
 export const fetchDogDetail = async (dogId: number, centerId: string) => {
