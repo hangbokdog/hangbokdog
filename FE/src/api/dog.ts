@@ -80,3 +80,12 @@ export const fetchDogMedicalHistory = async (dogId: number) => {
 	const response = await localAxios.get(`/dogs/${dogId}/medical-history`);
 	return response.data as MedicalHistoryResponse[];
 };
+
+export const getDogCommentsAPI = async (
+	dogId: number,
+): Promise<DogCommentItem[]> => {
+	const response = await localAxios.get<DogCommentItem[]>(
+		`/${dogId}/comments`,
+	);
+	return response.data;
+};

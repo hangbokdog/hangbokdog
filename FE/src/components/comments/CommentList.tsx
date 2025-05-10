@@ -1,22 +1,8 @@
 import CommentItem from "./CommentItem";
-
-interface Comment {
-	id: number;
-	content: string;
-	author: string;
-	createdAt: string;
-	replies?: Reply[];
-}
-
-interface Reply {
-	id: number;
-	content: string;
-	author: string;
-	createdAt: string;
-}
+import type { DogCommentItem } from "@/types/dog";
 
 interface CommentListProps {
-	comments: Comment[];
+	comments: DogCommentItem[];
 	replyOpenId: number | null;
 	setReplyOpenId: (id: number | null) => void;
 	replyValue: string;
@@ -38,10 +24,10 @@ export default function CommentList({
 }: CommentListProps) {
 	return (
 		<div className="flex-1 px-2.5 pt-2.5">
-			{comments.map((comment) => (
+			{comments.map((commentItem) => (
 				<CommentItem
-					key={comment.id}
-					comment={comment}
+					key={commentItem.dogComment.id}
+					comment={commentItem}
 					replyOpenId={replyOpenId}
 					setReplyOpenId={setReplyOpenId}
 					replyValue={replyValue}
