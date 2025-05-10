@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -81,5 +82,14 @@ public class CenterController {
 	public ResponseEntity<ExistingCenterCityResponse> getExistingCities() {
 		ExistingCenterCityResponse response = centerService.getExistingCity();
 		return ResponseEntity.ok().body(response);
+	}
+
+	@DeleteMapping("/{centerId}")
+	public ResponseEntity<Void> deleteCenterMember(
+			@AuthMember Member member,
+			@PathVariable Long centerId
+	) {
+		centerService.deleteCenterMember(member.getId(), centerId);
+		return ResponseEntity.ok().build();
 	}
 }

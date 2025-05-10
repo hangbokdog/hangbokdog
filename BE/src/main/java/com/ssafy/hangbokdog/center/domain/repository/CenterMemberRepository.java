@@ -41,4 +41,8 @@ public class CenterMemberRepository {
     public List<CenterMember> getCenterMembersByMemberId(Long memberId) {
         return centerMemberJpaRepository.findByMemberId(memberId);
     }
+
+    public void delete(CenterMember centerMember) {
+        centerMemberJpaRepository.delete(centerMember);
+    }
 }
