@@ -85,7 +85,7 @@ export default function DogCommentsPage() {
 
 	const { mutate: createDogComment } = useMutation({
 		mutationFn: () =>
-			createDogCommentAPI(Number(id), commentValue, replyOpenId || 0),
+			createDogCommentAPI(Number(id), commentValue, replyOpenId || null),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ["dogComments", id],
