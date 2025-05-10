@@ -137,3 +137,13 @@ export const updateDogCommentAPI = async (
 	);
 	return response.data;
 };
+
+export const deleteDogCommentAPI = async (
+	dogId: number,
+	dogCommentId: number,
+) => {
+	const response = await localAxios.delete(
+		`/${dogId}/comments/${dogCommentId}`,
+	);
+	return response.data;
+};

@@ -90,7 +90,12 @@ export default function CommentItem({
 						<span className="font-bold text-sm">
 							{dogComment.author.nickName}
 						</span>
-						{dogComment.isAuthor && <CommentDropdown />}
+						{dogComment.isAuthor && !dogComment.isDeleted && (
+							<CommentDropdown
+								commentId={dogComment.id}
+								content={dogComment.content}
+							/>
+						)}
 					</div>
 					<div className="text-sm mt-1">{dogComment.content}</div>
 					<div className="flex items-center gap-2 mt-2 text-xs text-lightGray">
@@ -134,7 +139,7 @@ export default function CommentItem({
 								)}
 								{likeCount > 0 && (
 									<span className="ml-1">{likeCount}</span>
-							)}
+								)}
 							</button>
 						</div>
 					</div>

@@ -1,11 +1,39 @@
 import { BsThreeDots } from "react-icons/bs";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateDogCommentAPI, deleteDogCommentAPI } from "@/api/dog";
+import { toast } from "sonner";
+import {
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogFooter,
+	DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+
+interface CommentDropdownProps {
+	commentId: number;
+	content: string;
+}
+
+export default function CommentDropdown({
+	commentId,
+	content,
+}: CommentDropdownProps) {
+	const { id: dogId } = useParams();
+	const queryClient = useQueryClient();
 	const [isEditOpen, setIsEditOpen] = useState(false);
+	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+	const [editValue, setEditValue] = useState(content);
 
 	const updateMutation = useMutation({
 		mutationFn: (newContent: string) =>
@@ -19,6 +47,32 @@ import {
 			toast.error("댓글 수정에 실패했습니다.");
 		},
 	});
+
+	const deleteMutation = useMutation({
+		mutationFn: () => deleteDogCommentAPI(Number(dogId), commentId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["dogComments", dogId] });
+			toast.success("댓글이 삭제되었습니다.");
+			setIsDeleteOpen(false);
+		},
+		onError: () => {
+			toast.error("댓글 삭제에 실패했습니다.");
+		},
+	});
+
+	const handleUpdateComment = () => {
+		if (!editValue.trim()) {
+			toast.error("내용을 입력해주세요.");
+			return;
+		}
+
+		updateMutation.mutate(editValue);
+	};
+
+	const handleDeleteComment = () => {
+		deleteMutation.mutate();
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -36,7 +90,10 @@ import {
 					>
 						수정
 				</DropdownMenuItem>
-				<DropdownMenuItem className="justify-center">
+					<DropdownMenuItem
+						className="justify-center"
+						onClick={() => setIsDeleteOpen(true)}
+					>
 					삭제
 				</DropdownMenuItem>
 			</DropdownMenuContent>
