@@ -90,7 +90,7 @@ public class DogService {
 		}
 
 		DogDetailInfo dogDetailInfo = dogRepository.getDogDetail(dogId, centerId);
-		boolean isFavorite = favoriteDogRepository.existsByDogIdAndMemberId(centerId, memberId);
+		boolean isFavorite = favoriteDogRepository.existsByDogIdAndMemberId(dogId, memberId);
 		int favoriteCount = favoriteDogRepository.getFavoriteCountByDogId(dogId).intValue();
 		int sponsorCount = sponsorshipRepository.countActiveSponsorshipByDogId(dogId);
 		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
