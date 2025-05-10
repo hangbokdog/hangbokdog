@@ -23,6 +23,22 @@ export default function DogCard({
 	isManager = false,
 }: DogCardProps) {
 	const managerUrl = isManager ? "/manager" : "";
+	const addFavoriteMutation = useMutation({
+		mutationFn: () => {
+			return addDogFavoriteAPI(dogId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["dogs", "latest", centerId],
+			});
+			queryClient.invalidateQueries({ queryKey: ["dogDetail", dogId] });
+			toast.success("강아지를 좋아요 했습니다!");
+		},
+		onError: () => {
+			setIsLiked(false);
+			toast.error("좋아요에 실패했습니다.");
+		},
+	});
 	return (
 		<Link to={`${managerUrl}/dogs/${dogId}`}>
 			<div

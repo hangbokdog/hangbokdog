@@ -18,6 +18,23 @@ export default function DogHeader({
 	isLiked,
 }: DogHeaderProps) {
 	const { id } = useParams();
+	const addFavoriteMutation = useMutation({
+		mutationFn: () => {
+			return addDogFavoriteAPI(Number(id));
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["dogDetail", id] });
+			queryClient.invalidateQueries({
+				queryKey: ["dogs", "latest", centerId],
+			});
+			toast.success("강아지를 좋아요 했습니다!");
+		},
+		onError: () => {
+			setIsLiked(false);
+			setLikes((prev) => Math.max(0, prev - 1));
+			toast.error("좋아요에 실패했습니다.");
+		},
+	});
 
 	return (
 		<div className="flex items-center justify-between">
