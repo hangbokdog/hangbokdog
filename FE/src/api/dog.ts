@@ -89,3 +89,15 @@ export const getDogCommentsAPI = async (
 	);
 	return response.data;
 };
+
+export const createDogCommentAPI = async (
+	dogId: number,
+	content: string,
+	parentId: number | null,
+) => {
+	const response = await localAxios.post(`/${dogId}/comments`, {
+		content,
+		parentId,
+	});
+	return response.data;
+};
