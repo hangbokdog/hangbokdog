@@ -58,4 +58,8 @@ public class CenterMember extends BaseEntity {
     public void promote() {
         grade = CenterGrade.MANAGER;
     }
+
+    public boolean isSelf(Long loginId) {
+        return memberId.equals(loginId);
+    }
 }

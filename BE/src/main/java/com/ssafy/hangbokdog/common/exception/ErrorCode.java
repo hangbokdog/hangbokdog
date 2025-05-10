@@ -80,6 +80,7 @@ public enum ErrorCode {
     ALREADY_CENTER_JOIN_REQUEST(16002, "이미 센터에 가입 요청을 했습니다."),
     CENTER_JOIN_REQUEST_NOT_FOUND(16003, "센티 지원 이력이 없습니다."),
     CENTER_MEMBER_NOT_FOUND(16004, "센터에 가입한 유저가 아닙니다."),
+    NOT_CENTER_MEMBER_HIMSELF(16005, "본인이 아닙니다."),
 
     FAILED_TO_PARSE_TOKEN(17000, "토큰 파싱에 실패했습니다."),
 

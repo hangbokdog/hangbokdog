@@ -199,4 +199,15 @@ public class CenterService {
 
 		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
 	}
+
+	public void deleteCenterMember(Long memberId, Long centerId) {
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isSelf(memberId) && !centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_CENTER_MEMBER_HIMSELF);
+		}
+
+		centerMemberRepository.delete(centerMember);
+	}
 }
