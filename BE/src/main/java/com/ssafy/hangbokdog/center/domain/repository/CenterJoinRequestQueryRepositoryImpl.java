@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.center.domain.repository;
 
+import static com.ssafy.hangbokdog.center.domain.QCenter.center;
 import static com.ssafy.hangbokdog.center.domain.QCenterJoinRequest.centerJoinRequest;
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 
@@ -11,6 +12,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.center.dto.CenterJoinSearchInfo;
+import com.ssafy.hangbokdog.center.dto.response.AppliedCenterResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,21 @@ public class CenterJoinRequestQueryRepositoryImpl implements CenterJoinRequestQu
                         centerJoinRequest.centerId
                 ))
                 .from(centerJoinRequest)
+                .where(centerJoinRequest.memberId.eq(memberId))
+                .fetch();
+    }
+
+    @Override
+    public List<AppliedCenterResponse> getAppliedCentersByMemberId(Long memberId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        AppliedCenterResponse.class,
+                        center.id,
+                        center.name,
+                        center.centerCity
+                ))
+                .from(centerJoinRequest)
+                .leftJoin(center).on(centerJoinRequest.centerId.eq(center.id))
                 .where(centerJoinRequest.memberId.eq(memberId))
                 .fetch();
     }

@@ -28,6 +28,7 @@ public class CenterMemberJpaRepositoryCustomImpl implements CenterMemberJpaRepos
 				center.id,
 				center.name,
 				centerMember.grade,
+				center.centerCity,
 				centerMember.createdAt
 			))
 			.from(centerMember)

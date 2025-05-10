@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.center.presentation;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.application.CenterService;
+import com.ssafy.hangbokdog.center.dto.response.AppliedCenterResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -40,5 +43,10 @@ public class CenterJoinRequestController {
     ) {
 
         return ResponseEntity.ok(centerService.findAll(member, centerId, pageToken));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AppliedCenterResponse>> getAppliedCenters(@AuthMember Member member) {
+        return ResponseEntity.ok(centerService.getAppliedCenters(member.getId()));
     }
 }
