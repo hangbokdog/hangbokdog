@@ -98,5 +98,37 @@ export default function CommentDropdown({
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
+
+			<Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>댓글 수정</DialogTitle>
+					</DialogHeader>
+					<div className="grid gap-4 py-4">
+						<textarea
+							value={editValue}
+							onChange={(e) => setEditValue(e.target.value)}
+							placeholder="댓글을 작성해주세요"
+							className="min-h-[100px] w-full border rounded-md p-2"
+						/>
+					</div>
+					<DialogFooter className="sm:justify-end">
+						<DialogClose asChild>
+							<Button type="button" variant="secondary">
+								취소
+							</Button>
+						</DialogClose>
+						<Button
+							type="button"
+							disabled={updateMutation.isPending}
+							onClick={handleUpdateComment}
+						>
+							{updateMutation.isPending
+								? "수정 중..."
+								: "수정하기"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 	);
 }
