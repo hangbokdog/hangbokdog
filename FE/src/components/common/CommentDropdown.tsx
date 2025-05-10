@@ -74,30 +74,31 @@ export default function CommentDropdown({
 	};
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<button
-					type="button"
-					className="p-1 text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 bg-white dark:bg-gray-800"
-				>
-					<BsThreeDots className="size-4" />
-				</button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent align="end" side="bottom">
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<button
+						type="button"
+						className="p-1 text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 bg-white dark:bg-gray-800"
+					>
+						<BsThreeDots className="size-4" />
+					</button>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent align="end" side="bottom">
 					<DropdownMenuItem
 						className="justify-center"
 						onClick={() => setIsEditOpen(true)}
 					>
 						수정
-				</DropdownMenuItem>
+					</DropdownMenuItem>
 					<DropdownMenuItem
 						className="justify-center"
 						onClick={() => setIsDeleteOpen(true)}
 					>
-					삭제
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+						삭제
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
 
 			<Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
 				<DialogContent className="sm:max-w-md">
@@ -130,5 +131,37 @@ export default function CommentDropdown({
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			<Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+				<DialogContent className="sm:max-w-md">
+					<DialogHeader>
+						<DialogTitle>댓글 삭제</DialogTitle>
+					</DialogHeader>
+					<div className="py-4">
+						<p>
+							정말로 이 댓글을 삭제하시겠습니까? 이 작업은 되돌릴
+							수 없습니다.
+						</p>
+					</div>
+					<DialogFooter className="sm:justify-end">
+						<DialogClose asChild>
+							<Button type="button" variant="secondary">
+								취소
+							</Button>
+						</DialogClose>
+						<Button
+							type="button"
+							variant="destructive"
+							disabled={deleteMutation.isPending}
+							onClick={handleDeleteComment}
+						>
+							{deleteMutation.isPending
+								? "삭제 중..."
+								: "삭제하기"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
