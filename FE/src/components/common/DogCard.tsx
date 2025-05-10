@@ -1,5 +1,10 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addDogFavoriteAPI, removeDogFavoriteAPI } from "@/api/dog";
+import { toast } from "sonner";
+import useCenterStore from "@/lib/store/centerStore";
 
 interface DogCardProps {
 	dogId: number;
@@ -22,7 +27,12 @@ export default function DogCard({
 	bgColor,
 	isManager = false,
 }: DogCardProps) {
+	const centerId = useCenterStore.getState().selectedCenter?.centerId;
+	const [isLiked, setIsLiked] = useState(isFavorite);
+	const [isDisabled, setIsDisabled] = useState(false);
+	const queryClient = useQueryClient();
 	const managerUrl = isManager ? "/manager" : "";
+
 	const addFavoriteMutation = useMutation({
 		mutationFn: () => {
 			return addDogFavoriteAPI(dogId);
@@ -39,6 +49,45 @@ export default function DogCard({
 			toast.error("좋아요에 실패했습니다.");
 		},
 	});
+
+	const removeFavoriteMutation = useMutation({
+		mutationFn: () => {
+			return removeDogFavoriteAPI(dogId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["dogs", "latest", centerId],
+			});
+			queryClient.invalidateQueries({ queryKey: ["dogDetail", dogId] });
+			toast.success("좋아요를 취소했습니다.");
+		},
+		onError: () => {
+			setIsLiked(true);
+			toast.error("좋아요 취소에 실패했습니다.");
+		},
+	});
+
+	const handleToggleFavorite = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (isDisabled) return;
+
+		setIsDisabled(true);
+		const newLikeState = !isLiked;
+		setIsLiked(newLikeState);
+
+		if (newLikeState) {
+			addFavoriteMutation.mutate();
+		} else {
+			removeFavoriteMutation.mutate();
+		}
+
+		setTimeout(() => {
+			setIsDisabled(false);
+		}, 1000);
+	};
+
 	return (
 		<Link to={`${managerUrl}/dogs/${dogId}`}>
 			<div
@@ -71,10 +120,16 @@ export default function DogCard({
 							</span>
 						</p>
 					</div>
-					{isFavorite ? (
-						<FaHeart className="text-red size-4 cursor-pointer" />
+					{isLiked ? (
+						<FaHeart
+							className="text-red size-4 cursor-pointer"
+							onClick={handleToggleFavorite}
+						/>
 					) : (
-						<FaRegHeart className="text-blueGray size-4 cursor-pointer" />
+						<FaRegHeart
+							className="text-blueGray size-4 cursor-pointer"
+							onClick={handleToggleFavorite}
+						/>
 					)}
 				</div>
 			</div>

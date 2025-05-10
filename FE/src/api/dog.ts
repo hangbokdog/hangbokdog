@@ -108,3 +108,8 @@ export const addDogFavoriteAPI = async (dogId: number) => {
 	const response = await localAxios.post(`/dogs/${dogId}/favorite`);
 	return response.data;
 };
+
+export const removeDogFavoriteAPI = async (dogId: number) => {
+	const response = await localAxios.delete(`/dogs/${dogId}/favorite`);
+	return response.data;
+};
