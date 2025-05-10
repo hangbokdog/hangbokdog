@@ -41,7 +41,7 @@ interface DogDetail {
 	isLiked: boolean;
 	favoriteCount: number;
 	currentSponsorCount: number;
-
+	dogCommentCount: number;
 	medicationDate: string;
 	medicationInfo: string;
 	medicationNotes: string;
@@ -91,7 +91,7 @@ const mapDogDetailResponseToDogDetail = (
 	isLiked: response.isLiked,
 	favoriteCount: response.favoriteCount,
 	currentSponsorCount: response.currentSponsorCount,
-
+	dogCommentCount: response.dogCommentCount,
 	medicationDate: "정보 없음",
 	medicationInfo: "정보 없음",
 	medicationNotes: "없음",
@@ -160,7 +160,7 @@ export default function DogDetailPage() {
 
 	return (
 		<motion.div
-			className="flex flex-col"
+			className="flex flex-col mt-2.5"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5 }}
@@ -171,7 +171,8 @@ export default function DogDetailPage() {
 					name={data.dogName}
 					age={data.age}
 					likes={data.favoriteCount}
-					comments={data.comments}
+					isLiked={data.isLiked}
+					comments={data.dogCommentCount}
 				/>
 				<div className="flex justify-between items-center">
 					<DogStatus

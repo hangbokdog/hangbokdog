@@ -178,7 +178,7 @@ export default function SponsorShipPage() {
 	};
 
 	return (
-		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5 pb-2.5">
+		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5 pb-2.5 mt-2.5">
 			<span ref={topRef} className="font-bold text-grayText">
 				여러분의 관심이 아이들을 살립니다.
 			</span>
@@ -205,12 +205,12 @@ export default function SponsorShipPage() {
 				{dummyDogs.map((dog) => (
 					<DogCard
 						key={dog.id}
-						id={dog.id}
+						dogId={dog.id}
 						name={dog.name}
-						age={dog.age}
+						ageMonth={dog.age}
 						imageUrl={dog.imageUrl}
 						gender={dog.gender as "MALE" | "FEMALE"}
-						isLiked={dog.isLiked}
+						isFavorite={dog.isLiked}
 						bgColor="bg-white"
 					/>
 				))}

@@ -27,7 +27,7 @@ export default function Home() {
 	});
 
 	return (
-		<div className="flex flex-col gap-3 w-full">
+		<div className="flex flex-col gap-3 w-full mt-2.5">
 			<EmergencyPanel />
 
 			{isVolunteersLoading ? (
@@ -35,10 +35,8 @@ export default function Home() {
 			) : volunteers && volunteers.length > 0 ? (
 				<VolunteerPanel volunteers={volunteers} />
 			) : (
-				<div className="flex flex-col">
-					<span className="text-xl font-bold mb-2.5">
-						자원봉사 일정
-					</span>
+				<div className="flex flex-col gap-3 mx-2.5 p-2.5 bg-white rounded-lg shadow-custom-sm">
+					<span className="text-xl font-bold">자원봉사 일정</span>
 					<EmptyState message="자원봉사 일정이 없습니다." />
 				</div>
 			)}
@@ -48,10 +46,8 @@ export default function Home() {
 			) : dogs && dogs.dogSummaries.length > 0 ? (
 				<DogPanel count={dogs.count} dogSummaries={dogs.dogSummaries} />
 			) : (
-				<div className="flex flex-col">
-					<span className="text-xl font-bold mb-2.5">
-						보호중인 아이들
-					</span>
+				<div className="flex flex-col gap-3 mx-2.5 p-2.5 bg-white rounded-lg shadow-custom-sm">
+					<span className="text-xl font-bold">보호중인 아이들</span>
 					<EmptyState message="보호중인 아이들이 없습니다." />
 				</div>
 			)}

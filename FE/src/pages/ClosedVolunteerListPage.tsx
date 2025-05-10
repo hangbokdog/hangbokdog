@@ -66,7 +66,7 @@ export default function ClosedVolunteerListPage() {
 	}, []);
 
 	return (
-		<div className="flex flex-col mx-2.5">
+		<div className="flex flex-col mx-2.5 mt-2.5">
 			{isLoading ? (
 				<ClosedVolunteerListSkeleton />
 			) : allVolunteers.length > 0 ? (

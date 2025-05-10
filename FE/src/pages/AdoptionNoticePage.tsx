@@ -10,7 +10,7 @@ export default function AdoptionNoticePage() {
 	const [isChecked, setIsChecked] = useState(false);
 
 	return (
-		<div className="flex flex-col mx-2.5 pt-4 gap-4">
+		<div className="flex flex-col mx-2.5 pt-4 gap-4 mt-2.5">
 			<Title className="text-red">
 				입양 및 임시보호 신청 전 주의 사항
 			</Title>

@@ -67,7 +67,7 @@ export default function VolunteerSchedulePage() {
 	}, [volunteers]);
 
 	return (
-		<div className="flex flex-col mx-2.5 gap-6">
+		<div className="flex flex-col mx-2.5 gap-6 mt-2.5">
 			{isVolunteersLoading ? (
 				<CalendarSkeleton />
 			) : (

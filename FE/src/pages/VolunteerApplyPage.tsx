@@ -199,7 +199,7 @@ export default function VolunteerApplyPage() {
 	const isComplete = isFormComplete();
 
 	return (
-		<div className="flex flex-col p-2.5 gap-4">
+		<div className="flex flex-col p-2.5 gap-4 mt-2.5">
 			<span className="text-xl font-bold">일정 선택</span>
 			<span className="text-sm text-primary">
 				원하시는 날짜를 클릭해주세요!
