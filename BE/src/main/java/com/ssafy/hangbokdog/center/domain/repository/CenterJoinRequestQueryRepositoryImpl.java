@@ -56,6 +56,7 @@ public class CenterJoinRequestQueryRepositoryImpl implements CenterJoinRequestQu
         return queryFactory
                 .select(Projections.constructor(
                         AppliedCenterResponse.class,
+                        centerJoinRequest.id,
                         center.id,
                         center.name,
                         center.centerCity
