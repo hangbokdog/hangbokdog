@@ -46,9 +46,6 @@ public class DogCommentService {
 
 	public List<DogCommentWithRepliesResponse> findAllByDogId(Long dogId, Long memberId) {
 		List<DogCommentInfo> flat = dogCommentRepository.findAllByDogId(dogId, memberId);
-		List<Long> dogCommentIds = flat.stream()
-				.map(DogCommentInfo::id)
-				.collect(Collectors.toList());
 
 		Map<Long, Integer> dogCommentLikes = dogCommentRepository.findDogCommentLikeByDogId(dogId).stream()
 				.collect(Collectors.toMap(

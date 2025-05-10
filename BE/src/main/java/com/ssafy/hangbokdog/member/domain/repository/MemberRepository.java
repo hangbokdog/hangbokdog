@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -41,5 +42,9 @@ public class MemberRepository {
 
     public List<String> findFcmTokensByCenterId(Long centerId) {
         return memberJpaRepository.findFcmTokensByCenterId(centerId);
+    }
+
+    public MemberProfileResponse getMemberProfile(Long memberId) {
+        return memberJpaRepository.getMemberProfile(memberId);
     }
 }

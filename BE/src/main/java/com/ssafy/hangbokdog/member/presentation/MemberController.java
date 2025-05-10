@@ -18,6 +18,7 @@ import com.ssafy.hangbokdog.common.dto.MaskRequest;
 import com.ssafy.hangbokdog.member.application.MemberService;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,10 @@ public class MemberController {
     ) {
         memberService.deleteFcmToken(member.getId());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<MemberProfileResponse> getMyProfile(@AuthMember Member member) {
+        return ResponseEntity.ok().body(memberService.getMemberProfile(member.getId()));
     }
 }
