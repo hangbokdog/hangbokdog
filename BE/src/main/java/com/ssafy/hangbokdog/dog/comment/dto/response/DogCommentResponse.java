@@ -11,6 +11,8 @@ public record DogCommentResponse(
 	Long parentId,
 	String content,
 	Boolean isDeleted,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	Boolean isLiked,
+	Integer likeCount
 ) {
 }

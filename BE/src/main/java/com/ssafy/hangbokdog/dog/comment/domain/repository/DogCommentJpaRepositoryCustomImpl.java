@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.dog.comment.dto.DogCommentInfo;
 import com.ssafy.hangbokdog.dog.comment.dto.response.DogCommentResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
 
@@ -21,10 +22,10 @@ public class DogCommentJpaRepositoryCustomImpl implements DogCommentJpaRepositor
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<DogCommentResponse> findAllByDogId(Long dogId, Long loginId) {
+	public List<DogCommentInfo> findAllByDogId(Long dogId, Long loginId) {
 		return queryFactory
 			.select(Projections.constructor(
-				DogCommentResponse.class,
+				DogCommentInfo.class,
 				Projections.constructor(
 					MemberInfo.class,
 					member.id,

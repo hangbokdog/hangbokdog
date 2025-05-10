@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.comment.application;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,8 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.dog.comment.domain.DogComment;
 import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
+import com.ssafy.hangbokdog.dog.comment.dto.DogCommentInfo;
+import com.ssafy.hangbokdog.dog.comment.dto.DogCommentLikeInfo;
 import com.ssafy.hangbokdog.dog.comment.dto.request.DogCommentCreateRequest;
 import com.ssafy.hangbokdog.dog.comment.dto.request.DogCommentUpdateRequest;
 import com.ssafy.hangbokdog.dog.comment.dto.response.DogCommentResponse;
@@ -42,12 +45,48 @@ public class DogCommentService {
 	}
 
 	public List<DogCommentWithRepliesResponse> findAllByDogId(Long dogId, Long memberId) {
-		List<DogCommentResponse> flat = dogCommentRepository.findAllByDogId(dogId, memberId);
-		Map<Long, List<DogCommentResponse>> byParent = flat.stream()
+		List<DogCommentInfo> flat = dogCommentRepository.findAllByDogId(dogId, memberId);
+		List<Long> dogCommentIds = flat.stream()
+				.map(DogCommentInfo::id)
+				.collect(Collectors.toList());
+
+		Map<Long, Integer> dogCommentLikes = dogCommentRepository.findDogCommentLikeByDogId(dogId).stream()
+				.collect(Collectors.toMap(
+						DogCommentLikeInfo::dogCommentId,
+						DogCommentLikeInfo::count
+				));
+
+		List<Long> dogCommentLikeIds = dogCommentRepository.dogCommentLikeIdsByMemberId(memberId);
+
+		List<DogCommentResponse> newFlat = new ArrayList<>();
+
+		for (DogCommentInfo dogCommentInfo : flat) {
+			boolean isLiked = false;
+
+			if (dogCommentLikeIds.contains(dogCommentInfo.id())) {
+				isLiked = true;
+			}
+
+			DogCommentResponse response = new DogCommentResponse(
+					dogCommentInfo.author(),
+					dogCommentInfo.isAuthor(),
+					dogCommentInfo.id(),
+					dogCommentInfo.parentId(),
+					dogCommentInfo.content(),
+					dogCommentInfo.isDeleted(),
+					dogCommentInfo.createdAt(),
+					isLiked,
+					dogCommentLikes.getOrDefault(dogCommentInfo.id(), 0)
+			);
+
+			newFlat.add(response);
+		}
+
+		Map<Long, List<DogCommentResponse>> byParent = newFlat.stream()
 			.filter(cr -> cr.parentId() != null)
 			.collect(Collectors.groupingBy(DogCommentResponse::parentId));
 
-		return flat.stream()
+		return newFlat.stream()
 			.filter(cr -> cr.parentId() == null)
 			.map(root -> buildTree(root, byParent))
 			.collect(Collectors.toList());
