@@ -22,6 +22,7 @@ import com.ssafy.hangbokdog.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.dto.response.AppliedCenterResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterJoinRequestResponse;
+import com.ssafy.hangbokdog.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.dto.response.ExistingCenterCityResponse;
 import com.ssafy.hangbokdog.center.dto.response.MyCenterResponse;
@@ -68,7 +69,7 @@ public class CenterService {
 		return centerId;
 	}
 
-	public void join(Member member, Long centerId) {
+	public CenterJoinResponse join(Member member, Long centerId) {
 		if (!centerRepository.existsById(centerId)) {
 			throw new BadRequestException(ErrorCode.CENTER_NOT_FOUND);
 		}
@@ -81,12 +82,14 @@ public class CenterService {
 			throw new BadRequestException(ErrorCode.ALREADY_CENTER_JOIN_REQUEST);
 		}
 
-		centerJoinRequestRepository.save(
+		Long id = centerJoinRequestRepository.save(
 				CenterJoinRequest.builder()
 						.centerId(centerId)
 						.memberId(member.getId())
 						.build()
-		);
+		).getId();
+
+		return new CenterJoinResponse(id);
 	}
 
 	@Transactional

@@ -16,6 +16,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.application.CenterService;
 import com.ssafy.hangbokdog.center.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.dto.request.CenterCreateRequest;
+import com.ssafy.hangbokdog.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.dto.response.DonationAccountBalanceResponse;
 import com.ssafy.hangbokdog.center.dto.response.ExistingCenterCityResponse;
@@ -51,12 +52,11 @@ public class CenterController {
 	}
 
 	@PostMapping("/{centerId}/join-request")
-	public ResponseEntity<Void> join(
+	public ResponseEntity<CenterJoinResponse> join(
 			@AuthMember Member member,
 			@PathVariable Long centerId
 	) {
-		centerService.join(member, centerId);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().body(centerService.join(member, centerId));
 	}
 
 	@GetMapping
