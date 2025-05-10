@@ -1,5 +1,4 @@
 import logo from "@/assets/logo.png";
-import { FaMoon } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { Link } from "react-router-dom";
 import useAuthStore from "@/lib/store/authStore";
@@ -33,11 +32,31 @@ export default function Header() {
 		},
 	});
 
+	const { mutate: cancelJoinRequest } = useMutation({
+		mutationFn: () =>
+			cancelJoinRequestAPI(selectedCenter?.centerJoinRequestId as string),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["myJoinRequestCenters"],
+			});
+			setSelectedCenter({
+				centerId: selectedCenter?.centerId as string,
+				centerName: selectedCenter?.centerName as string,
+				status: "NONE",
+				centerJoinRequestId: "",
+			});
+			toast.success("가입 신청이 취소되었습니다.");
+		},
+		onError: () => {
+			toast.error("가입 신청 취소에 실패했습니다.");
+		},
+	});
+
 	const handleCenterAction = () => {
 		switch (selectedCenter?.status) {
-			case "신청중":
+			case "APPLIED":
 				// TODO: 신청 취소 API 호출
-				toast.success("가입 신청이 취소되었습니다.");
+				cancelJoinRequest();
 				break;
 			case "NONE":
 				// TODO: 가입 신청 API 호출

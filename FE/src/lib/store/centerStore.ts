@@ -4,6 +4,7 @@ interface Center {
 	centerId: string;
 	centerName: string;
 	status: string;
+	centerJoinRequestId?: string;
 }
 
 interface CenterState {

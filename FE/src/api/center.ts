@@ -31,3 +31,10 @@ export const registerCenterAPI = async (centerId: string) => {
 	const response = await localAxios.post(`/centers/${centerId}/join-request`);
 	return response.data;
 };
+
+export const cancelJoinRequestAPI = async (centerJoinRequestId: string) => {
+	const response = await localAxios.delete(
+		`/centerJoinRequests/${centerJoinRequestId}`,
+	);
+	return response.data;
+};
