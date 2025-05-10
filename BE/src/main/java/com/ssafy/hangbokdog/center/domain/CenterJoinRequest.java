@@ -27,6 +27,10 @@ public class CenterJoinRequest {
     @Column(name = "center_id", nullable = false)
     private Long centerId;
 
+    public boolean isAuthor(Long memberId) {
+        return this.memberId.equals(memberId);
+    }
+
     @Builder
     public CenterJoinRequest(
             Long memberId,

@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.center.presentation;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,5 +49,11 @@ public class CenterJoinRequestController {
     @GetMapping
     public ResponseEntity<List<AppliedCenterResponse>> getAppliedCenters(@AuthMember Member member) {
         return ResponseEntity.ok(centerService.getAppliedCenters(member.getId()));
+    }
+
+    @DeleteMapping("/{centerJoinRequestId}")
+    public ResponseEntity<Void> delete(@AuthMember Member member, @PathVariable Long centerJoinRequestId) {
+        centerService.deleteCenterJoinRequest(member.getId(), centerJoinRequestId);
+        return ResponseEntity.noContent().build();
     }
 }
