@@ -29,7 +29,8 @@ public class DogCommentLikeJpaRepositoryCustomImpl implements DogCommentLikeJpaR
 						dogCommentLike.commentId.count().intValue()
 				))
 				.from(dogCommentLike)
-				.leftJoin(dogComment).on(dogComment.dogId.eq(dogId))
+				.join(dogComment).on(dogComment.id.eq(dogCommentLike.commentId))
+				.where(dogComment.dogId.eq(dogId))
 				.groupBy(dogCommentLike.commentId)
 				.fetch();
 	}
