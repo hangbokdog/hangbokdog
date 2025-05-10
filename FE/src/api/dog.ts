@@ -123,3 +123,17 @@ export const toggleDogCommentLikeAPI = async (
 	);
 	return response.data;
 };
+
+export const updateDogCommentAPI = async (
+	dogId: number,
+	dogCommentId: number,
+	content: string,
+) => {
+	const response = await localAxios.patch(
+		`/${dogId}/comments/${dogCommentId}`,
+		{
+			content,
+		},
+	);
+	return response.data;
+};

@@ -5,8 +5,20 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+	const [isEditOpen, setIsEditOpen] = useState(false);
 
-export default function CommentDropdown() {
+	const updateMutation = useMutation({
+		mutationFn: (newContent: string) =>
+			updateDogCommentAPI(Number(dogId), commentId, newContent),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["dogComments", dogId] });
+			toast.success("댓글이 수정되었습니다.");
+			setIsEditOpen(false);
+		},
+		onError: () => {
+			toast.error("댓글 수정에 실패했습니다.");
+		},
+	});
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -18,8 +30,11 @@ export default function CommentDropdown() {
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" side="bottom">
-				<DropdownMenuItem className="justify-center">
-					신고
+					<DropdownMenuItem
+						className="justify-center"
+						onClick={() => setIsEditOpen(true)}
+					>
+						수정
 				</DropdownMenuItem>
 				<DropdownMenuItem className="justify-center">
 					삭제
