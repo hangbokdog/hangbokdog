@@ -33,8 +33,25 @@ export default function CenterListItem({
 		enabled: false,
 	});
 
+	const { mutate: registerCenter } = useMutation({
+		mutationFn: () => registerCenterAPI(centerId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["myJoinRequestCenters"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["centerSearch", query],
+			});
+			toast.success("가입 신청이 완료되었습니다.");
+		},
+		onError: () => {
+			toast.error("가입 신청에 실패했습니다.");
+		},
+	});
+
 	const handleRegister = () => {
-		console.log("Register clicked for center:", centerId);
+		registerCenter();
+	};
 	};
 
 	const handleVisit = async () => {
@@ -70,26 +87,15 @@ export default function CenterListItem({
 		>
 			{centerName}
 			<span className="flex gap-2.5">
-				<span>
-					{status === "가입신청" && (
-						<button
-							type="button"
-							className="bg-male rounded-full text-white px-4 py-1 text-sm font-semibold"
-							onClick={handleRegister}
-						>
-							가입 신청
-						</button>
-					)}
-				</span>
-				<span>
+				{status === "NONE" && (
 					<button
 						type="button"
-						className="bg-blueGray rounded-full text-white px-4 py-1 text-sm font-semibold"
-						onClick={handleVisit}
+						className="bg-male rounded-full text-white px-4 py-1 text-sm font-semibold"
+						onClick={handleRegister}
 					>
-						방문하기
+						가입 신청
 					</button>
-				</span>
+				)}
 			</span>
 		</div>
 	);

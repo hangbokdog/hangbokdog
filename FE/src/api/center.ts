@@ -26,3 +26,8 @@ export const fetchAddressBooks = async (centerId: string) => {
 	const response = await localAxios.get(`/addressbooks/${centerId}`);
 	return response.data;
 };
+
+export const registerCenterAPI = async (centerId: string) => {
+	const response = await localAxios.post(`/centers/${centerId}/join-request`);
+	return response.data;
+};
