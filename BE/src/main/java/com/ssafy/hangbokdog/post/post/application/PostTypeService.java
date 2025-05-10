@@ -41,7 +41,10 @@ public class PostTypeService {
         centerRepository.findById(centerId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
 
-        // TODO: 게시판 이름 중복 검사 로직 필요하면 추가
+        if (postTypeJpaRepository.existsByName(request.name(), centerId)) {
+            throw new BadRequestException(ErrorCode.POST_TYPE_NAME_EXISTS);
+        }
+
         PostType newPostType = new PostType(request.name(), centerId);
 
         PostType postType = postTypeJpaRepository.save(newPostType);

@@ -22,4 +22,11 @@ public interface PostTypeJpaRepository extends JpaRepository<PostType, Long> {
 			where (p.id = :id)
 			""")
 	String findNameById(Long id);
+
+	@Query("""
+			SELECT COUNT(pt.name) > 0
+			FROM PostType pt
+			WHERE pt.name = :postTypeName AND pt.centerId = :centerId
+			""")
+	boolean existsByName(@Param("postTypeName") String postTypeName, @Param("centerId") Long centerId);
 }
