@@ -113,3 +113,13 @@ export const removeDogFavoriteAPI = async (dogId: number) => {
 	const response = await localAxios.delete(`/dogs/${dogId}/favorite`);
 	return response.data;
 };
+
+export const toggleDogCommentLikeAPI = async (
+	dogId: number,
+	dogCommentId: number,
+) => {
+	const response = await localAxios.post(
+		`/${dogId}/comments/${dogCommentId}`,
+	);
+	return response.data;
+};
