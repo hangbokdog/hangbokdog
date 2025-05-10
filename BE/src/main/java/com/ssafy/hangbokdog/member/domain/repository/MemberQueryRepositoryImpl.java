@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,20 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 .on(member.id.eq(centerMember.memberId))
                 .where(centerMember.centerId.eq(centerId))
                 .fetch();
+    }
+
+    @Override
+    public MemberProfileResponse getMemberProfile(Long memberId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        MemberProfileResponse.class,
+                        member.id,
+                        member.name,
+                        member.nickName,
+                        member.profileImage
+                ))
+                .from(member)
+                .where(member.id.eq(memberId))
+                .fetchOne();
     }
 }

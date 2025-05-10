@@ -12,6 +12,7 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,10 @@ public class MemberService {
         Member member = getMember(memberId);
         member.updateFcmToken(null);
         member.denyEmergencyNotification();
+    }
+
+    public MemberProfileResponse getMemberProfile(Long memberId) {
+        return memberRepository.getMemberProfile(memberId);
     }
 
     private Member getMember(Long memberId) {
