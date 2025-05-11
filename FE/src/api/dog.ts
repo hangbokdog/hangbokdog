@@ -113,3 +113,37 @@ export const removeDogFavoriteAPI = async (dogId: number) => {
 	const response = await localAxios.delete(`/dogs/${dogId}/favorite`);
 	return response.data;
 };
+
+export const toggleDogCommentLikeAPI = async (
+	dogId: number,
+	dogCommentId: number,
+) => {
+	const response = await localAxios.post(
+		`/${dogId}/comments/${dogCommentId}`,
+	);
+	return response.data;
+};
+
+export const updateDogCommentAPI = async (
+	dogId: number,
+	dogCommentId: number,
+	content: string,
+) => {
+	const response = await localAxios.patch(
+		`/${dogId}/comments/${dogCommentId}`,
+		{
+			content,
+		},
+	);
+	return response.data;
+};
+
+export const deleteDogCommentAPI = async (
+	dogId: number,
+	dogCommentId: number,
+) => {
+	const response = await localAxios.delete(
+		`/${dogId}/comments/${dogCommentId}`,
+	);
+	return response.data;
+};
