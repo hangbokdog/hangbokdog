@@ -27,4 +27,8 @@ public class AddressBookRepository {
 	public List<AddressBookResponse> getAddressBookByCenter(Long centerId) {
 		return addressBookJpaRepository.getAddressBookByCenter(centerId);
 	}
+
+	public void deleteById(Long id) {
+		addressBookJpaRepository.deleteById(id);
+	}
 }
