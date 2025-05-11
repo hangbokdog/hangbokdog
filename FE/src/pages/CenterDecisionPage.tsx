@@ -2,7 +2,7 @@ import Search from "@/components/common/Search";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { debounce } from "lodash";
-import CenterListItem from "@/components/common/CenterListItem";
+import CenterDecisionListItem from "@/components/common/CenterDecisionListItem";
 import Header from "@/components/common/Header";
 import {
 	fetchCenters,
@@ -105,7 +105,7 @@ export default function CenterDecisionPage() {
 					{isLoading && <p>검색 중...</p>}
 					{searchResults?.map(
 						(center: centerResponseData, index: number) => (
-							<CenterListItem
+							<CenterDecisionListItem
 								key={center.centerId}
 								centerJoinRequestId={center.centerJoinRequestId}
 								centerId={center.centerId}
@@ -128,7 +128,7 @@ export default function CenterDecisionPage() {
 				<div>
 					{myCenters?.map(
 						(center: myCenterResponseData, index: number) => (
-							<CenterListItem
+							<CenterDecisionListItem
 								key={`my-center-${center.centerId}-${index}`}
 								centerId={center.centerId}
 								centerName={center.centerName}
@@ -153,7 +153,7 @@ export default function CenterDecisionPage() {
 							center: myJoinRequestCenterResponseData,
 							index: number,
 						) => (
-							<CenterListItem
+							<CenterDecisionListItem
 								key={`my-join-request-center-${center.centerId}-${index}`}
 								centerJoinRequestId={center.centerJoinRequestId}
 								centerId={center.centerId}
