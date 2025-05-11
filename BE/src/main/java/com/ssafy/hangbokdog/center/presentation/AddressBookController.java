@@ -66,7 +66,7 @@ public class AddressBookController {
 			@RequestParam Long centerId,
 			@PathVariable Long addressBookId
 	) {
-		addressBookService.deleteAddressBook(member, centerId, addressBookId);
+		addressBookService.deleteAddressBook(member, addressBookId, centerId);
 		return ResponseEntity.ok().build();
 	}
 }
