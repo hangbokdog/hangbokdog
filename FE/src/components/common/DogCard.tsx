@@ -1,4 +1,5 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { SiDatadog } from "react-icons/si";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -30,6 +31,7 @@ export default function DogCard({
 	const centerId = useCenterStore.getState().selectedCenter?.centerId;
 	const [isLiked, setIsLiked] = useState(isFavorite);
 	const [isDisabled, setIsDisabled] = useState(false);
+	const [imgError, setImgError] = useState(false);
 	const queryClient = useQueryClient();
 	const managerUrl = isManager ? "/manager" : "";
 
@@ -96,11 +98,18 @@ export default function DogCard({
 				<div
 					className={`${bgColor ? "rounded-tl-xl rounded-tr-xl" : "rounded-xl"} overflow-hidden relative`}
 				>
-					<img
-						src={imageUrl}
-						alt={name}
-						className="aspect-square object-cover"
-					/>
+					{imgError ? (
+						<div className="aspect-square object-cover flex justify-center items-center">
+							<SiDatadog className="text-6xl text-gray-400" />
+						</div>
+					) : (
+						<img
+							src={imageUrl}
+							alt={name}
+							className="aspect-square object-cover"
+							onError={() => setImgError(true)}
+						/>
+					)}
 					{gender === "MALE" ? (
 						<span className="absolute right-1 top-1 px-1.5 py-0.5 text-sm text-white bg-male rounded-full">
 							남아
@@ -116,7 +125,9 @@ export default function DogCard({
 						<p className="text-sm font-medium text-grayText">
 							{name}{" "}
 							<span className="text-xs text-blueGray">
-								{ageMonth}개월
+								{Number(ageMonth) >= 12
+									? `${Math.floor(Number(ageMonth) / 12)}살`
+									: `${ageMonth}개월`}
 							</span>
 						</p>
 					</div>
