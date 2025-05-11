@@ -1,189 +1,119 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import DogCard from "@/components/common/DogCard";
 import Search from "@/components/common/Search";
 import AISearchPanel from "@/components/common/AISearchPanel";
 import ScrollButton from "@/components/common/ScrollButton";
-import dog1 from "@/assets/images/dog1.png";
-import dog2 from "@/assets/images/dog2.png";
-import dog3 from "@/assets/images/dog3.png";
-
-// 더미 데이터
-const dummyDogs = [
-	{
-		id: 101,
-		name: "모리",
-		age: "7개월",
-		imageUrl: dog1,
-		gender: "MALE",
-		isLiked: false,
-	},
-	{
-		id: 102,
-		name: "찬희",
-		age: "6살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		isLiked: true,
-	},
-	{
-		id: 103,
-		name: "백돌",
-		age: "2개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		isLiked: false,
-	},
-	{
-		id: 104,
-		name: "코코",
-		age: "1살",
-		imageUrl: dog1,
-		gender: "MALE",
-		isLiked: false,
-	},
-	{
-		id: 105,
-		name: "루시",
-		age: "3살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		isLiked: true,
-	},
-	{
-		id: 106,
-		name: "초코",
-		age: "5개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		isLiked: false,
-	},
-	{
-		id: 107,
-		name: "보리",
-		age: "2살",
-		imageUrl: dog1,
-		gender: "MALE",
-		isLiked: false,
-	},
-	{
-		id: 108,
-		name: "하니",
-		age: "8개월",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		isLiked: true,
-	},
-	{
-		id: 109,
-		name: "댕댕이",
-		age: "3개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		isLiked: false,
-	},
-	{
-		id: 110,
-		name: "해피",
-		age: "4살",
-		imageUrl: dog1,
-		gender: "MALE",
-		isLiked: false,
-	},
-	{
-		id: 111,
-		name: "룰루",
-		age: "1살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		isLiked: true,
-	},
-	{
-		id: 112,
-		name: "몽실이",
-		age: "9개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		isLiked: false,
-	},
-	{
-		id: 113,
-		name: "별이",
-		age: "5살",
-		imageUrl: dog1,
-		gender: "MALE",
-		isLiked: false,
-	},
-	{
-		id: 114,
-		name: "나비",
-		age: "2살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		isLiked: true,
-	},
-	{
-		id: 115,
-		name: "달이",
-		age: "7개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		isLiked: false,
-	},
-	{
-		id: 116,
-		name: "꼬미",
-		age: "3살",
-		imageUrl: dog1,
-		gender: "MALE",
-		isLiked: false,
-	},
-	{
-		id: 117,
-		name: "두부",
-		age: "1살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		isLiked: true,
-	},
-	{
-		id: 118,
-		name: "콩이",
-		age: "4개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		isLiked: false,
-	},
-];
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { type DogSearchRequest, fetchDogsAPI } from "@/api/dog";
+import useCenterStore from "@/lib/store/centerStore";
 
 export default function ManagerDogListPage() {
 	const topRef = useRef<HTMLDivElement>(null);
+	const observerRef = useRef<HTMLDivElement>(null);
 	const [showImageSearch, setShowImageSearch] = useState(false);
 	const [isAnimating, setIsAnimating] = useState(false);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+	const { selectedCenter } = useCenterStore();
+	const [showStar, setShowStar] = useState(false);
+	const [filters, setFilters] = useState<Partial<DogSearchRequest>>({});
 
-	const toggleImageSearch = () => {
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearchQuery(searchQuery);
+		}, 300);
+
+		return () => clearTimeout(timer);
+	}, [searchQuery]);
+
+	const filter = useMemo<DogSearchRequest>(
+		() => ({
+			centerId: selectedCenter?.centerId || "",
+			name: debouncedSearchQuery || undefined,
+			isStar: showStar,
+			...filters,
+		}),
+		[selectedCenter?.centerId, debouncedSearchQuery, showStar, filters],
+	);
+
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading,
+		error,
+	} = useInfiniteQuery({
+		queryKey: ["dogs", filter],
+		queryFn: fetchDogsAPI,
+		getNextPageParam: (lastPage) => lastPage.pageToken || undefined,
+		initialPageParam: null,
+		enabled: !!filter.centerId,
+	});
+
+	useEffect(() => {
+		if (!observerRef.current || !hasNextPage) return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (
+					entries[0].isIntersecting &&
+					hasNextPage &&
+					!isFetchingNextPage
+				) {
+					fetchNextPage().catch((err) => {
+						console.error("Failed to fetch next page:", err);
+					});
+				}
+			},
+			{ threshold: 0.1 },
+		);
+
+		const currentObserver = observerRef.current;
+		observer.observe(currentObserver);
+
+		return () => {
+			if (currentObserver) {
+				observer.unobserve(currentObserver);
+			}
+		};
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	const toggleImageSearch = useCallback(() => {
 		setIsAnimating(true);
 		setTimeout(() => {
-			setShowImageSearch(!showImageSearch);
+			setShowImageSearch((prev) => !prev);
 			setIsAnimating(false);
 		}, 150);
-	};
+	}, []);
 
-	const handleSearch = (query: string) => {
-		console.log("검색어:", query);
-	};
+	const handleSearch = useCallback(
+		(query: string, newFilters: Partial<DogSearchRequest>) => {
+			setSearchQuery(query);
+			setFilters(newFilters);
+		},
+		[],
+	);
+
+	const handleFilterChange = useCallback(
+		(newFilters: Partial<DogSearchRequest>) => {
+			setFilters(newFilters);
+		},
+		[],
+	);
 
 	const handleFileSelect = (file: File) => {
 		console.log("선택된 파일:", file.name);
 	};
 
+	const dogs = data?.pages.flatMap((page) => page.data) || [];
+
 	return (
 		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5 pb-2.5">
-			<span ref={topRef} className="font-bold text-grayText">
-				여러분의 관심이 아이들을 살립니다.
-			</span>
 			<div
-				className={`transition-all duration-300 ${isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}
+				className={`transition-all duration-300 ${
+					isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
+				}`}
 			>
 				{!showImageSearch ? (
 					<Search
@@ -192,6 +122,8 @@ export default function ManagerDogListPage() {
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						onSearch={handleSearch}
+						currentFilter={filters}
+						onFilterChange={handleFilterChange}
 					/>
 				) : (
 					<AISearchPanel
@@ -201,20 +133,81 @@ export default function ManagerDogListPage() {
 					/>
 				)}
 			</div>
-			<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
-				{dummyDogs.map((dog) => (
-					<DogCard
-						key={dog.id}
-						dogId={dog.id}
-						name={dog.name}
-						ageMonth={dog.age}
-						imageUrl={dog.imageUrl}
-						gender={dog.gender as "MALE" | "FEMALE"}
-						isFavorite={dog.isLiked}
-						bgColor="bg-white"
+			<div className="flex items-center justify-between">
+				<span ref={topRef} className="font-bold text-grayText">
+					별이 된 아이들 표시
+				</span>
+				<button
+					type="button"
+					className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+						showStar ? "bg-main" : "bg-gray-300"
+					}`}
+					onClick={() => setShowStar(!showStar)}
+				>
+					<div
+						className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+							showStar ? "translate-x-6" : "translate-x-0"
+						}`}
 					/>
-				))}
+				</button>
 			</div>
+
+			{isLoading ? (
+				<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
+					{[...Array(6)].map((_, i) => (
+						<div
+							key={`skeleton-${
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								i
+							}`}
+							className="h-40 bg-gray-100 rounded-lg animate-pulse"
+						/>
+					))}
+				</div>
+			) : error ? (
+				<div className="flex flex-col items-center gap-2 py-4">
+					<p className="text-red-500">
+						에러: {(error as Error).message}
+					</p>
+					<button
+						type="button"
+						onClick={() => window.location.reload()}
+						className="px-4 py-2 bg-main text-white rounded-lg"
+					>
+						다시 시도
+					</button>
+				</div>
+			) : dogs.length === 0 ? (
+				<div className="flex justify-center py-8 text-gray-500">
+					결과가 없습니다.
+				</div>
+			) : (
+				<>
+					<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
+						{dogs.map((dog) => (
+							<DogCard
+								key={`${dog.dogId}-${dog.name}`}
+								dogId={dog.dogId}
+								name={dog.name}
+								ageMonth={dog.ageMonth.toString()}
+								imageUrl={dog.imageUrl}
+								gender={dog.gender as "MALE" | "FEMALE"}
+								isFavorite={dog.isFavorite}
+								bgColor="bg-white"
+								isManager={true}
+							/>
+						))}
+					</div>
+					{hasNextPage && (
+						<div
+							ref={observerRef}
+							className="h-5 flex items-center justify-center text-gray-500 text-sm"
+						>
+							{isFetchingNextPage ? "다음 페이지 로딩 중..." : ""}
+						</div>
+					)}
+				</>
+			)}
 			<ScrollButton targetRef={topRef} />
 		</div>
 	);
