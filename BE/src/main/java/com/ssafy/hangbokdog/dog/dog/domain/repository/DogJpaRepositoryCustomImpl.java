@@ -135,7 +135,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			))
 			.from(dog)
 			.leftJoin(addressBook)
-			.on(dog.centerId.eq(addressBook.centerId))
+			.on(dog.locationId.eq(addressBook.id))
 			.where(
 				dog.centerId.eq(centerId),
 				isInRange(pageToken),
