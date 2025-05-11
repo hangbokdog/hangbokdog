@@ -104,4 +104,8 @@ public class DogRepository {
 	public List<DogSummaryInfo> getDogSummaries(Long centerId) {
 		return dogJpaRepository.getDogSummaries(centerId);
 	}
+
+	public int getLocationDogCount(Long locationId) {
+		return dogJpaRepository.countByLocationId(locationId);
+	}
 }
