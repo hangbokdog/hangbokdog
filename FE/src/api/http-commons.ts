@@ -28,4 +28,10 @@ localAxios.interceptors.request.use(
 	},
 );
 
+export interface PageInfo<T> {
+	pageToken: string | null;
+	data: T[];
+	hasNext: boolean;
+}
+
 export default localAxios;
