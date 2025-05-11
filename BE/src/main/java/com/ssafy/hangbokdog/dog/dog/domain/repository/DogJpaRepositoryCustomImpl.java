@@ -94,8 +94,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					"timestampdiff(month, {0}, now())",
 					dog.birth
 				),
-
-				dog.gender
+				dog.gender,
+					dog.createdAt
 			))
 			.from(dog)
 			.where(dog.centerId.eq(centerId)
@@ -131,7 +131,9 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					"timestampdiff(month, {0}, now())",
 					dog.birth
 				),
-				dog.gender
+				dog.gender,
+					dog.createdAt,
+					dog.isStar
 			))
 			.from(dog)
 			.leftJoin(addressBook)

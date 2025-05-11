@@ -9,6 +9,7 @@ public record DogSearchResponse(
 	int ageMonth,
 	Gender gender,
 	boolean isFavorite,
-	int favoriteCount
+	int favoriteCount,
+	Boolean isStar
 ) {
 }

@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.dog.dog.dto;
 
+import java.time.LocalDateTime;
+
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 
 public record DogSummaryInfo(
@@ -7,6 +9,8 @@ public record DogSummaryInfo(
 	String name,
 	String imageUrl,
 	int ageMonth,
-	Gender gender
+	Gender gender,
+	LocalDateTime createdAt,
+	Boolean isStar
 ) {
 }

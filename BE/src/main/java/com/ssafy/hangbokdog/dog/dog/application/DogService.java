@@ -274,7 +274,8 @@ public class DogService {
 				dog.ageMonth(),
 				dog.gender(),
 				favoriteDogIds.contains(dog.dogId()),
-				favoriteCountMap.getOrDefault(dog.dogId(), 0)
+				favoriteCountMap.getOrDefault(dog.dogId(), 0),
+					dog.isStar()
 			))
 			.toList();
 
