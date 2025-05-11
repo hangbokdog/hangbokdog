@@ -13,19 +13,29 @@ import {
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import {
+	type DogBreed,
+	DogBreedLabel,
+	type Gender,
+	GenderLabel,
+} from "@/types/dog";
+import type { DogSearchRequest } from "@/api/dog";
+import useManagerStore from "@/lib/store/managerStore";
 
 interface SearchProps {
 	onClickAISearch?: () => void;
 	placeholder?: string;
 	maxLength?: number;
-	onSearch?: (query: string) => void;
+	onSearch?: (query: string, filters: Partial<DogSearchRequest>) => void;
 	value?: string;
 	onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	filter?: boolean;
 	ai?: boolean;
+	currentFilter?: Partial<DogSearchRequest>;
+	onFilterChange?: (filters: Partial<DogSearchRequest>) => void;
 }
 
-type FilterTab = "종" | "성별" | "나이" | "중성화" | "보호소" | "기타";
+type FilterTab = "breed" | "gender" | "isNeutered" | "location";
 
 export default function Search({
 	onClickAISearch,
@@ -36,39 +46,44 @@ export default function Search({
 	onChange,
 	filter = true,
 	ai = true,
+	currentFilter = {},
+	onFilterChange,
 }: SearchProps) {
-	const [selectedTab, setSelectedTab] = useState<FilterTab>("종");
+	const [selectedTab, setSelectedTab] = useState<FilterTab>("breed");
+	const { addressBook } = useManagerStore();
+	const [tempFilter, setTempFilter] =
+		useState<Partial<DogSearchRequest>>(currentFilter);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === "Enter" && onSearch) {
-			onSearch((e.target as HTMLInputElement).value);
+			onSearch((e.target as HTMLInputElement).value, tempFilter);
 		}
 	};
 
 	const filterTabs: FilterTab[] = [
-		"종",
-		"성별",
-		"나이",
-		"중성화",
-		"보호소",
-		"기타",
+		"breed",
+		"gender",
+		"isNeutered",
+		"location",
 	];
 
-	const filterOptions = {
-		종: [
-			"말티즈",
-			"치와와",
-			"시츄",
-			"비글",
-			"보더콜리",
-			"골든리트리버",
-			"진도개",
-		],
-		성별: ["수컷", "암컷"],
-		나이: ["0~3개월", "4~6개월", "7~12개월", "1~2년", "3~7년", "8년 이상"],
-		중성화: ["완료", "미완료"],
-		보호소: ["보호소1", "보호소2", "보호소3"],
-		기타: ["믹스", "의료", "프로젝트 봉사"],
+	const handleFilterApply = () => {
+		onFilterChange?.(tempFilter);
+		onSearch?.(value || "", tempFilter);
+	};
+
+	const handleFilterReset = () => {
+		setTempFilter({});
+		onFilterChange?.({});
+		onSearch?.(value || "", {});
+	};
+
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const handleOptionSelect = (key: keyof DogSearchRequest, value: any) => {
+		setTempFilter((prev) => ({
+			...prev,
+			[key]: prev[key] === value ? undefined : value,
+		}));
 	};
 
 	return (
@@ -124,36 +139,170 @@ export default function Search({
 												)}
 												type="button"
 											>
-												{tab}
+												{tab === "breed" && "종"}
+												{tab === "gender" && "성별"}
+												{tab === "isNeutered" &&
+													"중성화"}
+												{tab === "location" && "보호소"}
 											</button>
 										))}
 									</div>
 								</DrawerHeader>
 								<div className="p-4">
 									<div className="flex flex-wrap gap-2">
-										{filterOptions[selectedTab].map(
-											(option) => (
+										{selectedTab === "breed" &&
+											Object.entries(DogBreedLabel).map(
+												([key, label]) => (
+													<button
+														key={key}
+														onClick={() =>
+															handleOptionSelect(
+																"breed",
+																key as DogBreed,
+															)
+														}
+														className={cn(
+															"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
+															tempFilter.breed ===
+																key
+																? "bg-primary text-white"
+																: "bg-gray-100",
+														)}
+														type="button"
+													>
+														{label}
+													</button>
+												),
+											)}
+										{selectedTab === "gender" &&
+											Object.entries(GenderLabel).map(
+												([key, label]) => (
+													<button
+														key={key}
+														onClick={() =>
+															handleOptionSelect(
+																"gender",
+																key as Gender,
+															)
+														}
+														className={cn(
+															"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
+															tempFilter.gender ===
+																key
+																? "bg-primary text-white"
+																: "bg-gray-100",
+														)}
+														type="button"
+													>
+														{label}
+													</button>
+												),
+											)}
+										{selectedTab === "isNeutered" && (
+											<div className="flex gap-2">
 												<button
-													key={option}
-													className="px-3 py-1 rounded-full bg-gray-100 text-sm hover:bg-gray-200 transition-colors"
+													onClick={() =>
+														handleOptionSelect(
+															"isNeutered",
+															true,
+														)
+													}
+													className={cn(
+														"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
+														tempFilter.isNeutered ===
+															true
+															? "bg-primary text-white"
+															: "bg-gray-100",
+													)}
 													type="button"
 												>
-													{option}
+													완료
 												</button>
-											),
+												<button
+													onClick={() =>
+														handleOptionSelect(
+															"isNeutered",
+															false,
+														)
+													}
+													className={cn(
+														"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
+														tempFilter.isNeutered ===
+															false
+															? "bg-primary text-white"
+															: "bg-gray-100",
+													)}
+													type="button"
+												>
+													미완료
+												</button>
+											</div>
+										)}
+										{selectedTab === "location" && (
+											<div className="flex gap-2">
+												{addressBook.length > 0 ? (
+													addressBook.map(
+														(address) => (
+															<button
+																key={address.id}
+																onClick={() =>
+																	handleOptionSelect(
+																		"location",
+																		address.addressName,
+																	)
+																}
+																className={cn(
+																	"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
+																	tempFilter.location ===
+																		address.addressName
+																		? "bg-primary text-white"
+																		: "bg-gray-100",
+																)}
+																type="button"
+															>
+																{
+																	address.addressName
+																}
+															</button>
+														),
+													)
+												) : (
+													<p className="text-sm text-gray-500 col-span-full">
+														등록된 주소록이
+														없습니다.
+													</p>
+												)}
+											</div>
 										)}
 									</div>
 								</div>
 								<DrawerFooter className="flex-row justify-end gap-2">
 									<DrawerClose>
-										<div className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer">
+										<button
+											onClick={handleFilterReset}
+											onKeyDown={(e) => {
+												if (
+													e.key === "Enter" ||
+													e.key === " "
+												) {
+													handleFilterReset();
+												}
+											}}
+											tabIndex={0}
+											type="button"
+											className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
+										>
 											초기화
-										</div>
+										</button>
 									</DrawerClose>
 									<DrawerClose>
-										<div className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer">
+										<button
+											type="button"
+											onClick={handleFilterApply}
+											className="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors cursor-pointer"
+										>
 											검색하기
-										</div>
+										</button>
 									</DrawerClose>
 								</DrawerFooter>
 							</div>

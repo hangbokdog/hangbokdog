@@ -1,4 +1,5 @@
 import {
+	type AddressBook,
 	cancelJoinRequestAPI,
 	fetchAddressBooks,
 	registerCenterAPI,
@@ -9,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-interface CenterListItemProps {
+interface CenterDecisionListItemProps {
 	centerId: string;
 	centerName: string;
 	status: string;
@@ -18,20 +19,14 @@ interface CenterListItemProps {
 	centerJoinRequestId?: string;
 }
 
-interface AddressBook {
-	id: number;
-	addressName: string;
-	address: string;
-}
-
-export default function CenterListItem({
+export default function CenterDecisionListItem({
 	centerId,
 	centerName,
 	status,
 	index,
 	query,
 	centerJoinRequestId,
-}: CenterListItemProps) {
+}: CenterDecisionListItemProps) {
 	const { setSelectedCenter, setIsCenterMember } = useCenterStore();
 	const { setAddressBook } = useManagerStore();
 	const navigate = useNavigate();

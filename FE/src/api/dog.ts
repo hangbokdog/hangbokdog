@@ -6,7 +6,8 @@ import type {
 	Gender,
 	MedicalType,
 } from "@/types/dog";
-import localAxios from "./http-commons";
+import localAxios, { type PageInfo } from "./http-commons";
+import type { QueryFunction } from "@tanstack/react-query";
 
 export const createDogAPI = async (data: FormData) => {
 	const response = await localAxios.post("/dogs", data, {
@@ -145,5 +146,47 @@ export const deleteDogCommentAPI = async (
 	const response = await localAxios.delete(
 		`/${dogId}/comments/${dogCommentId}`,
 	);
+	return response.data;
+};
+
+export interface DogSearchResponse {
+	dogId: number;
+	name: string;
+	imageUrl: string;
+	ageMonth: number;
+	gender: Gender;
+	isFavorite: boolean;
+	favoriteCount: number;
+	isStar: boolean;
+}
+
+export interface DogSearchRequest {
+	centerId: string;
+	name?: string;
+	breed?: DogBreed;
+	gender?: Gender;
+	start?: string;
+	end?: string;
+	isNeutered?: boolean;
+	location?: string;
+	isStar?: boolean;
+}
+
+export const fetchDogsAPI: QueryFunction<
+	PageInfo<DogSearchResponse>,
+	[string, DogSearchRequest],
+	string | null
+> = async ({ pageParam = null, queryKey }) => {
+	const [, params] = queryKey as [string, DogSearchRequest];
+	const response = await localAxios.get<PageInfo<DogSearchResponse>>(
+		"/dogs/search",
+		{
+			params: {
+				...params,
+				pageToken: pageParam,
+			},
+		},
+	);
+	console.log("response", response.data);
 	return response.data;
 };
