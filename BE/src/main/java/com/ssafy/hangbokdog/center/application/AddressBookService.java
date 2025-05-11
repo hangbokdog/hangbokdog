@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.domain.AddressBook;
+import com.ssafy.hangbokdog.center.domain.Center;
 import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
@@ -26,8 +27,7 @@ public class AddressBookService {
 
 	public void save(AddressBookRequest request, Long centerId, Long memberId) {
 
-		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember centerMember = getCenterMember(centerId, memberId);
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -47,7 +47,13 @@ public class AddressBookService {
 		AddressBook addressBook = addressBookRepository.findById(addressBookId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
 
-		addressBook.updateAddress(request.addressName(), addressBook.getAddress());
+		CenterMember centerMember = getCenterMember(centerId, memberId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		addressBook.updateAddress(request.addressName(), request.address());
 	}
 
 	public List<AddressBookResponse> getAddressBooks(Long centerId) {
@@ -55,13 +61,17 @@ public class AddressBookService {
 	}
 
 	public void deleteAddressBook(Member member, Long addressBookId, Long centerId) {
-		CenterMember loginMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember loginMember = getCenterMember(centerId, member.getId());
 
 		if (!loginMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
 		addressBookRepository.deleteById(addressBookId);
+	}
+
+	private CenterMember getCenterMember(Long centerId, Long memberId) {
+		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 	}
 }
