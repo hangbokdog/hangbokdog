@@ -29,7 +29,8 @@ import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecaut
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -237,7 +238,7 @@ public class VolunteerService {
         volunteerTemplate.updatePrecaution(request.precaution());
     }
 
-    public VolunteerTemplateResponse findVolunteerTemplate(
+    public VolunteerTemplateInfoResponse findVolunteerTemplateInfo(
             Member member,
             Long addressBookId,
             Long centerId
@@ -252,6 +253,24 @@ public class VolunteerService {
         var volunteerTemplate = volunteerTemplateRepository.findByAddressBookId(addressBookId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_TEMPLATE_NOT_FOUND));
 
-        return VolunteerTemplateResponse.from(volunteerTemplate);
+        return VolunteerTemplateInfoResponse.from(volunteerTemplate);
+    }
+
+    public VolunteerTemplatePrecautionResponse findVolunteerTemplatePrecaution(
+        Member member,
+        Long addressBookId,
+        Long centerId
+    ) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+            .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        var volunteerTemplate = volunteerTemplateRepository.findByAddressBookId(addressBookId)
+            .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_TEMPLATE_NOT_FOUND));
+
+        return VolunteerTemplatePrecautionResponse.from(volunteerTemplate);
     }
 }
