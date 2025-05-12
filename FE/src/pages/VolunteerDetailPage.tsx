@@ -6,6 +6,9 @@ import VolunteerInfoHeader from "@/components/volunteer/VolunteerInfoHeader";
 import ScheduleTable from "@/components/volunteer/ScheduleTable";
 import GuideContent from "@/components/volunteer/GuideContent";
 import CautionContent from "@/components/volunteer/CautionContent";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router-dom";
+import { getVolunteerDetailAPI } from "@/api/volunteer";
 
 export default function VolunteerDetailPage() {
 	const scheduleData = [
@@ -17,6 +20,17 @@ export default function VolunteerDetailPage() {
 		{ date: "4.19(토)", morning: "4/6", afternoon: "6/6" },
 		{ date: "4.20(일)", morning: "6/6", afternoon: "3/6" },
 	];
+
+	const { id } = useParams();
+
+	const { data: volunteerDetail, isLoading: isVolunteerDetailLoading } =
+		useQuery({
+			queryKey: ["volunteerDetail", id],
+			queryFn: () => getVolunteerDetailAPI({ eventId: id as string }),
+			enabled: !!id,
+		});
+
+	console.log("volunteerDetail", volunteerDetail);
 
 	return (
 		<div className="flex flex-col mt-2.5">

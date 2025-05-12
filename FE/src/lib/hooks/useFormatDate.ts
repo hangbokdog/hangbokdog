@@ -14,3 +14,14 @@ export function useFormatDate() {
 
 	return { formatBirthDate };
 }
+
+// 날짜 포맷팅 함수
+export const formatDate = (dateString: string) => {
+	const date = new Date(dateString);
+	return date.toLocaleDateString("ko-KR", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+		weekday: "short",
+	});
+};
