@@ -136,7 +136,7 @@ public class VolunteerController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{addressBookId}/volunteerTemplats")
+    @GetMapping("/{addressBookId}/volunteerTemplates")
     public ResponseEntity<VolunteerTemplateResponse> findVolunteerTemplate(
             @AuthMember Member member,
             @PathVariable Long addressBookId,
