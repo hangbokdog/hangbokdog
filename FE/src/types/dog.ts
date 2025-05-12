@@ -89,3 +89,56 @@ export interface DogCreateRequest {
 	isNeutered: boolean;
 	breedDetail?: string;
 }
+
+export interface DogLatestResponse {
+	count: number;
+	dogSummaries: DogSummary[];
+}
+
+export interface DogSummary {
+	dogId: number;
+	name: string;
+	imageUrl: string;
+	ageMonth: number;
+	gender: string;
+	isFavorite: boolean;
+}
+
+export const MedicalType = {
+	SURGERY: "SURGERY",
+	MEDICATION: "MEDICATION",
+};
+
+export type MedicalType = (typeof MedicalType)[keyof typeof MedicalType];
+
+export const MedicalTypeLabel: Record<MedicalType, string> = {
+	SURGERY: "수술",
+	MEDICATION: "약물치료",
+};
+
+export interface DogCommentAuthor {
+	id: number;
+	nickName: string;
+	grade: string;
+	profileImage: string;
+}
+
+export interface DogCommentData {
+	author: DogCommentAuthor;
+	isAuthor: boolean;
+	id: number;
+	parentId: number | null;
+	content: string;
+	isDeleted: boolean;
+	createdAt: string;
+	isLiked: boolean;
+	likeCount: number;
+}
+
+export interface DogCommentItem {
+	dogComment: DogCommentData;
+	replies: {
+		dogComment: DogCommentData;
+		replies: DogCommentItem[];
+	}[];
+}

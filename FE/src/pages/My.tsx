@@ -36,7 +36,7 @@ export default function My() {
 	};
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col mt-2.5">
 			<Profile
 				name="멜롱"
 				email="min@naver.com"

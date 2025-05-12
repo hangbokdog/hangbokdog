@@ -16,7 +16,7 @@ export default function RouteBackHeader({
 
 	return (
 		<header
-			className={`w-full relative h-10 text-grayText flex justify-center gap-1 items-end px-5 ${bgColor && bgColor}`}
+			className={`w-full relative h-12 text-grayText flex justify-center items-center gap-1 px-5 ${bgColor && bgColor}`}
 		>
 			<button
 				type="button"

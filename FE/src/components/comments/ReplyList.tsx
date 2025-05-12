@@ -1,39 +1,20 @@
-import CommentDropdown from "../common/CommentDropdown";
-
-interface Reply {
-	id: number;
-	content: string;
-	author: string;
-	createdAt: string;
-}
+import ReplyItem from "./ReplyItem";
+import type { DogCommentItem } from "@/types/dog";
 
 interface ReplyListProps {
-	replies?: Reply[];
+	replies: {
+		dogComment: DogCommentItem["dogComment"];
+		replies: DogCommentItem[];
+	}[];
 }
 
 export default function ReplyList({ replies }: ReplyListProps) {
-	if (!replies) return null;
+	if (!replies || replies.length === 0) return null;
 
 	return (
 		<>
 			{replies.map((reply) => (
-				<div key={reply.id} className="p-2 max-w-full break-words">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-2">
-							<div className="w-6 h-6 rounded-full bg-grayText flex-shrink-0" />
-							<span className="font-bold text-xs">
-								{reply.author}
-							</span>
-							<span className="text-xs text-lightGray">
-								{reply.createdAt}
-							</span>
-						</div>
-						<CommentDropdown />
-					</div>
-					<div className="text-sm mt-1 whitespace-normal break-words">
-						{reply.content}
-					</div>
-				</div>
+				<ReplyItem key={reply.dogComment.id} reply={reply} />
 			))}
 		</>
 	);

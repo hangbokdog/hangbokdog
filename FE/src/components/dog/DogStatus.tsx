@@ -1,16 +1,25 @@
+import {
+	DogStatusLabel,
+	type DogStatus as DogStatusType,
+	Gender,
+	GenderLabel,
+} from "@/types/dog";
+
 interface DogStatusProps {
-	status: string;
-	gender: string;
+	status: DogStatusType;
+	gender: Gender;
 }
 
 export default function DogStatus({ status, gender }: DogStatusProps) {
 	return (
 		<div className="flex gap-2">
 			<span className="flex px-2.5 py-0.5 font-semibold text-white bg-green rounded-full">
-				{status}
+				{DogStatusLabel[status]}
 			</span>
-			<span className="flex px-2.5 py-0.5 font-semibold text-white bg-female rounded-full">
-				{gender}
+			<span
+				className={`flex px-2.5 py-0.5 font-semibold text-white ${gender === Gender.FEMALE ? "bg-female" : "bg-male"} rounded-full`}
+			>
+				{GenderLabel[gender]}
 			</span>
 		</div>
 	);
