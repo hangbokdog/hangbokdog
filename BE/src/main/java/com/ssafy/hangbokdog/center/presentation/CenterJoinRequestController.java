@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +34,15 @@ public class CenterJoinRequestController {
             @PathVariable Long centerJoinRequestId
     ) {
         centerService.approve(member, centerJoinRequestId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{centerJoinRequestId}/reject")
+    public ResponseEntity<Void> reject(
+        @AuthMember Member member,
+        @PathVariable Long centerJoinRequestId
+    ) {
+        centerService.reject(member, centerJoinRequestId);
         return ResponseEntity.noContent().build();
     }
 
