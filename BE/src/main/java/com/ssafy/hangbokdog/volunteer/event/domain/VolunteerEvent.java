@@ -83,7 +83,9 @@ public class VolunteerEvent extends BaseEntity {
             LocalDate endDate,
             String activityLog,
             String precaution,
-            String info
+            String info,
+            Long addressBookId,
+            String addressName
     ) {
         this.centerId = centerId;
         this.title = title;
@@ -96,5 +98,7 @@ public class VolunteerEvent extends BaseEntity {
         this.precaution = precaution;
         this.info = info;
         this.status = VolunteerEventStatus.OPEN;
+        this.addressBookId = addressBookId;
+        this.addressName = addressName;
     }
 }

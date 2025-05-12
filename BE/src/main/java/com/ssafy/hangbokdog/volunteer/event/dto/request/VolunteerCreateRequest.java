@@ -9,12 +9,12 @@ import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 public record VolunteerCreateRequest(
         String title,
         String content,
-        String address,
         LocalDate startDate,
         LocalDate endDate,
         String activityLog,
         String precaution,
         String info,
-        List<SlotDto> slots
+        List<SlotDto> slots,
+        Long addressBookId
 ) {
 }

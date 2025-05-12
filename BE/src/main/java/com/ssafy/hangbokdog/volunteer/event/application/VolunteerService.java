@@ -8,7 +8,9 @@ import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.domain.AddressBook;
 import com.ssafy.hangbokdog.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -34,6 +36,7 @@ public class VolunteerService {
     private final VolunteerSlotRepository slotRepository;
     private final CenterRepository centerRepository;
     private final CenterMemberRepository centerMemberRepository;
+    private final AddressBookRepository addressBookRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
@@ -51,17 +54,23 @@ public class VolunteerService {
 
         List<String> imageUrls = extractTopImageUrls(request.activityLog());
 
+        AddressBook addressBook = addressBookRepository.findById(request.addressBookId())
+                .orElseThrow(() -> new BadRequestException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
+
+
         VolunteerEvent event = VolunteerEvent.builder()
                 .centerId(centerId)
                 .title(request.title())
                 .content(request.content())
                 .imageUrls(imageUrls)
-                .address(request.address())
+                .address(addressBook.getAddress())
                 .startDate(request.startDate())
+                .addressBookId(request.addressBookId())
                 .endDate(request.endDate())
                 .activityLog(request.activityLog())
                 .precaution(request.precaution())
                 .info(request.info())
+                .addressName(addressBook.getAddressName())
                 .build();
 
         event = eventRepository.save(event);
