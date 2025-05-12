@@ -33,6 +33,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
+import com.ssafy.hangbokdog.dog.dog.dto.response.LocationDogCountResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.ProtectedDogCountResponse;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
@@ -280,6 +281,10 @@ public class DogService {
 			.toList();
 
 		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
+	}
+
+	public LocationDogCountResponse getLocationDogCount(Long locationId) {
+		return new LocationDogCountResponse(dogRepository.getLocationDogCount(locationId));
 	}
 
 

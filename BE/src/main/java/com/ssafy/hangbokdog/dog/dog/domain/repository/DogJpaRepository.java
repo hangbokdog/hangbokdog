@@ -14,4 +14,6 @@ public interface DogJpaRepository extends JpaRepository<Dog, Long>, DogJpaReposi
    			WHERE d.centerId = :centerId AND d.status != 'ADOPTED' AND d.isStar = false
 		""")
 	int countByCenterId(@Param("centerId") Long centerId);
+
+	int countByLocationId(Long locationId);
 }
