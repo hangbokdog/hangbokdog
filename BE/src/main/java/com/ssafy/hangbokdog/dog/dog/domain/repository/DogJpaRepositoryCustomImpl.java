@@ -132,7 +132,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					dog.birth
 				),
 				dog.gender,
-					dog.isStar
+				dog.isStar
 			))
 			.from(dog)
 			.leftJoin(addressBook)
@@ -148,7 +148,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				inBirthRange(start, end),
 				hasLocationIds(locationIds)
 			)
-			.orderBy(dog.createdAt.desc())
+			.orderBy(dog.id.desc())
 			.limit(pageSize + 1)
 			.fetch();
 	}
@@ -157,7 +157,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		if (pageToken == null) {
 			return null;
 		}
-		return dog.createdAt.lt(LocalDateTime.parse(pageToken));
+		return dog.id.lt(Long.parseLong(pageToken));
 	}
 
 	private BooleanExpression hasName(String name) {
