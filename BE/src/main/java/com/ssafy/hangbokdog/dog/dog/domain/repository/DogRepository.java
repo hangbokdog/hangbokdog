@@ -63,24 +63,24 @@ public class DogRepository {
 
 	public PageInfo<DogSummaryInfo> searchDogs(
 		String name,
-		DogBreed breed,
+		List<DogBreed> breeds,
 		Gender gender,
 		LocalDateTime start,
 		LocalDateTime end,
 		Boolean isNeutered,
-		String location,
+		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
 		String pageToken
 	) {
 		var data = dogJpaRepository.searchDogs(
 			name,
-			breed,
+			breeds,
 			gender,
 			start,
 			end,
 			isNeutered,
-			location,
+			locationIds,
 			isStar,
 			centerId,
 			pageToken,

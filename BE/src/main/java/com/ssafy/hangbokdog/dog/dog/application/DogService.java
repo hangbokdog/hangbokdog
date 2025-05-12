@@ -230,24 +230,24 @@ public class DogService {
 	public PageInfo<DogSearchResponse> searchDogs(
 		Long memberId,
 		String name,
-		DogBreed breed,
+		List<DogBreed> breeds,
 		Gender gender,
 		LocalDateTime start,
 		LocalDateTime end,
 		Boolean isNeutered,
-		String location,
+		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
 		String pageToken
 	) {
 		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchDogs(
 			name,
-			breed,
+			breeds,
 			gender,
 			start,
 			end,
 			isNeutered,
-			location,
+			locationIds,
 			isStar,
 			centerId,
 			pageToken
@@ -276,7 +276,7 @@ public class DogService {
 				dog.gender(),
 				favoriteDogIds.contains(dog.dogId()),
 				favoriteCountMap.getOrDefault(dog.dogId(), 0),
-					dog.isStar()
+				dog.isStar()
 			))
 			.toList();
 
