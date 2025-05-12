@@ -25,7 +25,8 @@ import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpd
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -136,16 +137,29 @@ public class VolunteerController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{addressBookId}/volunteerTemplates")
-    public ResponseEntity<VolunteerTemplateResponse> findVolunteerTemplate(
+    @GetMapping("/{addressBookId}/volunteerTemplates/info")
+    public ResponseEntity<VolunteerTemplateInfoResponse> findVolunteerTemplateInfo(
             @AuthMember Member member,
             @PathVariable Long addressBookId,
             @RequestParam Long centerId
     ) {
-        return ResponseEntity.ok(volunteerService.findVolunteerTemplate(
+        return ResponseEntity.ok(volunteerService.findVolunteerTemplateInfo(
                 member,
                 addressBookId,
                 centerId)
+        );
+    }
+
+    @GetMapping("/{addressBookId}/volunteerTemplates/precaution")
+    public ResponseEntity<VolunteerTemplatePrecautionResponse> findVolunteerTemplatePrecaution(
+        @AuthMember Member member,
+        @PathVariable Long addressBookId,
+        @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok(volunteerService.findVolunteerTemplatePrecaution(
+            member,
+            addressBookId,
+            centerId)
         );
     }
 }
