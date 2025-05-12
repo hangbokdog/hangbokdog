@@ -23,6 +23,7 @@ public record DogDetailInfo(
 	Boolean isNeutered,
 	DogBreed breed,
 	Integer age,
-	String location
+	String location,
+	Long locationId
 ) {
 }

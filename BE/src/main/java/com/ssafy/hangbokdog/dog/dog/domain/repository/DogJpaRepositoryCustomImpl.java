@@ -52,7 +52,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					"timestampdiff(MONTH, {0}, {1})",
 					dog.birth, LocalDateTime.now()
 				),
-				addressBook.addressName
+				addressBook.addressName,
+				dog.locationId
 			))
 			.from(dog)
 			.leftJoin(center)
