@@ -32,7 +32,7 @@ export const fetchMyJoinRequestCenters = async () => {
 export interface AddressBook {
 	id: number;
 	addressName: string;
-	address: string;
+	address: Location;
 }
 
 export const fetchAddressBooks = async (
@@ -107,5 +107,23 @@ export const fetchCenterJoinRequestAPI = async (
 	const response = await localAxios.get(`/centerJoinRequests/${centerId}`, {
 		params: { pageToken },
 	});
+	return response.data;
+};
+
+export const approveCenterJoinRequestAPI = async (
+	centerJoinRequestId: string,
+) => {
+	const response = await localAxios.post(
+		`/centerJoinRequests/${centerJoinRequestId}/approve`,
+	);
+	return response.data;
+};
+
+export const rejectCenterJoinRequestAPI = async (
+	centerJoinRequestId: string,
+) => {
+	const response = await localAxios.patch(
+		`/centerJoinRequests/${centerJoinRequestId}/reject`,
+	);
 	return response.data;
 };
