@@ -1,4 +1,4 @@
-export type TargetGrade = "ALL" | "VOLUNTEER" | "DONOR";
+export type TargetGrade = "ALL" | "USER" | "MANAGER";
 
 export interface TransportRequest {
 	title: string;
