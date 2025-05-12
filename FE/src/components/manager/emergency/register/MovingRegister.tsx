@@ -1,22 +1,17 @@
 import { useState } from "react";
-import { CalendarIcon, SearchIcon } from "lucide-react";
+import { createTransportPostAPI } from "@/api/emergencyRegister";
 import useCenterStore from "@/lib/store/centerStore";
-import { createPostTypeAPI, createPostAPI } from "@/api/emergencyRegister";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
-		id: "",
-		currentLocation: "",
-		destinationLocation: "",
-		date: "",
-		reason: "",
+		title: "",
+		content: "",
+		dueDate: "",
+		targetGrade: "ALL",
 	});
 
-	const [boardName, setBoardName] = useState("");
 	const { selectedCenter } = useCenterStore();
 	const centerId = Number(selectedCenter?.centerId);
-
-	console.log("현재 선택된 센터 ID:", selectedCenter?.centerId);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -29,117 +24,73 @@ export default function MovingRegister() {
 		e.preventDefault();
 
 		if (!centerId) {
-			alert("센터가 또는 사용자 정보가 없습니다.");
+			alert("센터 정보가 없습니다.");
 			return;
 		}
 
 		try {
-			const { boardTypeId } = await createPostTypeAPI(centerId, {
-				name: boardName,
+			await createTransportPostAPI(centerId, {
+				title: formData.title,
+				content: formData.content,
+				dueDate: new Date(formData.dueDate).toISOString(),
+				targetGrade: "ALL",
 			});
-			console.log("생성된 게시판 ID:", boardTypeId);
+			alert("운송 게시글이 등록되었습니다!");
 
-			const post = await createPostAPI(centerId, {
-				boardTypeId,
-				dogId: Number(formData.id),
-				title: "아이 이동 등록",
-				content: `
-			🐶 아이 ID: ${formData.id}
-			📍 현재 위치: ${formData.currentLocation}
-			🚚 이동 위치: ${formData.destinationLocation}
-			📅 이동 일시: ${formData.date}
-			✏️ 사유: ${formData.reason}
-		`,
-				files: [],
-			});
-
-			console.log("게시글 등록 성공:", post);
-			alert("등록이 완료되었습니다!");
-
-			// 초기화
+			// 입력값 초기화
 			setFormData({
-				id: "",
-				currentLocation: "",
-				destinationLocation: "",
-				date: "",
-				reason: "",
+				title: "",
+				content: "",
+				dueDate: "",
+				targetGrade: "ALL",
 			});
-		} catch (error) {
-			console.error("등록 실패:", error);
+		} catch (err) {
+			console.error("등록 실패:", err);
 			alert("등록에 실패했습니다.");
 		}
 	};
 
 	return (
-		<div className="max-w-md mx-auto p-6">
-			<div>
-				<div className="block text-gray-700 text-lg font-medium mb-2">
-					게시판 이름
-				</div>
-				<input
-					type="text"
-					value={boardName}
-					onChange={(e) => setBoardName(e.target.value)}
-					className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-				/>
-			</div>
-
+		<div className="max-w-md mx-auto px-0 py-6">
 			<form onSubmit={handleSubmit} className="space-y-6">
-				{/* id 필드 */}
+				{/* 제목 */}
 				<Field
-					label="아이"
-					name="id"
-					value={formData.id}
+					label="제목"
+					name="title"
+					value={formData.title}
 					onChange={handleChange}
-					onIconClick={() => console.log("아이 검색")}
 				/>
 
-				{/* currentLocation 필드 */}
+				{/* 이동 일시 */}
 				<Field
-					label="현위치"
-					name="currentLocation"
-					value={formData.currentLocation}
+					label="이동 일시"
+					name="dueDate"
+					value={formData.dueDate}
 					onChange={handleChange}
-					onIconClick={() => console.log("현위치 검색")}
 				/>
 
-				{/* destinationLocation 필드 */}
-				<Field
-					label="이동 위치"
-					name="destinationLocation"
-					value={formData.destinationLocation}
-					onChange={handleChange}
-					onIconClick={() => console.log("이동 위치 검색")}
-				/>
-
-				{/* date 필드 */}
-				<Field
-					label="일시"
-					name="date"
-					value={formData.date}
-					onChange={handleChange}
-					icon={<CalendarIcon className="h-5 w-5 text-gray-500" />}
-					onIconClick={() => console.log("달력 열기")}
-				/>
-
-				{/* reason 필드 */}
-				<div>
-					<div className="block text-gray-700 text-lg font-medium mb-2">
+				{/* 사유 (content) */}
+				<div className="mx-2.5">
+					<label
+						htmlFor="content"
+						className="block text-gray-700 text-lg font-medium mb-2"
+					>
 						사유
-					</div>
+					</label>
 					<textarea
-						name="reason"
-						value={formData.reason}
+						name="content"
+						id="content"
+						value={formData.content}
 						onChange={handleChange}
 						rows={6}
-						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none"
 					/>
 				</div>
 
 				<div className="pt-4">
 					<button
 						type="submit"
-						className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-full transition duration-200"
+						className="w-full bg-male text-white font-medium py-3 px-4 rounded-full transition"
 					>
 						등록하기
 					</button>
@@ -149,24 +100,20 @@ export default function MovingRegister() {
 	);
 }
 
-// 🔧 공통 input 필드 컴포넌트
+// 공통 필드 컴포넌트
 function Field({
 	label,
 	name,
 	value,
 	onChange,
-	icon = <SearchIcon className="h-5 w-5 text-gray-500" />,
-	onIconClick,
 }: {
 	label: string;
 	name: string;
 	value: string;
 	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-	icon?: React.ReactNode;
-	onIconClick: () => void;
 }) {
 	return (
-		<div>
+		<div className="mx-2.5">
 			<label
 				htmlFor={name}
 				className="block text-gray-700 text-lg font-medium mb-2"
@@ -175,21 +122,13 @@ function Field({
 			</label>
 			<div className="relative">
 				<input
-					type="text"
+					type={name === "dueDate" ? "date" : "text"}
 					id={name}
 					name={name}
 					value={value}
 					onChange={onChange}
-					className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+					className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-4"
 				/>
-				<button
-					type="button"
-					className="absolute right-2 top-1/2 transform -translate-y-1/2"
-					onClick={onIconClick}
-					aria-label={`${label} 검색`}
-				>
-					{icon}
-				</button>
 			</div>
 		</div>
 	);

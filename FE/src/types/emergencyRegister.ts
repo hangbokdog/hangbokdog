@@ -1,22 +1,24 @@
-export interface MovingRegisterForm {
-	dogName: string;
-	currentLocation: string;
-	destinationLocation: string;
-	date: string;
-	description: string;
+export type TargetGrade = "ALL" | "VOLUNTEER" | "DONOR";
+
+export interface TransportRequest {
+	title: string;
+	content: string;
+	dueDate: string; // ISO 8601 형식
+	targetGrade: TargetGrade;
 }
 
-export interface DonationRegisterForm {
+export interface DonationRequest {
 	title: string;
-	donation: number;
-	date: string;
-	description: string;
+	content: string;
+	dueDate: string;
+	targetAmount: number;
+	targetGrade: TargetGrade;
 }
 
-export interface VolunteerRegisterForm {
+export interface VolunteerRequest {
 	title: string;
-	people: number;
-	location: string;
-	date: string;
-	description: string;
+	content: string;
+	dueDate: string;
+	capacity: number;
+	targetGrade: TargetGrade;
 }
