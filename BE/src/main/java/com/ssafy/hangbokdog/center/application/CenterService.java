@@ -115,6 +115,21 @@ public class CenterService {
 		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
 	}
 
+	public void reject(Member member, Long centerJoinRequestId) {
+		var centerJoinRequest = centerJoinRequestRepository.findById(centerJoinRequestId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
+
+		Long centerId = centerJoinRequest.getCenterId();
+		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
+	}
+
 	public PageInfo<CenterJoinRequestResponse> findAll(Member member, Long centerId, String pageToken) {
 		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
 				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
