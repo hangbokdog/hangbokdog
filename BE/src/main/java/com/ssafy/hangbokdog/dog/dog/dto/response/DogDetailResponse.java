@@ -25,11 +25,11 @@ public record DogDetailResponse(
 	DogBreed breed,
 	int age,
 	String location,
+	Long locationId,
 	boolean isLiked,
 	int favoriteCount,
 	int currentSponsorCount,
 	int dogCommentCount
-
 ) {
 	public static DogDetailResponse from(
 		DogDetailInfo info,
@@ -55,6 +55,7 @@ public record DogDetailResponse(
 			info.breed(),
 			info.age(),
 			info.location(),
+			info.locationId(),
 			isLiked,
 			favoriteCount,
 			currentSponsorCount,
