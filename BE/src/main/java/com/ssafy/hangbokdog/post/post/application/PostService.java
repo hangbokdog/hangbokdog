@@ -2,7 +2,6 @@ package com.ssafy.hangbokdog.post.post.application;
 
 import java.util.List;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +11,6 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
-import com.ssafy.hangbokdog.fcm.dto.event.EmergencyPostEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.post.domain.Post;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
@@ -23,7 +21,6 @@ import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -31,7 +28,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final CenterRepository centerRepository;
     private final CenterMemberRepository centerMemberRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     public Long create(
             Member member,
@@ -52,21 +48,6 @@ public class PostService {
                 .build();
 
         Post post = postRepository.save(newPost);
-
-        if (postRepository.findPostTypeNameByPostTypeId(post.getPostTypeId()).equals("긴급")) {
-            log.info("응급알림 발생");
-            String centerName = centerRepository.findNameById(post.getCenterId());
-            eventPublisher.publishEvent(
-                    new EmergencyPostEvent(
-                            post.getId(),
-                            centerId,
-                            post.getTitle(),
-                            post.getContent(),
-                            centerName
-                    )
-            );
-            log.info("응급알림발생 후");
-        }
 
         return newPost.getId();
     }
