@@ -76,7 +76,7 @@ export const locations = {
 	SEOGWIPO: "SEOGWIPO",
 } as const;
 
-export type Location = (typeof Location)[keyof typeof Location];
+export type Location = (typeof locations)[keyof typeof locations];
 
 export const LocationLabel: Record<keyof typeof locations, string> = {
 	SEOUL: "서울",

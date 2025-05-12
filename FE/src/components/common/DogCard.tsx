@@ -107,6 +107,7 @@ export default function DogCard({
 							src={imageUrl}
 							alt={name}
 							className="aspect-square object-cover"
+							referrerPolicy="no-referrer"
 							onError={() => setImgError(true)}
 						/>
 					)}

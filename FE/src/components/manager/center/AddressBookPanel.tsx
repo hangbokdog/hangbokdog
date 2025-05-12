@@ -70,12 +70,17 @@ export default function AddressBookPanel() {
 	});
 
 	const handleSubmit = () => {
+		if (formData.addressName === "" || formData.address === "") {
+			toast.error("주소와 지역명을 입력해주세요.");
+			return;
+		}
+
 		registerCenter();
 	};
 
 	return (
 		<div className="flex flex-col bg-white rounded-lg shadow-custom-sm p-4 text-grayText font-semibold gap-2">
-			<div className="flex items-center justify-between">지역</div>
+			<span className="text-lg font-bold">지역</span>
 
 			<div className="flex flex-col">
 				<button

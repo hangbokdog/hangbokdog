@@ -18,6 +18,43 @@ export const createDogAPI = async (data: FormData) => {
 	return response.data.dogId;
 };
 
+export interface UpdateDogRequest {
+	dogName: string;
+	weight: number;
+	description: string;
+	isNeutered: boolean;
+	locationId: number;
+	dogBreed: DogBreed;
+}
+
+export const updateDogAPI = async (
+	centerId: string,
+	dogId: number,
+	request: UpdateDogRequest,
+	image: File | null,
+) => {
+	const formData = new FormData();
+
+	const jsonBlob = new Blob([JSON.stringify(request)], {
+		type: "application/json",
+	});
+
+	formData.append("request", jsonBlob);
+
+	if (image) {
+		formData.append("image", image);
+	}
+
+	const response = await localAxios.patch(`/dogs/${dogId}`, formData, {
+		params: { centerId },
+		headers: {
+			"Content-Type": "multipart/form-data",
+		},
+	});
+
+	return response.data;
+};
+
 export const getLatestDogAPI = async (
 	centerId: string,
 ): Promise<DogLatestResponse> => {
@@ -44,6 +81,7 @@ export interface DogDetailResponse {
 	breed: DogBreed;
 	age: number;
 	location: string;
+	locationId: number;
 	isLiked: boolean;
 	favoriteCount: number;
 	currentSponsorCount: number;
@@ -68,6 +106,45 @@ export interface DogSponsor {
 export const fetchDogSponsors = async (dogId: number) => {
 	const response = await localAxios.get(`/dogs/fosters/${dogId}`);
 	return response.data as DogSponsor[];
+};
+
+export interface MedicalHistoryRequest {
+	content: string;
+	medicalPeriod: number;
+	medicalType: MedicalType;
+	operatedDate: string;
+}
+
+export const createDogMedicalHistoryAPI = async (
+	dogId: number,
+	centerId: number,
+	request: MedicalHistoryRequest,
+	image: File | null,
+) => {
+	const formData = new FormData();
+
+	const jsonBlob = new Blob([JSON.stringify(request)], {
+		type: "application/json",
+	});
+
+	formData.append("request", jsonBlob);
+
+	if (image) {
+		formData.append("image", image);
+	}
+
+	const response = await localAxios.post(
+		`/dogs/${dogId}/medical-history`,
+		formData,
+		{
+			params: { centerId },
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		},
+	);
+
+	return response.data;
 };
 
 export interface MedicalHistoryResponse {
@@ -163,12 +240,12 @@ export interface DogSearchResponse {
 export interface DogSearchRequest {
 	centerId: string;
 	name?: string;
-	breed?: DogBreed;
+	breed?: DogBreed[];
 	gender?: Gender;
 	start?: string;
 	end?: string;
 	isNeutered?: boolean;
-	location?: string;
+	locationId?: string[];
 	isStar?: boolean;
 }
 
@@ -178,13 +255,18 @@ export const fetchDogsAPI: QueryFunction<
 	string | null
 > = async ({ pageParam = null, queryKey }) => {
 	const [, params] = queryKey as [string, DogSearchRequest];
+
+	const serializedParams = {
+		...params,
+		breed: params.breed?.join(","),
+		locationId: params.locationId?.join(","),
+		pageToken: pageParam,
+	};
+
 	const response = await localAxios.get<PageInfo<DogSearchResponse>>(
 		"/dogs/search",
 		{
-			params: {
-				...params,
-				pageToken: pageParam,
-			},
+			params: serializedParams,
 		},
 	);
 	console.log("response", response.data);
