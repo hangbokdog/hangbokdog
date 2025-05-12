@@ -95,7 +95,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					dog.birth
 				),
 				dog.gender,
-					dog.createdAt
+				dog.createdAt,
+				dog.isStar
 			))
 			.from(dog)
 			.where(dog.centerId.eq(centerId)
