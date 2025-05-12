@@ -21,8 +21,11 @@ import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -109,5 +112,40 @@ public class VolunteerController {
             @PathVariable Long addressBookId
     ) {
         return ResponseEntity.ok(volunteerService.findEndedVolunteersInAddressBook(addressBookId, pageToken));
+    }
+
+    @PostMapping("/{addressBookId}/volunteerTemplates/info")
+    public ResponseEntity<Void> updateVolunteerTemplateInfo(
+            @AuthMember Member member,
+            @PathVariable Long addressBookId,
+            @RequestParam Long centerId,
+            @RequestBody VolunteerTemplateInfoUpdateRequest request
+    ) {
+        volunteerService.updateTemplateInfo(member, addressBookId, request, centerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{addressBookId}/volunteerTemplates/precaution")
+    public ResponseEntity<Void> updateVolunteerTemplate(
+            @AuthMember Member member,
+            @PathVariable Long addressBookId,
+            @RequestParam Long centerId,
+            @RequestBody VolunteerTemplatePrecautionUpdateRequest request
+    ) {
+        volunteerService.updateTemplatePrecaution(member, addressBookId, request, centerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{addressBookId}/volunteerTemplats")
+    public ResponseEntity<VolunteerTemplateResponse> findVolunteerTemplate(
+            @AuthMember Member member,
+            @PathVariable Long addressBookId,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok(volunteerService.findVolunteerTemplate(
+                member,
+                addressBookId,
+                centerId)
+        );
     }
 }

@@ -74,6 +74,7 @@ public enum ErrorCode {
     SLOT_FULL(15004, "해당 봉사 슬롯의 정원이 가득 찼습니다."),
     VOLUNTEER_APPLICATION_NOT_FOUND(15005, "존재하지 않는 봉사 신청입니다."),
     VOLUNTEER_APPLICATION_PROCESSING_FAILED(15006, "신청한 봉사에 대한 처리를 실패했습니다."),
+    VOLUNTEER_TEMPLATE_NOT_FOUND(15007, "봉사 템플릿을 찾을 수 없습니다."),
 
     CENTER_NOT_FOUND(16000, "존재하지 않는 센터입니다."),
     ALREADY_JOIN_CENTER(16001, "이미 가입한 센터입니다."),

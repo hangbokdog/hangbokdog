@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.domain.AddressBook;
-import com.ssafy.hangbokdog.center.domain.Center;
 import com.ssafy.hangbokdog.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
@@ -15,6 +14,8 @@ import com.ssafy.hangbokdog.center.dto.response.AddressBookResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerTemplate;
+import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerTemplateRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,9 +23,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AddressBookService {
 
+	private static final String DEFAULT_INFO = "기본 정보 템플릿이 없습니다.";
+	private static final String DEFAULT_PRECAUTION = "기본 주의사항 템플릿이 없습니다";
+
 	private final AddressBookRepository addressBookRepository;
 	private final CenterMemberRepository centerMemberRepository;
+	private final VolunteerTemplateRepository volunteerTemplateRepository;
 
+	@Transactional
 	public void save(AddressBookRequest request, Long centerId, Long memberId) {
 
 		CenterMember centerMember = getCenterMember(centerId, memberId);
@@ -32,6 +38,13 @@ public class AddressBookService {
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
+
+		volunteerTemplateRepository.save(
+				VolunteerTemplate.builder()
+						.info(DEFAULT_INFO)
+						.precaution(DEFAULT_PRECAUTION)
+						.build()
+		);
 
 		AddressBook addressBook = AddressBook.builder()
 			.addressName(request.addressName())

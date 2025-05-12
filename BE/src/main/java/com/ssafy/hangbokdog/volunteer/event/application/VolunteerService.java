@@ -16,15 +16,20 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepository;
+import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerTemplateRepository;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,6 +42,7 @@ public class VolunteerService {
     private final CenterRepository centerRepository;
     private final CenterMemberRepository centerMemberRepository;
     private final AddressBookRepository addressBookRepository;
+    private final VolunteerTemplateRepository volunteerTemplateRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
@@ -189,5 +195,63 @@ public class VolunteerService {
 
     public PageInfo<VolunteerResponse> findEndedVolunteersInAddressBook(Long addressBookId, String pageToken) {
         return eventRepository.findEndedVolunteerEventInAddressBook(addressBookId, pageToken);
+    }
+
+    @Transactional
+    public void updateTemplateInfo(
+            Member member,
+            Long addressBookId,
+            VolunteerTemplateInfoUpdateRequest request,
+            Long centerId
+    ) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        var volunteerTemplate = volunteerTemplateRepository.findByAddressBookId(addressBookId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_TEMPLATE_NOT_FOUND));
+
+        volunteerTemplate.updateInfo(request.info());
+    }
+
+    @Transactional
+    public void updateTemplatePrecaution(
+            Member member,
+            Long addressBookId,
+            VolunteerTemplatePrecautionUpdateRequest request,
+            Long centerId
+    ) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        var volunteerTemplate = volunteerTemplateRepository.findByAddressBookId(addressBookId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_TEMPLATE_NOT_FOUND));
+
+        volunteerTemplate.updatePrecaution(request.precaution());
+    }
+
+    public VolunteerTemplateResponse findVolunteerTemplate(
+            Member member,
+            Long addressBookId,
+            Long centerId
+    ) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        var volunteerTemplate = volunteerTemplateRepository.findByAddressBookId(addressBookId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_TEMPLATE_NOT_FOUND));
+
+        return VolunteerTemplateResponse.from(volunteerTemplate);
     }
 }
