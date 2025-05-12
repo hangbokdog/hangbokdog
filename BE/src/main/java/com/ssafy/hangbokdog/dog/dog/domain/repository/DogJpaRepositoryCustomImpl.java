@@ -109,12 +109,12 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	@Override
 	public List<DogSummaryInfo> searchDogs(
 		String name,
-		DogBreed breed,
+		List<DogBreed> breeds,
 		Gender gender,
 		LocalDateTime start,
 		LocalDateTime end,
 		Boolean isNeutered,
-		String location,
+		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
 		String pageToken,
@@ -142,12 +142,12 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.centerId.eq(centerId),
 				isInRange(pageToken),
 				hasName(name),
-				hasBreed(breed),
+				hasBreeds(breeds),
 				hasGender(gender),
 				isNeuteredEq(isNeutered),
 				isStarEq(isStar),
 				inBirthRange(start, end),
-				hasLocation(location)
+				hasLocationIds(locationIds)
 			)
 			.orderBy(dog.createdAt.desc())
 			.limit(pageSize + 1)
@@ -165,8 +165,9 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		return (name == null || name.isBlank()) ? null : dog.name.containsIgnoreCase(name);
 	}
 
-	private BooleanExpression hasBreed(DogBreed breed) {
-		return (breed == null) ? null : dog.dogBreed.eq(breed);
+	private BooleanExpression hasBreeds(List<DogBreed> breeds) {
+		if (breeds == null || breeds.isEmpty()) return null;
+		return dog.dogBreed.in(breeds);
 	}
 
 	private BooleanExpression hasGender(Gender gender) {
@@ -189,8 +190,9 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		}
 	}
 
-	private BooleanExpression hasLocation(String location) {
-		return (location == null || location.isBlank()) ? null : addressBook.addressName.eq(location);
+	private BooleanExpression hasLocationIds(List<Long> locationIds) {
+		if (locationIds == null || locationIds.isEmpty()) return null;
+		return dog.locationId.in(locationIds);
 	}
 
 	private BooleanExpression isStarEq(Boolean isStar) {

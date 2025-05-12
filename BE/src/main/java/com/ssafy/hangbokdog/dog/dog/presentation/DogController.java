@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.dog.dog.presentation;
 
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -201,12 +202,12 @@ public class DogController {
 	public ResponseEntity<PageInfo<DogSearchResponse>> search(
 		@AuthMember Member member,
 		@RequestParam(value = "name", required = false) String name,
-		@RequestParam(value = "breed", required = false) DogBreed breed,
+		@RequestParam(value = "breed", required = false) List<DogBreed> breeds,
 		@RequestParam(value = "gender", required = false) Gender gender,
 		@RequestParam(value = "start", required = false) LocalDateTime start,
 		@RequestParam(value = "end", required = false) LocalDateTime end,
 		@RequestParam(value = "isNeutered", required = false) Boolean isNeutered,
-		@RequestParam(value = "location", required = false) String location,
+		@RequestParam(value = "locationId", required = false) List<Long> locationIds,
 		@RequestParam(value = "isStar", required = false) Boolean isStar,
 		@RequestParam(value = "centerId") Long centerId,
 		@RequestParam(required = false) String pageToken
@@ -214,18 +215,19 @@ public class DogController {
 		PageInfo<DogSearchResponse> response = dogService.searchDogs(
 			member.getId(),
 			name,
-			breed,
+			breeds,
 			gender,
 			start,
 			end,
 			isNeutered,
-			location,
+			locationIds,
 			isStar,
 			centerId,
 			pageToken
 		);
 		return ResponseEntity.ok().body(response);
 	}
+
 
 	@GetMapping("/location/{locationId}/count")
 	public ResponseEntity<LocationDogCountResponse> locationDogCount(@PathVariable Long locationId) {
