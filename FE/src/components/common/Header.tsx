@@ -78,7 +78,7 @@ export default function Header() {
 				</div>
 			</Link>
 			{selectedCenter?.centerName && (
-				<div className="relative group">
+				<div className="relative group z-100">
 					<button
 						type="button"
 						className="flex items-center gap-1 text-grayText hover:text-main"
