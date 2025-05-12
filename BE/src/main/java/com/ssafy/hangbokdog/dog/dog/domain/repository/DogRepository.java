@@ -108,4 +108,12 @@ public class DogRepository {
 	public int getLocationDogCount(Long locationId) {
 		return dogJpaRepository.countByLocationId(locationId);
 	}
+
+	public void updateDogLocation(Long locationId, Long newLocationId) {
+		dogJpaRepository.bulkUpdateDogLocationId(locationId, newLocationId);
+	}
+
+	public void deleteAllByLocationId(Long locationId) {
+		dogJpaRepository.deleteAllByLocationId(locationId);
+	}
 }

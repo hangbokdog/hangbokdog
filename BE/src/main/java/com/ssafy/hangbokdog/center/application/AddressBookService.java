@@ -14,6 +14,7 @@ import com.ssafy.hangbokdog.center.dto.request.AddressBookRequest;
 import com.ssafy.hangbokdog.center.dto.response.AddressBookResponse;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class AddressBookService {
 
 	private final AddressBookRepository addressBookRepository;
 	private final CenterMemberRepository centerMemberRepository;
+	private final DogRepository dogRepository;
 
 	public void save(AddressBookRequest request, Long centerId, Long memberId) {
 
@@ -54,7 +56,13 @@ public class AddressBookService {
 		}
 
 		addressBook.updateAddress(request.addressName(), request.address());
-	}
+
+		if (request.newLocationId() != null) {
+			dogRepository.updateDogLocation(request.locationId(), request.newLocationId());
+		} else {
+			dogRepository.deleteAllByLocationId(request.locationId());
+		}
+ 	}
 
 	public List<AddressBookResponse> getAddressBooks(Long centerId) {
 		return addressBookRepository.getAddressBookByCenter(centerId);
