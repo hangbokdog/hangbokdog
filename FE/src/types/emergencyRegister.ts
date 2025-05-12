@@ -1,5 +1,5 @@
 export interface MovingRegisterForm {
-	dogId: number;
+	dogName: string;
 	currentLocation: string;
 	destinationLocation: string;
 	date: string;

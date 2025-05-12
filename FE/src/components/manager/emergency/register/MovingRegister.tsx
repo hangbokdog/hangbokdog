@@ -12,6 +12,7 @@ export default function MovingRegister() {
 		reason: "",
 	});
 
+	const [boardName, setBoardName] = useState("");
 	const { selectedCenter } = useCenterStore();
 	const centerId = Number(selectedCenter?.centerId);
 
@@ -28,28 +29,28 @@ export default function MovingRegister() {
 		e.preventDefault();
 
 		if (!centerId) {
-			alert("센터가 선택되지 않았습니다.");
+			alert("센터가 또는 사용자 정보가 없습니다.");
 			return;
 		}
 
 		try {
-			// 1. 게시판 생성
-			const postType = await createPostTypeAPI(centerId, {
-				name: "이동등록",
-				// description: "아이 이동 등록용 게시판입니다.",
+			const { boardTypeId } = await createPostTypeAPI(centerId, {
+				name: boardName,
 			});
+			console.log("생성된 게시판 ID:", boardTypeId);
 
-			// 2. 게시글 생성
-			const post = await createPostAPI({
-				postTypeId: postType.id,
+			const post = await createPostAPI(centerId, {
+				boardTypeId,
+				dogId: Number(formData.id),
 				title: "아이 이동 등록",
 				content: `
-          🐶 아이 ID: ${formData.id}
-          📍 현재 위치: ${formData.currentLocation}
-          🚚 이동 위치: ${formData.destinationLocation}
-          📅 이동 일시: ${formData.date}
-          ✏️ 사유: ${formData.reason}
-        `,
+			🐶 아이 ID: ${formData.id}
+			📍 현재 위치: ${formData.currentLocation}
+			🚚 이동 위치: ${formData.destinationLocation}
+			📅 이동 일시: ${formData.date}
+			✏️ 사유: ${formData.reason}
+		`,
+				files: [],
 			});
 
 			console.log("게시글 등록 성공:", post);
@@ -71,6 +72,18 @@ export default function MovingRegister() {
 
 	return (
 		<div className="max-w-md mx-auto p-6">
+			<div>
+				<div className="block text-gray-700 text-lg font-medium mb-2">
+					게시판 이름
+				</div>
+				<input
+					type="text"
+					value={boardName}
+					onChange={(e) => setBoardName(e.target.value)}
+					className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
+			</div>
+
 			<form onSubmit={handleSubmit} className="space-y-6">
 				{/* id 필드 */}
 				<Field
