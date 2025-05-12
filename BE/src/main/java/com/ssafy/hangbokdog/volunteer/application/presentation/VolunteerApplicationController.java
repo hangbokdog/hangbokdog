@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.application.application.VolunteerApplicationService;
+import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -72,5 +74,23 @@ public class VolunteerApplicationController {
     ) {
         volunteerApplicationService.delete(applicationId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{eventId}/applications")
+    public ResponseEntity<PageInfo<ApplicationResponse>> findAll(
+            @AuthMember Member member,
+            @PathVariable Long eventId,
+            @RequestParam VolunteerApplicationStatus status,
+            @RequestParam(required = false) String pageToken,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok(volunteerApplicationService.findAll(
+                member,
+                eventId,
+                status,
+                pageToken,
+                centerId
+                )
+        );
     }
 }

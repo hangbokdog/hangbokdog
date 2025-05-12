@@ -16,7 +16,11 @@ import java.util.Set;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 
@@ -105,5 +109,35 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                         e.getValue()
                 ))
                 .toList();
+    }
+
+    @Override
+    public List<ApplicationResponse> findAll(
+            Long volunteerEventId,
+            VolunteerApplicationStatus status,
+            String pageToken,
+            int pageSize
+    ) {
+        return queryFactory.select(Projections.constructor(
+                ApplicationResponse.class,
+                    volunteerApplication.id,
+                    volunteerApplication.memberId,
+                    volunteerApplication.volunteerId,
+                    volunteerApplication.status
+                )).from(volunteerApplication)
+                .where(volunteerApplication.id.eq(volunteerEventId).and(
+                        volunteerApplication.status.eq(status)).and(
+                                volunteerApplication.status.eq(status)
+                ), isInRange(pageToken))
+                .limit(pageSize)
+                .fetch();
+    }
+
+    private BooleanExpression isInRange(String pageToken) {
+        if (pageToken == null) {
+            return null;
+        }
+
+        return volunteerApplication.id.lt(Long.valueOf(pageToken));
     }
 }

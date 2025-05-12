@@ -6,7 +6,10 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
+import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class VolunteerApplicationRepository {
+
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final VolunteerApplicationJpaRepository volunteerApplicationJpaRepository;
 
@@ -38,5 +43,14 @@ public class VolunteerApplicationRepository {
 
     public void delete(VolunteerApplication application) {
         volunteerApplicationJpaRepository.delete(application);
+    }
+
+    public PageInfo<ApplicationResponse> findAll(
+            Long volunteerEventId,
+            VolunteerApplicationStatus status,
+            String pageToken
+    ) {
+        var data = volunteerApplicationJpaRepository.findAll(volunteerEventId, status, pageToken, DEFAULT_PAGE_SIZE);
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, ApplicationResponse::id);
     }
 }
