@@ -1,4 +1,4 @@
-import Search from "@/components/common/Search";
+import Search from "@/components/common/filter/Search";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { debounce } from "lodash";
@@ -11,6 +11,7 @@ import {
 } from "@/api/center";
 import useCenterStore from "@/lib/store/centerStore";
 import { createCenter } from "@/api/center";
+import { locations } from "@/types/center";
 
 interface centerResponseData {
 	centerId: string;
@@ -73,8 +74,9 @@ export default function CenterDecisionPage() {
 
 	const handleDummyCenterCreate = () => {
 		createCenterMutate({
-			name: "더미 보호소",
+			name: "신청 확인용",
 			sponsorAmount: 25000,
+			centerCity: locations.SEOUL,
 		});
 	};
 
