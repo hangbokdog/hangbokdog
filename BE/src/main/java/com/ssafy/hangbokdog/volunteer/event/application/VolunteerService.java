@@ -114,16 +114,16 @@ public class VolunteerService {
     // TODO: 필요하다면 페이지네이션 추가
     public List<VolunteerResponse> findAll(Long centerId) {
         return eventRepository.findAllOpenEvents(centerId).stream()
-                .map(volunteerInfo -> VolunteerResponse.of(
-                        volunteerInfo.id(),
-                        volunteerInfo.title(),
-                        volunteerInfo.content(),
-                        volunteerInfo.address(),
-                        volunteerInfo.addressName(),
-                        volunteerInfo.startDate(),
-                        volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().get(0)))
-                .toList();
+            .map(volunteerInfo -> VolunteerResponse.of(
+                volunteerInfo.id(),
+                volunteerInfo.title(),
+                volunteerInfo.content(),
+                volunteerInfo.address(),
+                volunteerInfo.addressName(),
+                volunteerInfo.startDate(),
+                volunteerInfo.endDate(),
+                volunteerInfo.imageUrls().isEmpty() ? null : volunteerInfo.imageUrls().get(0)
+            )).toList();
     }
 
     public VolunteerDetailResponse findById(Long eventId) {
