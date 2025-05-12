@@ -28,6 +28,9 @@ public class Emergency extends BaseEntity {
 	@Column(name = "emergency_id", nullable = false)
 	private Long id;
 
+	@Column(name = "author_id", nullable = false)
+	private Long authorId;
+
 	@Column(name = "center_id", nullable = false)
 	private Long centerId;
 
