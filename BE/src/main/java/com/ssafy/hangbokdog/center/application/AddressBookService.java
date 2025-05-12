@@ -39,20 +39,21 @@ public class AddressBookService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
+		AddressBook addressBook = AddressBook.builder()
+				.addressName(request.addressName())
+				.address(request.address())
+				.centerId(centerId)
+				.build();
+
+		addressBookRepository.save(addressBook);
+
 		volunteerTemplateRepository.save(
 				VolunteerTemplate.builder()
 						.info(DEFAULT_INFO)
 						.precaution(DEFAULT_PRECAUTION)
+						.addressBookId(addressBook.getId())
 						.build()
 		);
-
-		AddressBook addressBook = AddressBook.builder()
-			.addressName(request.addressName())
-			.address(request.address())
-			.centerId(centerId)
-			.build();
-
-		addressBookRepository.save(addressBook);
 	}
 
 	@Transactional
