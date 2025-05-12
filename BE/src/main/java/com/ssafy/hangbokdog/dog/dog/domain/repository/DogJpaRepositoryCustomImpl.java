@@ -95,7 +95,6 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					dog.birth
 				),
 				dog.gender,
-				dog.createdAt,
 				dog.isStar
 			))
 			.from(dog)
@@ -133,7 +132,6 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 					dog.birth
 				),
 				dog.gender,
-					dog.createdAt,
 					dog.isStar
 			))
 			.from(dog)

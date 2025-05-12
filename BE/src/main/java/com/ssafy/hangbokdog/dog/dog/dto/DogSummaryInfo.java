@@ -10,7 +10,6 @@ public record DogSummaryInfo(
 	String imageUrl,
 	int ageMonth,
 	Gender gender,
-	LocalDateTime createdAt,
 	Boolean isStar
 ) {
 }

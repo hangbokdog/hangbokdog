@@ -86,7 +86,7 @@ public class DogRepository {
 			pageToken,
 			DOG_PAGE_SIZE
 		);
-		return PageInfo.of(data, DOG_PAGE_SIZE, DogSummaryInfo::createdAt);
+		return PageInfo.of(data, DOG_PAGE_SIZE, DogSummaryInfo::dogId);
 	}
 
 	public void deleteMedicalHistory(Long id) {
