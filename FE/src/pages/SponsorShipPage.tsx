@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import DogCard from "@/components/common/DogCard";
-import Search from "@/components/common/Search";
+import Search from "@/components/common/filter/Search";
 import AISearchPanel from "@/components/common/AISearchPanel";
 import ScrollButton from "@/components/common/ScrollButton";
 import dog1 from "@/assets/images/dog1.png";

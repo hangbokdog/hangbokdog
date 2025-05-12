@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 interface DogInfoItemProps {
 	label: string;
-	value: string;
+	value: string | ReactNode;
 	className?: string;
 }
 

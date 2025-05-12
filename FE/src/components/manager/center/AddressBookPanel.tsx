@@ -70,6 +70,11 @@ export default function AddressBookPanel() {
 	});
 
 	const handleSubmit = () => {
+		if (formData.addressName === "" || formData.address === "") {
+			toast.error("주소와 지역명을 입력해주세요.");
+			return;
+		}
+
 		registerCenter();
 	};
 

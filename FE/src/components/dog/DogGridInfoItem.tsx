@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 interface DogGridInfoItemProps {
 	label: string;
-	value: string;
+	value: string | ReactNode;
 }
 
 export default function DogGridInfoItem({

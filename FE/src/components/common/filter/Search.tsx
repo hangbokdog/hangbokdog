@@ -8,19 +8,18 @@ import {
 	DrawerFooter,
 	DrawerHeader,
 	DrawerTitle,
-	DrawerTrigger,
 	DrawerDescription,
+	DrawerTrigger,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import {
-	type DogBreed,
-	DogBreedLabel,
-	type Gender,
-	GenderLabel,
-} from "@/types/dog";
 import type { DogSearchRequest } from "@/api/dog";
 import useManagerStore from "@/lib/store/managerStore";
+import BreedFilter from "./BreedFilter";
+import GenderFilter from "./GenderFilter";
+import AgeFilter from "./AgeFilter";
+import NeuteredFilter from "./NeuteredFilter";
+import LocationFilter from "./LocationFilter";
 
 interface SearchProps {
 	onClickAISearch?: () => void;
@@ -35,7 +34,7 @@ interface SearchProps {
 	onFilterChange?: (filters: Partial<DogSearchRequest>) => void;
 }
 
-type FilterTab = "breed" | "gender" | "isNeutered" | "location";
+type FilterTab = "breed" | "gender" | "age" | "isNeutered" | "location";
 
 export default function Search({
 	onClickAISearch,
@@ -63,6 +62,7 @@ export default function Search({
 	const filterTabs: FilterTab[] = [
 		"breed",
 		"gender",
+		"age",
 		"isNeutered",
 		"location",
 	];
@@ -80,9 +80,28 @@ export default function Search({
 
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const handleOptionSelect = (key: keyof DogSearchRequest, value: any) => {
+		setTempFilter((prev) => {
+			if (key === "breed" || key === "locationId") {
+				const currentValues = prev[key] || [];
+				return {
+					...prev,
+					[key]: currentValues.includes(value)
+						? currentValues.filter((v) => v !== value)
+						: [...currentValues, value],
+				};
+			}
+			return {
+				...prev,
+				[key]: prev[key] === value ? undefined : value,
+			};
+		});
+	};
+
+	const handleDateChange = (start?: string, end?: string) => {
 		setTempFilter((prev) => ({
 			...prev,
-			[key]: prev[key] === value ? undefined : value,
+			start,
+			end,
 		}));
 	};
 
@@ -105,7 +124,7 @@ export default function Search({
 							<MdFilterAlt className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
 						</DrawerTrigger>
 						<DrawerContent
-							className="bg-white"
+							className="bg-white min-h-[40%]"
 							aria-describedby="drawer-description"
 						>
 							<div className="mx-auto w-full max-w-[440px]">
@@ -141,6 +160,7 @@ export default function Search({
 											>
 												{tab === "breed" && "종"}
 												{tab === "gender" && "성별"}
+												{tab === "age" && "나이"}
 												{tab === "isNeutered" &&
 													"중성화"}
 												{tab === "location" && "보호소"}
@@ -149,132 +169,62 @@ export default function Search({
 									</div>
 								</DrawerHeader>
 								<div className="p-4">
-									<div className="flex flex-wrap gap-2">
-										{selectedTab === "breed" &&
-											Object.entries(DogBreedLabel).map(
-												([key, label]) => (
-													<button
-														key={key}
-														onClick={() =>
-															handleOptionSelect(
-																"breed",
-																key as DogBreed,
-															)
-														}
-														className={cn(
-															"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
-															tempFilter.breed ===
-																key
-																? "bg-primary text-white"
-																: "bg-gray-100",
-														)}
-														type="button"
-													>
-														{label}
-													</button>
-												),
-											)}
-										{selectedTab === "gender" &&
-											Object.entries(GenderLabel).map(
-												([key, label]) => (
-													<button
-														key={key}
-														onClick={() =>
-															handleOptionSelect(
-																"gender",
-																key as Gender,
-															)
-														}
-														className={cn(
-															"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
-															tempFilter.gender ===
-																key
-																? "bg-primary text-white"
-																: "bg-gray-100",
-														)}
-														type="button"
-													>
-														{label}
-													</button>
-												),
-											)}
-										{selectedTab === "isNeutered" && (
-											<div className="flex gap-2">
-												<button
-													onClick={() =>
-														handleOptionSelect(
-															"isNeutered",
-															true,
-														)
-													}
-													className={cn(
-														"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
-														tempFilter.isNeutered ===
-															true
-															? "bg-primary text-white"
-															: "bg-gray-100",
-													)}
-													type="button"
-												>
-													완료
-												</button>
-												<button
-													onClick={() =>
-														handleOptionSelect(
-															"isNeutered",
-															false,
-														)
-													}
-													className={cn(
-														"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
-														tempFilter.isNeutered ===
-															false
-															? "bg-primary text-white"
-															: "bg-gray-100",
-													)}
-													type="button"
-												>
-													미완료
-												</button>
-											</div>
-										)}
-										{selectedTab === "location" && (
-											<div className="flex gap-2">
-												{addressBook.length > 0 ? (
-													addressBook.map(
-														(address) => (
-															<button
-																key={address.id}
-																onClick={() =>
-																	handleOptionSelect(
-																		"location",
-																		address.addressName,
-																	)
-																}
-																className={cn(
-																	"px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors",
-																	tempFilter.location ===
-																		address.addressName
-																		? "bg-primary text-white"
-																		: "bg-gray-100",
-																)}
-																type="button"
-															>
-																{
-																	address.addressName
-																}
-															</button>
-														),
-													)
-												) : (
-													<p className="text-sm text-gray-500 col-span-full">
-														등록된 주소록이
-														없습니다.
-													</p>
-												)}
-											</div>
-										)}
-									</div>
+									{selectedTab === "breed" && (
+										<BreedFilter
+											selectedBreeds={
+												tempFilter.breed || []
+											}
+											onSelect={(breed) =>
+												handleOptionSelect(
+													"breed",
+													breed,
+												)
+											}
+										/>
+									)}
+									{selectedTab === "gender" && (
+										<GenderFilter
+											selectedGender={tempFilter.gender}
+											onSelect={(gender) =>
+												handleOptionSelect(
+													"gender",
+													gender,
+												)
+											}
+										/>
+									)}
+									{selectedTab === "age" && (
+										<AgeFilter
+											startDate={tempFilter.start}
+											endDate={tempFilter.end}
+											onDateChange={handleDateChange}
+										/>
+									)}
+									{selectedTab === "isNeutered" && (
+										<NeuteredFilter
+											isNeutered={tempFilter.isNeutered}
+											onSelect={(value) =>
+												handleOptionSelect(
+													"isNeutered",
+													value,
+												)
+											}
+										/>
+									)}
+									{selectedTab === "location" && (
+										<LocationFilter
+											selectedLocations={
+												tempFilter.locationId || []
+											}
+											addressBook={addressBook}
+											onSelect={(location) =>
+												handleOptionSelect(
+													"locationId",
+													location,
+												)
+											}
+										/>
+									)}
 								</div>
 								<DrawerFooter className="flex-row justify-end gap-2">
 									<DrawerClose>

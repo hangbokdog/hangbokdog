@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import DogCard from "@/components/common/DogCard";
-import Search from "@/components/common/Search";
+import Search from "@/components/common/filter/Search";
 import AISearchPanel from "@/components/common/AISearchPanel";
 import ScrollButton from "@/components/common/ScrollButton";
 import { useInfiniteQuery } from "@tanstack/react-query";

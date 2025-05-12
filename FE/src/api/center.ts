@@ -1,8 +1,10 @@
+import type { Location } from "@/types/center";
 import localAxios, { type PageInfo } from "./http-commons";
 
 export interface centerCreateRequest {
 	name: string;
 	sponsorAmount: number;
+	centerCity: Location;
 }
 
 export const createCenter = async (data: centerCreateRequest) => {

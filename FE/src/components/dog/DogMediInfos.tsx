@@ -1,17 +1,37 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { FaPills, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	FaPills,
+	FaChevronDown,
+	FaChevronUp,
+	FaPlusCircle,
+} from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import DogInfoCard from "./DogInfoCard";
-import { fetchDogMedicalHistory, type MedicalHistoryResponse } from "@/api/dog";
+import {
+	createDogMedicalHistoryAPI,
+	fetchDogMedicalHistory,
+	type MedicalHistoryResponse,
+} from "@/api/dog";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
+import type { MedicalType } from "@/types/dog";
+import { toast } from "sonner";
 
 interface DogMediInfosProps {
 	dogId: number;
+	isManager: boolean;
+	centerId: number;
 }
 
-export default function DogMediInfos({ dogId }: DogMediInfosProps) {
+export default function DogMediInfos({
+	dogId,
+	isManager,
+	centerId,
+}: DogMediInfosProps) {
 	const [isExpanded, setIsExpanded] = useState(false);
+	const [open, setOpen] = useState(false);
+	const queryClient = useQueryClient();
 
 	const {
 		data: medicalHistories,
@@ -22,6 +42,10 @@ export default function DogMediInfos({ dogId }: DogMediInfosProps) {
 		queryFn: () => fetchDogMedicalHistory(Number(dogId)),
 		enabled: isExpanded && !!dogId,
 	});
+
+	const toLocalDateTimeString = (date: string): string => {
+		return `${date}T00:00:00`;
+	};
 
 	const formatDate = (dateStr: string): string => {
 		if (!dateStr || Number.isNaN(Date.parse(dateStr))) {
@@ -34,8 +58,65 @@ export default function DogMediInfos({ dogId }: DogMediInfosProps) {
 		setIsExpanded((prev) => !prev);
 	};
 
+	const [form, setForm] = useState<{
+		content: string;
+		medicalPeriod: number;
+		medicalType: MedicalType;
+		operatedDate: string;
+	}>({
+		content: "",
+		medicalPeriod: 1,
+		medicalType: "MEDICATION",
+		operatedDate: new Date().toISOString().split("T")[0], // 오늘 날짜
+	});
+
+	const [imageFile, setImageFile] = useState<File | null>(null);
+
+	const mutation = useMutation({
+		mutationFn: async () => {
+			const request = {
+				...form,
+				operatedDate: toLocalDateTimeString(form.operatedDate),
+			};
+			return await createDogMedicalHistoryAPI(
+				dogId,
+				centerId,
+				request,
+				imageFile,
+			);
+		},
+		onSuccess: () => {
+			toast.success("의료 기룍이 등록되었습니다");
+			setOpen(false);
+			setForm({
+				content: "",
+				medicalPeriod: 1,
+				medicalType: "MEDICATION",
+				operatedDate: new Date().toISOString().split("T")[0],
+			});
+			setImageFile(null);
+			queryClient.invalidateQueries({
+				queryKey: ["dogMedicalHistory", dogId],
+			});
+		},
+		onError: () => {
+			toast.error("등록 실패");
+		},
+	});
+
 	return (
-		<DogInfoCard title="복약정보">
+		<DogInfoCard title="의료 기록">
+			{isManager && (
+				<div className="w-full flex justify-end px-2">
+					<button
+						type="button"
+						className="flex justify-end px-4 items-center gap-2 bg-male text-white rounded-full hover:bg-blue"
+						onClick={() => setOpen(true)}
+					>
+						추가하기 <FaPlusCircle />
+					</button>
+				</div>
+			)}
 			<div className="flex flex-col gap-2">
 				<button
 					type="button"
@@ -123,6 +204,142 @@ export default function DogMediInfos({ dogId }: DogMediInfosProps) {
 						</motion.div>
 					)}
 				</AnimatePresence>
+
+				<Drawer open={open} onOpenChange={setOpen}>
+					<DrawerContent>
+						<div className="mx-auto w-full max-w-sm">
+							<DrawerHeader>
+								<DrawerTitle>복약정보 추가</DrawerTitle>
+							</DrawerHeader>
+							<div className="p-4 space-y-4">
+								{/* 이미지 업로드 */}
+								<div className="flex flex-col gap-1">
+									<label
+										htmlFor="image"
+										className="text-sm font-medium text-gray-700"
+									>
+										이미지 (선택)
+									</label>
+									<input
+										id="image"
+										type="file"
+										accept="image/*"
+										className="border px-3 py-2 rounded-md"
+										onChange={(e) => {
+											const file = e.target.files?.[0];
+											if (file) {
+												setImageFile(file);
+											}
+										}}
+									/>
+								</div>
+								{/* Content 입력 */}
+								<div className="flex flex-col gap-1">
+									<label
+										htmlFor="content"
+										className="text-sm font-medium text-gray-700"
+									>
+										내용
+									</label>
+									<input
+										id="content"
+										type="text"
+										className="border px-3 py-2 rounded-md"
+										value={form.content}
+										onChange={(e) =>
+											setForm({
+												...form,
+												content: e.target.value,
+											})
+										}
+									/>
+								</div>
+
+								{/* Medical Period 입력 */}
+								<div className="flex flex-col gap-1">
+									<label
+										htmlFor="period"
+										className="text-sm font-medium text-gray-700"
+									>
+										복약 주기 (일)
+									</label>
+									<input
+										id="period"
+										type="number"
+										className="border px-3 py-2 rounded-md"
+										value={form.medicalPeriod}
+										onChange={(e) =>
+											setForm({
+												...form,
+												medicalPeriod: Number(
+													e.target.value,
+												),
+											})
+										}
+									/>
+								</div>
+
+								{/* Medical Type 선택 */}
+								<div className="flex flex-col gap-1">
+									<label
+										htmlFor="type"
+										className="text-sm font-medium text-gray-700"
+									>
+										종류
+									</label>
+									<select
+										id="type"
+										className="border px-3 py-2 rounded-md"
+										value={form.medicalType}
+										onChange={(e) =>
+											setForm({
+												...form,
+												medicalType: e.target
+													.value as MedicalType,
+											})
+										}
+									>
+										<option value="SURGERY">수술</option>
+										<option value="MEDICATION">복약</option>
+									</select>
+								</div>
+
+								{/* Operated Date 선택 */}
+								<div className="flex flex-col gap-1">
+									<label
+										htmlFor="date"
+										className="text-sm font-medium text-gray-700"
+									>
+										시행일
+									</label>
+									<input
+										id="date"
+										type="date"
+										className="border px-3 py-2 rounded-md"
+										value={form.operatedDate}
+										onChange={(e) =>
+											setForm({
+												...form,
+												operatedDate: e.target.value,
+											})
+										}
+									/>
+								</div>
+
+								{/* 등록 버튼 */}
+								<div className="flex justify-end pt-2">
+									<button
+										type="button"
+										className="bg-male text-white px-4 py-2 rounded-md font-semibold"
+										onClick={() => mutation.mutate()}
+									>
+										등록
+									</button>
+								</div>
+							</div>
+						</div>
+					</DrawerContent>
+				</Drawer>
 			</div>
 		</DogInfoCard>
 	);

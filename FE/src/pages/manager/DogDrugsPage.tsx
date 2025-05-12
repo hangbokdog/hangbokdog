@@ -1,4 +1,4 @@
-import Search from "@/components/common/Search";
+import Search from "@/components/common/filter/Search";
 import DogDrugsPanel from "@/components/manager/dogs/DogDrugsPanel";
 
 export default function DogDrugsPage() {
