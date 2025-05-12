@@ -166,7 +166,9 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	}
 
 	private BooleanExpression hasBreeds(List<DogBreed> breeds) {
-		if (breeds == null || breeds.isEmpty()) return null;
+		if (breeds == null || breeds.isEmpty()) {
+			return null;
+		}
 		return dog.dogBreed.in(breeds);
 	}
 
@@ -191,7 +193,9 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	}
 
 	private BooleanExpression hasLocationIds(List<Long> locationIds) {
-		if (locationIds == null || locationIds.isEmpty()) return null;
+		if (locationIds == null || locationIds.isEmpty()) {
+			return null;
+		}
 		return dog.locationId.in(locationIds);
 	}
 
