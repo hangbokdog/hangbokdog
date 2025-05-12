@@ -142,7 +142,8 @@ public class DogService {
 			request.weight(),
 			request.description(),
 			request.isNeutered(),
-			request.locationId()
+			request.locationId(),
+			request.dogBreed()
 		);
 	}
 

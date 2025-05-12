@@ -103,7 +103,8 @@ public class Dog extends BaseEntity {
 		Double weight,
 		String description,
 		Boolean isNeutered,
-		Long locationId
+		Long locationId,
+		DogBreed dogBreed
 	) {
 		this.name = name;
 		this.profileImage = profileImageUrl;
@@ -111,6 +112,7 @@ public class Dog extends BaseEntity {
 		this.description = description;
 		this.isNeutered = isNeutered;
 		this.locationId = locationId;
+		this.dogBreed = dogBreed;
 	}
 
 	@Builder
