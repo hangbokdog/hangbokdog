@@ -2,9 +2,11 @@ import { getLatestDogAPI } from "@/api/dog";
 import { getLatestVolunteerAPI } from "@/api/volunteer";
 import EmptyState from "@/components/common/EmptyState";
 import { DogPanelSkeleton } from "@/components/dog/SkeletonComponents";
+import CenterJoinPrompt from "@/components/home/CenterJoinPrompt";
 import DogPanel from "@/components/home/DogPanel";
 import DonationPanel from "@/components/home/DonationPanel";
 import EmergencyPanel from "@/components/home/EmergencyPanel";
+import ManagerDashboardPanel from "@/components/home/ManagerDashboardPanel";
 import MyDonationPanel from "@/components/home/MyDonationPanel";
 import VolunteerPanel from "@/components/home/VolunteerPanel";
 import { VolunteerPanelSkeleton } from "@/components/volunteer/SkeletonComponents";
@@ -12,7 +14,9 @@ import useCenterStore from "@/lib/store/centerStore";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-	const centerId = useCenterStore.getState().selectedCenter?.centerId;
+	const { selectedCenter, isCenterMember } = useCenterStore();
+	const centerId = selectedCenter?.centerId;
+	const isManager = selectedCenter?.status === "MANAGER";
 
 	const { data: volunteers, isLoading: isVolunteersLoading } = useQuery({
 		queryKey: ["volunteers", "latest", centerId],
@@ -28,6 +32,8 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col gap-3 w-full mt-2.5">
+			{isManager && <ManagerDashboardPanel />}
+			{!isCenterMember && <CenterJoinPrompt />}
 			<EmergencyPanel />
 
 			{isVolunteersLoading ? (

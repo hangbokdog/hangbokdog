@@ -15,8 +15,6 @@ import type { ApplicantItemProps } from "@/types/volunteer";
 
 export const ApplicantItem = ({
 	applicant,
-	onApprove,
-	onReject,
 	formatDate,
 	isApproved = false,
 }: ApplicantItemProps) => {
@@ -79,10 +77,7 @@ export const ApplicantItem = ({
 								</AlertDialogHeader>
 								<AlertDialogFooter>
 									<AlertDialogCancel>취소</AlertDialogCancel>
-									<AlertDialogAction
-										className="bg-red-500 hover:bg-red-600"
-										onClick={() => onReject(applicant.id)}
-									>
+									<AlertDialogAction className="bg-red-500 hover:bg-red-600">
 										거절하기
 									</AlertDialogAction>
 								</AlertDialogFooter>
@@ -111,10 +106,7 @@ export const ApplicantItem = ({
 								</AlertDialogHeader>
 								<AlertDialogFooter>
 									<AlertDialogCancel>취소</AlertDialogCancel>
-									<AlertDialogAction
-										className="bg-blue-500 hover:bg-blue-600"
-										onClick={() => onApprove(applicant.id)}
-									>
+									<AlertDialogAction className="bg-blue-500 hover:bg-blue-600">
 										수락하기
 									</AlertDialogAction>
 								</AlertDialogFooter>

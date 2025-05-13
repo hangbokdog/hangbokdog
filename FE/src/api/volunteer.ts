@@ -1,4 +1,8 @@
-import type { ClosedVolunteerResponse, Volunteer } from "@/types/volunteer";
+import type {
+	ClosedVolunteerResponse,
+	Volunteer,
+	VolunteerApplicantsResponse,
+} from "@/types/volunteer";
 import localAxios from "./http-commons";
 
 export const getLatestVolunteerAPI = async ({
@@ -80,16 +84,6 @@ export const updateVolunteerAPI = async ({
 // 봉사활동 일정 삭제
 export const deleteVolunteerAPI = async ({ id }: { id: number }) => {
 	const response = await localAxios.delete(`volunteers/${id}`);
-	return response.data;
-};
-
-// 봉사 신청자 목록 조회
-export const getVolunteerApplicantsAPI = async ({
-	volunteerId,
-}: { volunteerId: number }) => {
-	const response = await localAxios.get(
-		`volunteers/${volunteerId}/applicants`,
-	);
 	return response.data;
 };
 
@@ -269,6 +263,31 @@ export const applyVolunteerAPI = async ({
 	const response = await localAxios.post(
 		`/volunteers/${eventId}/applications`,
 		applicationData,
+	);
+	return response.data;
+};
+
+// 봉사 신청자 목록 조회
+export const getVolunteerApplicantsAPI = async ({
+	centerId,
+	eventId,
+	status,
+	pageToken,
+}: {
+	centerId: string;
+	eventId: number;
+	status: "PENDING" | "APPROVED" | "REJECTED";
+	pageToken?: string;
+}): Promise<VolunteerApplicantsResponse> => {
+	const response = await localAxios.get<VolunteerApplicantsResponse>(
+		`/volunteers/${eventId}/applications`,
+		{
+			params: {
+				centerId,
+				status,
+				pageToken,
+			},
+		},
 	);
 	return response.data;
 };
