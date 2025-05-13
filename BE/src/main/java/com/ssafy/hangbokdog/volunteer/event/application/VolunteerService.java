@@ -66,12 +66,11 @@ public class VolunteerService {
         AddressBook addressBook = addressBookRepository.findById(request.addressBookId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.ADDRESS_BOOK_NOT_FOUND));
 
-
         VolunteerEvent event = VolunteerEvent.builder()
                 .centerId(centerId)
                 .title(request.title())
                 .content(request.content())
-                .imageUrls(imageUrls)
+                .imageUrls(imageUrls.isEmpty() ? List.of(DEFAULT_VOLUNTEER_IMAGE) : imageUrls)
                 .address(addressBook.getAddress())
                 .startDate(request.startDate())
                 .addressBookId(request.addressBookId())
