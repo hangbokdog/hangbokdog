@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 
-import static com.ssafy.hangbokdog.center.domain.QAddressBook.addressBook;
+import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.addressBook;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
 

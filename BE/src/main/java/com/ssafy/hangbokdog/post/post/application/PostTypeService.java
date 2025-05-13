@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.hangbokdog.center.domain.CenterMember;
-import com.ssafy.hangbokdog.center.domain.repository.CenterMemberRepository;
-import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
+import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
+import com.ssafy.hangbokdog.center.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.post.post.domain.PostType;

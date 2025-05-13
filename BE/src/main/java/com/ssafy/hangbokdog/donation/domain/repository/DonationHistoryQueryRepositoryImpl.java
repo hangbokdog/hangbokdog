@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.donation.domain.repository;
 
-import static com.ssafy.hangbokdog.center.domain.QCenter.*;
+import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.donation.domain.QDonationHistory.*;
 
 import java.util.List;
