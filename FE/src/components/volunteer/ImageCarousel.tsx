@@ -9,13 +9,8 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import dog1 from "@/assets/images/dog1.png";
-import dog2 from "@/assets/images/dog2.png";
-import dog3 from "@/assets/images/dog3.png";
 
-const images = [dog1, dog2, dog3] as const;
-
-export default function ImageCarousel() {
+export default function ImageCarousel({ images }: { images: string[] }) {
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const handleSelect = (api: CarouselApi) => {
