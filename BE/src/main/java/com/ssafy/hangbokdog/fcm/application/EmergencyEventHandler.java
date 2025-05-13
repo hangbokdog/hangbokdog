@@ -4,10 +4,8 @@ import java.util.List;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
-import com.ssafy.hangbokdog.fcm.dto.event.EmergencyPostEvent;
+import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +20,12 @@ public class EmergencyEventHandler {
 	private final MemberRepository memberRepository;
 
 	@EventListener
-	public void handleEmergencyEvent(EmergencyPostEvent event) {
+	public void handleEmergencyEvent(EmergencyEvent event) {
 		Long centerId = event.centerId();
 
 		log.info("emergency event: " + event);
 
+		//TODO: 나중에 등급별로 보내는 기능 추가
 		List<String> targetTokens = memberRepository.findFcmTokensByCenterId(centerId);
 
 		for (String targetToken : targetTokens) {

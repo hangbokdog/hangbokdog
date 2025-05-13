@@ -107,7 +107,7 @@ public class VolunteerController {
     }
 
     @GetMapping("/{addressBookId}/addressBooks/ended")
-    public ResponseEntity<PageInfo<VolunteerResponse>> findendedVolunteerInAddressBook(
+    public ResponseEntity<PageInfo<VolunteerResponse>> findEndedVolunteerInAddressBook(
             @AuthMember Member member,
             @RequestParam(required = false) String pageToken,
             @PathVariable Long addressBookId
