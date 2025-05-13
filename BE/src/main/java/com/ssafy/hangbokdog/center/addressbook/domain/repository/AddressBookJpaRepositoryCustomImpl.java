@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookResponse;
-
 import com.ssafy.hangbokdog.vaccination.dto.LocationInfo;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository

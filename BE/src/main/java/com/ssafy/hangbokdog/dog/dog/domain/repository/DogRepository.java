@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.geolatte.geom.M;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -16,8 +15,8 @@ import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
-
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.addressbook.domain.AddressBook;
 import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookResponse;
-
 import com.ssafy.hangbokdog.vaccination.dto.LocationInfo;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository

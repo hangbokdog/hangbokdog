@@ -121,7 +121,8 @@ public class VaccinationService {
 	}
 
 	public PageInfo<VaccinationSummaryResponse> getVaccinationSummaries(Long centerId, String pageToken) {
-		PageInfo<VaccinationSummaryInfo> vaccinationSummaryInfo = vaccinationRepository.getVaccinationSummaryByCenterId(centerId, pageToken);
+		PageInfo<VaccinationSummaryInfo> vaccinationSummaryInfo = vaccinationRepository
+			.getVaccinationSummaryByCenterId(centerId, pageToken);
 
 		var data = vaccinationSummaryInfo.data();
 

@@ -3,7 +3,6 @@ package com.ssafy.hangbokdog.dog.dog.domain.repository;
 import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
-import static com.ssafy.hangbokdog.vaccination.domain.QVaccinatedDog.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,8 +19,8 @@ import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
-
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
