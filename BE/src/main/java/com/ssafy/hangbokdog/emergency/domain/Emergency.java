@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.emergency.domain;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -53,6 +54,10 @@ public class Emergency extends BaseEntity {
 	@Column(name = "target_amount")
 	private Integer targetAmount;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "emergency_type")
+	private EmergencyType emergencyType;
+
 	@Builder
 	public Emergency(
 		Long centerId,
@@ -61,7 +66,8 @@ public class Emergency extends BaseEntity {
 		String content,
 		TargetGrade targetGrade,
 		Integer capacity,
-		Integer targetAmount
+		Integer targetAmount,
+		EmergencyType emergencyType
 	) {
 		this.centerId = centerId;
 		this.dueDate = dueDate;

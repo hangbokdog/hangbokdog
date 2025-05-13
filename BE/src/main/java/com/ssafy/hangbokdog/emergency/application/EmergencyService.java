@@ -1,5 +1,8 @@
 package com.ssafy.hangbokdog.emergency.application;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,11 +13,13 @@ import com.ssafy.hangbokdog.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.emergency.domain.Emergency;
+import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.domain.repository.EmergencyRepository;
 import com.ssafy.hangbokdog.emergency.dto.request.EmergencyDonationRequest;
 import com.ssafy.hangbokdog.emergency.dto.request.EmergencyTransportRequest;
 import com.ssafy.hangbokdog.emergency.dto.request.EmergencyVolunteerRequest;
 import com.ssafy.hangbokdog.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -49,6 +54,7 @@ public class EmergencyService {
 			.content(request.content())
 			.dueDate(request.dueDate())
 			.targetGrade(request.targetGrade())
+			.emergencyType(EmergencyType.TRANSPORT)
 			.build();
 
 		eventPublisher.publishEvent(
@@ -86,6 +92,7 @@ public class EmergencyService {
 			.dueDate(request.dueDate())
 			.capacity(request.capacity())
 			.targetGrade(request.targetGrade())
+			.emergencyType(EmergencyType.VOLUNTEER)
 			.build();
 
 		eventPublisher.publishEvent(
@@ -123,6 +130,7 @@ public class EmergencyService {
 			.dueDate(request.dueDate())
 			.targetAmount(request.targetAmount())
 			.targetGrade(request.targetGrade())
+			.emergencyType(EmergencyType.DONATION)
 			.build();
 
 		eventPublisher.publishEvent(
@@ -137,5 +145,9 @@ public class EmergencyService {
 		);
 
 		return new EmergencyCreateResponse(emergencyRepository.save(emergency).getId());
+	}
+
+	public List<EmergencyResponse> getEmergencyByCenter(Long centerId, EmergencyType type) {
+		return emergencyRepository.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
 	}
 }
