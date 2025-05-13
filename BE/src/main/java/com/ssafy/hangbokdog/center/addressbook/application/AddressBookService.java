@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.addressbook.domain.AddressBook;
-import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.addressbook.domain.repository.AddressBookRepository;
-import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.addressbook.dto.request.AddressBookRequest;
 import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookResponse;
+import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
