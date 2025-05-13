@@ -1,6 +1,9 @@
 package com.ssafy.hangbokdog.emergency.presentation;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,10 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.emergency.application.EmergencyService;
+import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.dto.request.EmergencyDonationRequest;
 import com.ssafy.hangbokdog.emergency.dto.request.EmergencyTransportRequest;
 import com.ssafy.hangbokdog.emergency.dto.request.EmergencyVolunteerRequest;
 import com.ssafy.hangbokdog.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -49,5 +54,14 @@ public class EmergencyController {
 		@RequestParam Long centerId
 	) {
 		return ResponseEntity.ok().body(emergencyService.createDonationEmergency(request, member, centerId));
+	}
+
+	@GetMapping
+	public ResponseEntity<List<EmergencyResponse>> getEmergenciesByCenterId(
+		@AuthMember Member member,
+		@RequestParam Long centerId,
+		@RequestParam(required = false) EmergencyType type
+	) {
+		return ResponseEntity.ok().body(emergencyService.getEmergencyByCenter(centerId, type));
 	}
 }

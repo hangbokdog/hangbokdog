@@ -1,8 +1,13 @@
 package com.ssafy.hangbokdog.emergency.domain.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.emergency.domain.Emergency;
+import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.dto.response.EmergencyResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -14,5 +19,9 @@ public class EmergencyRepository {
 
 	public Emergency save(Emergency emergency) {
 		return emergencyJpaRepository.save(emergency);
+	}
+
+	public List<EmergencyResponse> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
+		return emergencyJpaRepository.getEmergenciesByCenterId(centerId, type, now);
 	}
 }
