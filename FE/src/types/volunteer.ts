@@ -4,9 +4,13 @@ export interface ScheduleItem {
 	date: string;
 	morning: string;
 	afternoon: string;
+	morningSlotId?: number;
+	afternoonSlotId?: number;
+	rawDate?: string;
 }
 
 export interface Participant {
+	id: number;
 	nickname: string;
 	name: string;
 	phone: string;
@@ -18,6 +22,8 @@ export interface SelectedSchedule {
 	capacity: string;
 	people: number;
 	participants: Participant[];
+	slotId?: number;
+	rawDate?: string;
 }
 
 export interface Volunteer {
@@ -97,4 +103,18 @@ export interface VolunteerItemProps {
 
 export interface VolunteerScheduleManagerProps {
 	address: AddressBook;
+}
+
+export interface APIScheduleItem {
+	date: string;
+	morning: {
+		volunteerSlotId: number;
+		appliedCount: number;
+		capacity: number;
+	};
+	afternoon: {
+		volunteerSlotId: number;
+		appliedCount: number;
+		capacity: number;
+	};
 }

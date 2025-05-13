@@ -238,3 +238,37 @@ export const createVolunteerPrecautionTemplateAPI = async ({
 	);
 	return response.data;
 };
+
+export const getVolunteerScheduleApplyAPI = async ({
+	eventId,
+}: {
+	eventId: string;
+}) => {
+	const response = await localAxios.get(`/volunteers/${eventId}/schedule`);
+	return response.data;
+};
+
+// 봉사 신청 API
+export interface VolunteerApplication {
+	date: string;
+	volunteerSlotIds: number[];
+	participantIds: number[];
+}
+
+export interface VolunteerApplicationRequest {
+	applications: VolunteerApplication[];
+}
+
+export const applyVolunteerAPI = async ({
+	eventId,
+	applicationData,
+}: {
+	eventId: string | number;
+	applicationData: VolunteerApplicationRequest;
+}) => {
+	const response = await localAxios.post(
+		`/volunteers/${eventId}/applications`,
+		applicationData,
+	);
+	return response.data;
+};
