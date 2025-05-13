@@ -4,6 +4,8 @@ import type {
 	DonationRequest,
 	VolunteerRequest,
 	EmergencyPostResponse,
+	EmergencyPost,
+	EmergencyType,
 } from "@/types/emergencyRegister";
 
 /**
@@ -60,6 +62,25 @@ export const createDonationPostAPI = async (
 ): Promise<EmergencyPostResponse> => {
 	const response = await localAxios.post("/emergencies/donation", data, {
 		params: { centerId },
+	});
+	return response.data;
+};
+
+/**
+ * 응급 게시글 목록 조회
+ *  centerId 센터 ID (필수)
+ *  type 게시글 타입 (선택): "TRANSPORT" | "DONATION" | "VOLUNTEER"
+ * returns EmergencyPost[]
+ */
+export const getEmergencyPostAPI = async (
+	centerId: number,
+	type?: EmergencyType,
+): Promise<EmergencyPost[]> => {
+	const response = await localAxios.get("/emergencies", {
+		params: {
+			centerId,
+			...(type && { type }),
+		},
 	});
 	return response.data;
 };

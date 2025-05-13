@@ -4,6 +4,12 @@ export enum TargetGrade {
 	MANAGER = "MANAGER",
 }
 
+export enum EmergencyType {
+	TRANSPORT = "TRANSPORT",
+	DONATION = "DONATION",
+	VOLUNTEER = "VOLUNTEER",
+}
+
 export interface TransportRequest {
 	title: string;
 	content: string;
@@ -29,4 +35,17 @@ export interface VolunteerRequest {
 
 export interface EmergencyPostResponse {
 	emergencyId: number;
+}
+
+export interface EmergencyPost {
+	emergencyId: number;
+	centerId: number;
+	authorId: number;
+	name: string;
+	title: string;
+	memberImage: string;
+	dueDate: string;
+	capacity?: number;
+	targetAmount?: number;
+	type: EmergencyType;
 }
