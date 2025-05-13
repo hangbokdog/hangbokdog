@@ -1,10 +1,8 @@
 package com.ssafy.hangbokdog.vaccination.application;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -88,6 +86,10 @@ public class VaccinationService {
 		vaccinationRepository.bulkInsertVaccinatedDog(request.dogIds(), vaccinationId);
 
 		vaccination.complete();
+
+		List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vaccinationId);
+
+		dogRepository.bulkInsertMedicalHistories(dogIds, vaccination.getContent(), vaccination.getOperatedDate());
 	}
 
 	public VaccinationDetailResponse getVaccinationDetail(Long vaccinationId) {

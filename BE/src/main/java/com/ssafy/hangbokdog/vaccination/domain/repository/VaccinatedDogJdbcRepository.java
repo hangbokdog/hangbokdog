@@ -17,7 +17,8 @@ public class VaccinatedDogJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	public void bulkInsertVaccinatedDog(List<Long> dogIds, Long vaccinationId) {
-		String sql = "INSERT INTO vaccinated_dog (dog_id, vaccination_id) VALUES (?, ?)";
+		String sql = "INSERT INTO vaccinated_dog (dog_id, vaccination_id, created_at, modified_at) "
+			+ "VALUES (?, ?, NOW(), NOW())";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
