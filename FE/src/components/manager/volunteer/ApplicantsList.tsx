@@ -13,7 +13,7 @@ export const ApplicantsList = ({
 }: ApplicantsListProps) => {
 	return (
 		<Tabs defaultValue="pending" className="mt-4">
-			<TabsList className="grid w-full grid-cols-2">
+			<TabsList className="grid w-full grid-cols-2 bg-superLightBlueGray">
 				<TabsTrigger value="pending">
 					대기 중 ({pendingApplicants.length})
 				</TabsTrigger>
