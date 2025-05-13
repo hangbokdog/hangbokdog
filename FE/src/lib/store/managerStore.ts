@@ -1,10 +1,5 @@
+import type { AddressBook } from "@/api/center";
 import { create } from "zustand";
-
-interface AddressBook {
-	id: number;
-	addressName: string;
-	address: string;
-}
 
 interface ManagerState {
 	addressBook: AddressBook[];

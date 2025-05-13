@@ -1,14 +1,9 @@
-import { useState } from "react";
 import { Calendar, Plus } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
 	getVolunteersByAddressBookAPI,
 	deleteVolunteerAPI,
-	getVolunteerApplicantsAPI,
-	approveVolunteerApplicationAPI,
-	rejectVolunteerApplicationAPI,
 } from "@/api/volunteer";
-import type { Volunteer, VolunteerApplicant } from "@/types/volunteer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -32,25 +27,6 @@ export default function VolunteerScheduleManager({
 			}),
 	});
 
-	// 선택된 봉사활동과 신청자 관련 상태
-	const [selectedVolunteer, setSelectedVolunteer] =
-		useState<Volunteer | null>(null);
-	const [selectedApplicantId, setSelectedApplicantId] = useState<
-		number | null
-	>(null);
-
-	// 신청자 데이터 가져오기
-	const { data: applicants = [], isLoading: isApplicantsLoading } = useQuery({
-		queryKey: ["applicants", selectedVolunteer?.id],
-		queryFn: () =>
-			selectedVolunteer
-				? getVolunteerApplicantsAPI({
-						volunteerId: selectedVolunteer.id,
-					})
-				: Promise.resolve([]),
-		enabled: !!selectedVolunteer,
-	});
-
 	// 봉사활동 삭제
 	const deleteVolunteerMutation = useMutation({
 		mutationFn: deleteVolunteerAPI,
@@ -65,34 +41,6 @@ export default function VolunteerScheduleManager({
 		},
 	});
 
-	// 봉사 신청 수락
-	const approveApplicationMutation = useMutation({
-		mutationFn: approveVolunteerApplicationAPI,
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["applicants", selectedVolunteer?.id],
-			});
-			toast.success("봉사 신청이 수락되었습니다.");
-		},
-		onError: () => {
-			toast.error("신청 수락 실패");
-		},
-	});
-
-	// 봉사 신청 거절
-	const rejectApplicationMutation = useMutation({
-		mutationFn: rejectVolunteerApplicationAPI,
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["applicants", selectedVolunteer?.id],
-			});
-			toast.success("봉사 신청이 거절되었습니다.");
-		},
-		onError: () => {
-			toast.error("신청 거절 실패");
-		},
-	});
-
 	// 일정 생성 페이지로 이동
 	const handleAddSchedule = () => {
 		navigate(`/manager/volunteer/create?addressBookId=${address.id}`);
@@ -102,38 +50,6 @@ export default function VolunteerScheduleManager({
 	const handleDeleteSchedule = (id: number) => {
 		deleteVolunteerMutation.mutate({ id });
 	};
-
-	// 신청자 승인하기
-	const handleApproveApplicant = (id: number) => {
-		setSelectedApplicantId(id);
-		if (selectedVolunteer) {
-			approveApplicationMutation.mutate({
-				volunteerId: selectedVolunteer.id,
-				applicantId: id,
-			});
-		}
-	};
-
-	// 신청자 거절하기
-	const handleRejectApplicant = (id: number) => {
-		setSelectedApplicantId(id);
-		if (selectedVolunteer) {
-			rejectApplicationMutation.mutate({
-				volunteerId: selectedVolunteer.id,
-				applicantId: id,
-			});
-		}
-	};
-
-	// 보류 중인 신청자 필터링
-	const pendingApplicants = applicants.filter(
-		(app: VolunteerApplicant) => app.status === "PENDING",
-	);
-
-	// 승인된 신청자 필터링
-	const approvedApplicants = applicants.filter(
-		(app: VolunteerApplicant) => app.status === "APPROVED",
-	);
 
 	return (
 		<div className="flex flex-col gap-5">
@@ -175,13 +91,6 @@ export default function VolunteerScheduleManager({
 								key={volunteer.id}
 								volunteer={volunteer}
 								onDelete={handleDeleteSchedule}
-								onSelectVolunteer={setSelectedVolunteer}
-								applicants={applicants}
-								pendingApplicants={pendingApplicants}
-								approvedApplicants={approvedApplicants}
-								isApplicantsLoading={isApplicantsLoading}
-								onApproveApplicant={handleApproveApplicant}
-								onRejectApplicant={handleRejectApplicant}
 								formatDate={formatDate}
 							/>
 						))}

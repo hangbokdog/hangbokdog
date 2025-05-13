@@ -1,5 +1,6 @@
 import type {
 	CheckNicknameResponse,
+	NicknameSearchResponse,
 	OauthLoginResponse,
 	UserInfoResponse,
 } from "@/types/auth";
@@ -79,5 +80,21 @@ export const logoutAPI = async () => {
 
 export const getUserInfoAPI = async (): Promise<UserInfoResponse> => {
 	const response = await localAxios.get<UserInfoResponse>("members/my");
+	return response.data;
+};
+
+export const getNicknameSearchAPI = async ({
+	nickname,
+}: {
+	nickname: string;
+}): Promise<NicknameSearchResponse> => {
+	const response = await localAxios.get<NicknameSearchResponse>(
+		"/members/search",
+		{
+			params: {
+				nickname,
+			},
+		},
+	);
 	return response.data;
 };

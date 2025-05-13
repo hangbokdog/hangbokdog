@@ -4,9 +4,13 @@ export interface ScheduleItem {
 	date: string;
 	morning: string;
 	afternoon: string;
+	morningSlotId?: number;
+	afternoonSlotId?: number;
+	rawDate?: string;
 }
 
 export interface Participant {
+	id: number;
 	nickname: string;
 	name: string;
 	phone: string;
@@ -18,6 +22,8 @@ export interface SelectedSchedule {
 	capacity: string;
 	people: number;
 	participants: Participant[];
+	slotId?: number;
+	rawDate?: string;
 }
 
 export interface Volunteer {
@@ -67,34 +73,47 @@ export interface VolunteerSchedule {
 
 export interface ApplicantItemProps {
 	applicant: VolunteerApplicant;
-	onApprove: (id: number) => void;
-	onReject: (id: number) => void;
 	formatDate: (dateString: string) => string;
 	isApproved?: boolean;
 }
 
 export interface ApplicantsListProps {
-	pendingApplicants: VolunteerApplicant[];
-	approvedApplicants: VolunteerApplicant[];
-	isLoading: boolean;
-	onApprove: (id: number) => void;
-	onReject: (id: number) => void;
 	formatDate: (dateString: string) => string;
+	eventId: number;
 }
 
 export interface VolunteerItemProps {
 	volunteer: Volunteer;
 	onDelete: (id: number) => void;
-	onSelectVolunteer: (volunteer: Volunteer) => void;
-	applicants: VolunteerApplicant[];
-	pendingApplicants: VolunteerApplicant[];
-	approvedApplicants: VolunteerApplicant[];
-	isApplicantsLoading: boolean;
-	onApproveApplicant: (id: number) => void;
-	onRejectApplicant: (id: number) => void;
 	formatDate: (dateString: string) => string;
 }
 
 export interface VolunteerScheduleManagerProps {
 	address: AddressBook;
+}
+
+export interface APIScheduleItem {
+	date: string;
+	morning: {
+		volunteerSlotId: number;
+		appliedCount: number;
+		capacity: number;
+	};
+	afternoon: {
+		volunteerSlotId: number;
+		appliedCount: number;
+		capacity: number;
+	};
+}
+
+export interface VolunteerApplicantsResponse {
+	pageToken: string;
+	data: VolunteerApplicant[];
+	hasNext: boolean;
+}
+export interface VolunteerApplicant {
+	id: number;
+	memberId: number;
+	volunteerId: number;
+	status: "PENDING" | "APPROVED" | "REJECTED";
 }

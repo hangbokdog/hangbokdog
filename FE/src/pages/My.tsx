@@ -4,8 +4,10 @@ import Order from "@/components/my/Order";
 import ProtectDogPanel from "@/components/my/ProtectDogPanel";
 import { logoutAPI } from "@/api/auth";
 import useAuthStore from "@/lib/store/authStore";
+import useCenterStore from "@/lib/store/centerStore";
 import { useMutation } from "@tanstack/react-query";
 import { MdLogout } from "react-icons/md";
+import { BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
@@ -15,6 +17,7 @@ function handleEdit() {
 
 export default function My() {
 	const { clearAuth } = useAuthStore();
+	const { selectedCenter, clearSelectedCenter } = useCenterStore();
 	const navigate = useNavigate();
 
 	const logoutMutation = useMutation({
@@ -35,6 +38,12 @@ export default function My() {
 		logoutMutation.mutate();
 	};
 
+	const handleCenterChange = () => {
+		clearSelectedCenter();
+		toast.success("센터를 변경하였습니다.");
+		navigate("/");
+	};
+
 	return (
 		<div className="flex flex-col mt-2.5">
 			<Profile
@@ -45,6 +54,30 @@ export default function My() {
 					console.log("프로필 수정 클릭됨");
 				}}
 			/>
+
+			{selectedCenter && (
+				<div className="mx-2.5 mb-3">
+					<div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+						<div className="flex items-center">
+							<BuildingIcon className="w-4 h-4 text-gray-500 mr-2" />
+							<div>
+								<p className="text-xs text-gray-500">내 센터</p>
+								<p className="text-sm font-medium">
+									{selectedCenter.centerName}
+								</p>
+							</div>
+						</div>
+						<button
+							type="button"
+							onClick={handleCenterChange}
+							className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-main hover:bg-main hover:text-white transition-all duration-200"
+						>
+							변경하기
+						</button>
+					</div>
+				</div>
+			)}
+
 			<div className="grid grid-cols-2 justify-center gap-3 mx-2.5">
 				<div className="h-[165px]">
 					<MileageCard />

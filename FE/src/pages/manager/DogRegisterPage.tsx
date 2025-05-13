@@ -215,7 +215,7 @@ export default function DogRegisterPage() {
 	};
 
 	return (
-		<div className="flex flex-col gap-5 p-4 text-sm text-grayText bg-white">
+		<div className="flex flex-col gap-10 p-4 text-base text-grayText bg-white">
 			<label className="w-full h-48 bg-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
 				{profilePreview ? (
 					<img

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MdEditNote } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DogImage from "@/components/dog/DogImage";
 import DogHeader from "@/components/dog/DogHeader";
 import DogInfoCard from "@/components/dog/DogInfoCard";
@@ -83,10 +83,7 @@ const mapDogDetailResponseToDogDetail = (
 	isStar: response.isStar ? 1 : 0,
 	gender: response.gender,
 	isNeutered: response.isNeutered ? "O" : "X",
-	breed:
-		response.breed in DogBreedLabel
-			? DogBreedLabel[response.breed as DogBreed]
-			: DogBreedLabel.OTHER,
+	breed: response.breed,
 	age: `${formatAge(response.age)}`,
 	location: response.location || "알 수 없음",
 	locationId: response.locationId,
@@ -104,6 +101,7 @@ export default function DogDetailPage() {
 	const { selectedCenter } = useCenterStore();
 	const { id } = useParams<{ id: string }>();
 	const [isEditing, setIsEditing] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement | null>(null);
 
 	const {
 		data: addressBooks,
@@ -132,7 +130,13 @@ export default function DogDetailPage() {
 			!!id && !Number.isNaN(Number(id)) && !!selectedCenter?.centerId,
 	});
 
+	useEffect(() => {
+		if (data) console.log(data);
+	}, [data]);
+
 	const [form, setForm] = useState({
+		imageFile: null as File | null,
+		imagePreview: null as string | null,
 		dogName: "",
 		weight: 0,
 		description: "",
@@ -144,6 +148,8 @@ export default function DogDetailPage() {
 	useEffect(() => {
 		if (data) {
 			setForm({
+				imageFile: null,
+				imagePreview: data.profileImageUrl || null,
 				dogName: data.dogName,
 				weight: Number.parseFloat(data.weight),
 				description: data.description,
@@ -190,14 +196,18 @@ export default function DogDetailPage() {
 	const handleUpdate = async () => {
 		try {
 			await updateDogAPI(
-				data.centerId.toString(),
+				data.centerId,
 				data.dogId,
 				{
-					...form,
+					dogName: form.dogName,
+					weight: form.weight,
+					description: form.description,
+					isNeutered: form.isNeutered,
 					locationId: form.locationId ?? 0,
-					dogBreed: form.dogBreed as DogBreed,
+					dogBreed:
+						(form.dogBreed as DogBreed) || DogBreedLabel.OTHER,
 				},
-				null,
+				form.imageFile,
 			);
 			toast.success("수정이 완료되었습니다");
 			setIsEditing(false);
@@ -208,14 +218,70 @@ export default function DogDetailPage() {
 		}
 	};
 
+	const handleImageClick = () => {
+		if (isEditing && fileInputRef.current) {
+			fileInputRef.current.click();
+		}
+	};
+
+	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			if (form.imagePreview?.startsWith("blob:")) {
+				URL.revokeObjectURL(form.imagePreview);
+			}
+			const preview = URL.createObjectURL(file);
+			setForm((prev) => ({
+				...prev,
+				imageFile: file,
+				imagePreview: preview,
+			}));
+		}
+	};
+
 	return (
 		<motion.div
-			className="flex flex-col mt-2.5"
+			className="flex flex-col"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.5 }}
 		>
-			<DogImage src={data.profileImageUrl || dog1} alt={data.dogName} />
+			<div className="relative">
+				<DogImage
+					src={
+						isEditing && form.imagePreview
+							? form.imagePreview
+							: data.profileImageUrl || dog1
+					}
+					alt={data.dogName}
+					className={isEditing ? "cursor-pointer" : ""}
+				/>
+				{isEditing && (
+					<div
+						className="absolute inset-x-0 top-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] w-full h-full p-2"
+						onClick={handleImageClick}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" || e.key === " ") {
+								handleImageClick();
+							}
+						}}
+					>
+						<p className="text-xl font-semibold text-superLightBlueGray">
+							이미지 변경하기
+						</p>
+					</div>
+				)}
+			</div>
+			{isEditing && (
+				<input
+					type="file"
+					accept="image/*"
+					ref={fileInputRef}
+					style={{ display: "none" }}
+					onChange={handleImageChange}
+				/>
+			)}
+
 			<div className="flex flex-col p-2.5 gap-3">
 				<DogHeader
 					name={data.dogName}
@@ -263,13 +329,14 @@ export default function DogDetailPage() {
 								isEditing ? (
 									<select
 										value={form.dogBreed}
+										defaultValue={data.breed}
 										onChange={(e) =>
 											setForm({
 												...form,
 												dogBreed: e.target.value,
 											})
 										}
-										className="w-full bg-white rounded-full p-1"
+										className="w-full bg-white rounded-full p-1 text-center"
 									>
 										{Object.entries(DogBreedLabel).map(
 											([breed, label]) => (
@@ -283,7 +350,7 @@ export default function DogDetailPage() {
 										)}
 									</select>
 								) : (
-									data.breed
+									DogBreedLabel[data.breed as DogBreed]
 								)
 							}
 						/>
@@ -297,7 +364,7 @@ export default function DogDetailPage() {
 									<input
 										type="number"
 										value={form.weight}
-										className="w-full bg-white rounded-full p-1"
+										className="w-full bg-white rounded-full p-1 text-center"
 										onChange={(e) =>
 											setForm({
 												...form,
@@ -316,7 +383,7 @@ export default function DogDetailPage() {
 								isEditing ? (
 									<select
 										value={form.isNeutered ? "O" : "X"}
-										className="flex w-full h-full justify-center"
+										className="flex w-full h-full justify-center text-center bg-white rounded-full p-1"
 										onChange={(e) =>
 											setForm({
 												...form,
@@ -340,7 +407,7 @@ export default function DogDetailPage() {
 							isEditing ? (
 								<textarea
 									value={form.description}
-									className="w-full h-32"
+									className="w-full min-h-[100px] max-h-[300px] bg-white p-1"
 									onChange={(e) =>
 										setForm({
 											...form,
@@ -382,7 +449,7 @@ export default function DogDetailPage() {
 												),
 											})
 										}
-										className="border p-2 rounded"
+										className="border p-2 rounded bg-white"
 									>
 										{addressBooks?.map((ab) => (
 											<option key={ab.id} value={ab.id}>

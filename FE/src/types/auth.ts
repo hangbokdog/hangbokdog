@@ -14,3 +14,13 @@ export interface UserInfoResponse {
 	nickName: string;
 	profileImage: string;
 }
+
+export interface NicknameSearchResponse {
+	id: number;
+	nickName: string;
+	name: string;
+	phone: string;
+	age: number;
+	grade: string;
+	profileImage: string;
+}

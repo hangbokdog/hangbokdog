@@ -1,4 +1,4 @@
-import { Calendar, Info, Trash2, Users } from "lucide-react";
+import { ArrowRight, Calendar, Info, Trash2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,
@@ -23,17 +23,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import type { VolunteerItemProps } from "@/types/volunteer";
 import { ApplicantsList } from "./ApplicantsList";
+import { Link } from "react-router-dom";
 
 export const VolunteerItem = ({
 	volunteer,
 	onDelete,
-	onSelectVolunteer,
-	applicants,
-	pendingApplicants,
-	approvedApplicants,
-	isApplicantsLoading,
-	onApproveApplicant,
-	onRejectApplicant,
 	formatDate,
 }: VolunteerItemProps) => {
 	return (
@@ -49,41 +43,47 @@ export const VolunteerItem = ({
 										variant="ghost"
 										size="icon"
 										className="rounded-full hover:bg-gray-200 h-8 w-8"
-										onClick={() =>
-											onSelectVolunteer(volunteer)
-										}
 									>
 										<Users className="w-4 h-4 text-blue-500" />
 									</Button>
 								</SheetTrigger>
 								<SheetContent
 									side="right"
-									className="overflow-y-auto w-[440px]"
+									className="overflow-y-auto w-full sm:max-w-sm md:w-[440px] py-5 px-2.5 bg-background flex flex-col h-full"
 								>
-									<SheetHeader>
-										<SheetTitle className="flex items-center">
-											<Users className="w-5 h-5 mr-2 text-blue-500" />
+									<SheetHeader className="p-0">
+										<SheetTitle className="flex items-center text-xl">
+											<Users className="w-5 h-5 mr-2 text-male" />
 											봉사 신청자 관리
 										</SheetTitle>
 										<SheetDescription>
-											{volunteer.title} (
-											{formatDate(volunteer.startDate)} ~{" "}
-											{formatDate(volunteer.endDate)})
+											<span className="text-lg font-medium text-primary">
+												{volunteer.title}
+											</span>
+											<br />
+											<span className="text-base text-grayText">
+												{formatDate(
+													volunteer.startDate,
+												)}{" "}
+												~{" "}
+												{formatDate(volunteer.endDate)}
+											</span>
 										</SheetDescription>
 									</SheetHeader>
 
-									<ApplicantsList
-										pendingApplicants={pendingApplicants}
-										approvedApplicants={approvedApplicants}
-										isLoading={isApplicantsLoading}
-										onApprove={onApproveApplicant}
-										onReject={onRejectApplicant}
-										formatDate={formatDate}
-									/>
+									<div className="flex-1 overflow-y-auto">
+										<ApplicantsList
+											formatDate={formatDate}
+											eventId={volunteer.id}
+										/>
+									</div>
 
-									<SheetFooter className="mt-6">
+									<SheetFooter className="mt-auto pt-4 pb-2 sticky bottom-0 bg-background p-0">
 										<SheetClose asChild>
-											<Button variant="outline">
+											<Button
+												variant="outline"
+												className="bg-superLightBlueGray w-full sm:w-auto"
+											>
 												닫기
 											</Button>
 										</SheetClose>
@@ -134,10 +134,20 @@ export const VolunteerItem = ({
 						{formatDate(volunteer.startDate)} ~{" "}
 						{formatDate(volunteer.endDate)}
 					</p>
-					<p className="text-sm text-gray-600 flex items-center mt-1 truncate">
-						<Info className="w-4 h-4 mr-1 text-gray-400 flex-shrink-0" />
-						{volunteer.content}
-					</p>
+					<div className="flex items-center justify-between">
+						<p className="text-sm text-gray-600 flex items-center mt-1 truncate">
+							<Info className="w-4 h-4 mr-1 text-gray-400 flex-shrink-0" />
+							{volunteer.content}
+						</p>
+						<Link to={`/volunteer/${volunteer.id}`}>
+							<Button
+								className="rounded-full bg-white hover:bg-gray-200 h-8 w-8"
+								size="icon"
+							>
+								<ArrowRight className="w-4 h-4 text-primary" />
+							</Button>
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>

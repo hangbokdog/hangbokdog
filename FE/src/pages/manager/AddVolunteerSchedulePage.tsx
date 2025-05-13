@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Clock, AlertTriangle, Info, X } from "lucide-react";
+import {
+	Clock,
+	AlertTriangle,
+	Info,
+	X,
+	Image as ImageIcon,
+} from "lucide-react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import useCenterStore from "@/lib/store/centerStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import {
 	getVolunteerInfoTemplateAPI,
 	getVolunteerPrecautionTemplateAPI,
@@ -14,6 +21,40 @@ import {
 	type VolunteerData,
 } from "@/api/volunteer";
 import { toast } from "sonner";
+import localAxios from "@/api/http-commons";
+
+// 이미지 업로드 API 함수
+const uploadVolunteerImageAPI = async (file: File) => {
+	try {
+		// FormData 생성
+		const formData = new FormData();
+		formData.append("file", file);
+
+		// API 요청 (axios 사용)
+		const response = await localAxios.post("/volunteers/images", formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+
+		// 서버에서 반환한 S3 이미지 URL 반환
+		return response.data;
+	} catch (error) {
+		// 413 Request Entity Too Large 오류 처리
+		if (axios.isAxiosError(error) && error.response?.status === 413) {
+			throw new Error("파일 크기가 너무 큽니다 (최대 10MB)");
+		}
+		throw new Error("이미지 업로드에 실패했습니다");
+	}
+};
+
+// 에디터 타입 정의
+type EditorType =
+	| "activityLog"
+	| "info"
+	| "precaution"
+	| "infoTemplate"
+	| "precautionTemplate";
 
 interface SlotType {
 	slotType: "MORNING" | "AFTERNOON";
@@ -34,10 +75,17 @@ export default function AddVolunteerSchedulePage() {
 	const { selectedCenter } = useCenterStore();
 	const queryClient = useQueryClient();
 
+	// 각 에디터별 Ref 생성
+	const activityLogQuillRef = useRef<ReactQuill>(null);
+	const infoQuillRef = useRef<ReactQuill>(null);
+	const precautionQuillRef = useRef<ReactQuill>(null);
+	const infoTemplateQuillRef = useRef<ReactQuill>(null);
+	const precautionTemplateQuillRef = useRef<ReactQuill>(null);
+
 	// URL 파라미터에서 addressBookId 확인
 	const addressBookId = searchParams.get("addressBookId");
 
-	// 상태 관리
+	// 기본 상태 관리
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
 	const [startDate, setStartDate] = useState("");
@@ -57,6 +105,19 @@ export default function AddVolunteerSchedulePage() {
 	const [afternoonStartTime, setAfternoonStartTime] = useState("15:00");
 	const [afternoonEndTime, setAfternoonEndTime] = useState("18:00");
 
+	// 각 에디터별 이미지 업로드 상태
+	const [activityLogImageUploading, setActivityLogImageUploading] =
+		useState(false);
+	const [infoImageUploading, setInfoImageUploading] = useState(false);
+	const [precautionImageUploading, setPrecautionImageUploading] =
+		useState(false);
+	const [infoTemplateImageUploading, setInfoTemplateImageUploading] =
+		useState(false);
+	const [
+		precautionTemplateImageUploading,
+		setPrecautionTemplateImageUploading,
+	] = useState(false);
+
 	// 템플릿 없음 상태 관리
 	const [infoTemplateNotFound, setInfoTemplateNotFound] = useState(false);
 	const [precautionTemplateNotFound, setPrecautionTemplateNotFound] =
@@ -68,6 +129,395 @@ export default function AddVolunteerSchedulePage() {
 		useState(false);
 	const [newInfoTemplate, setNewInfoTemplate] = useState("");
 	const [newPrecautionTemplate, setNewPrecautionTemplate] = useState("");
+
+	// 에디터 타입에 따른 상태 설정 함수
+	const getEditorState = useMemo(
+		() => (type: EditorType) => {
+			switch (type) {
+				case "activityLog":
+					return {
+						ref: activityLogQuillRef,
+						setUploading: setActivityLogImageUploading,
+						isUploading: activityLogImageUploading,
+					};
+				case "info":
+					return {
+						ref: infoQuillRef,
+						setUploading: setInfoImageUploading,
+						isUploading: infoImageUploading,
+					};
+				case "precaution":
+					return {
+						ref: precautionQuillRef,
+						setUploading: setPrecautionImageUploading,
+						isUploading: precautionImageUploading,
+					};
+				case "infoTemplate":
+					return {
+						ref: infoTemplateQuillRef,
+						setUploading: setInfoTemplateImageUploading,
+						isUploading: infoTemplateImageUploading,
+					};
+				case "precautionTemplate":
+					return {
+						ref: precautionTemplateQuillRef,
+						setUploading: setPrecautionTemplateImageUploading,
+						isUploading: precautionTemplateImageUploading,
+					};
+			}
+		},
+		[
+			activityLogQuillRef,
+			infoQuillRef,
+			precautionQuillRef,
+			infoTemplateQuillRef,
+			precautionTemplateQuillRef,
+			activityLogImageUploading,
+			infoImageUploading,
+			precautionImageUploading,
+			infoTemplateImageUploading,
+			precautionTemplateImageUploading,
+			setActivityLogImageUploading,
+			setInfoImageUploading,
+			setPrecautionImageUploading,
+			setInfoTemplateImageUploading,
+			setPrecautionTemplateImageUploading,
+		],
+	);
+
+	// 파일 업로드 함수 - S3에 업로드하고 에디터에 이미지 삽입
+	const uploadImageToS3AndInsert = useCallback(
+		async (file: File, editorType: EditorType) => {
+			const { ref, setUploading } = getEditorState(editorType);
+
+			// 파일 크기 검증 (10MB 제한)
+			if (file.size > 10 * 1024 * 1024) {
+				toast.error("파일 크기는 10MB 이하여야 합니다.");
+				return;
+			}
+
+			// 이미지 타입 검증
+			if (!file.type.startsWith("image/")) {
+				toast.error("이미지 파일만 업로드할 수 있습니다.");
+				return;
+			}
+
+			try {
+				setUploading(true);
+				console.log("이미지 업로드 시작:", file.name);
+
+				// 이미지 업로드 API 호출 - S3에 업로드
+				const s3ImageUrl = await uploadVolunteerImageAPI(file);
+				console.log("S3 업로드 성공. URL:", s3ImageUrl);
+
+				// 에디터 선택 정보 가져오기
+				const editor = ref.current?.getEditor();
+				const range = editor?.getSelection(true);
+
+				// 에디터에 포커스 주기
+				editor?.focus();
+
+				// 에디터에 S3 이미지 URL 삽입
+				if (range && editor) {
+					// 이미지 삽입
+					console.log(`이미지 삽입 시도: 위치=${range.index}`);
+					editor.insertEmbed(range.index, "image", s3ImageUrl);
+
+					// 이미지 후에 커서 이동
+					editor.setSelection(range.index + 1, 0);
+					console.log("이미지 삽입 완료");
+				} else if (editor) {
+					console.error("에디터 선택 범위를 가져올 수 없습니다");
+					// 위치를 명시적으로 지정해서 시도
+					editor.insertEmbed(0, "image", s3ImageUrl);
+				}
+
+				toast.success("이미지가 업로드되었습니다.");
+			} catch (error) {
+				const errorMessage =
+					error instanceof Error
+						? error.message
+						: "이미지 업로드 중 오류가 발생했습니다.";
+				toast.error(errorMessage);
+				console.error("이미지 업로드 에러:", error);
+			} finally {
+				setUploading(false);
+			}
+		},
+		[getEditorState],
+	);
+
+	// 각 에디터별 이미지 핸들러 생성
+	const createImageHandler = useCallback(
+		(editorType: EditorType) => {
+			return () => {
+				const input = document.createElement("input");
+				input.setAttribute("type", "file");
+				input.setAttribute("accept", "image/*");
+				input.click();
+
+				input.onchange = async () => {
+					if (!input.files?.length) return;
+					await uploadImageToS3AndInsert(input.files[0], editorType);
+				};
+			};
+		},
+		[uploadImageToS3AndInsert],
+	);
+
+	// 각 에디터별 모듈 설정 생성
+	const createEditorModules = useCallback(
+		(editorType: EditorType) => {
+			return {
+				toolbar: {
+					container: [
+						[{ header: [1, 2, 3, 4, 5, 6, false] }],
+						["bold", "italic", "underline", "strike"],
+						[{ color: [] }, { background: [] }],
+						[{ list: "ordered" }, { list: "bullet" }],
+						[{ align: [] }],
+						["link", "image"],
+						["clean"],
+					],
+					handlers: {
+						image: createImageHandler(editorType),
+					},
+				},
+				clipboard: {
+					// 기본 붙여넣기 동작 커스터마이징 (이미지 붙여넣기 제한)
+					matchVisual: false,
+				},
+				// 드래그 앤 드롭 비활성화
+				keyboard: {
+					bindings: {
+						// 이미지 붙여넣기 단축키 비활성화
+						"image-paste": {
+							key: "V",
+							shortKey: true,
+							handler: () => false, // 핸들러가 false를 반환하면 기본 동작 중지
+						},
+					},
+				},
+			};
+		},
+		[createImageHandler],
+	);
+
+	// 각 에디터별 모듈 메모이제이션
+	const activityLogModules = useMemo(
+		() => createEditorModules("activityLog"),
+		[createEditorModules],
+	);
+	const infoModules = useMemo(
+		() => createEditorModules("info"),
+		[createEditorModules],
+	);
+	const precautionModules = useMemo(
+		() => createEditorModules("precaution"),
+		[createEditorModules],
+	);
+	const infoTemplateModules = useMemo(
+		() => createEditorModules("infoTemplate"),
+		[createEditorModules],
+	);
+	const precautionTemplateModules = useMemo(
+		() => createEditorModules("precautionTemplate"),
+		[createEditorModules],
+	);
+
+	// ReactQuill용 스타일 추가
+	useEffect(() => {
+		// 스타일시트 생성
+		const styleElement = document.createElement("style");
+		styleElement.innerHTML = `
+			.ql-editor.drag-over {
+				background-color: rgba(0, 120, 255, 0.05);
+				border: 2px dashed #0078ff;
+			}
+			
+			/* 파일 드래그 중일 때 표시할 메시지 - 드래그 앤 드롭 비활성화로 사용하지 않음 */
+			.ql-editor.drag-over::after {
+				content: '드래그 앤 드롭은 지원하지 않습니다';
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background-color: rgba(255, 255, 255, 0.9);
+				padding: 8px 16px;
+				border-radius: 4px;
+				font-size: 14px;
+				color: #ff0000;
+				font-weight: 500;
+				pointer-events: none;
+			}
+			
+			/* 모바일 환경에서 툴바 개선 */
+			@media (max-width: 640px) {
+				.ql-toolbar.ql-snow {
+					padding: 4px;
+					overflow-x: auto;
+					white-space: nowrap;
+					-webkit-overflow-scrolling: touch;
+					display: flex;
+					flex-wrap: nowrap;
+					justify-content: flex-start;
+					gap: 2px;
+				}
+				
+				.ql-toolbar.ql-snow .ql-formats {
+					margin-right: 8px;
+					display: inline-flex;
+				}
+				
+				/* 이미지 버튼 강조 */
+				.ql-toolbar .ql-image {
+					position: relative;
+					background-color: rgba(0, 120, 255, 0.1);
+					border-radius: 4px;
+				}
+				
+				.ql-toolbar .ql-image::after {
+					content: '📷';
+					position: absolute;
+					bottom: -2px;
+					right: -2px;
+					font-size: 10px;
+					pointer-events: none;
+				}
+			}
+			
+			/* 드래그 앤 드롭 비활성화를 위한 스타일 */
+			.ql-container {
+				position: relative;
+			}
+			
+			.ql-container::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				z-index: 1;
+				pointer-events: none;
+			}
+		`;
+		document.head.appendChild(styleElement);
+
+		// 클린업 함수
+		return () => {
+			document.head.removeChild(styleElement);
+		};
+	}, []);
+
+	// 드래그 앤 드롭 방지를 위한 이벤트 핸들러 등록
+	useEffect(() => {
+		const preventDragDrop = (e: DragEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		};
+
+		const preventPasteImage = (e: ClipboardEvent) => {
+			// 텍스트 붙여넣기는 허용하고 이미지만 차단
+			if (e.clipboardData) {
+				for (let i = 0; i < e.clipboardData.items.length; i++) {
+					const item = e.clipboardData.items[i];
+					if (item.type.indexOf("image") !== -1) {
+						e.preventDefault();
+						toast.warning(
+							"이미지는 툴바의 이미지 버튼을 통해서만 추가할 수 있습니다.",
+						);
+						return;
+					}
+				}
+			}
+		};
+
+		// 모든 에디터에 이벤트 핸들러 등록
+		const editorRefs = [
+			activityLogQuillRef,
+			infoQuillRef,
+			precautionQuillRef,
+			infoTemplateQuillRef,
+			precautionTemplateQuillRef,
+		];
+
+		// 각 에디터 컨테이너에 이벤트 리스너 등록
+		editorRefs.forEach((ref) => {
+			if (ref.current) {
+				try {
+					const editor = ref.current.getEditor();
+					if (editor && editor.root) {
+						const editorRoot = editor.root;
+
+						// 드래그 앤 드롭 이벤트 방지
+						editorRoot.addEventListener(
+							"dragover",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.addEventListener(
+							"drop",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.addEventListener(
+							"dragenter",
+							preventDragDrop,
+							true,
+						);
+
+						// 이미지 붙여넣기 방지
+						editorRoot.addEventListener(
+							"paste",
+							preventPasteImage,
+							true,
+						);
+					}
+				} catch (error) {
+					console.log("에디터가 아직 초기화되지 않았습니다.");
+				}
+			}
+		});
+
+		// 클린업 함수
+		return () => {
+			editorRefs.forEach((ref) => {
+				if (ref.current) {
+					try {
+						const editor = ref.current.getEditor();
+						if (editor && editor.root) {
+							const editorRoot = editor.root;
+
+							editorRoot.removeEventListener(
+								"dragover",
+								preventDragDrop,
+								true,
+							);
+							editorRoot.removeEventListener(
+								"drop",
+								preventDragDrop,
+								true,
+							);
+							editorRoot.removeEventListener(
+								"dragenter",
+								preventDragDrop,
+								true,
+							);
+							editorRoot.removeEventListener(
+								"paste",
+								preventPasteImage,
+								true,
+							);
+						}
+					} catch (error) {
+						// 무시
+					}
+				}
+			});
+		};
+	}, []);
 
 	// useQuery를 사용하여 봉사 안내 템플릿 데이터 가져오기
 	const {
@@ -256,6 +706,41 @@ export default function AddVolunteerSchedulePage() {
 		}
 		createPrecautionTemplate();
 	};
+
+	// 로딩 인디케이터 컴포넌트
+	const LoadingIndicator = () => (
+		<div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-10">
+			<div className="flex flex-col items-center">
+				<div className="w-10 h-10 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
+				<p className="mt-2 text-sm">이미지 업로드 중...</p>
+			</div>
+		</div>
+	);
+
+	// 모바일 전용 안내 배너
+	const MobileHelpBanner = () => (
+		<div className="bg-blue-50 border border-blue-200 rounded-md p-3 flex items-start gap-2">
+			<ImageIcon
+				size={18}
+				className="text-blue-500 flex-shrink-0 mt-0.5"
+			/>
+			<div>
+				<p className="text-sm text-blue-700 font-medium">
+					이미지 업로드 도움말
+				</p>
+				<p className="text-xs text-blue-600 mt-1">
+					툴바의 이미지 버튼을 클릭하여 사진을 추가할 수 있습니다.{" "}
+					<br />
+					모바일에서는 화면을 가로로 돌리면 더 편하게 사용할 수
+					있습니다.
+					<br />
+					<span className="text-red">
+						(단, 이미지 파일 크기는 10MB 이하여야 합니다.)
+					</span>
+				</p>
+			</div>
+		</div>
+	);
 
 	// 폼 제출 핸들러
 	const handleSubmit = async () => {
@@ -557,7 +1042,9 @@ export default function AddVolunteerSchedulePage() {
 					/>
 				</div>
 
-				{/* 활동 일지 작성 예시 */}
+				<MobileHelpBanner />
+
+				{/* 활동 일지 작성 예시 - 에디터 모듈 적용 */}
 				<div className="flex flex-col gap-3">
 					<label
 						htmlFor="activity-log"
@@ -565,14 +1052,21 @@ export default function AddVolunteerSchedulePage() {
 					>
 						활동 일지
 					</label>
-					<ReactQuill
-						theme="snow"
-						value={activityLog}
-						onChange={setActivityLog}
-					/>
+
+					<div className="relative">
+						{activityLogImageUploading && <LoadingIndicator />}
+						<ReactQuill
+							ref={activityLogQuillRef}
+							theme="snow"
+							value={activityLog}
+							onChange={setActivityLog}
+							modules={activityLogModules}
+							placeholder="활동 일지를 작성하세요."
+						/>
+					</div>
 				</div>
 
-				{/* 봉사 안내 */}
+				{/* 봉사 안내 - 에디터 모듈 적용 */}
 				<div className="flex flex-col gap-3">
 					<div className="flex items-center justify-between">
 						<label
@@ -617,10 +1111,20 @@ export default function AddVolunteerSchedulePage() {
 							)}
 						</div>
 					</div>
-					<ReactQuill theme="snow" value={info} onChange={setInfo} />
+					<div className="relative">
+						{infoImageUploading && <LoadingIndicator />}
+						<ReactQuill
+							ref={infoQuillRef}
+							theme="snow"
+							value={info}
+							onChange={setInfo}
+							modules={infoModules}
+							placeholder="봉사 안내를 작성하세요."
+						/>
+					</div>
 				</div>
 
-				{/* 주의 사항 */}
+				{/* 주의 사항 - 에디터 모듈 적용 */}
 				<div className="flex flex-col gap-3">
 					<div className="flex items-center justify-between">
 						<label
@@ -667,11 +1171,17 @@ export default function AddVolunteerSchedulePage() {
 							)}
 						</div>
 					</div>
-					<ReactQuill
-						theme="snow"
-						value={precaution}
-						onChange={setPrecaution}
-					/>
+					<div className="relative">
+						{precautionImageUploading && <LoadingIndicator />}
+						<ReactQuill
+							ref={precautionQuillRef}
+							theme="snow"
+							value={precaution}
+							onChange={setPrecaution}
+							modules={precautionModules}
+							placeholder="주의 사항을 작성하세요."
+						/>
+					</div>
 				</div>
 			</div>
 
@@ -695,7 +1205,7 @@ export default function AddVolunteerSchedulePage() {
 				</div>
 			</div>
 
-			{/* 정보 템플릿 생성 모달 */}
+			{/* 정보 템플릿 생성 모달 - 에디터 모듈 적용 */}
 			{showInfoTemplateModal && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 					<div className="bg-white rounded-lg p-6 w-full max-w-2xl">
@@ -718,12 +1228,19 @@ export default function AddVolunteerSchedulePage() {
 							>
 								봉사 안내 템플릿 내용
 							</label>
-							<ReactQuill
-								theme="snow"
-								value={newInfoTemplate}
-								onChange={setNewInfoTemplate}
-								className="h-64"
-							/>
+							<div className="relative">
+								{infoTemplateImageUploading && (
+									<LoadingIndicator />
+								)}
+								<ReactQuill
+									ref={infoTemplateQuillRef}
+									theme="snow"
+									value={newInfoTemplate}
+									onChange={setNewInfoTemplate}
+									modules={infoTemplateModules}
+									className="h-64"
+								/>
+							</div>
 						</div>
 						<div className="flex justify-end gap-3 mt-6">
 							<button
@@ -746,7 +1263,7 @@ export default function AddVolunteerSchedulePage() {
 				</div>
 			)}
 
-			{/* 주의사항 템플릿 생성 모달 */}
+			{/* 주의사항 템플릿 생성 모달 - 에디터 모듈 적용 */}
 			{showPrecautionTemplateModal && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
 					<div className="bg-white rounded-lg p-6 w-full max-w-2xl">
@@ -771,12 +1288,19 @@ export default function AddVolunteerSchedulePage() {
 							>
 								봉사 주의사항 템플릿 내용
 							</label>
-							<ReactQuill
-								theme="snow"
-								value={newPrecautionTemplate}
-								onChange={setNewPrecautionTemplate}
-								className="h-64"
-							/>
+							<div className="relative">
+								{precautionTemplateImageUploading && (
+									<LoadingIndicator />
+								)}
+								<ReactQuill
+									ref={precautionTemplateQuillRef}
+									theme="snow"
+									value={newPrecautionTemplate}
+									onChange={setNewPrecautionTemplate}
+									modules={precautionTemplateModules}
+									className="h-64"
+								/>
+							</div>
 						</div>
 						<div className="flex justify-end gap-3 mt-6">
 							<button

@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
 import {
 	FaPills,
 	FaChevronDown,
 	FaChevronUp,
 	FaPlusCircle,
+	FaTrashAlt,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,11 +17,21 @@ import DogInfoCard from "./DogInfoCard";
 import {
 	createDogMedicalHistoryAPI,
 	fetchDogMedicalHistory,
-	type MedicalHistoryResponse,
+	removeDogMedicalHistoryAPI,
 } from "@/api/dog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 import type { MedicalType } from "@/types/dog";
 import { toast } from "sonner";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "../ui/alert-dialog";
 
 interface DogMediInfosProps {
 	dogId: number;
@@ -32,16 +47,39 @@ export default function DogMediInfos({
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [open, setOpen] = useState(false);
 	const queryClient = useQueryClient();
+	const [selectedHistory, setSelectedHistory] = useState<{
+		id: number;
+		content: string;
+		image?: string | null;
+		operatedDate: string;
+		medicalType: string;
+		medicalPeriod: number;
+	} | null>(null);
 
 	const {
 		data: medicalHistories,
 		isLoading,
 		error,
-	} = useQuery<MedicalHistoryResponse[], Error>({
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useInfiniteQuery({
 		queryKey: ["dogMedicalHistory", dogId],
-		queryFn: () => fetchDogMedicalHistory(Number(dogId)),
+		queryFn: ({ pageParam }: { pageParam?: string }) =>
+			fetchDogMedicalHistory(Number(dogId), pageParam),
+		initialPageParam: undefined,
+		getNextPageParam: (lastPage) => lastPage.pageToken,
 		enabled: isExpanded && !!dogId,
 	});
+
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+		const isNearBottom = scrollHeight - scrollTop <= clientHeight * 1.2;
+
+		if (isNearBottom && hasNextPage && !isFetchingNextPage) {
+			fetchNextPage();
+		}
+	};
 
 	const toLocalDateTimeString = (date: string): string => {
 		return `${date}T00:00:00`;
@@ -104,6 +142,36 @@ export default function DogMediInfos({
 		},
 	});
 
+	const deleteMedication = useMutation({
+		mutationFn: (id: number) =>
+			removeDogMedicalHistoryAPI(id, centerId, dogId),
+		onSuccess: (_, deletedId) => {
+			toast.success("의료 정보가 삭제되었습니다.");
+
+			queryClient.setQueryData(
+				["dogMedicalHistory", dogId],
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				(prev: any) => {
+					if (!prev) return prev;
+					return {
+						...prev,
+						// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+						pages: prev.pages.map((page: any) => ({
+							...page,
+							data: page.data.filter(
+								// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+								(item: any) => item.id !== deletedId,
+							),
+						})),
+					};
+				},
+			);
+		},
+		onError: () => {
+			toast.error("의료 정보 삭제에 실패했습니다.");
+		},
+	});
+
 	return (
 		<DogInfoCard title="의료 기록">
 			{isManager && (
@@ -137,7 +205,8 @@ export default function DogMediInfos({
 							animate={{ opacity: 1, height: "auto" }}
 							exit={{ opacity: 0, height: 0 }}
 							transition={{ duration: 0.3 }}
-							className="overflow-hidden"
+							className="max-h-[500px] overflow-y-scroll"
+							onScroll={handleScroll}
 						>
 							{isLoading ? (
 								<div className="flex items-center justify-center py-2 w-full">
@@ -161,40 +230,94 @@ export default function DogMediInfos({
 									복약기록을 불러오지 못했습니다.
 								</div>
 							) : medicalHistories &&
-								medicalHistories.length > 0 ? (
+								medicalHistories.pages.flatMap(
+									(page) => page.data,
+								).length > 0 ? (
 								<div className="flex flex-col gap-2">
-									{medicalHistories.map((history) => (
-										<div
-											key={history.id}
-											className="flex items-center gap-3 p-2 border-b border-gray-200"
-										>
-											<Avatar className="size-10">
-												{history.image ? (
-													<AvatarImage
-														src={history.image}
-														alt={history.content}
-														className="object-cover"
-													/>
-												) : (
-													<AvatarFallback>
-														<FaPills className="text-gray-400 size-5" />
-													</AvatarFallback>
-												)}
-											</Avatar>
-											<div className="flex flex-col">
-												<span className="text-sm font-medium">
-													{history.content}
-												</span>
-												<span className="text-xs text-gray-500">
-													{history.medicalType} |{" "}
-													{history.medicalPeriod}일 |{" "}
-													{formatDate(
-														history.operatedDate,
+									{medicalHistories.pages
+										.flatMap((page) => page.data)
+										.map((history) => (
+											<div
+												key={history.id}
+												className="flex items-center gap-3 p-2 border-b border-gray-200"
+											>
+												<Avatar className="size-24 rounded-none">
+													{history.image ? (
+														<AvatarImage
+															src={history.image}
+															alt={
+																history.content
+															}
+															className="object-cover"
+														/>
+													) : (
+														<AvatarFallback className="rounded-none">
+															<FaPills className="text-gray-400 size-5" />
+														</AvatarFallback>
 													)}
-												</span>
+												</Avatar>
+												<div className="flex flex-col w-full h-24 justify-between">
+													<span className="text-sm font-medium overflow-ellipsis">
+														{history.content}
+													</span>
+													<span className="flex w-full justify-between items-center">
+														<span className="text-xs text-gray-500">
+															{
+																history.medicalType
+															}{" "}
+															|{" "}
+															{
+																history.medicalPeriod
+															}
+															일 |{" "}
+															{formatDate(
+																history.operatedDate,
+															)}
+														</span>
+														<button
+															type="button"
+															className="text-blueGray text-sm px-2"
+															onClick={() =>
+																setSelectedHistory(
+																	{
+																		id: history.id,
+																		content:
+																			history.content,
+																		image: history.image,
+																		operatedDate:
+																			history.operatedDate,
+																		medicalType:
+																			history.medicalType,
+																		medicalPeriod:
+																			history.medicalPeriod,
+																	},
+																)
+															}
+														>
+															<FaTrashAlt />
+														</button>
+													</span>
+												</div>
 											</div>
+										))}
+									{isFetchingNextPage && (
+										<div className="flex items-center justify-center py-2 w-full">
+											<svg
+												className="animate-spin h-5 w-5 text-gray-500"
+												viewBox="0 0 24 24"
+											>
+												<title>Loading more...</title>
+												<circle
+													cx="12"
+													cy="12"
+													r="10"
+													stroke="currentColor"
+													strokeWidth="4"
+													fill="none"
+												/>
+											</svg>
 										</div>
-									))}
+									)}
 								</div>
 							) : (
 								<div className="text-center py-2 text-gray-500 w-full">
@@ -341,6 +464,73 @@ export default function DogMediInfos({
 					</DrawerContent>
 				</Drawer>
 			</div>
+			<AlertDialog
+				open={!!selectedHistory}
+				onOpenChange={() => setSelectedHistory(null)}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							정말 삭제하시겠습니까?
+						</AlertDialogTitle>
+						<AlertDialogDescription>
+							삭제된 의료 기록은 복구할 수 없습니다.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+
+					{/* 미리보기 */}
+					<div className="flex items-start gap-4 py-2">
+						{selectedHistory?.image ? (
+							<img
+								src={selectedHistory.image}
+								alt="의료기록 이미지"
+								className="w-20 h-20 object-cover rounded border"
+							/>
+						) : (
+							<div className="w-20 h-20 bg-gray-100 flex items-center justify-center rounded border text-gray-400">
+								<FaPills className="text-xl" />
+							</div>
+						)}
+						<div className="text-sm space-y-1">
+							<div>
+								<strong>내용:</strong>{" "}
+								{selectedHistory?.content}
+							</div>
+							<div>
+								<strong>시행일:</strong>{" "}
+								{formatDate(
+									selectedHistory?.operatedDate || "",
+								)}
+							</div>
+							<div>
+								<strong>종류:</strong>{" "}
+								{selectedHistory?.medicalType === "SURGERY"
+									? "수술"
+									: "복약"}
+							</div>
+							<div>
+								<strong>복약 주기:</strong>{" "}
+								{selectedHistory?.medicalPeriod}일
+							</div>
+						</div>
+					</div>
+
+					<AlertDialogFooter>
+						<AlertDialogCancel>취소</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={() => {
+								if (selectedHistory) {
+									deleteMedication.mutate(selectedHistory.id);
+									setSelectedHistory(null);
+								}
+							}}
+							className="bg-red-600 hover:bg-red-700 text-white"
+						>
+							삭제하기
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</DogInfoCard>
 	);
 }
