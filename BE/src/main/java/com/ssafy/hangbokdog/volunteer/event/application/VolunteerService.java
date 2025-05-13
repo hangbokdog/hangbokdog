@@ -38,6 +38,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VolunteerService {
 
+    private static final String DEFAULT_VOLUNTEER_IMAGE = "https://palgona.s3.ap-northeast-2.amazonaws.com/default.png";
+
     private final VolunteerEventRepository eventRepository;
     private final VolunteerSlotRepository slotRepository;
     private final CenterRepository centerRepository;
@@ -122,7 +124,9 @@ public class VolunteerService {
                         volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().get(0)))
+                        volunteerInfo.imageUrls().isEmpty()
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0))
+                )
                 .toList();
     }
 
@@ -172,7 +176,9 @@ public class VolunteerService {
                         volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().get(0)))
+                        volunteerInfo.imageUrls().isEmpty()
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0))
+                )
                 .toList();
     }
 
@@ -190,7 +196,9 @@ public class VolunteerService {
                         volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().get(0)))
+                        volunteerInfo.imageUrls().isEmpty()
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0)
+                ))
                 .toList();
     }
 
