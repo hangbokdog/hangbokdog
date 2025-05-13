@@ -50,6 +50,7 @@ public class EmergencyService {
 		String centerName = centerRepository.findNameById(centerId);
 
 		Emergency emergency = Emergency.builder()
+			.centerId(centerId)
 			.title(request.title())
 			.authorId(member.getId())
 			.content(request.content())
@@ -88,6 +89,7 @@ public class EmergencyService {
 		String centerName = centerRepository.findNameById(centerId);
 
 		Emergency emergency = Emergency.builder()
+			.centerId(centerId)
 			.title(request.title())
 			.authorId(member.getId())
 			.content(request.content())
@@ -127,6 +129,7 @@ public class EmergencyService {
 		String centerName = centerRepository.findNameById(centerId);
 
 		Emergency emergency = Emergency.builder()
+			.centerId(centerId)
 			.title(request.title())
 			.authorId(member.getId())
 			.content(request.content())
