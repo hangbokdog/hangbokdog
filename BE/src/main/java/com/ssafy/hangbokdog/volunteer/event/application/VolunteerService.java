@@ -38,6 +38,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VolunteerService {
 
+    private static final String DEFAULT_VOLUNTEER_IMAGE = "https://palgona.s3.ap-northeast-2.amazonaws.com/default.png";
+
     private final VolunteerEventRepository eventRepository;
     private final VolunteerSlotRepository slotRepository;
     private final CenterRepository centerRepository;
@@ -114,16 +116,18 @@ public class VolunteerService {
     // TODO: 필요하다면 페이지네이션 추가
     public List<VolunteerResponse> findAll(Long centerId) {
         return eventRepository.findAllOpenEvents(centerId).stream()
-            .map(volunteerInfo -> VolunteerResponse.of(
-                volunteerInfo.id(),
-                volunteerInfo.title(),
-                volunteerInfo.content(),
-                volunteerInfo.address(),
-                volunteerInfo.addressName(),
-                volunteerInfo.startDate(),
-                volunteerInfo.endDate(),
-                volunteerInfo.imageUrls().isEmpty() ? null : volunteerInfo.imageUrls().get(0)
-            )).toList();
+                .map(volunteerInfo -> VolunteerResponse.of(
+                        volunteerInfo.id(),
+                        volunteerInfo.title(),
+                        volunteerInfo.content(),
+                        volunteerInfo.address(),
+                        volunteerInfo.addressName(),
+                        volunteerInfo.startDate(),
+                        volunteerInfo.endDate(),
+                        volunteerInfo.imageUrls().isEmpty()
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0))
+                )
+                .toList();
     }
 
     public VolunteerDetailResponse findById(Long eventId) {
@@ -172,7 +176,9 @@ public class VolunteerService {
                         volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().get(0)))
+                        volunteerInfo.imageUrls().isEmpty()
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0))
+                )
                 .toList();
     }
 
@@ -190,7 +196,9 @@ public class VolunteerService {
                         volunteerInfo.addressName(),
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().get(0)))
+                        volunteerInfo.imageUrls().isEmpty()
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0)
+                ))
                 .toList();
     }
 
