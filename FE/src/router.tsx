@@ -32,6 +32,7 @@ import CenterLayout from "./layouts/CenterLayout";
 import DogDrugsPage from "./pages/manager/DogDrugsPage";
 import ClosedVolunteerListPage from "./pages/ClosedVolunteerListPage";
 import CenterManagerMainPage from "./pages/manager/CenterManagerMainPage";
+import MedicationAddPage from "./pages/manager/MedicationAddPage";
 
 const router = createBrowserRouter([
 	{
@@ -190,8 +191,13 @@ const router = createBrowserRouter([
 								element: <DogManageMainPage />,
 							},
 							{
-								path: "button",
+								path: "drugs",
 								element: <DogDrugsPage />,
+							},
+							{
+								path: "drugs/create",
+								element: <MedicationAddPage />,
+								handle: { showHeader: false },
 							},
 						],
 					},
