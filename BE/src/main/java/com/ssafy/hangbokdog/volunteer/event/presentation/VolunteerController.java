@@ -1,6 +1,5 @@
 package com.ssafy.hangbokdog.volunteer.event.presentation;
 
-import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import java.net.URI;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
