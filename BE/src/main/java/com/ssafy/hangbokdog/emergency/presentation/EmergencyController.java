@@ -43,7 +43,7 @@ public class EmergencyController {
 	}
 
 	@PostMapping("/donation")
-	public ResponseEntity<EmergencyCreateResponse> createTransportEmergency(
+	public ResponseEntity<EmergencyCreateResponse> createDonationEmergency(
 		@AuthMember Member member,
 		@RequestBody EmergencyDonationRequest request,
 		@RequestParam Long centerId
