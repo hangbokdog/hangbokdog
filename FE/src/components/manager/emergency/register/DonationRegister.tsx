@@ -32,25 +32,25 @@ export default function DonationRegister() {
 		e.preventDefault();
 
 		if (!centerId) {
-			alert("센터 정보가 없습니다.");
+			toast("센터 정보가 없습니다.");
 			return;
 		}
 
 		// 제목
 		if (!formData.title.trim()) {
-			alert("제목을 입력해주세요.");
+			toast("제목을 입력해주세요.");
 			return;
 		}
 
 		// 내용(사유)
 		if (!formData.content.trim()) {
-			alert("사유를 입력해주세요.");
+			toast("사유를 입력해주세요.");
 			return;
 		}
 
 		// 목표 금액 (포함)
 		if (formData.targetAmount <= 0) {
-			alert("목표 금액은 1원 이상이어야 합니다.");
+			toast("목표 금액은 1원 이상이어야 합니다.");
 			return;
 		}
 
@@ -65,10 +65,8 @@ export default function DonationRegister() {
 				...formData,
 				dueDate: `${formData.dueDate}T00:00:00`,
 			});
-			toast(
-				`후원 게시글이 등록되었습니다! (ID: ${response.emergencyId})`,
-			);
-
+			toast("후원 게시글이 등록되었습니다!");
+			console.log("emergencyId", response.emergencyId);
 			// 초기화
 			setFormData({
 				title: "",

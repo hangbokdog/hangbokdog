@@ -3,6 +3,7 @@ import { createTransportPostAPI } from "@/api/emergencyRegister";
 import useCenterStore from "@/lib/store/centerStore";
 import { TargetGrade } from "@/types/emergencyRegister";
 import TargetGradeTag from "./TargetGradeTag";
+import { toast } from "sonner";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ export default function MovingRegister() {
 		e.preventDefault();
 
 		if (!centerId) {
-			alert("센터 정보가 없습니다.");
+			toast("센터 정보가 없습니다.");
 			return;
 		}
 
@@ -37,7 +38,7 @@ export default function MovingRegister() {
 				dueDate: `${formData.dueDate}T00:00:00`,
 				targetGrade: formData.targetGrade,
 			});
-			alert("운송 게시글이 등록되었습니다!");
+			toast("이동 게시글이 등록되었습니다!");
 
 			// 입력값 초기화
 			setFormData({
@@ -48,7 +49,7 @@ export default function MovingRegister() {
 			});
 		} catch (err) {
 			console.error("등록 실패:", err);
-			alert("등록에 실패했습니다.");
+			toast("등록에 실패했습니다.");
 		}
 	};
 

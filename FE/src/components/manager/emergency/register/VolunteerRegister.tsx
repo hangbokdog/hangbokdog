@@ -3,6 +3,7 @@ import useCenterStore from "@/lib/store/centerStore";
 import { createVolunteerPostAPI } from "@/api/emergencyRegister";
 import { TargetGrade, type VolunteerRequest } from "@/types/emergencyRegister";
 import TargetGradeTag from "./TargetGradeTag";
+import { toast } from "sonner";
 
 export default function VolunteerRegister() {
 	const [formData, setFormData] = useState<VolunteerRequest>({
@@ -30,7 +31,7 @@ export default function VolunteerRegister() {
 		e.preventDefault();
 
 		if (!centerId) {
-			alert("센터 정보가 없습니다.");
+			toast("센터 정보가 없습니다.");
 			return;
 		}
 
@@ -39,7 +40,7 @@ export default function VolunteerRegister() {
 				...formData,
 				dueDate: new Date(formData.dueDate).toISOString(), // ISO 포맷 보장
 			});
-			alert("자원봉사 게시글이 등록되었습니다!");
+			toast("자원봉사 게시글이 등록되었습니다!");
 
 			setFormData({
 				title: "",
@@ -50,7 +51,7 @@ export default function VolunteerRegister() {
 			});
 		} catch (err) {
 			console.error("등록 실패:", err);
-			alert("등록에 실패했습니다.");
+			toast("등록에 실패했습니다.");
 		}
 	};
 
