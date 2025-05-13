@@ -28,7 +28,7 @@ export interface UpdateDogRequest {
 }
 
 export const updateDogAPI = async (
-	centerId: string,
+	centerId: number,
 	dogId: number,
 	request: UpdateDogRequest,
 	image: File | null,
@@ -156,9 +156,26 @@ export interface MedicalHistoryResponse {
 	image: string;
 }
 
-export const fetchDogMedicalHistory = async (dogId: number) => {
-	const response = await localAxios.get(`/dogs/${dogId}/medical-history`);
-	return response.data as MedicalHistoryResponse[];
+export const fetchDogMedicalHistory = async (
+	dogId: number,
+	pageToken?: string,
+): Promise<PageInfo<MedicalHistoryResponse>> => {
+	const response = await localAxios.get(`/dogs/${dogId}/medical-history`, {
+		params: { pageToken },
+	});
+	return response.data;
+};
+
+export const removeDogMedicalHistoryAPI = async (
+	medicalHistoryId: number,
+	centerId: number,
+	dogId: number,
+) => {
+	const response = await localAxios.delete(`/dogs/${dogId}/medical-history`, {
+		params: { medicalHistoryId, centerId },
+	});
+
+	return response.data;
 };
 
 export const getDogCommentsAPI = async (
