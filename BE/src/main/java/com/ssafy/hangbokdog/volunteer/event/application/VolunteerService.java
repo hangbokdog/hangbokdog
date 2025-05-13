@@ -280,4 +280,8 @@ public class VolunteerService {
 
         return VolunteerTemplatePrecautionResponse.from(volunteerTemplate);
     }
+
+    public List<DailyApplicationInfo> findAllSchedule(Long eventId) {
+        return eventRepository.findDailyApplications(eventId);
+    }
 }

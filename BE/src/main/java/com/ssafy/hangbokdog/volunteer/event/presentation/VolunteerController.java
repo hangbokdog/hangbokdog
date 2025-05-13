@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.volunteer.event.presentation;
 
+import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import java.net.URI;
 import java.util.List;
 
@@ -79,6 +80,14 @@ public class VolunteerController {
     ) {
         VolunteerDetailResponse response = volunteerService.findById(eventId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{eventId}/schedule")
+    public ResponseEntity<List<DailyApplicationInfo>> findAllSchedule(
+            @AuthMember Member member,
+            @PathVariable Long eventId
+    ) {
+        return ResponseEntity.ok(volunteerService.findAllSchedule(eventId));
     }
 
     @GetMapping("/latest")
