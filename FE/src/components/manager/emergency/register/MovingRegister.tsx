@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { CalendarIcon, SearchIcon } from "lucide-react";
+import { createTransportPostAPI } from "@/api/emergencyRegister";
+import useCenterStore from "@/lib/store/centerStore";
+import { TargetGrade } from "@/types/emergencyRegister";
+import TargetGradeTag from "./TargetGradeTag";
+import { toast } from "sonner";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
-		id: "",
-		currentLocation: "",
-		destinationLocation: "",
-		date: "",
-		reason: "",
+		title: "",
+		content: "",
+		dueDate: "",
+		targetGrade: TargetGrade.ALL,
 	});
+
+	const { selectedCenter } = useCenterStore();
+	const centerId = Number(selectedCenter?.centerId);
 
 	const handleChange = (
 		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -17,155 +23,135 @@ export default function MovingRegister() {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleSubmit = (e: React.FormEvent) => {
+	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log("제출된 데이터:", formData);
-		// 여기에 데이터 제출 로직 추가
+
+		if (!centerId) {
+			toast("센터 정보가 없습니다.");
+			return;
+		}
+
+		try {
+			await createTransportPostAPI(centerId, {
+				title: formData.title,
+				content: formData.content,
+				dueDate: `${formData.dueDate}T00:00:00`,
+				targetGrade: formData.targetGrade,
+			});
+			toast("이동 게시글이 등록되었습니다!");
+
+			// 입력값 초기화
+			setFormData({
+				title: "",
+				content: "",
+				dueDate: "",
+				targetGrade: TargetGrade.ALL,
+			});
+		} catch (err) {
+			console.error("등록 실패:", err);
+			toast("등록에 실패했습니다.");
+		}
+	};
+
+	const handleGradeChange = (grade: TargetGrade) => {
+		setFormData((prev) => ({ ...prev, targetGrade: grade }));
 	};
 
 	return (
-		<div className="max-w-md mx-auto p-6">
+		<div className="max-w-md mx-auto px-0 py-6">
 			<form onSubmit={handleSubmit} className="space-y-6">
-				{/* 아이디 필드 */}
-				<div>
-					<label
-						htmlFor="id"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						아이
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="id"
-							name="id"
-							value={formData.id}
-							onChange={handleChange}
-							className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("아이 검색")}
-							aria-label="아이 검색"
-						>
-							<SearchIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
+				<div className="text-gray-700 mx-2.5 text-lg font-medium">
+					알림 대상
 				</div>
-
-				{/* 현위치 필드 */}
-				<div>
-					<label
-						htmlFor="currentLocation"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						현위치
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="currentLocation"
-							name="currentLocation"
-							value={formData.currentLocation}
-							onChange={handleChange}
-							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("현위치 검색")}
-							aria-label="현위치 검색"
-						>
-							<SearchIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
+				<div className="flex gap-2 mx-2.5 mb-4">
+					{(Object.values(TargetGrade) as TargetGrade[]).map(
+						(grade) => (
+							<TargetGradeTag
+								key={grade}
+								grade={grade}
+								selected={formData.targetGrade === grade}
+								onClick={handleGradeChange}
+							/>
+						),
+					)}
 				</div>
+				{/* 제목 */}
+				<Field
+					label="제목"
+					name="title"
+					value={formData.title}
+					onChange={handleChange}
+				/>
 
-				{/* 이동 위치 필드 */}
-				<div>
-					<label
-						htmlFor="destinationLocation"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						이동 위치
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="destinationLocation"
-							name="destinationLocation"
-							value={formData.destinationLocation}
-							onChange={handleChange}
-							className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("이동 위치 검색")}
-							aria-label="이동 위치 검색"
-						>
-							<SearchIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
-				</div>
+				{/* 이동 일시 */}
+				<Field
+					label="일시"
+					name="dueDate"
+					value={formData.dueDate}
+					onChange={handleChange}
+				/>
 
-				{/* 일시 필드 */}
-				<div>
+				{/* 사유 (content) */}
+				<div className="mx-2.5">
 					<label
-						htmlFor="date"
-						className="block text-gray-700 text-lg font-medium mb-2"
-					>
-						일시
-					</label>
-					<div className="relative">
-						<input
-							type="text"
-							id="date"
-							name="date"
-							value={formData.date}
-							onChange={handleChange}
-							className="w-full border rounded-xl border-gray-300 p-2"
-						/>
-						<button
-							type="button"
-							className="absolute right-2 top-1/2 transform -translate-y-1/2"
-							onClick={() => console.log("달력 열기")}
-							aria-label="달력 열기"
-						>
-							<CalendarIcon className="h-5 w-5 text-gray-500" />
-						</button>
-					</div>
-				</div>
-
-				{/* 사유 필드 */}
-				<div>
-					<label
-						htmlFor="reason"
+						htmlFor="content"
 						className="block text-gray-700 text-lg font-medium mb-2"
 					>
 						사유
 					</label>
 					<textarea
-						id="reason"
-						name="reason"
-						value={formData.reason}
+						name="content"
+						id="content"
+						value={formData.content}
 						onChange={handleChange}
 						rows={6}
-						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none"
 					/>
 				</div>
 
-				{/* 등록 버튼 */}
 				<div className="pt-4">
 					<button
 						type="submit"
-						className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-full transition duration-200"
+						className="w-full bg-male text-white font-medium py-3 px-4 rounded-full transition"
 					>
 						등록하기
 					</button>
 				</div>
 			</form>
+		</div>
+	);
+}
+
+// 공통 필드 컴포넌트
+function Field({
+	label,
+	name,
+	value,
+	onChange,
+}: {
+	label: string;
+	name: string;
+	value: string;
+	onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+	return (
+		<div className="mx-2.5">
+			<label
+				htmlFor={name}
+				className="block text-gray-700 text-lg font-medium mb-2"
+			>
+				{label}
+			</label>
+			<div className="relative">
+				<input
+					type={name === "dueDate" ? "date" : "text"}
+					id={name}
+					name={name}
+					value={value}
+					onChange={onChange}
+					className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-4"
+				/>
+			</div>
 		</div>
 	);
 }
