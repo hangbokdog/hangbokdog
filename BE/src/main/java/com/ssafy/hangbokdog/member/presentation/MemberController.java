@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.member.presentation;
 
-import java.util.List;
-
 import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
@@ -31,14 +29,12 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<MemberSearchNicknameResponse>> findByNickname(
+    public ResponseEntity<MemberSearchNicknameResponse> findByNickname(
             @AuthMember Member member,
             @RequestParam String nickname
     ) {
         // disableMasking=false 로 넘기면 항상 마스킹
-        MaskRequest maskRequest = new MaskRequest(false);
-        List<MemberSearchNicknameResponse> responses = memberService.findByNickname(maskRequest, nickname);
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(memberService.findByNickname(new MaskRequest(false), nickname));
     }
 
     @PatchMapping("/fcm-token")

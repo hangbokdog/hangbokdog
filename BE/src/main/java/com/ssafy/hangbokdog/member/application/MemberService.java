@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.member.application;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +25,15 @@ public class MemberService {
 
     // TODO: GRADE가 ADMIN인 사용자는 조회되지 않도록 구현이 필요하면 추가
     @MaskApply(
-            typeValue        = List.class,
+            typeValue        = Optional.class,
             genericTypeValue = MemberSearchNicknameResponse.class
     )
-    public List<MemberSearchNicknameResponse> findByNickname(
+    public MemberSearchNicknameResponse findByNickname(
             MaskRequest maskRequest,
             String nickname
     ) {
-        return memberRepository.findByNickname(nickname);
+        return memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.MEMBER_NOT_FOUND));
     }
 
     @Transactional

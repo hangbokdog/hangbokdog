@@ -4,6 +4,7 @@ import static com.ssafy.hangbokdog.center.center.domain.QCenterMember.centerMemb
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -21,8 +22,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MemberSearchNicknameResponse> findByNickname(String nickname) {
-        return queryFactory
+    public Optional<MemberSearchNicknameResponse> findByNickname(String nickname) {
+        return Optional.ofNullable(queryFactory
                 .select(Projections.constructor(
                         MemberSearchNicknameResponse.class,
                         member.id,
@@ -35,7 +36,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 ))
                 .from(member)
                 .where(member.nickName.containsIgnoreCase(nickname))
-                .fetch();
+                .fetchOne()
+        );
     }
 
     @Override

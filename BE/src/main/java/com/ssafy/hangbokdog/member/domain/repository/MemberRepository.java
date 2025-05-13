@@ -20,7 +20,7 @@ public class MemberRepository {
         return memberJpaRepository.findById(id);
     }
 
-    public List<MemberSearchNicknameResponse> findByNickname(String nickname) {
+    public Optional<MemberSearchNicknameResponse> findByNickname(String nickname) {
         return memberJpaRepository.findByNickname(nickname);
     }
 
