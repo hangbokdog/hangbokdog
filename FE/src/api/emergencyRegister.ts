@@ -3,6 +3,7 @@ import type {
 	TransportRequest,
 	DonationRequest,
 	VolunteerRequest,
+	EmergencyPostResponse,
 } from "@/types/emergencyRegister";
 
 /**
@@ -43,10 +44,20 @@ export const createVolunteerPostAPI = async (
  * data 게시글 데이터
  * returns 생성된 게시글 ID
  */
+// export const createDonationPostAPI = async (
+// 	centerId: number,
+// 	data: DonationRequest,
+// ): Promise<number> => {
+// 	const response = await localAxios.post("/emergencies/donation", data, {
+// 		params: { centerId },
+// 	});
+// 	return response.data;
+// };
+
 export const createDonationPostAPI = async (
 	centerId: number,
 	data: DonationRequest,
-): Promise<number> => {
+): Promise<EmergencyPostResponse> => {
 	const response = await localAxios.post("/emergencies/donation", data, {
 		params: { centerId },
 	});

@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { CalendarIcon } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
 import { createDonationPostAPI } from "@/api/emergencyRegister";
-import type { DonationRequest } from "@/types/emergencyRegister";
+import { type DonationRequest, TargetGrade } from "@/types/emergencyRegister";
+import TargetGradeTag from "./TargetGradeTag";
+import { toast } from "sonner";
 
 export default function DonationRegister() {
 	const [formData, setFormData] = useState<DonationRequest>({
@@ -10,9 +11,10 @@ export default function DonationRegister() {
 		content: "",
 		dueDate: "",
 		targetAmount: 0,
-		targetGrade: "ALL",
+		targetGrade: TargetGrade.ALL,
 	});
 
+	// 선택된 센터 정보를 가져오기
 	const { selectedCenter } = useCenterStore();
 	const centerId = Number(selectedCenter?.centerId);
 
@@ -34,12 +36,38 @@ export default function DonationRegister() {
 			return;
 		}
 
+		// 제목
+		if (!formData.title.trim()) {
+			alert("제목을 입력해주세요.");
+			return;
+		}
+
+		// 내용(사유)
+		if (!formData.content.trim()) {
+			alert("사유를 입력해주세요.");
+			return;
+		}
+
+		// 목표 금액 (포함)
+		if (formData.targetAmount <= 0) {
+			alert("목표 금액은 1원 이상이어야 합니다.");
+			return;
+		}
+
+		// 일시
+		if (!formData.dueDate) {
+			toast("일시를 선택해주세요.");
+			return;
+		}
+
 		try {
-			await createDonationPostAPI(centerId, {
+			const response = await createDonationPostAPI(centerId, {
 				...formData,
-				dueDate: new Date(formData.dueDate).toISOString(), // 날짜 포맷 보장
+				dueDate: `${formData.dueDate}T00:00:00`,
 			});
-			alert("후원 게시글이 등록되었습니다!");
+			toast(
+				`후원 게시글이 등록되었습니다! (ID: ${response.emergencyId})`,
+			);
 
 			// 초기화
 			setFormData({
@@ -47,17 +75,37 @@ export default function DonationRegister() {
 				content: "",
 				dueDate: "",
 				targetAmount: 0,
-				targetGrade: "ALL",
+				targetGrade: TargetGrade.ALL,
 			});
 		} catch (err) {
 			console.error("등록 실패:", err);
-			alert("등록에 실패했습니다.");
+			toast("등록에 실패했습니다.");
 		}
 	};
 
+	// TargetGrade 선택 처리 함수
+	const handleGradeChange = (grade: TargetGrade) => {
+		setFormData((prev) => ({ ...prev, targetGrade: grade }));
+	};
+
 	return (
-		<div className="max-w-md mx-auto p-6">
+		<div className="max-w-md mx-auto px-0 py-6">
 			<form onSubmit={handleSubmit} className="space-y-6">
+				<div className="text-gray-700 mx-2.5 text-lg font-medium">
+					알림 대상
+				</div>
+				<div className="flex gap-2 mx-2.5 mb-4">
+					{(Object.values(TargetGrade) as TargetGrade[]).map(
+						(grade) => (
+							<TargetGradeTag
+								key={grade}
+								grade={grade}
+								selected={formData.targetGrade === grade}
+								onClick={handleGradeChange}
+							/>
+						),
+					)}
+				</div>
 				{/* 제목 */}
 				<Field
 					label="제목"
@@ -92,7 +140,6 @@ export default function DonationRegister() {
 					value={formData.dueDate}
 					onChange={handleChange}
 					type="date"
-					icon={<CalendarIcon className="h-5 w-5 text-gray-500" />}
 				/>
 
 				<div className="pt-4">
@@ -114,8 +161,6 @@ function Field({
 	value,
 	onChange,
 	type = "text",
-	unit,
-	icon,
 }: {
 	label: string;
 	name: string;
@@ -128,14 +173,14 @@ function Field({
 	icon?: React.ReactNode;
 }) {
 	return (
-		<div>
+		<div className="mx-2.5">
 			<label
 				htmlFor={name}
 				className="block text-gray-700 text-lg font-medium mb-2"
 			>
 				{label}
 			</label>
-			<div className="relative flex items-center">
+			<div className="relative">
 				{type === "textarea" ? (
 					<textarea
 						id={name}
@@ -143,7 +188,7 @@ function Field({
 						value={value}
 						onChange={onChange}
 						rows={4}
-						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none"
+						className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-4"
 					/>
 				) : (
 					<input
@@ -152,18 +197,8 @@ function Field({
 						name={name}
 						value={value}
 						onChange={onChange}
-						className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-4"
 					/>
-				)}
-				{unit && (
-					<span className="absolute right-3 text-sm text-gray-500">
-						{unit}
-					</span>
-				)}
-				{icon && (
-					<span className="absolute right-2 top-1/2 transform -translate-y-1/2">
-						{icon}
-					</span>
 				)}
 			</div>
 		</div>

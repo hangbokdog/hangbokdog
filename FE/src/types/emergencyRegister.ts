@@ -1,4 +1,8 @@
-export type TargetGrade = "ALL" | "USER" | "MANAGER";
+export enum TargetGrade {
+	ALL = "ALL",
+	USER = "USER",
+	MANAGER = "MANAGER",
+}
 
 export interface TransportRequest {
 	title: string;
@@ -21,4 +25,8 @@ export interface VolunteerRequest {
 	dueDate: string;
 	capacity: number;
 	targetGrade: TargetGrade;
+}
+
+export interface EmergencyPostResponse {
+	emergencyId: number;
 }

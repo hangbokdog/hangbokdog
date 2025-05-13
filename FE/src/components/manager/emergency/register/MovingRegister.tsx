@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { createTransportPostAPI } from "@/api/emergencyRegister";
 import useCenterStore from "@/lib/store/centerStore";
+import { TargetGrade } from "@/types/emergencyRegister";
+import TargetGradeTag from "./TargetGradeTag";
 
 export default function MovingRegister() {
 	const [formData, setFormData] = useState({
 		title: "",
 		content: "",
 		dueDate: "",
-		targetGrade: "ALL",
+		targetGrade: TargetGrade.ALL,
 	});
 
 	const { selectedCenter } = useCenterStore();
@@ -32,8 +34,8 @@ export default function MovingRegister() {
 			await createTransportPostAPI(centerId, {
 				title: formData.title,
 				content: formData.content,
-				dueDate: new Date(formData.dueDate).toISOString(),
-				targetGrade: "ALL",
+				dueDate: `${formData.dueDate}T00:00:00`,
+				targetGrade: formData.targetGrade,
 			});
 			alert("운송 게시글이 등록되었습니다!");
 
@@ -42,7 +44,7 @@ export default function MovingRegister() {
 				title: "",
 				content: "",
 				dueDate: "",
-				targetGrade: "ALL",
+				targetGrade: TargetGrade.ALL,
 			});
 		} catch (err) {
 			console.error("등록 실패:", err);
@@ -50,9 +52,28 @@ export default function MovingRegister() {
 		}
 	};
 
+	const handleGradeChange = (grade: TargetGrade) => {
+		setFormData((prev) => ({ ...prev, targetGrade: grade }));
+	};
+
 	return (
 		<div className="max-w-md mx-auto px-0 py-6">
 			<form onSubmit={handleSubmit} className="space-y-6">
+				<div className="text-gray-700 mx-2.5 text-lg font-medium">
+					알림 대상
+				</div>
+				<div className="flex gap-2 mx-2.5 mb-4">
+					{(Object.values(TargetGrade) as TargetGrade[]).map(
+						(grade) => (
+							<TargetGradeTag
+								key={grade}
+								grade={grade}
+								selected={formData.targetGrade === grade}
+								onClick={handleGradeChange}
+							/>
+						),
+					)}
+				</div>
 				{/* 제목 */}
 				<Field
 					label="제목"
@@ -63,7 +84,7 @@ export default function MovingRegister() {
 
 				{/* 이동 일시 */}
 				<Field
-					label="이동 일시"
+					label="일시"
 					name="dueDate"
 					value={formData.dueDate}
 					onChange={handleChange}

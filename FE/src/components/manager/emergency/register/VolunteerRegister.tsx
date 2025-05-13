@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { CalendarIcon } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
 import { createVolunteerPostAPI } from "@/api/emergencyRegister";
-import type { VolunteerRequest } from "@/types/emergencyRegister";
+import { TargetGrade, type VolunteerRequest } from "@/types/emergencyRegister";
+import TargetGradeTag from "./TargetGradeTag";
 
 export default function VolunteerRegister() {
 	const [formData, setFormData] = useState<VolunteerRequest>({
@@ -10,7 +10,7 @@ export default function VolunteerRegister() {
 		content: "",
 		dueDate: "",
 		capacity: 0,
-		targetGrade: "ALL",
+		targetGrade: TargetGrade.ALL,
 	});
 
 	const { selectedCenter } = useCenterStore();
@@ -46,7 +46,7 @@ export default function VolunteerRegister() {
 				content: "",
 				dueDate: "",
 				capacity: 0,
-				targetGrade: "ALL",
+				targetGrade: TargetGrade.ALL,
 			});
 		} catch (err) {
 			console.error("등록 실패:", err);
@@ -54,9 +54,28 @@ export default function VolunteerRegister() {
 		}
 	};
 
+	const handleGradeChange = (grade: TargetGrade) => {
+		setFormData((prev) => ({ ...prev, targetGrade: grade }));
+	};
+
 	return (
-		<div className="max-w-md mx-auto p-6">
+		<div className="max-w-md mx-auto py-6 px-0">
 			<form onSubmit={handleSubmit} className="space-y-6">
+				<div className="text-gray-700 mx-2.5 text-lg font-medium">
+					알림 대상
+				</div>
+				<div className="flex gap-2 mx-2.5 mb-4">
+					{(Object.values(TargetGrade) as TargetGrade[]).map(
+						(grade) => (
+							<TargetGradeTag
+								key={grade}
+								grade={grade}
+								selected={formData.targetGrade === grade}
+								onClick={handleGradeChange}
+							/>
+						),
+					)}
+				</div>
 				{/* 제목 */}
 				<Field
 					label="제목"
@@ -90,7 +109,6 @@ export default function VolunteerRegister() {
 					value={formData.dueDate}
 					onChange={handleChange}
 					type="date"
-					icon={<CalendarIcon className="h-5 w-5 text-gray-500" />}
 				/>
 
 				<div className="pt-4">
@@ -112,8 +130,6 @@ function Field({
 	value,
 	onChange,
 	type = "text",
-	unit,
-	icon,
 }: {
 	label: string;
 	name: string;
@@ -126,7 +142,7 @@ function Field({
 	icon?: React.ReactNode;
 }) {
 	return (
-		<div>
+		<div className="mx-2.5">
 			<label
 				htmlFor={name}
 				className="block text-gray-700 text-lg font-medium mb-2"
@@ -141,7 +157,7 @@ function Field({
 						value={value}
 						onChange={onChange}
 						rows={4}
-						className="w-full border rounded-xl border-gray-300 p-2 focus:outline-none"
+						className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-4"
 					/>
 				) : (
 					<input
@@ -150,18 +166,8 @@ function Field({
 						name={name}
 						value={value}
 						onChange={onChange}
-						className="w-full border rounded-xl border-gray-300 p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full border bg-background rounded-xl border-gray-300 p-2 pr-4"
 					/>
-				)}
-				{unit && (
-					<span className="absolute right-3 text-sm text-gray-500">
-						{unit}
-					</span>
-				)}
-				{icon && (
-					<span className="absolute right-2 top-1/2 transform -translate-y-1/2">
-						{icon}
-					</span>
 				)}
 			</div>
 		</div>
