@@ -28,13 +28,6 @@ import { Link } from "react-router-dom";
 export const VolunteerItem = ({
 	volunteer,
 	onDelete,
-	onSelectVolunteer,
-	applicants,
-	pendingApplicants,
-	approvedApplicants,
-	isApplicantsLoading,
-	onApproveApplicant,
-	onRejectApplicant,
 	formatDate,
 }: VolunteerItemProps) => {
 	return (
@@ -50,9 +43,6 @@ export const VolunteerItem = ({
 										variant="ghost"
 										size="icon"
 										className="rounded-full hover:bg-gray-200 h-8 w-8"
-										onClick={() =>
-											onSelectVolunteer(volunteer)
-										}
 									>
 										<Users className="w-4 h-4 text-blue-500" />
 									</Button>
@@ -83,16 +73,8 @@ export const VolunteerItem = ({
 
 									<div className="flex-1 overflow-y-auto">
 										<ApplicantsList
-											pendingApplicants={
-												pendingApplicants
-											}
-											approvedApplicants={
-												approvedApplicants
-											}
-											isLoading={isApplicantsLoading}
-											onApprove={onApproveApplicant}
-											onReject={onRejectApplicant}
 											formatDate={formatDate}
+											eventId={volunteer.id}
 										/>
 									</div>
 
