@@ -25,7 +25,7 @@ public class MemberService {
 
     // TODO: GRADE가 ADMIN인 사용자는 조회되지 않도록 구현이 필요하면 추가
     @MaskApply(
-            typeValue        = Optional.class,
+            typeValue        = MemberSearchNicknameResponse.class,
             genericTypeValue = MemberSearchNicknameResponse.class
     )
     public MemberSearchNicknameResponse findByNickname(
