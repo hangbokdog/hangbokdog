@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.hangbokdog.center.dto.CenterKeyInfo;
+import com.ssafy.hangbokdog.center.center.dto.CenterKeyInfo;
 import com.ssafy.hangbokdog.transaction.dto.TransactionInfo;
 
 import lombok.RequiredArgsConstructor;

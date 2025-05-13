@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.hangbokdog.center.dto.CenterKeyInfo;
+import com.ssafy.hangbokdog.center.center.dto.CenterKeyInfo;
 import com.ssafy.hangbokdog.transaction.domain.Transaction;
 import com.ssafy.hangbokdog.transaction.dto.TransactionInfo;
 

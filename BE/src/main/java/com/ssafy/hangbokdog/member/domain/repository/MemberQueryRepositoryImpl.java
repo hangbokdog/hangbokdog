@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.member.domain.repository;
 
-import static com.ssafy.hangbokdog.center.domain.QCenterMember.centerMember;
+import static com.ssafy.hangbokdog.center.center.domain.QCenterMember.centerMember;
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 
 import java.util.List;

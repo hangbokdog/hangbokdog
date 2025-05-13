@@ -1,0 +1,16 @@
+package com.ssafy.hangbokdog.center.center.domain.repository;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+
+public interface CenterMemberJpaRepository extends JpaRepository<CenterMember, Long>, CenterMemberJpaRepositoryCustom {
+    boolean existsByMemberIdAndCenterId(Long memberId, Long centerId);
+
+    Optional<CenterMember> findByMemberIdAndCenterId(Long memberId, Long centerId);
+
+	List<CenterMember> findByMemberId(Long memberId);
+}

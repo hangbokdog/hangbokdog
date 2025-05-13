@@ -2,7 +2,6 @@ package com.ssafy.hangbokdog.emergency.domain;
 
 import java.time.LocalDateTime;
 
-import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.domain.enums.TargetGrade;
 
 import lombok.AccessLevel;
