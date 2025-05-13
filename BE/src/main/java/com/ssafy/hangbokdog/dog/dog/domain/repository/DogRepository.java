@@ -27,6 +27,7 @@ public class DogRepository {
 	private static final int DOG_PAGE_SIZE = 30;
 
 	private final DogJpaRepository dogJpaRepository;
+	private final MedicalHistoryJdbcRepository medicalHistoryJdbcRepository;
 	private final MedicalHistoryJpaRepository medicalHistoryJpaRepository;
 
 	public Dog createDog(Dog dog) {
@@ -125,5 +126,13 @@ public class DogRepository {
 			DOG_PAGE_SIZE
 		);
 		return PageInfo.of(data, DOG_PAGE_SIZE, VaccinationDoneResponse::dogId);
+	}
+
+	public void bulkInsertMedicalHistories(
+		List<Long> dogIds,
+		String content,
+		LocalDateTime operatedTime
+	) {
+		medicalHistoryJdbcRepository.bulkInsertMedicalHistory(dogIds, content, operatedTime);
 	}
 }
