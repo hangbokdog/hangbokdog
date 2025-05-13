@@ -112,13 +112,13 @@ export default function DonationRegister() {
 					onChange={handleChange}
 				/>
 
-				{/* 사유 */}
+				{/* 일시 */}
 				<Field
-					label="사유"
-					name="content"
-					value={formData.content}
+					label="일시"
+					name="dueDate"
+					value={formData.dueDate}
 					onChange={handleChange}
-					type="textarea"
+					type="date"
 				/>
 
 				{/* 목표 금액 */}
@@ -131,13 +131,13 @@ export default function DonationRegister() {
 					unit="원"
 				/>
 
-				{/* 일시 */}
+				{/* 사유 */}
 				<Field
-					label="일시"
-					name="dueDate"
-					value={formData.dueDate}
+					label="사유"
+					name="content"
+					value={formData.content}
 					onChange={handleChange}
-					type="date"
+					type="textarea"
 				/>
 
 				<div className="pt-4">
