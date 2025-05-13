@@ -3,8 +3,6 @@ package com.ssafy.hangbokdog.vaccination.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.hibernate.annotations.Type;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import org.hibernate.annotations.Type;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
 import com.ssafy.hangbokdog.vaccination.domain.enums.VaccinationStatus;
