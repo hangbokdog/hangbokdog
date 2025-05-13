@@ -51,6 +51,7 @@ public class EmergencyService {
 
 		Emergency emergency = Emergency.builder()
 			.title(request.title())
+			.authorId(member.getId())
 			.content(request.content())
 			.dueDate(request.dueDate())
 			.targetGrade(request.targetGrade())
@@ -88,6 +89,7 @@ public class EmergencyService {
 
 		Emergency emergency = Emergency.builder()
 			.title(request.title())
+			.authorId(member.getId())
 			.content(request.content())
 			.dueDate(request.dueDate())
 			.capacity(request.capacity())
@@ -126,6 +128,7 @@ public class EmergencyService {
 
 		Emergency emergency = Emergency.builder()
 			.title(request.title())
+			.authorId(member.getId())
 			.content(request.content())
 			.dueDate(request.dueDate())
 			.targetAmount(request.targetAmount())

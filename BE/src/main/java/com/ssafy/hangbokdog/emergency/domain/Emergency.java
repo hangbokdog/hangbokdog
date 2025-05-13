@@ -60,6 +60,7 @@ public class Emergency extends BaseEntity {
 
 	@Builder
 	public Emergency(
+		Long authorId,
 		Long centerId,
 		LocalDateTime dueDate,
 		String title,
@@ -69,6 +70,7 @@ public class Emergency extends BaseEntity {
 		Integer targetAmount,
 		EmergencyType emergencyType
 	) {
+		this.authorId = authorId;
 		this.centerId = centerId;
 		this.dueDate = dueDate;
 		this.title = title;
@@ -76,5 +78,6 @@ public class Emergency extends BaseEntity {
 		this.targetGrade = targetGrade;
 		this.capacity = capacity;
 		this.targetAmount = targetAmount;
+		this.emergencyType = emergencyType;
 	}
 }
