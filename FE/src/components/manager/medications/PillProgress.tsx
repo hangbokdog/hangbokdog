@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+interface PillProgressProps {
+	completed: number;
+	pending: number;
+}
 
-export default function PillProgress() {
-	const completed = 543;
-	const pending = 225;
+export default function PillProgress({
+	completed,
+	pending,
+}: PillProgressProps) {
 	const total = completed + pending;
 	const targetProgress = (completed / total) * 100;
 
