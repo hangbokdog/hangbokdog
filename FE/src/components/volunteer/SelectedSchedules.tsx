@@ -1,4 +1,5 @@
 import ParticipantForm from "./ParticipantForm";
+import { Trash2 } from "lucide-react";
 import type { Participant, SelectedSchedule } from "@/types/volunteer";
 
 interface SelectedSchedulesProps {
@@ -13,6 +14,12 @@ interface SelectedSchedulesProps {
 		participantIndex: number,
 		nickname: string,
 	) => void;
+	onParticipantChange: (
+		scheduleIndex: number,
+		participantIndex: number,
+		field: keyof Participant,
+		value: string,
+	) => void;
 }
 
 export default function SelectedSchedules({
@@ -20,6 +27,7 @@ export default function SelectedSchedules({
 	onScheduleRemove,
 	onPeopleCountChange,
 	onNicknameSearch,
+	onParticipantChange,
 }: SelectedSchedulesProps) {
 	if (selectedSchedules.length === 0) {
 		return null;
