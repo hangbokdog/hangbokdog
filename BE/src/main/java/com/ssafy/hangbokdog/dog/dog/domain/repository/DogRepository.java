@@ -17,6 +17,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 
+import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -111,5 +112,19 @@ public class DogRepository {
 
 	public int getLocationDogCountIn(List<Long> locationIds) {
 		return dogJpaRepository.countByLocationIdsIn(locationIds);
+	}
+
+	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(
+		List<Long> dogIds,
+		List<Long> locationIds,
+		String pageToken
+	) {
+		var data = dogJpaRepository.getNotVaccinatedDogs(
+			dogIds,
+			locationIds,
+			pageToken,
+			DOG_PAGE_SIZE
+		);
+		return PageInfo.of(data, DOG_PAGE_SIZE, VaccinationDoneResponse::dogId);
 	}
 }

@@ -8,6 +8,7 @@ import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
+import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 
 public interface DogJpaRepositoryCustom {
 
@@ -27,6 +28,13 @@ public interface DogJpaRepositoryCustom {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		String pageToken,
+		int pageSize
+	);
+
+	List<VaccinationDoneResponse> getNotVaccinatedDogs(
+		List<Long> dogIds,
+		List<Long> locationIds,
 		String pageToken,
 		int pageSize
 	);

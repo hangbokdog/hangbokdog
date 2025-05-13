@@ -27,9 +27,10 @@ import com.ssafy.hangbokdog.vaccination.dto.VaccinationSummaryInfo;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCompleteRequest;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCreateRequest;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationCreateResponse;
-
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDetailResponse;
+import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationSummaryResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -160,6 +161,17 @@ public class VaccinationService {
 		}
 
 		return new PageInfo<>(vaccinationSummaryInfo.pageToken(), responses, vaccinationSummaryInfo.hasNext());
+	}
+
+	public PageInfo<VaccinationDoneResponse> getVaccinatedDogs(Long vaccinationId, String pageToken) {
+		return vaccinationRepository.getVaccinationDogsByVaccinationId(vaccinationId, pageToken);
+	}
+
+	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(Long vacationId, String pageToken) {
+		Vaccination vaccination = getVaccination(vacationId);
+		List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vacationId);
+		List<Long> locationIds = vaccination.getLocationIds();
+		return dogRepository.getNotVaccinatedDogs(dogIds, locationIds, pageToken);
 	}
 
 	private Vaccination getVaccination(Long vaccinationId) {

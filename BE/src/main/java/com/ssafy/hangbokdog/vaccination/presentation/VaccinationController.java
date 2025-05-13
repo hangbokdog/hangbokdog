@@ -12,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.api.Page;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.dog.dog.dto.DogSummary;
+import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.vaccination.application.VaccinationService;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCompleteRequest;
@@ -21,6 +24,7 @@ import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCreateRequest;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationCreateResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDetailResponse;
 
+import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationSummaryResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -77,5 +81,23 @@ public class VaccinationController {
 		@RequestParam(required = false) String pageToken
 	) {
 		return ResponseEntity.ok(vaccinationService.getVaccinationSummaries(centerId, pageToken));
+	}
+
+	@GetMapping("/{vaccinationId}/done")
+	public ResponseEntity<PageInfo<VaccinationDoneResponse>> getVaccinatedDogs(
+		@AuthMember Member member,
+		@RequestParam(required = false) String pageToken,
+		@PathVariable Long vaccinationId
+	) {
+		return ResponseEntity.ok().body(vaccinationService.getVaccinatedDogs(vaccinationId, pageToken));
+	}
+
+	@GetMapping("/{vaccinationId}/yet")
+	public ResponseEntity<PageInfo<VaccinationDoneResponse>> getNotYetVaccinatedDogs(
+		@AuthMember Member member,
+		@RequestParam(required = false) String pageToken,
+		@PathVariable Long vaccinationId
+	) {
+		return ResponseEntity.ok().body(vaccinationService.getNotVaccinatedDogs(vaccinationId, pageToken));
 	}
 }

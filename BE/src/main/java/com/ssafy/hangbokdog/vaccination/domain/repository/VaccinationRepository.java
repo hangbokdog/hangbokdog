@@ -10,6 +10,7 @@ import com.ssafy.hangbokdog.vaccination.domain.Vaccination;
 import com.ssafy.hangbokdog.vaccination.dto.VaccinationDetailInfo;
 import com.ssafy.hangbokdog.vaccination.dto.VaccinationSummaryInfo;
 
+import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class VaccinationRepository {
 
 	private static final int VACCINATION_PAGE_SIZE = 10;
+	private static final int DOG_PAGE_SIZE = 30;
 
 	private final VaccinationJpaRepository vaccinationJpaRepository;
 	private final VaccinatedDogJpaRepository vaccinatedDogJpaRepository;
@@ -48,5 +50,14 @@ public class VaccinationRepository {
 	) {
 		var data = vaccinationJpaRepository.getVaccinationSummariesByCenterId(centerId, pageToken, VACCINATION_PAGE_SIZE);
 		return PageInfo.of(data, VACCINATION_PAGE_SIZE, VaccinationSummaryInfo::vaccinationId);
+	}
+
+	public PageInfo<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(Long vaccinationId, String pageToken) {
+		var data = vaccinatedDogJpaRepository.getVaccinationDogsByVaccinationId(vaccinationId, pageToken, DOG_PAGE_SIZE);
+		return PageInfo.of(data, DOG_PAGE_SIZE, VaccinationDoneResponse::dogId);
+	}
+
+	public List<Long> getVaccinatedDogIdsByVaccinationId(Long vaccinationId) {
+		return vaccinationJpaRepository.getVaccinatedDogIdsByVaccinationId(vaccinationId);
 	}
 }

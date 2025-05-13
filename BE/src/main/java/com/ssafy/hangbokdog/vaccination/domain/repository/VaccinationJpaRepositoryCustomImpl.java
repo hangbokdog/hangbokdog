@@ -57,8 +57,10 @@ public class VaccinationJpaRepositoryCustomImpl implements VaccinationJpaReposit
 				vaccination.locationIds
 			))
 			.from(vaccination)
-			.where(isInRange(pageToken),
-				vaccination.centerId.eq(centerId))
+			.where(vaccination.centerId.eq(centerId),
+				isInRange(pageToken))
+			.orderBy(vaccination.id.desc())
+			.limit(pageSize + 1)
 			.fetch();
 	}
 
