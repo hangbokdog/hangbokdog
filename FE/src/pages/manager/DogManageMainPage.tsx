@@ -37,7 +37,7 @@ export default function DogManageMainPage() {
 						className="w-[70%]"
 					/>
 					<Link
-						to="button"
+						to="drugs"
 						className="w-full rounded-full py-1 bg-superLightBlueGray text-lg font-semibold text-center hover:bg-superLightGray"
 					>
 						복약 필요한 아이들
