@@ -3,6 +3,8 @@ package com.ssafy.hangbokdog.vaccination.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,6 +34,9 @@ public class Vaccination extends BaseEntity {
 	@Column(name = "vaccination_id", nullable = false)
 	private Long id;
 
+	@Column(name = "center_id", nullable = false)
+	private Long centerId;
+
 	@Column(name = "author_id", nullable = false)
 	private Long authorId;
 
@@ -52,8 +57,16 @@ public class Vaccination extends BaseEntity {
 	@Column(name = "status", nullable = false)
 	private VaccinationStatus status;
 
+	public void complete() {
+		if (this.status.equals(VaccinationStatus.COMPLETED)) {
+			throw new BadRequestException(ErrorCode.VACCINATION_ALREADY_COMPLETED);
+		}
+		this.status = VaccinationStatus.COMPLETED;
+	}
+
 	@Builder
 	public Vaccination(
+		Long centerId,
 		Long authorId,
 		String title,
 		String content,
@@ -61,6 +74,7 @@ public class Vaccination extends BaseEntity {
 		List<Long> locationIds,
 		VaccinationStatus status
 	) {
+		this.centerId = centerId;
 		this.authorId = authorId;
 		this.title = title;
 		this.content = content;
