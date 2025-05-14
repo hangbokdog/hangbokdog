@@ -141,6 +141,12 @@ public class VolunteerApplicationService {
             throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_PROCESSING_FAILED);
         }
 
+        if (request.status().equals(VolunteerApplicationStatus.REJECTED)) {
+            slot.decreaseAppliedCount();
+            volunteerApplicationRepository.delete(application);
+            return;
+        }
+
         application.updateStatus(request.status());
     }
 
