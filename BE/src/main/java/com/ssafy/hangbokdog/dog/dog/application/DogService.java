@@ -37,6 +37,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.LocationDogCountResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.ProtectedDogCountResponse;
+import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.sponsorship.domain.repository.SponsorshipRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -50,6 +51,7 @@ public class DogService {
 	private final FavoriteDogRepository favoriteDogRepository;
 	private final SponsorshipRepository sponsorshipRepository;
 	private final DogCommentRepository dogCommentRepository;
+	private final FosterRepository fosterRepository;
 
 	public DogCreateResponse createDog(
 		Long memberId,
@@ -96,8 +98,9 @@ public class DogService {
 		int favoriteCount = favoriteDogRepository.getFavoriteCountByDogId(dogId).intValue();
 		int sponsorCount = sponsorshipRepository.countActiveSponsorshipByDogId(dogId);
 		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
+		boolean isFosterApply = fosterRepository.isFosterApplying(memberId, dogId);
 
-		return DogDetailResponse.from(dogDetailInfo, isFavorite, favoriteCount, sponsorCount, dogCommentCount);
+		return DogDetailResponse.from(dogDetailInfo, isFavorite, favoriteCount, sponsorCount, dogCommentCount, isFosterApply);
 	}
 
 	@Transactional

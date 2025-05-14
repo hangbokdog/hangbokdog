@@ -55,4 +55,8 @@ public class FosterRepository {
 	public List<DogFosterResponse> getFostersByDogId(Long dogId) {
 		return fosterJpaRepository.getFostersByDogId(dogId);
 	}
+
+	public boolean isFosterApplying(Long memberId, Long dogId) {
+		return fosterJpaRepository.isFosterApply(memberId, dogId);
+	}
 }
