@@ -1,9 +1,11 @@
 package com.ssafy.hangbokdog.emergency.application;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,10 +31,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmergencyService {
 
+	private static final String REDIS_KEY = "emergency:feed:center:";
+
 	private final EmergencyRepository emergencyRepository;
 	private final CenterMemberRepository centerMemberRepository;
 	private final ApplicationEventPublisher eventPublisher;
 	private final CenterRepository centerRepository;
+	private final RedisTemplate<String, List<EmergencyResponse>> redisTemplate;
 
 	@Transactional
 	public EmergencyCreateResponse createTransPortEmergency(
@@ -154,6 +159,22 @@ public class EmergencyService {
 	}
 
 	public List<EmergencyResponse> getEmergencyByCenter(Long centerId, EmergencyType type) {
-		return emergencyRepository.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
+
+		String redisKey = REDIS_KEY + centerId + ":" + type;
+		List<EmergencyResponse> cachedData = redisTemplate.opsForValue().get(redisKey);
+
+		if (cachedData != null) {
+			return cachedData;
+		}
+
+		List<EmergencyResponse> emergencyResponses = emergencyRepository.getEmergenciesByCenterId(
+			centerId,
+			type,
+			LocalDateTime.now()
+		);
+
+		redisTemplate.opsForValue().set(redisKey, emergencyResponses, Duration.ofMinutes(120));
+
+		return emergencyResponses;
 	}
 }
