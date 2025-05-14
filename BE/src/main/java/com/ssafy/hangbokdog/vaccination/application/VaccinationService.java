@@ -166,7 +166,8 @@ public class VaccinationService {
 				info.title(),
 				info.content(),
 				info.operatedDate(),
-				locationInfo
+				locationInfo,
+				info.status()
 			);
 
 			responses.add(response);
