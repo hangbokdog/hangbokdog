@@ -3,9 +3,14 @@ import {
 	fetchVaccinationDetailAPI,
 } from "@/api/vaccine";
 import PillProgress from "@/components/manager/vaccination/PillProgress";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+	type InfiniteData,
+} from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
 	CalendarIcon,
 	MapPinIcon,
@@ -13,11 +18,34 @@ import {
 	ListIcon,
 	CheckCircleIcon,
 	ClockIcon,
+	LoaderIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import useCenterStore from "@/lib/store/centerStore";
 import VaccinationDrawer from "@/components/manager/vaccination/VaccinationDrawer";
 import { toast } from "sonner";
+
+// Define types for the summary list data structure
+interface VaccinationSummary {
+	vaccinationId: number;
+	title: string;
+	content?: string;
+	operatedDate?: string;
+	status: string;
+	locationInfos?: Array<{
+		locationId: number;
+		locationName: string;
+	}>;
+}
+
+// Define the structure of pages in infinite query
+interface SummaryPage {
+	data: VaccinationSummary[];
+	pageToken?: string;
+}
+
+// Type for infinite query data
+type VaccinationSummaryList = InfiniteData<SummaryPage>;
 
 // Ripple effect function for button clicks
 const createRippleEffect = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,6 +81,8 @@ export default function VaccinationDetailPage() {
 	const vaccinationId = id ? Number.parseInt(id, 10) : 0;
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const { selectedCenter } = useCenterStore();
+	const queryClient = useQueryClient();
+	const [isCompleting, setIsCompleting] = useState(false);
 
 	// Add ripple animation style
 	useEffect(() => {
@@ -108,11 +138,108 @@ export default function VaccinationDetailPage() {
 					dogIds: [],
 				},
 			),
-		onSuccess: () => {
-			toast.success("접종 완료 처리되었습니다");
+		onMutate: async () => {
+			setIsCompleting(true);
+
+			// Cancel any outgoing refetches
+			await queryClient.cancelQueries({
+				queryKey: ["vaccinationDetail", vaccinationId],
+			});
+
+			// Also cancel any vaccinationSummaries queries
+			await queryClient.cancelQueries({
+				queryKey: ["vaccinationSummaries", selectedCenter?.centerId],
+			});
+
+			// Get snapshot of current data
+			const previousData = queryClient.getQueryData([
+				"vaccinationDetail",
+				vaccinationId,
+			]);
+
+			// Get summaries data for optimistic update
+			const previousSummaries =
+				queryClient.getQueryData<VaccinationSummaryList>([
+					"vaccinationSummaries",
+					selectedCenter?.centerId,
+				]);
+
+			// Optimistically update the UI for detail view
+			if (vaccinationDetail) {
+				queryClient.setQueryData(["vaccinationDetail", vaccinationId], {
+					...vaccinationDetail,
+					status: "COMPLETED",
+					completedDogCount: vaccinationDetail.totalCount,
+				});
+
+				// Also update the vaccination summaries list if it exists
+				if (previousSummaries) {
+					queryClient.setQueryData<VaccinationSummaryList>(
+						["vaccinationSummaries", selectedCenter?.centerId],
+						(old) => {
+							if (!old) return old;
+
+							// Update the vaccination status in all pages
+							return {
+								...old,
+								pages: old.pages.map((page) => ({
+									...page,
+									data: page.data.map((item) =>
+										item.vaccinationId === vaccinationId
+											? { ...item, status: "COMPLETED" }
+											: item,
+									),
+								})),
+							};
+						},
+					);
+				}
+			}
+
+			return { previousData, previousSummaries };
 		},
-		onError: () => {
-			toast.error("접종 완료 처리에 실패했습니다");
+		onSuccess: () => {
+			toast.success("접종이 완료되었습니다", {
+				duration: 2000,
+			});
+
+			// Update all related queries to ensure consistency
+			queryClient.invalidateQueries({
+				queryKey: ["vaccinationDetail", vaccinationId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["pendingDogs"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["completedDogs"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["vaccinationSummaries", selectedCenter?.centerId],
+			});
+		},
+		onError: (error, _, context) => {
+			console.log("error:", error);
+			if (context?.previousData) {
+				queryClient.setQueryData(
+					["vaccinationDetail", vaccinationId],
+					context.previousData,
+				);
+			}
+
+			// Revert the vaccination summaries if there was an error
+			if (context?.previousSummaries) {
+				queryClient.setQueryData(
+					["vaccinationSummaries", selectedCenter?.centerId],
+					context.previousSummaries,
+				);
+			}
+
+			toast.error("접종 완료 처리에 실패했습니다", {
+				duration: 3000,
+			});
+		},
+		onSettled: () => {
+			setIsCompleting(false);
 		},
 	});
 
@@ -354,16 +481,36 @@ export default function VaccinationDetailPage() {
 						transition={{ delay: 0.3 }}
 						className="fixed bottom-4"
 					>
-						<button
-							type="button"
-							className="bg-male rounded-full text-white font-semibold w-48 py-2 px-4 relative overflow-hidden transition-all duration-200 active:scale-95 active:brightness-90 focus:outline-none group"
-							onClick={(e) => {
-								createRippleEffect(e);
-								handleCompleteVaccination();
-							}}
-						>
-							<span className="relative z-10">완료</span>
-						</button>
+						<AnimatePresence mode="wait">
+							{!isCompleting ? (
+								<motion.button
+									key="complete-button"
+									type="button"
+									className="bg-male rounded-full text-white font-semibold w-48 py-2 px-4 relative overflow-hidden transition-all duration-200 active:scale-95 active:brightness-90 focus:outline-none group"
+									onClick={(e) => {
+										createRippleEffect(e);
+										handleCompleteVaccination();
+									}}
+									whileTap={{ scale: 0.95 }}
+								>
+									<span className="relative z-10">완료</span>
+								</motion.button>
+							) : (
+								<motion.div
+									key="loading-button"
+									initial={{ opacity: 0, scale: 0.9 }}
+									animate={{ opacity: 1, scale: 1 }}
+									exit={{ opacity: 0, scale: 0.9 }}
+									className="bg-male/80 rounded-full text-white font-semibold w-48 py-2 px-4 flex items-center justify-center"
+								>
+									<LoaderIcon
+										className="animate-spin mr-2"
+										size={18}
+									/>
+									<span>처리 중...</span>
+								</motion.div>
+							)}
+						</AnimatePresence>
 					</motion.div>
 				</div>
 			)}
