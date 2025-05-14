@@ -1,18 +1,17 @@
 package com.ssafy.hangbokdog.adoption.domain;
 
-import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
-import com.ssafy.hangbokdog.common.exception.BadRequestException;
-import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.common.exception.BadRequestException;
+import com.ssafy.hangbokdog.common.exception.ErrorCode;
 
 import lombok.AccessLevel;
 import lombok.Builder;
