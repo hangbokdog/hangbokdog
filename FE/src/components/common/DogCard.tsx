@@ -26,14 +26,12 @@ export default function DogCard({
 	gender,
 	isFavorite,
 	bgColor,
-	isManager = false,
 }: DogCardProps) {
 	const centerId = useCenterStore.getState().selectedCenter?.centerId;
 	const [isLiked, setIsLiked] = useState(isFavorite);
 	const [isDisabled, setIsDisabled] = useState(false);
 	const [imgError, setImgError] = useState(false);
 	const queryClient = useQueryClient();
-	const managerUrl = isManager ? "/manager" : "";
 
 	const addFavoriteMutation = useMutation({
 		mutationFn: () => {
@@ -91,7 +89,7 @@ export default function DogCard({
 	};
 
 	return (
-		<Link to={`${managerUrl}/dogs/${dogId}`}>
+		<Link to={`/dogs/${dogId}`}>
 			<div
 				className={`flex flex-col rounded-xl ${bgColor && "shadow-custom-sm"}`}
 			>
