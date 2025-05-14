@@ -29,13 +29,13 @@ export default function ScheduleTable({
 			<Table className="border-collapse">
 				<TableHeader>
 					<TableRow className="border-b border-gray-200">
-						<TableHead className="text-center font-medium bg-background py-2.5 text-base">
+						<TableHead className="w-1/3 text-center font-medium bg-background py-2.5 text-base">
 							날짜
 						</TableHead>
-						<TableHead className="text-center font-medium bg-background py-2.5 text-base">
+						<TableHead className="w-1/3 text-center font-medium bg-background py-2.5 text-base">
 							오전
 						</TableHead>
-						<TableHead className="text-center font-medium bg-background py-2.5 text-base">
+						<TableHead className="w-1/3 text-center font-medium bg-background py-2.5 text-base">
 							오후
 						</TableHead>
 					</TableRow>
