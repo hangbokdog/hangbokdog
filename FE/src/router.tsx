@@ -82,6 +82,7 @@ const router = createBrowserRouter([
 									{
 										index: true,
 										element: <DogDetailPage />,
+										handle: { showHeader: false },
 									},
 									{
 										path: "comments",
