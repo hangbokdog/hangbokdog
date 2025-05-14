@@ -1,22 +1,28 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ApplicantItem } from "./ApplicantItem";
-import type {
-	ApplicantsListProps,
-	VolunteerApplicantsResponse,
-} from "@/types/volunteer";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import useCenterStore from "@/lib/store/centerStore";
 import { getVolunteerApplicantsAPI } from "@/api/volunteer";
 import { useRef, useCallback, useEffect, useState } from "react";
+import { format } from "date-fns";
+import { ko } from "date-fns/locale";
+import type {
+	ApplicantsListProps,
+	VolunteerApplicantsResponse,
+	VolunteerApplicant,
+} from "@/types/volunteer";
 
-export const ApplicantsList = ({
-	formatDate,
-	eventId,
-}: ApplicantsListProps) => {
+export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 	const { selectedCenter } = useCenterStore();
 	const centerId = selectedCenter?.centerId;
 	const [activeTab, setActiveTab] = useState<string>("pending");
+
+	// 날짜를 포맷팅하는 함수
+	const formatDate = (dateString: string) => {
+		const date = new Date(dateString);
+		return format(date, "yyyy년 M월 d일 (EEE) HH:mm", { locale: ko });
+	};
 
 	const {
 		data: pendingApplicants,
@@ -137,14 +143,14 @@ export const ApplicantsList = ({
 				</TabsTrigger>
 			</TabsList>
 
-			<TabsContent value="pending" className="mt-4 space-y-3">
+			<TabsContent value="pending" className="mt-2 space-y-3">
 				{isPendingApplicantsLoading ? (
 					<>
-						<Skeleton className="h-20 w-full" />
-						<Skeleton className="h-20 w-full" />
+						<Skeleton className="h-24 w-full rounded-xl" />
+						<Skeleton className="h-24 w-full rounded-xl" />
 					</>
 				) : allPendingApplicants.length === 0 ? (
-					<div className="text-center py-8 text-gray-500">
+					<div className="text-center py-12 text-gray-500 bg-gray-50 rounded-xl">
 						대기 중인 봉사 신청이 없습니다.
 					</div>
 				) : (
@@ -154,12 +160,13 @@ export const ApplicantsList = ({
 								key={applicant.id}
 								applicant={applicant}
 								formatDate={formatDate}
+								eventId={eventId}
 							/>
 						))}
 						{hasNextPending && (
 							<div ref={loadMorePendingRef}>
 								{isFetchingNextPending && (
-									<Skeleton className="h-20 w-full" />
+									<Skeleton className="h-24 w-full rounded-xl" />
 								)}
 							</div>
 						)}
@@ -167,14 +174,14 @@ export const ApplicantsList = ({
 				)}
 			</TabsContent>
 
-			<TabsContent value="approved" className="mt-4 space-y-3">
+			<TabsContent value="approved" className="mt-2 space-y-3">
 				{isApprovedApplicantsLoading ? (
 					<>
-						<Skeleton className="h-20 w-full" />
-						<Skeleton className="h-20 w-full" />
+						<Skeleton className="h-24 w-full rounded-xl" />
+						<Skeleton className="h-24 w-full rounded-xl" />
 					</>
 				) : allApprovedApplicants.length === 0 ? (
-					<div className="text-center py-8 text-gray-500">
+					<div className="text-center py-12 text-gray-500 bg-gray-50 rounded-xl">
 						수락된 봉사자가 없습니다.
 					</div>
 				) : (
@@ -185,12 +192,13 @@ export const ApplicantsList = ({
 								applicant={applicant}
 								formatDate={formatDate}
 								isApproved={true}
+								eventId={eventId}
 							/>
 						))}
 						{hasNextApproved && (
 							<div ref={loadMoreApprovedRef}>
 								{isFetchingNextApproved && (
-									<Skeleton className="h-20 w-full" />
+									<Skeleton className="h-24 w-full rounded-xl" />
 								)}
 							</div>
 						)}

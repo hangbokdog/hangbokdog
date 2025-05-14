@@ -46,15 +46,18 @@ export interface ClosedVolunteerResponse {
 
 export interface VolunteerApplicant {
 	id: number;
-	userId: number;
-	nickname: string;
-	name: string;
-	phoneNumber: string;
-	requestDate: string;
-	scheduleId: number;
-	volunteerDate: string;
-	timeSlot: "morning" | "afternoon";
+	memberId: number;
+	volunteerId: number;
 	status: "PENDING" | "APPROVED" | "REJECTED";
+	createdAt: string;
+	name: string;
+	nickname: string;
+	birth: string;
+	phone: string | null;
+	age: number;
+	grade: string;
+	email: string;
+	profileImage: string;
 }
 
 export interface VolunteerSchedule {
@@ -107,13 +110,7 @@ export interface APIScheduleItem {
 }
 
 export interface VolunteerApplicantsResponse {
-	pageToken: string;
+	pageToken: string | null;
 	data: VolunteerApplicant[];
 	hasNext: boolean;
-}
-export interface VolunteerApplicant {
-	id: number;
-	memberId: number;
-	volunteerId: number;
-	status: "PENDING" | "APPROVED" | "REJECTED";
 }
