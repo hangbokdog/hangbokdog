@@ -143,7 +143,8 @@ public class DogService {
 			request.description(),
 			request.isNeutered(),
 			request.locationId(),
-			request.dogBreed()
+			request.dogBreed(),
+			request.isStar()
 		);
 	}
 
