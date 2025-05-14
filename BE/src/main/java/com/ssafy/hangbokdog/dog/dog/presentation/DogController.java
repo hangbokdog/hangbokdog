@@ -30,6 +30,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
+import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.LocationDogCountResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.ProtectedDogCountResponse;
@@ -232,6 +233,15 @@ public class DogController {
 	@GetMapping("/location/{locationId}/count")
 	public ResponseEntity<LocationDogCountResponse> locationDogCount(@PathVariable Long locationId) {
 		return ResponseEntity.ok().body(dogService.getLocationDogCount(locationId));
+	}
+
+	@GetMapping("/hospital")
+	public ResponseEntity<PageInfo<HospitalDogResponse>> getHospitalDogs(
+		@AuthMember Member member,
+		@RequestParam Long centerId,
+		@RequestParam(required = false) String pageToken
+	) {
+		return ResponseEntity.ok().body(dogService.getHospitalDogs(centerId, pageToken));
 	}
 
 	private String uploadImageToS3(MultipartFile image) {
