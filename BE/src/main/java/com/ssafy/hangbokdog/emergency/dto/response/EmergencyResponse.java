@@ -10,6 +10,7 @@ public record EmergencyResponse(
 	Long authorId,
 	String name,
 	String title,
+	String content,
 	String memberImage,
 	LocalDateTime dueDate,
 	Integer capacity,

@@ -34,6 +34,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				emergency.authorId,
 				member.nickName,
 				emergency.title,
+				emergency.content,
 				member.profileImage,
 				emergency.dueDate,
 				emergency.capacity,
