@@ -30,7 +30,8 @@ public record DogDetailResponse(
 	int favoriteCount,
 	int currentSponsorCount,
 	int dogCommentCount,
-	Boolean isFosterApply
+	Boolean isFosterApply,
+	Boolean isSponsorshipApply
 ) {
 	public static DogDetailResponse from(
 		DogDetailInfo info,
@@ -38,7 +39,8 @@ public record DogDetailResponse(
 		int favoriteCount,
 		int currentSponsorCount,
 		int dogCommentCount,
-		Boolean isFosterApply
+		Boolean isFosterApply,
+		Boolean isSponsorshipApply
 	) {
 		return new DogDetailResponse(
 			info.dogId(),
@@ -62,7 +64,8 @@ public record DogDetailResponse(
 			favoriteCount,
 			currentSponsorCount,
 			dogCommentCount,
-			isFosterApply
+			isFosterApply,
+			isSponsorshipApply
 		);
 	}
 }
