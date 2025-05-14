@@ -99,6 +99,7 @@ public class DogService {
 		int sponsorCount = sponsorshipRepository.countActiveSponsorshipByDogId(dogId);
 		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
 		boolean isFosterApply = fosterRepository.isFosterApplying(memberId, dogId);
+		boolean isSponsorApply = sponsorshipRepository.existsSponsorshipByMemberIdAndDogId(memberId, dogId);
 
 		return DogDetailResponse.from(
 			dogDetailInfo,
@@ -106,7 +107,8 @@ public class DogService {
 			favoriteCount,
 			sponsorCount,
 			dogCommentCount,
-			isFosterApply
+			isFosterApply,
+			isSponsorApply
 		);
 	}
 
