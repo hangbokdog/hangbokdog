@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.vaccination.presentation;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;

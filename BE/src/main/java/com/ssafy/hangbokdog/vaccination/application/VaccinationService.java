@@ -43,7 +43,7 @@ public class VaccinationService {
 
 	public VaccinationCreateResponse createVaccination(Long centerId, Long memberId, VaccinationCreateRequest request) {
 
-		if (centerRepository.existsById(centerId)) {
+		if (!centerRepository.existsById(centerId)) {
 			throw new BadRequestException(ErrorCode.CENTER_NOT_FOUND);
 		}
 
