@@ -22,7 +22,7 @@ public interface DogJpaRepository extends JpaRepository<Dog, Long>, DogJpaReposi
 	@Query("""
 			SELECT COUNT(d.id)
 			FROM Dog d
-			WHERE d.locationId IN :locationId
+			WHERE d.locationId IN :locationIds
 		""")
 	int countByLocationIdsIn(List<Long> locationIds);
 }
