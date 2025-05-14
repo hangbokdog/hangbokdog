@@ -126,9 +126,8 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                     volunteerApplication.volunteerId,
                     volunteerApplication.status
                 )).from(volunteerApplication)
-                .where(volunteerApplication.id.eq(volunteerEventId).and(
-                        volunteerApplication.status.eq(status)).and(
-                                volunteerApplication.status.eq(status)
+                .where(volunteerApplication.volunteerEventId.eq(volunteerEventId).and(
+                        volunteerApplication.status.eq(status)
                 ), isInRange(pageToken))
                 .limit(pageSize)
                 .fetch();
