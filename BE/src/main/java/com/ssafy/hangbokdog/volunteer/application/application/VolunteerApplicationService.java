@@ -51,7 +51,7 @@ public class VolunteerApplicationService {
     private final CenterMemberRepository centerMemberRepository;
 
     public void apply(Long eventId, VolunteerApplicationCreateRequest request) {
-        if (volunteerEventRepository.existsById(eventId)) {
+        if (!volunteerEventRepository.existsById(eventId)) {
             throw new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND);
         }
 
