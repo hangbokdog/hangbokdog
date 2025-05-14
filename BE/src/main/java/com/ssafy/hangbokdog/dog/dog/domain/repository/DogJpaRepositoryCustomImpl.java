@@ -176,6 +176,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			))
 			.from(dog)
 			.where(dog.locationId.in(locationIds),
+				dog.status.eq(DogStatus.PROTECTED),
+				dog.isStar.eq(false),
 				dog.id.notIn(dogIds),
 				isInRange(pageToken))
 			.orderBy(dog.id.desc())
