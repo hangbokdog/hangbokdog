@@ -245,7 +245,7 @@ export const getVolunteerScheduleApplyAPI = async ({
 // 봉사 신청 API
 export interface VolunteerApplication {
 	date: string;
-	volunteerSlotIds: number[];
+	volunteerSlotId: number;
 	participantIds: number[];
 }
 
