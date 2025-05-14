@@ -27,7 +27,7 @@ public class MedicalHistoryJdbcRepository {
 	) {
 		String sql = "INSERT INTO medical_history"
 			+ "(dog_id, content, medical_history_image, "
-			+ "medical_period, medical_type, operated_time, created_at, modified_at)"
+			+ "medical_period, medical_type, operated_date, created_at, modified_at)"
 			+ " VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
