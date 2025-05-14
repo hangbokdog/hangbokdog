@@ -51,7 +51,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 ))
                 .from(volunteerEvent)
                 .where(openCondition, centerCondition)
-                .orderBy(volunteerEvent.startDate.desc())
+                .orderBy(volunteerEvent.startDate.asc())
                 .fetch();
     }
 
