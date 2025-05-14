@@ -169,7 +169,7 @@ public class VolunteerService {
                 .precaution(event.getPrecaution())
                 .info(event.getInfo())
                 .applicationStatus(volunteerApplication.isEmpty()
-                        ? VolunteerApplicationStatus.NONE : volunteerApplication.get().getStatus())
+                        ? VolunteerApplicationStatus.NONE : volunteerApplication.get(0).getStatus())
                 .build();
     }
 
@@ -313,7 +313,8 @@ public class VolunteerService {
         return volunteerApplicationStatus.stream()
                 .collect(Collectors.toMap(
                         VolunteerApplicationStatusInfo::volunteerEventId,
-                        VolunteerApplicationStatusInfo::status
+                        VolunteerApplicationStatusInfo::status,
+                        (old, newValue) -> newValue
                 ));
     }
 

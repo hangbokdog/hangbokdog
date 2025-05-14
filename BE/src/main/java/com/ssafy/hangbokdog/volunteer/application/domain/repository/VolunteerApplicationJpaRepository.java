@@ -1,7 +1,6 @@
 package com.ssafy.hangbokdog.volunteer.application.domain.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,5 +17,5 @@ public interface VolunteerApplicationJpaRepository
     List<VolunteerApplication> findByVolunteerSlotIdIn(List<Long> volunteerSlotIds);
 
     @Query("SELECT va FROM VolunteerApplication va WHERE va.volunteerEventId = :eventId AND va.memberId = :memberId")
-    Optional<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId);
+    List<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId);
 }

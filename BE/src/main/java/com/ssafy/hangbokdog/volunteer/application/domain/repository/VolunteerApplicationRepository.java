@@ -64,7 +64,7 @@ public class VolunteerApplicationRepository {
         return volunteerApplicationJpaRepository.findByEventIdsIn(memberId, volunteerIds);
     }
 
-    public Optional<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId) {
+    public List<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId) {
         return volunteerApplicationJpaRepository.findByEventIdAndMemberId(eventId, memberId);
     }
 }
