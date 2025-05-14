@@ -291,3 +291,20 @@ export const getVolunteerApplicantsAPI = async ({
 	);
 	return response.data;
 };
+
+// 봉사 신청 승인, 거절 api
+export const updateVolunteerApplicantStatusAPI = async ({
+	eventId,
+	applicationId,
+	status,
+}: {
+	eventId: number;
+	applicationId: number;
+	status: "APPROVED" | "REJECTED";
+}) => {
+	const response = await localAxios.patch(
+		`/volunteers/${eventId}/applications/${applicationId}/status`,
+		{ status },
+	);
+	return response.data;
+};

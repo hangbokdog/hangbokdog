@@ -63,12 +63,6 @@ interface SlotType {
 	capacity: number;
 }
 
-interface TemplateResponse {
-	info?: string;
-	precaution?: string;
-	status?: string;
-}
-
 export default function AddVolunteerSchedulePage() {
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
@@ -167,21 +161,11 @@ export default function AddVolunteerSchedulePage() {
 			}
 		},
 		[
-			activityLogQuillRef,
-			infoQuillRef,
-			precautionQuillRef,
-			infoTemplateQuillRef,
-			precautionTemplateQuillRef,
 			activityLogImageUploading,
 			infoImageUploading,
 			precautionImageUploading,
 			infoTemplateImageUploading,
 			precautionTemplateImageUploading,
-			setActivityLogImageUploading,
-			setInfoImageUploading,
-			setPrecautionImageUploading,
-			setInfoTemplateImageUploading,
-			setPrecautionTemplateImageUploading,
 		],
 	);
 
@@ -444,11 +428,11 @@ export default function AddVolunteerSchedulePage() {
 		];
 
 		// 각 에디터 컨테이너에 이벤트 리스너 등록
-		editorRefs.forEach((ref) => {
+		for (const ref of editorRefs) {
 			if (ref.current) {
 				try {
 					const editor = ref.current.getEditor();
-					if (editor && editor.root) {
+					if (editor?.root) {
 						const editorRoot = editor.root;
 
 						// 드래그 앤 드롭 이벤트 방지
@@ -479,15 +463,15 @@ export default function AddVolunteerSchedulePage() {
 					console.log("에디터가 아직 초기화되지 않았습니다.");
 				}
 			}
-		});
+		}
 
 		// 클린업 함수
 		return () => {
-			editorRefs.forEach((ref) => {
+			for (const ref of editorRefs) {
 				if (ref.current) {
 					try {
 						const editor = ref.current.getEditor();
-						if (editor && editor.root) {
+						if (editor?.root) {
 							const editorRoot = editor.root;
 
 							editorRoot.removeEventListener(
@@ -515,7 +499,7 @@ export default function AddVolunteerSchedulePage() {
 						// 무시
 					}
 				}
-			});
+			}
 		};
 	}, []);
 

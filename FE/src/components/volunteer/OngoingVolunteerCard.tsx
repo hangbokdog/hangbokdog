@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import OngoingVolunteerDateBox from "./OngoingVolunteerDateBox";
 import OngoingVolunteerImage from "./OngoingVolunteerImage";
 import OngoingVolunteerInfo from "./OngoingVolunteerInfo";
-import dog1 from "@/assets/images/dog1.png";
 
 interface OngoingVolunteerCardProps {
 	id: number;
@@ -20,7 +19,6 @@ export default function OngoingVolunteerCard({
 	title,
 	content,
 	address,
-	locationType,
 	startDate,
 	endDate,
 	imageUrl,
@@ -39,7 +37,7 @@ export default function OngoingVolunteerCard({
 					location={address}
 					description={content}
 				/>
-				<OngoingVolunteerImage src={dog1} alt="dog1" />
+				<OngoingVolunteerImage src={imageUrl} alt="dog1" />
 			</div>
 		</Link>
 	);
