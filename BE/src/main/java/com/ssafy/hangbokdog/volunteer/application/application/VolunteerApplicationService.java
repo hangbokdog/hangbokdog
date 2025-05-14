@@ -82,7 +82,10 @@ public class VolunteerApplicationService {
         List<VolunteerApplication> volunteerApplications = new ArrayList<>();
 
         for (var applicationRequest : request.applications()) {
-            HashSet<Long> participantMemberIds = slotIdToMemberIds.getOrDefault(applicationRequest.volunteerSlotId(), new HashSet<>());
+            HashSet<Long> participantMemberIds = slotIdToMemberIds.getOrDefault(
+                    applicationRequest.volunteerSlotId(),
+                    new HashSet<>()
+            );
             for (Long participantId : applicationRequest.participantIds()) {
                 if (participantMemberIds.contains(participantId)) {
                     throw new BadRequestException(DUPLICATE_APPLICATION);
