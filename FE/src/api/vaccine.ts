@@ -33,6 +33,7 @@ export interface VaccinationSummaryResponse {
 	content: string;
 	operatedDate: string;
 	locationInfos: LocationInfo[];
+	status: VaccinationStatus;
 }
 
 export const fetchVaccinationSummariesAPI = async (
@@ -61,9 +62,79 @@ export interface VaccinationDetailResponse {
 	completedDogCount: number;
 	totalCount: number;
 	status: VaccinationStatus;
+	locationNames: string[];
 }
 
 export const fetchVaccinationDetailAPI = async (vaccinationId: number) => {
 	const response = await localAxios.get(`vaccinations/${vaccinationId}`);
+	return response.data;
+};
+
+export interface VaccinationDoneResponse {
+	dogId: number;
+	name: string;
+	imageUrl: string;
+	ageMonth: number;
+}
+
+export const fetchVaccinatedDogsAPI = async (
+	vaccinationId: number,
+	pageToken?: string,
+	keyword?: string,
+): Promise<PageInfo<VaccinationDoneResponse>> => {
+	const response = await localAxios.get(
+		`/vaccinations/${vaccinationId}/done`,
+		{
+			params: { pageToken, keyword },
+		},
+	);
+	return response.data;
+};
+
+export const fetchNotYetVaccinatedDogsAPI = async (
+	vaccinationId: number,
+	pageToken?: string,
+	keyword?: string,
+): Promise<PageInfo<VaccinationDoneResponse>> => {
+	const response = await localAxios.get(
+		`/vaccinations/${vaccinationId}/yet`,
+		{
+			params: { pageToken, keyword },
+		},
+	);
+	return response.data;
+};
+
+type VaccinationCompleteRequest = {
+	dogIds: number[];
+};
+
+export const completeVaccinationAPI = async (
+	vaccinationId: number,
+	centerId: number,
+	request: VaccinationCompleteRequest,
+) => {
+	const response = await localAxios.patch(
+		`/vaccinations/${vaccinationId}`,
+		request,
+		{
+			params: { centerId },
+		},
+	);
+	return response.data;
+};
+
+export const saveVaccinationAPI = async (
+	vaccinationId: number,
+	centerId: string,
+	request: VaccinationCompleteRequest,
+) => {
+	const response = await localAxios.post(
+		`/vaccinations/${vaccinationId}`,
+		request,
+		{
+			params: { centerId },
+		},
+	);
 	return response.data;
 };

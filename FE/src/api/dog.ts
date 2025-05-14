@@ -25,6 +25,7 @@ export interface UpdateDogRequest {
 	isNeutered: boolean;
 	locationId: number;
 	dogBreed: DogBreed;
+	isStar: boolean;
 }
 
 export const updateDogAPI = async (
@@ -312,6 +313,23 @@ export const applyAdoptionAPI = async (dogId: string) => {
 export const applyFosterAPI = async (dogId: string, centerId: string) => {
 	const response = await localAxios.post(`/dogs/${dogId}/fosters`, null, {
 		params: { centerId },
+	});
+	return response.data;
+};
+
+export interface HospitalDogResponse {
+	dogId: number;
+	name: string;
+	imageUrl: string;
+	ageMonth: number;
+}
+
+export const fetchHospitalDogsAPI = async (
+	centerId: number,
+	pageToken?: string,
+): Promise<PageInfo<HospitalDogResponse[]>> => {
+	const response = await localAxios.get("/dogs/hospital", {
+		params: { centerId, pageToken },
 	});
 	return response.data;
 };
