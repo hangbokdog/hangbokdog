@@ -49,7 +49,7 @@ export default function VolunteerRegister() {
 				dueDate: new Date(formData.dueDate).toISOString(), // ISO 포맷 보장
 			});
 			toast("자원봉사 게시글이 등록되었습니다!");
-			navigate("/manager");
+			navigate("/manager/emergency");
 			// ✅ 캐시된 'emergency-posts' 쿼리를 무효화 → 자동으로 다시 요청됨
 			await queryClient.invalidateQueries({
 				queryKey: [

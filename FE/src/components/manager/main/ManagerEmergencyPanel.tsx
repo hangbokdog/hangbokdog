@@ -58,27 +58,6 @@ export default function ManagerEmergencyPanel({
 
 	return (
 		<div className="flex flex-col">
-			<div className="flex justify-between items-center py-2">
-				<div className="flex gap-2 items-center">
-					<div className="flex rounded-full w-6 h-6 bg-red overflow-hidden">
-						<img
-							src="/src/assets/images/3D Siren Light Model.png"
-							className="w-6 h-6"
-							alt="Emergency Icon"
-						/>
-					</div>
-					<div className="text-lg font-bold text-grayText">긴급</div>
-				</div>
-				<div>
-					<button
-						type="button"
-						className="px-3 py-1 bg-male text-white rounded-full"
-						onClick={() => navigate("/manager/emergency/register")}
-					>
-						긴급 생성
-					</button>
-				</div>
-			</div>
 			<ListPanel
 				link="/manager/emergency"
 				tabs={[

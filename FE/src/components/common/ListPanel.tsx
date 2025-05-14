@@ -18,9 +18,6 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 	const activeIndex = tabs.findIndex((tab) => tab.key === activeTabKey);
 	const activeTab = tabs.find((tab) => tab.key === activeTabKey);
 
-	console.log("ListPanel tabs:", tabs);
-	console.log("activeTab data:", activeTab?.data);
-
 	return (
 		<div className="flex flex-col">
 			<div className="flex flex-1 flex-col items-center p-2 gap-3 rounded-lg bg-white shadow-custom-sm">
