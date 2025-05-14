@@ -54,7 +54,8 @@ public class VaccinationJpaRepositoryCustomImpl implements VaccinationJpaReposit
 				vaccination.title,
 				vaccination.content,
 				vaccination.operatedDate,
-				vaccination.locationIds
+				vaccination.locationIds,
+				vaccination.status
 			))
 			.from(vaccination)
 			.where(vaccination.centerId.eq(centerId),
