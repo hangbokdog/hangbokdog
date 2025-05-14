@@ -319,8 +319,7 @@ export default function VolunteerApplyPage() {
 			// 타입 안전하게 변환
 			return {
 				date: schedule.rawDate || "", // rawDate가 없으면 빈 문자열 사용
-				volunteerSlotIds:
-					schedule.slotId !== undefined ? [schedule.slotId] : [],
+				volunteerSlotId: schedule.slotId,
 				participantIds: schedule.participants.map((p) => p.id),
 			};
 		});

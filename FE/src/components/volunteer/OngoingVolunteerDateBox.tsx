@@ -17,7 +17,7 @@ export default function OngoingVolunteerDateBox({
 	const endDayColor = useDayColor(endMonth, endDay);
 
 	return (
-		<div className="p-3 flex flex-col items-center justify-between border-r border-superLightGray">
+		<div className="p-3 w-16 flex flex-col items-center justify-between border-r border-superLightGray">
 			<span className="text-xs font-medium text-lightGray">
 				{startMonth} /{" "}
 				<span className={`font-bold text-base ${startDayColor}`}>

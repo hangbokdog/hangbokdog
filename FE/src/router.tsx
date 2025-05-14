@@ -5,7 +5,6 @@ import Login from "./pages/Login";
 import DonationLayout from "./layouts/DonationLayout";
 import SponsorShipPage from "./pages/SponsorShipPage";
 import ManagerMainLayout from "./layouts/ManagerMainLayout";
-import ManagerMainPage from "./pages/manager/ManagerMainPage";
 import ManagerVolunteerPage from "./pages/manager/ManagerVolunteerPage";
 import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
@@ -93,23 +92,24 @@ const router = createBrowserRouter([
 										),
 										handle: { showHeader: false },
 									},
+									{
+										path: "adoption",
+										children: [
+											{
+												path: "notice",
+												element: (
+													<CenterMemberProtectedRoute>
+														<AdoptionNoticePage />
+													</CenterMemberProtectedRoute>
+												),
+											},
+										],
+									},
 								],
 							},
 						],
 					},
-					{
-						path: "adoption",
-						children: [
-							{
-								path: "notice",
-								element: (
-									<CenterMemberProtectedRoute>
-										<AdoptionNoticePage />
-									</CenterMemberProtectedRoute>
-								),
-							},
-						],
-					},
+
 					{
 						path: "volunteer",
 						children: [

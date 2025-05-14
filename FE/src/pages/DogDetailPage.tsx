@@ -473,7 +473,7 @@ export default function DogDetailPage() {
 
 				<DogActionButtons
 					sponsorLink="https://www.ihappynanum.com/Nanum/B/21G6PTU1W5"
-					adoptionLink="/adoption/notice"
+					adoptionLink={`/dogs/${id}/adoption/notice`}
 				/>
 			</div>
 		</motion.div>

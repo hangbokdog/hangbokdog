@@ -86,6 +86,7 @@ export interface DogDetailResponse {
 	favoriteCount: number;
 	currentSponsorCount: number;
 	dogCommentCount: number;
+	isFosterApply?: boolean;
 }
 
 export const fetchDogDetail = async (dogId: number, centerId: string) => {
@@ -287,5 +288,30 @@ export const fetchDogsAPI: QueryFunction<
 		},
 	);
 	console.log("response", response.data);
+	return response.data;
+};
+
+export const applySponsorAPI = async (dogId: string, centerId: string) => {
+	const response = await localAxios.post(
+		`/dogs/${dogId}/apply-sponsor`,
+		null,
+		{
+			params: { centerId },
+		},
+	);
+	return response.data;
+};
+
+export const applyAdoptionAPI = async (dogId: string) => {
+	const response = await localAxios.post("/adoptions", null, {
+		params: { dogId },
+	});
+	return response.data;
+};
+
+export const applyFosterAPI = async (dogId: string, centerId: string) => {
+	const response = await localAxios.post(`/dogs/${dogId}/fosters`, null, {
+		params: { centerId },
+	});
 	return response.data;
 };
