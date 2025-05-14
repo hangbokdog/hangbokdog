@@ -33,6 +33,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
+import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.LocationDogCountResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.ProtectedDogCountResponse;
@@ -289,6 +290,9 @@ public class DogService {
 		return new LocationDogCountResponse(dogRepository.getLocationDogCount(locationId));
 	}
 
+	public PageInfo<HospitalDogResponse> getHospitalDogs(Long centerId, String pageToken) {
+		return dogRepository.getHospitalDogs(centerId, pageToken);
+	}
 
 	private Dog findDog(Long dogId) {
 		return dogRepository.getDog(dogId)

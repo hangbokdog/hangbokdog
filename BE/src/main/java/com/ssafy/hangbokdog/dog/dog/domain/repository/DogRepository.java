@@ -14,6 +14,7 @@ import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
+import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.MedicalHistoryResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 
@@ -136,5 +137,10 @@ public class DogRepository {
 		LocalDateTime operatedTime
 	) {
 		medicalHistoryJdbcRepository.bulkInsertMedicalHistory(dogIds, content, operatedTime);
+	}
+
+	public PageInfo<HospitalDogResponse> getHospitalDogs(Long centerId, String pageToken) {
+		var data = dogJpaRepository.getHospitalDogs(centerId, pageToken, DOG_PAGE_SIZE);
+		return PageInfo.of(data, DOG_PAGE_SIZE, HospitalDogResponse::dogId);
 	}
 }

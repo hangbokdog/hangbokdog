@@ -8,6 +8,7 @@ import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
+import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 
 public interface DogJpaRepositoryCustom {
@@ -39,4 +40,6 @@ public interface DogJpaRepositoryCustom {
 		String pageToken,
 		int pageSize
 	);
+
+	List<HospitalDogResponse> getHospitalDogs(Long centerId, String pageToken, int pageSize);
 }
