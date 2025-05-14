@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.volunteer.application.domain.repository;
 
+import static com.ssafy.hangbokdog.member.domain.QMember.member;
 import static com.ssafy.hangbokdog.volunteer.application.domain.QVolunteerApplication.*;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
@@ -124,8 +125,18 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                     volunteerApplication.id,
                     volunteerApplication.memberId,
                     volunteerApplication.volunteerId,
-                    volunteerApplication.status
+                    volunteerApplication.status,
+                    volunteerApplication.createdAt,
+                    member.name,
+                    member.nickName,
+                    member.birth,
+                    member.phone,
+                    member.age,
+                    member.grade,
+                    member.email,
+                    member.profileImage
                 )).from(volunteerApplication)
+                .leftJoin(member).on(member.id.eq(volunteerApplication.memberId))
                 .where(volunteerApplication.volunteerEventId.eq(volunteerEventId).and(
                         volunteerApplication.status.eq(status)
                 ), isInRange(pageToken))
