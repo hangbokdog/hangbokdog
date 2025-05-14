@@ -98,8 +98,8 @@ public class DogService {
 		int favoriteCount = favoriteDogRepository.getFavoriteCountByDogId(dogId).intValue();
 		int sponsorCount = sponsorshipRepository.countActiveSponsorshipByDogId(dogId);
 		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
-		boolean isFosterApply = fosterRepository.isFosterApplying(memberId, dogId);
-		boolean isSponsorApply = sponsorshipRepository.existsSponsorshipByMemberIdAndDogId(memberId, dogId);
+		Boolean isFosterApply = fosterRepository.isFosterApplying(memberId, dogId);
+		Boolean isSponsorApply = sponsorshipRepository.existsSponsorshipByMemberIdAndDogId(memberId, dogId);
 
 		return DogDetailResponse.from(
 			dogDetailInfo,
