@@ -10,6 +10,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelJoinRequestAPI, registerCenterAPI } from "@/api/center";
 import { useState } from "react";
 
+type CenterStatus = "NONE" | "APPLIED" | "USER" | "MANAGER";
+
 export default function Header() {
 	const { user } = useAuthStore();
 	const { selectedCenter, clearSelectedCenter, setSelectedCenter } =
@@ -60,15 +62,12 @@ export default function Header() {
 	const handleCenterAction = () => {
 		switch (selectedCenter?.status) {
 			case "APPLIED":
-				// TODO: 신청 취소 API 호출
 				cancelJoinRequest();
 				break;
 			case "NONE":
-				// TODO: 가입 신청 API 호출
 				registerCenter();
 				break;
 			case "USER":
-				// TODO: 센터 변경 API 호출
 				break;
 			case "MANAGER":
 				navigate("/manager");
@@ -98,109 +97,143 @@ export default function Header() {
 		selectedCenter?.status === "USER" ||
 		selectedCenter?.status === "MANAGER";
 
+	// 상태별 버튼 텍스트와 스타일
+	const getStatusButton = () => {
+		if (!selectedCenter?.status) return null;
+
+		const styles: Record<CenterStatus, string> = {
+			NONE: "bg-main text-white",
+			APPLIED: "bg-red text-white",
+			USER: "bg-gray-100 text-gray-500",
+			MANAGER: "bg-gray-100 text-gray-500",
+		};
+
+		const text: Record<CenterStatus, string> = {
+			NONE: "가입 신청",
+			APPLIED: "신청 취소",
+			USER: "회원",
+			MANAGER: "매니저",
+		};
+
+		const status = selectedCenter.status as CenterStatus;
+
+		return (
+			<button
+				type="button"
+				onClick={handleCenterAction}
+				className={`px-2 py-1 rounded text-xs min-h-[28px] touch-manipulation ${styles[status]}`}
+			>
+				{text[status]}
+			</button>
+		);
+	};
+
 	return (
-		<header className="w-full h-12 flex justify-between items-center px-5">
-			<Link to={"/"}>
-				<div className="flex items-center gap-1.5">
-					<img className="w-8" src={logo} alt="logo" />
-					<p className="text-2xl font-bold text-[20px] text-main">
-						행복하개
-					</p>
-				</div>
-			</Link>
-			{selectedCenter?.centerName && (
-				<div className="relative z-20">
-					<button
-						type="button"
-						className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
-						onClick={toggleDropdown}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" || e.key === " ") {
-								toggleDropdown();
-							}
-						}}
-					>
-						<BuildingIcon className="w-3.5 h-3.5 text-gray-500" />
-						<span className="text-sm font-medium truncate max-w-[110px]">
-							{selectedCenter.centerName}
+		<header className="w-full bg-white/95 backdrop-blur-sm shadow-sm z-30 safe-top">
+			<div className="flex h-12 items-center px-3 justify-between">
+				{/* 로고 영역 - 왼쪽 */}
+				<div className="flex items-center">
+					<Link to={"/"} className="flex items-center gap-1">
+						<img className="w-6 h-6" src={logo} alt="로고" />
+						<span className="text-lg font-bold text-main">
+							행복하개
 						</span>
-						<IoIosArrowDown
-							className={`size-3.5 text-gray-500 transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
-						/>
-					</button>
-					{isDropdownOpen && (
-						<>
-							<div
-								className="fixed inset-0 z-10"
-								onClick={handleClickOutside}
-								role="button"
-								tabIndex={-1}
-								aria-label="Close dropdown"
+					</Link>
+				</div>
+
+				{/* 오른쪽 영역: 센터 선택기 + 알림 */}
+				<div className="flex items-center gap-2">
+					{selectedCenter?.centerName && (
+						<div className="relative">
+							<button
+								type="button"
+								onClick={toggleDropdown}
 								onKeyDown={(e) => {
-									if (e.key === "Escape") {
-										handleClickOutside();
+									if (e.key === "Enter" || e.key === " ") {
+										toggleDropdown();
 									}
 								}}
-							/>
-							<div className="absolute top-full mt-1 right-0 z-20 bg-white shadow-lg rounded-lg overflow-hidden w-48 border border-gray-100">
-								<div className="py-2 px-3">
-									<p className="text-xs text-gray-400 mb-1">
-										현재 센터
-									</p>
-									<p className="text-sm font-medium text-gray-800 truncate">
-										{selectedCenter.centerName}
-									</p>
-								</div>
-								<div className="border-t border-gray-100">
-									<button
-										type="button"
-										className="w-full px-3 py-2.5 flex items-center justify-between text-left text-sm text-main hover:bg-gray-50 transition-colors duration-200"
-										onClick={handleCenterChange}
-									>
-										<span>센터 변경하기</span>
-										<ChevronRightIcon className="w-4 h-4" />
-									</button>
-								</div>
-							</div>
-						</>
+								className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
+								aria-label="센터 선택"
+							>
+								<BuildingIcon className="w-3 h-3 text-gray-600" />
+								<span className="text-xs font-medium text-gray-700 max-w-[90px] truncate">
+									{selectedCenter.centerName}
+								</span>
+								<IoIosArrowDown
+									className={`w-3 h-3 text-gray-600 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+								/>
+							</button>
+
+							{isDropdownOpen && (
+								<>
+									<div
+										className="fixed inset-0 z-10"
+										onClick={handleClickOutside}
+										onKeyDown={(e) => {
+											if (e.key === "Escape") {
+												handleClickOutside();
+											}
+										}}
+										role="button"
+										tabIndex={-1}
+										aria-label="드롭다운 닫기"
+									/>
+									<div className="absolute top-full right-0 mt-1 z-20 bg-white rounded-lg shadow-lg border border-gray-100 w-48 overflow-hidden">
+										<div className="p-2.5">
+											<p className="text-xs text-gray-400 mb-0.5">
+												현재 센터
+											</p>
+											<p className="text-sm font-medium mb-1 break-words">
+												{selectedCenter.centerName}
+											</p>
+											{user.accessToken &&
+												selectedCenter?.centerId &&
+												getStatusButton()}
+										</div>
+										<div className="border-t border-gray-100">
+											<button
+												type="button"
+												className="w-full px-2.5 py-2 flex items-center justify-between text-left text-sm text-main hover:bg-gray-50"
+												onClick={handleCenterChange}
+												onKeyDown={(e) => {
+													if (
+														e.key === "Enter" ||
+														e.key === " "
+													) {
+														handleCenterChange();
+													}
+												}}
+											>
+												<span>센터 변경하기</span>
+												<ChevronRightIcon className="w-3.5 h-3.5" />
+											</button>
+										</div>
+									</div>
+								</>
+							)}
+						</div>
+					)}
+
+					{/* 알림 버튼은 항상 오른쪽에 배치 */}
+					{isCenterMember && (
+						<button
+							type="button"
+							className="flex items-center justify-center text-gray-600 hover:text-main p-1.5 rounded-full hover:bg-gray-50 touch-manipulation"
+							aria-label="알림"
+							onClick={() => {
+								/* Handle notification click */
+							}}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									// Handle notification click
+								}
+							}}
+						>
+							<IoNotificationsOutline className="w-5 h-5" />
+						</button>
 					)}
 				</div>
-			)}
-			<div className="flex items-center gap-3">
-				{user.accessToken && selectedCenter?.centerId && (
-					<button
-						type="button"
-						onClick={handleCenterAction}
-						className={`px-3 py-1 rounded text-sm 
-							${selectedCenter.status === "NONE" && "bg-main text-white"} 
-							${selectedCenter.status === "APPLIED" && "bg-red text-white"}
-							${selectedCenter.status === "USER" && "bg-gray-100 text-gray-500"}
-							${selectedCenter.status === "MANAGER" && "bg-gray-100 text-gray-500"}
-						`}
-					>
-						{selectedCenter.status === "APPLIED" && "신청 취소하기"}
-						{selectedCenter.status === "USER" && "회원"}
-						{selectedCenter.status === "MANAGER" && "매니저"}
-						{selectedCenter.status === "NONE" && "가입 신청하기"}
-					</button>
-				)}
-				{isCenterMember && (
-					<button
-						type="button"
-						className="text-grayText hover:text-main"
-						onClick={() => {
-							/* Handle notification click */
-						}}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" || e.key === " ") {
-								// Handle notification click
-							}
-						}}
-						aria-label="알림"
-					>
-						<IoNotificationsOutline className="size-6" />
-					</button>
-				)}
 			</div>
 		</header>
 	);

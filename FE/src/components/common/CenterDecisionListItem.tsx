@@ -100,11 +100,7 @@ export default function CenterDecisionListItem({
 			setIsCenterMember(false);
 		}
 
-		if (status === "MANAGER") {
-			navigate("/manager");
-		} else {
-			navigate("/");
-		}
+		navigate("/");
 	};
 
 	// 상태에 따른 배지 색상 및 텍스트
