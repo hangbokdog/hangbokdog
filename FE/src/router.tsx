@@ -25,7 +25,6 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import CenterProtectedRoute from "./components/auth/CenterProtectedRoute";
 import CenterMemberProtectedRoute from "./components/auth/CenterMemberProtectedRoute";
 import DogManageMainPage from "./pages/manager/DogManageMainPage";
-import ManagerDogListPage from "./pages/manager/ManagerDogListPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import CenterDecisionPage from "./pages/CenterDecisionPage";
 import CenterLayout from "./layouts/CenterLayout";
@@ -33,6 +32,9 @@ import DogDrugsPage from "./pages/manager/DogDrugsPage";
 import ClosedVolunteerListPage from "./pages/ClosedVolunteerListPage";
 import CenterManagerMainPage from "./pages/manager/CenterManagerMainPage";
 import VaccinationDetailPage from "./pages/manager/VaccinationDetailPage";
+import DogListPage from "./pages/DogListPage";
+import AdoptionManagerMainPage from "./pages/manager/AdoptionManagerMainPage";
+import FosterManagerMainPage from "./pages/manager/FosterManagerMainPage";
 
 const router = createBrowserRouter([
 	{
@@ -71,6 +73,10 @@ const router = createBrowserRouter([
 					{
 						path: "dogs",
 						children: [
+							{
+								index: true,
+								element: <DogListPage />,
+							},
 							{
 								path: ":id",
 								children: [
@@ -146,10 +152,6 @@ const router = createBrowserRouter([
 				),
 				children: [
 					{
-						index: true,
-						element: <ManagerMainPage />,
-					},
-					{
 						path: "volunteer",
 						children: [
 							{
@@ -185,6 +187,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: "dog-management",
+						handle: { showHeader: false },
 						children: [
 							{
 								index: true,
@@ -214,36 +217,19 @@ const router = createBrowserRouter([
 						],
 					},
 					{
-						path: "dog-list",
-						element: <ManagerDogListPage />,
-					},
-					{
-						path: "dogs",
-						children: [
-							{
-								path: ":id",
-								children: [
-									{
-										index: true,
-										element: <DogDetailPage />,
-										handle: { showHeader: false },
-									},
-									{
-										path: "comments",
-										element: (
-											<CenterMemberProtectedRoute>
-												<DogCommentsPage />
-											</CenterMemberProtectedRoute>
-										),
-										handle: { showHeader: false },
-									},
-								],
-							},
-						],
-					},
-					{
 						path: "center",
 						element: <CenterManagerMainPage />,
+						handle: { showHeader: false },
+					},
+					{
+						path: "adoption",
+						element: <AdoptionManagerMainPage />,
+						handle: { showHeader: false },
+					},
+					{
+						path: "foster",
+						element: <FosterManagerMainPage />,
+						handle: { showHeader: false },
 					},
 				],
 			},
