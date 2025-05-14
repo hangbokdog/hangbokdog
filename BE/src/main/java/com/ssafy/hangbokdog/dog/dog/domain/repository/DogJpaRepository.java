@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.dog.dog.domain.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +18,11 @@ public interface DogJpaRepository extends JpaRepository<Dog, Long>, DogJpaReposi
 	int countByCenterId(@Param("centerId") Long centerId);
 
 	int countByLocationId(Long locationId);
+
+	@Query("""
+			SELECT COUNT(d.id)
+			FROM Dog d
+			WHERE d.locationId IN :locationIds AND d.isStar = false AND d.status = 'PROTECTED'
+		""")
+	int countByLocationIdsIn(List<Long> locationIds);
 }

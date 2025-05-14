@@ -8,6 +8,7 @@ public record DogUpdateRequest(
 	String description,
 	Boolean isNeutered,
 	Long locationId,
-	DogBreed dogBreed
+	DogBreed dogBreed,
+	Boolean isStar
 ) {
 }

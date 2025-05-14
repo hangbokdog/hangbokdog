@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookResponse;
+import com.ssafy.hangbokdog.vaccination.dto.LocationInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,19 @@ public class AddressBookJpaRepositoryCustomImpl implements AddressBookJpaReposit
 			))
 			.from(addressBook)
 			.where(addressBook.centerId.eq(centerId))
+			.fetch();
+	}
+
+	@Override
+	public List<LocationInfo> getLocationInfosIn(List<Long> locationIds) {
+		return queryFactory
+			.select(Projections.constructor(
+				LocationInfo.class,
+				addressBook.id,
+				addressBook.addressName
+			))
+			.from(addressBook)
+			.where(addressBook.id.in(locationIds))
 			.fetch();
 	}
 }

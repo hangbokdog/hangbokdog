@@ -104,7 +104,8 @@ public class Dog extends BaseEntity {
 		String description,
 		Boolean isNeutered,
 		Long locationId,
-		DogBreed dogBreed
+		DogBreed dogBreed,
+		Boolean isStar
 	) {
 		this.name = name;
 		this.profileImage = profileImageUrl;
@@ -113,6 +114,7 @@ public class Dog extends BaseEntity {
 		this.isNeutered = isNeutered;
 		this.locationId = locationId;
 		this.dogBreed = dogBreed;
+		this.isStar = isStar;
 	}
 
 	@Builder

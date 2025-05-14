@@ -86,7 +86,14 @@ public enum ErrorCode {
 
     FAILED_TO_PARSE_TOKEN(17000, "토큰 파싱에 실패했습니다."),
 
-    ADDRESS_BOOK_NOT_FOUND(18000, "없는 주소입니다.");
+    ADDRESS_BOOK_NOT_FOUND(18000, "없는 주소입니다."),
+
+    VACCINATION_ALREADY_COMPLETED(19000, "이미 완료된 접종입니다"),
+    VACCINATION_NOT_FOUND(19001, "해당 접종을 찾을 수 없습니다."),
+
+    ADOPTION_NOT_FOUND(20000, "해당 입양 요청을 찾을 수 없습니다"),
+    ADOPTION_ALREADY_REJECTED(20001, "이미 거절된 입양 요청입니다."),
+    ADOPTION_ALREADY_ACCEPTED(20002, "이미 승인된 입양 요청입니다.");
 
     private final int code;
     private final String message;
