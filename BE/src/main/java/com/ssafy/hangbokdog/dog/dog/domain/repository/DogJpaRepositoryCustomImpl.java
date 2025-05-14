@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
+import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -181,6 +182,29 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.status.eq(DogStatus.PROTECTED),
 				dog.isStar.eq(false),
 				dog.id.notIn(dogIds),
+				isInRange(pageToken))
+			.orderBy(dog.id.desc())
+			.fetch();
+	}
+
+	@Override
+	public List<HospitalDogResponse> getHospitalDogs(Long centerId, String pageToken, int pageSize) {
+		return queryFactory
+			.select(Projections.constructor(
+				HospitalDogResponse.class,
+				dog.id,
+				dog.name,
+				dog.profileImage,
+				Expressions.numberTemplate(
+					Integer.class,
+					"timestampdiff(month, {0}, now())",
+					dog.birth
+				)
+			))
+			.from(dog)
+			.where(dog.status.eq(DogStatus.HOSPITAL),
+				dog.centerId.eq(centerId),
+				dog.isStar.eq(false),
 				isInRange(pageToken))
 			.orderBy(dog.id.desc())
 			.fetch();
