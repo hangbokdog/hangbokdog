@@ -100,7 +100,14 @@ public class DogService {
 		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
 		boolean isFosterApply = fosterRepository.isFosterApplying(memberId, dogId);
 
-		return DogDetailResponse.from(dogDetailInfo, isFavorite, favoriteCount, sponsorCount, dogCommentCount, isFosterApply);
+		return DogDetailResponse.from(
+			dogDetailInfo,
+			isFavorite,
+			favoriteCount,
+			sponsorCount,
+			dogCommentCount,
+			isFosterApply
+		);
 	}
 
 	@Transactional
