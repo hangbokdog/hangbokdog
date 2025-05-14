@@ -48,6 +48,6 @@ public class SponsorshipRepository {
 	}
 
 	public boolean existsSponsorshipByMemberIdAndDogId(Long memberId, Long dogId) {
-		return sponsorshipJpaRepository.
+		return sponsorshipJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
 	}
 }
