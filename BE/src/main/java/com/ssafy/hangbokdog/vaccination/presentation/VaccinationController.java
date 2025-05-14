@@ -87,17 +87,19 @@ public class VaccinationController {
 	public ResponseEntity<PageInfo<VaccinationDoneResponse>> getVaccinatedDogs(
 		@AuthMember Member member,
 		@RequestParam(required = false) String pageToken,
-		@PathVariable Long vaccinationId
+		@PathVariable Long vaccinationId,
+		@RequestParam(required = false) String keyword
 	) {
-		return ResponseEntity.ok().body(vaccinationService.getVaccinatedDogs(vaccinationId, pageToken));
+		return ResponseEntity.ok().body(vaccinationService.getVaccinatedDogs(vaccinationId, keyword, pageToken));
 	}
 
 	@GetMapping("/{vaccinationId}/yet")
 	public ResponseEntity<PageInfo<VaccinationDoneResponse>> getNotYetVaccinatedDogs(
 		@AuthMember Member member,
 		@RequestParam(required = false) String pageToken,
-		@PathVariable Long vaccinationId
+		@PathVariable Long vaccinationId,
+		@RequestParam String keyword
 	) {
-		return ResponseEntity.ok().body(vaccinationService.getNotVaccinatedDogs(vaccinationId, pageToken));
+		return ResponseEntity.ok().body(vaccinationService.getNotVaccinatedDogs(vaccinationId, keyword, pageToken));
 	}
 }

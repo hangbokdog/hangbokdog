@@ -25,6 +25,7 @@ public class VaccinatedDogJpaRepositoryCustomImpl implements VaccinatedDogJpaRep
 	@Override
 	public List<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(
 		Long vaccinationId,
+		String keyword,
 		String pageToken,
 		int pageSize
 	) {
@@ -43,10 +44,15 @@ public class VaccinatedDogJpaRepositoryCustomImpl implements VaccinatedDogJpaRep
 			.from(vaccinatedDog)
 			.leftJoin(dog).on(vaccinatedDog.dogId.eq(dog.id))
 			.where(vaccinatedDog.vaccinationId.eq(vaccinationId),
+				hasName(keyword),
 				isInRange(pageToken))
 			.orderBy(vaccinatedDog.id.desc())
 			.limit(pageSize + 1)
 			.fetch();
+	}
+
+	private BooleanExpression hasName(String name) {
+		return (name == null || name.isBlank()) ? null : dog.name.containsIgnoreCase(name);
 	}
 
 	private BooleanExpression isInRange(String pageToken) {

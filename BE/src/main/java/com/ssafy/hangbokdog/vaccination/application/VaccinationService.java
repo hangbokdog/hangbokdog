@@ -175,15 +175,15 @@ public class VaccinationService {
 		return new PageInfo<>(vaccinationSummaryInfo.pageToken(), responses, vaccinationSummaryInfo.hasNext());
 	}
 
-	public PageInfo<VaccinationDoneResponse> getVaccinatedDogs(Long vaccinationId, String pageToken) {
-		return vaccinationRepository.getVaccinationDogsByVaccinationId(vaccinationId, pageToken);
+	public PageInfo<VaccinationDoneResponse> getVaccinatedDogs(Long vaccinationId, String keyword, String pageToken) {
+		return vaccinationRepository.getVaccinationDogsByVaccinationId(vaccinationId, keyword, pageToken);
 	}
 
-	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(Long vacationId, String pageToken) {
-		Vaccination vaccination = getVaccination(vacationId);
-		List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vacationId);
+	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(Long vaccinationId, String keyword, String pageToken) {
+		Vaccination vaccination = getVaccination(vaccinationId);
+		List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vaccinationId);
 		List<Long> locationIds = vaccination.getLocationIds();
-		return dogRepository.getNotVaccinatedDogs(dogIds, locationIds, pageToken);
+		return dogRepository.getNotVaccinatedDogs(dogIds, keyword, locationIds, pageToken);
 	}
 
 	private Vaccination getVaccination(Long vaccinationId) {

@@ -34,6 +34,7 @@ public interface DogJpaRepositoryCustom {
 
 	List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
+		String keyword,
 		List<Long> locationIds,
 		String pageToken,
 		int pageSize

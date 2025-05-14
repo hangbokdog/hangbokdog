@@ -158,6 +158,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	@Override
 	public List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
+		String keyword,
 		List<Long> locationIds,
 		String pageToken,
 		int pageSize
@@ -176,6 +177,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			))
 			.from(dog)
 			.where(dog.locationId.in(locationIds),
+				hasName(keyword),
 				dog.status.eq(DogStatus.PROTECTED),
 				dog.isStar.eq(false),
 				dog.id.notIn(dogIds),

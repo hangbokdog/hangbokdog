@@ -53,9 +53,9 @@ public class VaccinationRepository {
 		return PageInfo.of(data, VACCINATION_PAGE_SIZE, VaccinationSummaryInfo::vaccinationId);
 	}
 
-	public PageInfo<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(Long vaccinationId, String pageToken) {
+	public PageInfo<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(Long vaccinationId, String keyword, String pageToken) {
 		var data = vaccinatedDogJpaRepository
-			.getVaccinationDogsByVaccinationId(vaccinationId, pageToken, DOG_PAGE_SIZE);
+			.getVaccinationDogsByVaccinationId(vaccinationId, keyword, pageToken, DOG_PAGE_SIZE);
 		return PageInfo.of(data, DOG_PAGE_SIZE, VaccinationDoneResponse::dogId);
 	}
 

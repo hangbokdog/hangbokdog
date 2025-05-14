@@ -116,11 +116,13 @@ public class DogRepository {
 
 	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
+		String keyword,
 		List<Long> locationIds,
 		String pageToken
 	) {
 		var data = dogJpaRepository.getNotVaccinatedDogs(
 			dogIds,
+			keyword,
 			locationIds,
 			pageToken,
 			DOG_PAGE_SIZE
