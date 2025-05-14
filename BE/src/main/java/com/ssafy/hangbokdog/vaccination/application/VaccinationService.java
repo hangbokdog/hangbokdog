@@ -96,12 +96,17 @@ public class VaccinationService {
 		Vaccination vaccination = getVaccination(vaccinationId);
 
 		List<Long> totalDogIds = vaccination.getLocationIds();
+		List<String> locationNames = addressBookRepository.getLocationInfosIn(vaccination.getLocationIds())
+			.stream()
+			.map(LocationInfo::locationName)
+			.collect(Collectors.toList());
+
 
 		VaccinationDetailInfo vaccinationDetailInfo = vaccinationRepository.getVaccinationDetailInfo(vaccinationId);
 		Integer vaccinatedDogCount = vaccinationRepository.countVaccinationByVaccinationId(vaccinationId);
 		Integer totalDog = dogRepository.getLocationDogCountIn(totalDogIds);
 
-		return VaccinationDetailResponse.of(vaccinationDetailInfo, totalDog, vaccinatedDogCount);
+		return VaccinationDetailResponse.of(vaccinationDetailInfo, totalDog, vaccinatedDogCount, locationNames);
 	}
 
 	@Transactional
