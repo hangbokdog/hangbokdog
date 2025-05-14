@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useCenterStore from "@/lib/store/centerStore";
 import { createDonationPostAPI } from "@/api/emergencyRegister";
 import { type DonationRequest, TargetGrade } from "@/types/emergencyRegister";
@@ -14,6 +15,7 @@ export default function DonationRegister() {
 		targetGrade: TargetGrade.ALL,
 	});
 
+	const navigate = useNavigate();
 	// 선택된 센터 정보를 가져오기
 	const { selectedCenter } = useCenterStore();
 	const centerId = Number(selectedCenter?.centerId);
@@ -66,7 +68,7 @@ export default function DonationRegister() {
 				dueDate: `${formData.dueDate}T00:00:00`,
 			});
 			toast("후원 게시글이 등록되었습니다!");
-			console.log("emergencyId", response.emergencyId);
+			navigate("/manager");
 			// 초기화
 			setFormData({
 				title: "",
