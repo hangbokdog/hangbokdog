@@ -16,6 +16,7 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.vaccination.application.VaccinationService;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCompleteRequest;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCreateRequest;
+import com.ssafy.hangbokdog.vaccination.dto.response.SavedDogCountResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationCreateResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDetailResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
@@ -51,14 +52,13 @@ public class VaccinationController {
 	}
 
 	@PostMapping("/{vaccinationId}")
-	public ResponseEntity<Void> saveVaccination(
+	public ResponseEntity<SavedDogCountResponse> saveVaccination(
 		@AuthMember Member member,
 		@PathVariable Long vaccinationId,
 		@RequestParam Long centerId,
 		@RequestBody VaccinationCompleteRequest request
 	) {
-		vaccinationService.saveVaccination(centerId, member.getId(), vaccinationId, request);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok().body(vaccinationService.saveVaccination(centerId, member.getId(), vaccinationId, request));
 	}
 
 	@GetMapping("/{vaccinationId}")

@@ -24,6 +24,7 @@ import com.ssafy.hangbokdog.vaccination.dto.VaccinationDetailInfo;
 import com.ssafy.hangbokdog.vaccination.dto.VaccinationSummaryInfo;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCompleteRequest;
 import com.ssafy.hangbokdog.vaccination.dto.request.VaccinationCreateRequest;
+import com.ssafy.hangbokdog.vaccination.dto.response.SavedDogCountResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationCreateResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDetailResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
@@ -110,7 +111,7 @@ public class VaccinationService {
 	}
 
 	@Transactional
-	public void saveVaccination(
+	public SavedDogCountResponse saveVaccination(
 		Long centerId,
 		Long memberId,
 		Long vaccinationId,
@@ -124,7 +125,7 @@ public class VaccinationService {
 
 		Vaccination vaccination = getVaccination(vaccinationId);
 
-		vaccinationRepository.bulkInsertVaccinatedDog(request.dogIds(), vaccinationId);
+		return new SavedDogCountResponse(vaccinationRepository.bulkInsertVaccinatedDog(request.dogIds(), vaccinationId));
 	}
 
 	public PageInfo<VaccinationSummaryResponse> getVaccinationSummaries(Long centerId, String pageToken) {
