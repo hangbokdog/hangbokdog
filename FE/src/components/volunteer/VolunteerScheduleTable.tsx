@@ -28,13 +28,13 @@ export default function VolunteerScheduleTable({
 			<Table className="border-collapse w-full">
 				<TableHeader className="border-b border-lightGray">
 					<TableRow className="[&:hover]:bg-transparent ">
-						<TableHead className="text-center py-4 px-3 text-base font-medium border border-white">
+						<TableHead className="w-1/3 text-center py-4 px-3 text-base font-medium border border-white">
 							날짜
 						</TableHead>
-						<TableHead className="text-center py-4 px-3 text-base font-medium border border-white">
+						<TableHead className="w-1/3 text-center py-4 px-3 text-base font-medium border border-white">
 							오전
 						</TableHead>
-						<TableHead className="text-center py-4 px-3 text-base font-medium border border-white">
+						<TableHead className="w-1/3 text-center py-4 px-3 text-base font-medium border border-white">
 							오후
 						</TableHead>
 					</TableRow>
@@ -45,7 +45,7 @@ export default function VolunteerScheduleTable({
 							key={item.date}
 							className="!border-0 [&:hover]:bg-transparent"
 						>
-							<TableCell className="text-center py-4 text-base border border-white">
+							<TableCell className="w-1/3 text-center py-4 text-base border border-white">
 								{item.date}
 							</TableCell>
 							<TableCell
@@ -56,7 +56,7 @@ export default function VolunteerScheduleTable({
 										item.morning,
 									)
 								}
-								className={`text-center py-4 text-base cursor-pointer border border-white hover:bg-blue-50 ${
+								className={`w-1/3 text-center py-4 text-base cursor-pointer border border-white hover:bg-blue-50 ${
 									item.morning === "6/6" ? "text-red-500" : ""
 								} ${
 									selectedSchedules.some(
@@ -78,7 +78,7 @@ export default function VolunteerScheduleTable({
 										item.afternoon,
 									)
 								}
-								className={`text-center py-4 text-base cursor-pointer border border-white hover:bg-blue-50 ${
+								className={`w-1/3 text-center py-4 text-base cursor-pointer border border-white hover:bg-blue-50 ${
 									item.afternoon === "6/6"
 										? "text-red-500"
 										: ""
