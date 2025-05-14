@@ -1,7 +1,6 @@
 import OngoingVolunteerDateBox from "./OngoingVolunteerDateBox";
 import OngoingVolunteerImage from "./OngoingVolunteerImage";
 import OngoingVolunteerInfo from "./OngoingVolunteerInfo";
-import dog1 from "@/assets/images/dog1.png";
 
 interface ClosedVolunteerCardProps {
 	id: number;
@@ -15,11 +14,9 @@ interface ClosedVolunteerCardProps {
 }
 
 export default function ClosedVolunteerCard({
-	id,
 	title,
 	content,
 	address,
-	locationType,
 	startDate,
 	endDate,
 	imageUrl,
@@ -41,7 +38,7 @@ export default function ClosedVolunteerCard({
 				location={address}
 				description={content}
 			/>
-			<OngoingVolunteerImage src={dog1} alt="dog1" />
+			<OngoingVolunteerImage src={imageUrl} alt="dog1" />
 			{/* 클릭 방지용 오버레이 */}
 			<div className="absolute inset-0 cursor-not-allowed z-20" />
 		</div>

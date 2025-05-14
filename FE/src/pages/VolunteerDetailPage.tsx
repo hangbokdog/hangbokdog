@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import { getVolunteerDetailAPI } from "@/api/volunteer";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import ApplicationStatusCard from "@/components/volunteer/ApplicationStatusCard";
 
 // 날짜를 YYYY.MM.DD(요일) 형식으로 변환하는 함수
 const formatDateWithDay = (dateString: string) => {
@@ -84,10 +85,28 @@ export default function VolunteerDetailPage() {
 		};
 	});
 
+	// 사용자 신청 상태 (예시로 넣었습니다. 실제로는 API에서 받아오는 값 사용)
+	// 실제 구현시 API 응답에서 applicationStatus 필드를 가져와야 합니다
+	const applicationStatus = volunteerDetail.applicationStatus || "PENDING";
+	// 참여일/시간 정보 (예시)
+	const applicationDate =
+		volunteerDetail.applicationDate || volunteerDetail.startDate;
+	const applicationTime =
+		volunteerDetail.applicationTime || timeInfo.split(" / ")[0];
+
 	return (
 		<div className="flex flex-col mt-2.5">
 			<ImageCarousel images={volunteerDetail.imageUrls} />
 			<div className="flex flex-col p-2.5 gap-2.5">
+				{/* 신청 상태가 있을 경우 상태 카드 표시 */}
+				{applicationStatus && applicationStatus !== "NONE" && (
+					<ApplicationStatusCard
+						status={applicationStatus as "PENDING" | "APPROVED"}
+						date={formatDateWithDay(applicationDate)}
+						time={applicationTime}
+					/>
+				)}
+
 				<VolunteerInfoHeader
 					title={volunteerDetail.title}
 					status={status}
