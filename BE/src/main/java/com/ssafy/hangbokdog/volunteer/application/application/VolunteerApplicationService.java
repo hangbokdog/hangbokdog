@@ -65,6 +65,7 @@ public class VolunteerApplicationService {
 
         var volunteerSlots = volunteerSlotRepository.findByIdIn(volunteerSlotIds);
         var slotIdToCapacity = mapSlotIdToCapacity(volunteerSlots);
+        var slotIdToSlot = mapSlotIdToSlot(volunteerSlots);
 
         if (volunteerSlots.size() != request.applications().size()) {
             throw new BadRequestException(ErrorCode.SLOT_NOT_FOUND);
@@ -86,6 +87,9 @@ public class VolunteerApplicationService {
                     applicationRequest.volunteerSlotId(),
                     new HashSet<>()
             );
+            VolunteerSlot slot = slotIdToSlot.get(applicationRequest.volunteerSlotId());
+            slot.increaseAppliedCount(request.applications().size());
+
             for (Long participantId : applicationRequest.participantIds()) {
                 if (participantMemberIds.contains(participantId)) {
                     throw new BadRequestException(DUPLICATE_APPLICATION);
@@ -102,6 +106,14 @@ public class VolunteerApplicationService {
         }
 
         volunteerApplicationRepository.saveAll(volunteerApplications);
+    }
+
+    private Map<Long, VolunteerSlot> mapSlotIdToSlot(List<VolunteerSlot> volunteerSlots) {
+        return volunteerSlots.stream()
+                .collect(Collectors.toMap(
+                        VolunteerSlot::getId,
+                        volunteerSlot -> volunteerSlot
+                ));
     }
 
     public List<WeeklyApplicationResponse> getWeeklyApplications(Member member, LocalDate date) {
