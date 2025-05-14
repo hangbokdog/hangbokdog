@@ -40,8 +40,8 @@ public class VaccinationRepository {
 		return vaccinatedDogJpaRepository.countByVaccinationId(vaccinationId);
 	}
 
-	public void bulkInsertVaccinatedDog(List<Long> dogIds, Long vaccinationId) {
-		vaccinatedDogJdbcRepository.bulkInsertVaccinatedDog(dogIds, vaccinationId);
+	public int bulkInsertVaccinatedDog(List<Long> dogIds, Long vaccinationId) {
+		return vaccinatedDogJdbcRepository.bulkInsertVaccinatedDog(dogIds, vaccinationId);
 	}
 
 	public PageInfo<VaccinationSummaryInfo> getVaccinationSummaryByCenterId(
