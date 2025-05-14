@@ -98,7 +98,7 @@ public class VaccinationController {
 		@AuthMember Member member,
 		@RequestParam(required = false) String pageToken,
 		@PathVariable Long vaccinationId,
-		@RequestParam String keyword
+		@RequestParam(required = false) String keyword
 	) {
 		return ResponseEntity.ok().body(vaccinationService.getNotVaccinatedDogs(vaccinationId, keyword, pageToken));
 	}
