@@ -125,7 +125,10 @@ public class VaccinationService {
 
 		Vaccination vaccination = getVaccination(vaccinationId);
 
-		return new SavedDogCountResponse(vaccinationRepository.bulkInsertVaccinatedDog(request.dogIds(), vaccinationId));
+		return new SavedDogCountResponse(vaccinationRepository.bulkInsertVaccinatedDog(
+			request.dogIds(),
+			vaccinationId
+		));
 	}
 
 	public PageInfo<VaccinationSummaryResponse> getVaccinationSummaries(Long centerId, String pageToken) {

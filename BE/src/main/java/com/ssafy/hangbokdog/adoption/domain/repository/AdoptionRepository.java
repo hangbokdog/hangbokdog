@@ -25,8 +25,11 @@ public class AdoptionRepository {
 	public Optional<Adoption> findById(Long id) {
 		return adoptionJpaRepository.findById(id);
 	}
-	
-	public PageInfo<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(Long centerId, String pageToken) {
+
+	public PageInfo<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(
+		Long centerId,
+		String pageToken
+	) {
 		var data = adoptionJpaRepository.getAdoptionApplicationsByCenterId(centerId, pageToken, ADOPTION_PAGE_SIZE);
 		return PageInfo.of(data, ADOPTION_PAGE_SIZE, AdoptionApplicationResponse::adoptionId);
 	}

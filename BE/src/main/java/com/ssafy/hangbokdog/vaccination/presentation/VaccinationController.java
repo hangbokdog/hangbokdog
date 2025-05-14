@@ -58,7 +58,12 @@ public class VaccinationController {
 		@RequestParam Long centerId,
 		@RequestBody VaccinationCompleteRequest request
 	) {
-		return ResponseEntity.ok().body(vaccinationService.saveVaccination(centerId, member.getId(), vaccinationId, request));
+		return ResponseEntity.ok().body(vaccinationService.saveVaccination(
+			centerId,
+			member.getId(),
+			vaccinationId,
+			request
+		));
 	}
 
 	@GetMapping("/{vaccinationId}")
