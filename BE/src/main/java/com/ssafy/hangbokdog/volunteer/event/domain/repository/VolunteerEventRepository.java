@@ -33,6 +33,11 @@ public class VolunteerEventRepository {
         return volunteerEventJpaRepository.findById(eventId);
     }
 
+    public boolean existsById(Long eventId) {
+        return volunteerEventJpaRepository.existsById(eventId);
+    }
+
+
     public List<DailyApplicationInfo> findDailyApplications(Long eventId) {
         return volunteerEventJpaRepository.findDailyApplications(eventId);
     }

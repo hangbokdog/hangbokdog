@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.member.domain.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
@@ -13,4 +14,6 @@ public interface MemberQueryRepository {
     List<String> findFcmTokensByCenterId(Long centerId);
 
     MemberProfileResponse getMemberProfile(Long memberId);
+
+    List<MemberAgeInfo> findByIdWithAge(List<Long> allParticipantIds);
 }

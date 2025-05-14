@@ -20,6 +20,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
@@ -130,6 +131,18 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                                 volunteerApplication.status.eq(status)
                 ), isInRange(pageToken))
                 .limit(pageSize)
+                .fetch();
+    }
+
+    @Override
+    public List<VolunteerApplicationStatusInfo> findByEventIdsIn(Long memberId, List<Long> volunteerIds) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerApplicationStatusInfo.class,
+                volunteerApplication.volunteerEventId,
+                volunteerApplication.status
+        )).from(volunteerApplication)
+                .where(volunteerApplication.volunteerEventId.in(volunteerIds)
+                        .and(volunteerApplication.memberId.eq(memberId)))
                 .fetch();
     }
 

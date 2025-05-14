@@ -3,6 +3,8 @@ package com.ssafy.hangbokdog.volunteer.event.application;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,9 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
+import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
@@ -28,7 +33,10 @@ import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpd
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 
@@ -46,6 +54,7 @@ public class VolunteerService {
     private final CenterMemberRepository centerMemberRepository;
     private final AddressBookRepository addressBookRepository;
     private final VolunteerTemplateRepository volunteerTemplateRepository;
+    private final VolunteerApplicationRepository volunteerApplicationRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
@@ -112,10 +121,15 @@ public class VolunteerService {
         return eventId;
     }
 
-    // TODO: 필요하다면 페이지네이션 추가
-    public List<VolunteerResponse> findAll(Long centerId) {
+    public List<VolunteerParticipantResponse> findAll(Member member, Long centerId) {
+        var volunteers = eventRepository.findAllOpenEvents(centerId);
+        List<Long> volunteerIds = extractVolunteerEventIds(volunteers);
+
+        var volunteerApplicationStatus = volunteerApplicationRepository.findByEventIdsIn(member.getId(), volunteerIds);
+        var volunteerIdToApplicationStatus = mapVolunteerIdToApplicationStatus(volunteerApplicationStatus);
+
         return eventRepository.findAllOpenEvents(centerId).stream()
-                .map(volunteerInfo -> VolunteerResponse.of(
+                .map(volunteerInfo -> VolunteerParticipantResponse.of(
                         volunteerInfo.id(),
                         volunteerInfo.title(),
                         volunteerInfo.content(),
@@ -124,17 +138,19 @@ public class VolunteerService {
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().isEmpty()
-                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0))
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0),
+                        volunteerIdToApplicationStatus.getOrDefault(volunteerInfo.id(), VolunteerApplicationStatus.NONE)
+                        )
                 )
                 .toList();
     }
 
-    public VolunteerDetailResponse findById(Long eventId) {
+    public VolunteerDetailResponse findById(Member member, Long eventId) {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
         List<SlotDto> slots = slotRepository.findByEventId(eventId);
-
+        var volunteerApplication = volunteerApplicationRepository.findByEventIdAndMemberId(eventId, member.getId());
         List<DailyApplicationInfo> applicationInfos = eventRepository.findDailyApplications(eventId);
 
         return VolunteerDetailResponse.builder()
@@ -152,22 +168,20 @@ public class VolunteerService {
                 .applicationInfo(applicationInfos)
                 .precaution(event.getPrecaution())
                 .info(event.getInfo())
+                .applicationStatus(volunteerApplication.isEmpty()
+                        ? VolunteerApplicationStatus.NONE : volunteerApplication.get().getStatus())
                 .build();
     }
 
-    // HTML에서 <img src="..."> 태그의 src 속성만 뽑아내는 유틸
-    private List<String> extractTopImageUrls(String html) {
-        return Jsoup.parse(html)
-                .select("img[src]")
-                .stream()
-                .map(img -> img.attr("src"))
-                .distinct()
-                .toList();
-    }
+    public List<VolunteerResponseWithStatus> findLatest(Member member, Long centerId) {
+        var volunteers = eventRepository.findAllOpenEvents(centerId);
+        List<Long> volunteerIds = extractVolunteerEventIds(volunteers);
 
-    public List<VolunteerResponse> findLatest(Long centerId) {
+        var volunteerApplicationStatus = volunteerApplicationRepository.findByEventIdsIn(member.getId(), volunteerIds);
+        var volunteerIdToApplicationStatus = mapVolunteerIdToApplicationStatus(volunteerApplicationStatus);
+
         return eventRepository.findLatestVolunteerEvent(centerId).stream()
-                .map(volunteerInfo -> VolunteerResponse.of(
+                .map(volunteerInfo -> VolunteerResponseWithStatus.of(
                         volunteerInfo.id(),
                         volunteerInfo.title(),
                         volunteerInfo.content(),
@@ -176,7 +190,9 @@ public class VolunteerService {
                         volunteerInfo.startDate(),
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().isEmpty()
-                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0))
+                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0),
+                        volunteerIdToApplicationStatus.getOrDefault(volunteerInfo.id(), VolunteerApplicationStatus.NONE)
+                        )
                 )
                 .toList();
     }
@@ -283,5 +299,31 @@ public class VolunteerService {
 
     public List<DailyApplicationInfo> findAllSchedule(Long eventId) {
         return eventRepository.findDailyApplications(eventId);
+    }
+
+    private List<Long> extractVolunteerEventIds(List<VolunteerInfo> volunteers) {
+        return volunteers.stream()
+                .map(VolunteerInfo::id)
+                .toList();
+    }
+
+    private Map<Long, VolunteerApplicationStatus> mapVolunteerIdToApplicationStatus(
+            List<VolunteerApplicationStatusInfo> volunteerApplicationStatus
+    ) {
+        return volunteerApplicationStatus.stream()
+                .collect(Collectors.toMap(
+                        VolunteerApplicationStatusInfo::volunteerEventId,
+                        VolunteerApplicationStatusInfo::status
+                ));
+    }
+
+    // HTML에서 <img src="..."> 태그의 src 속성만 뽑아내는 유틸
+    private List<String> extractTopImageUrls(String html) {
+        return Jsoup.parse(html)
+                .select("img[src]")
+                .stream()
+                .map(img -> img.attr("src"))
+                .distinct()
+                .toList();
     }
 }

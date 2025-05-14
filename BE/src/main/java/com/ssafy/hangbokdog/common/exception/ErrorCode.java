@@ -27,6 +27,7 @@ public enum ErrorCode {
     NOT_SELLER(5003, "해당 상품의 판매자가 아닙니다."),
     EMERGENCY_NOTIFICATION_ALREADY_AGREED(5004, "이미 응급 알림에 동의한 상태입니다."),
     EMERGENCY_NOTIFICATION_ALREADY_DISAGREED(5005, "이미 응급 알림을 거절한 상태입니다."),
+    AGE_REQUIREMENT_NOT_MET(5006, "나이가 부족합니다."),
 
     DOG_NOT_FOUND(6000, "존재하지 않는 강아지입니다."),
     FOSTER_APPLICATION_NOT_FOUND(6001, "존재하지 않는 임시보호 요청입니다."),

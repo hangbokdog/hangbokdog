@@ -25,7 +25,9 @@ import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpd
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 
@@ -65,11 +67,11 @@ public class VolunteerController {
     }
 
     @GetMapping
-    public ResponseEntity<List<VolunteerResponse>> findAll(
+    public ResponseEntity<List<VolunteerParticipantResponse>> findAll(
             @AuthMember Member member,
             @RequestParam(required = false) Long centerId
     ) {
-        List<VolunteerResponse> responses = volunteerService.findAll(centerId);
+        List<VolunteerParticipantResponse> responses = volunteerService.findAll(member, centerId);
         return ResponseEntity.ok(responses);
     }
 
@@ -78,7 +80,7 @@ public class VolunteerController {
             @AuthMember Member member,
             @PathVariable Long eventId
     ) {
-        VolunteerDetailResponse response = volunteerService.findById(eventId);
+        VolunteerDetailResponse response = volunteerService.findById(member, eventId);
         return ResponseEntity.ok(response);
     }
 
@@ -91,11 +93,11 @@ public class VolunteerController {
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<List<VolunteerResponse>> findLatest(
+    public ResponseEntity<List<VolunteerResponseWithStatus>> findLatest(
             @AuthMember Member member,
             @RequestParam(required = false) Long centerId
     ) {
-        return ResponseEntity.ok(volunteerService.findLatest(centerId));
+        return ResponseEntity.ok(volunteerService.findLatest(member, centerId));
     }
 
     @GetMapping("/ended")

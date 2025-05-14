@@ -40,7 +40,7 @@ public class VolunteerApplicationController {
             @PathVariable Long eventId,
             @RequestBody VolunteerApplicationCreateRequest request
     ) {
-        volunteerApplicationService.apply(member, eventId, request);
+        volunteerApplicationService.apply(eventId, request);
         return ResponseEntity.created(null).build();
     }
 

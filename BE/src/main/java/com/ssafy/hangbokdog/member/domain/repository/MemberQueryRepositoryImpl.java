@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
@@ -64,5 +65,16 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                 .from(member)
                 .where(member.id.eq(memberId))
                 .fetchOne();
+    }
+
+    @Override
+    public List<MemberAgeInfo> findByIdWithAge(List<Long> allParticipantIds) {
+        return queryFactory.select(Projections.constructor(
+                MemberAgeInfo.class,
+                member.id,
+                member.age
+        )).from(member)
+                .where(member.id.in(allParticipantIds))
+                .fetch();
     }
 }

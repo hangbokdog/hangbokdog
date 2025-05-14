@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 
@@ -21,6 +22,7 @@ public class VolunteerApplicationRepository {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final VolunteerApplicationJpaRepository volunteerApplicationJpaRepository;
+    private final VolunteerApplicationJdbcRepository volunteerApplicationJdbcRepository;
 
     public boolean existsByVolunteerIdAndMemberId(Long volunteerId, Long memberId) {
         return volunteerApplicationJpaRepository.existsByVolunteerIdAndMemberId(volunteerId, memberId);
@@ -52,5 +54,17 @@ public class VolunteerApplicationRepository {
     ) {
         var data = volunteerApplicationJpaRepository.findAll(volunteerEventId, status, pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, ApplicationResponse::id);
+    }
+
+    public List<VolunteerApplication> findByVolunteerSlotIdIn(List<Long> volunteerSlotIds) {
+        return volunteerApplicationJpaRepository.findByVolunteerSlotIdIn(volunteerSlotIds);
+    }
+
+    public List<VolunteerApplicationStatusInfo> findByEventIdsIn(Long memberId, List<Long> volunteerIds) {
+        return volunteerApplicationJpaRepository.findByEventIdsIn(memberId, volunteerIds);
+    }
+
+    public Optional<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId) {
+        return volunteerApplicationJpaRepository.findByEventIdAndMemberId(eventId, memberId);
     }
 }

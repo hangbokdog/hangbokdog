@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 
@@ -21,4 +22,6 @@ public interface VolunteerApplicationQueryRepository {
             String pageToken,
             int pageSize
     );
+
+    List<VolunteerApplicationStatusInfo> findByEventIdsIn(Long memberId, List<Long> volunteerIds);
 }

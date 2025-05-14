@@ -27,4 +27,8 @@ public class VolunteerSlotRepository {
     public Optional<VolunteerSlot> findById(Long slotId) {
         return volunteerSlotJpaRepository.findById(slotId);
     }
+
+    public List<VolunteerSlot> findByIdIn(List<Long> volunteerSlotIds) {
+        return volunteerSlotJpaRepository.findByIdIn(volunteerSlotIds);
+    }
 }

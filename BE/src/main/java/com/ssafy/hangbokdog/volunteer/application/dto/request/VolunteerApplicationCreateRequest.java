@@ -8,7 +8,7 @@ public record VolunteerApplicationCreateRequest(
 ) {
     public record ApplicationRequest(
             LocalDate date,
-            List<Long> volunteerSlotIds,
+            Long volunteerSlotId,
             List<Long> participantIds
     ) {
     }

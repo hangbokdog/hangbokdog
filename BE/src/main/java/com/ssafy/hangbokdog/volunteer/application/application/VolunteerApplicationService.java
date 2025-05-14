@@ -1,11 +1,16 @@
 package com.ssafy.hangbokdog.volunteer.application.application;
 
+import static com.ssafy.hangbokdog.common.exception.ErrorCode.AGE_REQUIREMENT_NOT_MET;
+import static com.ssafy.hangbokdog.common.exception.ErrorCode.DUPLICATE_APPLICATION;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +25,9 @@ import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
+import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerSlotCapacity;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest;
+import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest.ApplicationRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
@@ -35,75 +42,63 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class VolunteerApplicationService {
 
+    private static final int VOLUNTEER_AGE_RESTRICTION = 20;
+
     private final VolunteerApplicationRepository volunteerApplicationRepository;
     private final VolunteerEventRepository volunteerEventRepository;
     private final VolunteerSlotRepository volunteerSlotRepository;
     private final MemberRepository memberRepository;
     private final CenterMemberRepository centerMemberRepository;
 
-    public void apply(Member member, Long eventId, VolunteerApplicationCreateRequest request) {
-        // 1) 이벤트 존재 확인
-        VolunteerEvent event = volunteerEventRepository.findById(eventId)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
+    public void apply(Long eventId, VolunteerApplicationCreateRequest request) {
+        if (volunteerEventRepository.existsById(eventId)) {
+            throw new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND);
+        }
 
-        List<VolunteerApplication> toSave = new ArrayList<>();
+        List<Long> volunteerSlotIds = extractSlotIds(request);
+        List<Long> allParticipantIds = extractAllParticipantIds(request);
 
-        // 2) 날짜별/슬롯별 신청 처리
-        for (var app : request.applications()) {
-            LocalDate date = app.date();
+        var memberAgeInfo = memberRepository.findByIdInWithAge(allParticipantIds);
+        if (memberAgeInfo.stream().anyMatch(info -> info.age() < VOLUNTEER_AGE_RESTRICTION)) {
+            throw new BadRequestException(AGE_REQUIREMENT_NOT_MET);
+        }
 
-            // 2-1) 이 신청 건의 전체 참가자 ID 목록 (대표자 + 동행자)
-            List<Long> pIds = Stream
-                    .concat(app.participantIds().stream(), Stream.of(member.getId()))
-                    .distinct()
-                    .toList();
+        var volunteerSlots = volunteerSlotRepository.findByIdIn(volunteerSlotIds);
+        var slotIdToCapacity = mapSlotIdToCapacity(volunteerSlots);
 
-            // 2-2) 날짜별 반복문 내에서 **나이 유효성 검사**
-            for (Long pid : pIds) {
-                Member mem = memberRepository.findById(pid)
-                        .orElseThrow(() -> new BadRequestException(ErrorCode.MEMBER_NOT_FOUND, "memberId: " + pid));
-                if (!mem.isAdult()) {
-                    throw new BadRequestException(ErrorCode.VOLUNTEER_UNDERAGE, "memberId: " + pid);
-                }
-            }
+        if (volunteerSlots.size() != request.applications().size()) {
+            throw new BadRequestException(ErrorCode.SLOT_NOT_FOUND);
+        }
 
-            // 2-3) 이 신청 건에 포함된 slotId 만큼 반복
-            for (Long slotId : app.volunteerSlotIds()) {
-                VolunteerSlot slot = volunteerSlotRepository.findById(slotId)
-                        .orElseThrow(() -> new BadRequestException(ErrorCode.SLOT_NOT_FOUND));
-
-                // 2-4) 중복 신청 체크
-                for (Long pid : pIds) {
-                    boolean already = volunteerApplicationRepository.existsByVolunteerIdAndMemberId(slotId, pid);
-                    if (already) {
-                        throw new BadRequestException(ErrorCode.DUPLICATE_APPLICATION,
-                                "slotId: " + slotId + ", memberId: " + pid);
-                    }
-                }
-
-                // 2-5) 정원 초과 체크
-                int cap = slot.getCapacity();
-                int curr = slot.getAppliedCount();
-                if (curr + pIds.size() > cap) {
-                    throw new BadRequestException(ErrorCode.SLOT_FULL, "slotId: " + slotId);
-                }
-
-                // 2-6) VolunteerApplication 엔티티 생성
-                for (Long pid : pIds) {
-                    toSave.add(VolunteerApplication.builder()
-                            .memberId(pid)
-                            .volunteerId(slotId)
-                            .build()
-                    );
-                }
-
-                // 2-7) 슬롯 appliedCount 즉시 갱신
-                slot.increaseAppliedCount(pIds.size());
+        for (var applicationRequest : request.applications()) {
+            VolunteerSlotCapacity slotCapacity = slotIdToCapacity.get(applicationRequest.volunteerSlotId());
+            if (slotCapacity.appliedCount() + applicationRequest.participantIds().size() > slotCapacity.capacity()) {
+                throw new BadRequestException(ErrorCode.SLOT_FULL);
             }
         }
 
-        // 3) 일괄 저장
-        volunteerApplicationRepository.saveAll(toSave);
+        var previousVolunteerApplications = volunteerApplicationRepository.findByVolunteerSlotIdIn(volunteerSlotIds);
+        var slotIdToMemberIds = mapSlotIdToMemberIds(previousVolunteerApplications);
+        List<VolunteerApplication> volunteerApplications = new ArrayList<>();
+
+        for (var applicationRequest : request.applications()) {
+            HashSet<Long> participantMemberIds = slotIdToMemberIds.get(applicationRequest.volunteerSlotId());
+            for (Long participantId : applicationRequest.participantIds()) {
+                if (participantMemberIds.contains(participantId)) {
+                    throw new BadRequestException(DUPLICATE_APPLICATION);
+                }
+
+                volunteerApplications.add(
+                        VolunteerApplication.builder()
+                                .volunteerSlotId(applicationRequest.volunteerSlotId())
+                                .volunteerEventId(eventId)
+                                .memberId(participantId)
+                                .build()
+                );
+            }
+        }
+
+        volunteerApplicationRepository.saveAll(volunteerApplications);
     }
 
     public List<WeeklyApplicationResponse> getWeeklyApplications(Member member, LocalDate date) {
@@ -184,5 +179,40 @@ public class VolunteerApplicationService {
         }
 
         return volunteerApplicationRepository.findAll(volunteerEventId, status, pageToken);
+    }
+
+    private Map<Long, HashSet<Long>> mapSlotIdToMemberIds(List<VolunteerApplication> previousVolunteerApplications) {
+        return previousVolunteerApplications.stream()
+                .collect(Collectors.groupingBy(
+                        VolunteerApplication::getVolunteerId,
+                        Collectors.mapping(
+                                VolunteerApplication::getMemberId,
+                                Collectors.toCollection(HashSet::new)
+                        )
+                ));
+    }
+
+    private Map<Long, VolunteerSlotCapacity> mapSlotIdToCapacity(List<VolunteerSlot> volunteerSlots) {
+        return volunteerSlots.stream()
+                .collect(Collectors.toMap(
+                        VolunteerSlot::getId,
+                        volunteerSlot -> VolunteerSlotCapacity.of(
+                                volunteerSlot.getCapacity(),
+                                volunteerSlot.getAppliedCount()
+                        )
+                ));
+    }
+
+    private List<Long> extractAllParticipantIds(VolunteerApplicationCreateRequest request) {
+        return request.applications().stream()
+                .flatMap(app -> app.participantIds().stream())
+                .distinct()
+                .toList();
+    }
+
+    private List<Long> extractSlotIds(VolunteerApplicationCreateRequest request) {
+        return request.applications().stream()
+                .map(ApplicationRequest::volunteerSlotId)
+                .toList();
     }
 }

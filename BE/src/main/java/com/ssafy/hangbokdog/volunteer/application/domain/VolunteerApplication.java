@@ -31,15 +31,19 @@ public class VolunteerApplication extends BaseEntity {
     @Column(name = "volunteer_slot_id", nullable = false)
     private Long volunteerId;
 
+    @Column(name = " volunteerId", nullable = false)
+    private Long volunteerEventId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private VolunteerApplicationStatus status;
 
     @Builder
-    public VolunteerApplication(Long memberId, Long volunteerId) {
+    public VolunteerApplication(Long memberId, Long volunteerSlotId, Long volunteerEventId) {
         this.memberId = memberId;
-        this.volunteerId = volunteerId;
+        this.volunteerId = volunteerSlotId;
         this.status = VolunteerApplicationStatus.PENDING;
+        this.volunteerEventId = volunteerEventId;
     }
 
     public void updateStatus(VolunteerApplicationStatus status) {

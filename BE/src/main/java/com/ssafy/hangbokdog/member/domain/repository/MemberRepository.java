@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
@@ -46,5 +47,9 @@ public class MemberRepository {
 
     public MemberProfileResponse getMemberProfile(Long memberId) {
         return memberJpaRepository.getMemberProfile(memberId);
+    }
+
+    public List<MemberAgeInfo> findByIdInWithAge(List<Long> allParticipantIds) {
+        return memberJpaRepository.findByIdWithAge(allParticipantIds);
     }
 }
