@@ -47,7 +47,7 @@ public class SponsorshipRepository {
 		return sponsorshipJpaRepositoryCustom.getMySponsorships(memberId);
 	}
 
-	public boolean existsSponsorshipByMemberIdAndDogId(Long memberId, Long dogId) {
+	public Boolean existsSponsorshipByMemberIdAndDogId(Long memberId, Long dogId) {
 		return sponsorshipJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
 	}
 }
