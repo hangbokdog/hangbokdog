@@ -5,6 +5,7 @@ import VolunteerListItem from "@/components/common/emergency/volunteerListItem";
 import { useQuery } from "@tanstack/react-query";
 import { getEmergencyPostAPI } from "@/api/emergencyRegister";
 import { EmergencyType } from "@/types/emergencyRegister";
+import { useNavigate } from "react-router-dom";
 
 interface EmergencyPanelProps {
 	centerId: number;
@@ -13,6 +14,7 @@ interface EmergencyPanelProps {
 export default function ManagerEmergencyPanel({
 	centerId,
 }: EmergencyPanelProps) {
+	const navigate = useNavigate();
 	// ✅ 일손 게시글
 	const { data: volunteerPosts = [], isLoading: isLoadingVolunteer } =
 		useQuery({
@@ -55,45 +57,69 @@ export default function ManagerEmergencyPanel({
 	}
 
 	return (
-		<ListPanel
-			link="/manager/emergency"
-			tabs={[
-				{
-					key: "volunteer",
-					label: "일손",
-					data: volunteerPosts.map((p, idx) => ({
-						title: p.title,
-						target: p.capacity ?? 0,
-						date: `D-${calculateDDay(p.dueDate)}`,
-						index: idx,
-					})),
-					component: VolunteerListItem,
-				},
-				{
-					key: "transport",
-					label: "이동",
-					data: transportPosts.map((p, idx) => ({
-						title: p.title,
-						name: p.name,
-						date: `D-${calculateDDay(p.dueDate)}`,
-						index: idx,
-					})),
-					component: MovingListItem,
-				},
-				{
-					key: "donation",
-					label: "후원",
-					data: donationPosts.map((p, idx) => ({
-						title: p.title,
-						current: 0,
-						target: p.targetAmount ?? 0,
-						date: `D-${calculateDDay(p.dueDate)}`,
-						index: idx,
-					})),
-					component: DonationListItem,
-				},
-			]}
-		/>
+		<div className="flex flex-col">
+			<div className="flex justify-between items-center py-2">
+				<div className="flex gap-2 items-center">
+					<div className="flex rounded-full w-6 h-6 bg-red overflow-hidden">
+						<img
+							src="/src/assets/images/3D Siren Light Model.png"
+							className="w-6 h-6"
+							alt="Emergency Icon"
+						/>
+					</div>
+					<div className="text-lg font-bold text-grayText">긴급</div>
+				</div>
+				<div>
+					<button
+						type="button"
+						className="px-3 py-1 bg-male text-white rounded-full"
+						onClick={() => navigate("/manager/emergency/register")}
+					>
+						긴급 생성
+					</button>
+				</div>
+			</div>
+			<ListPanel
+				link="/manager/emergency"
+				tabs={[
+					{
+						key: "volunteer",
+						label: "일손",
+						data: volunteerPosts.map((p, idx) => ({
+							title: p.title,
+							name: p.name ?? "알 수 없음",
+							target: p.capacity ?? 0,
+							date: `D-${calculateDDay(p.dueDate)}`,
+							index: idx,
+						})),
+						component: VolunteerListItem,
+					},
+					{
+						key: "transport",
+						label: "이동",
+						data: transportPosts.map((p, idx) => ({
+							title: p.title,
+							name: p.name ?? "알 수 없음",
+							date: `D-${calculateDDay(p.dueDate)}`,
+							index: idx,
+						})),
+						component: MovingListItem,
+					},
+					{
+						key: "donation",
+						label: "후원",
+						data: donationPosts.map((p, idx) => ({
+							title: p.title,
+							name: p.name ?? "알 수 없음",
+							target: p.targetAmount ?? 0,
+							date: `D-${calculateDDay(p.dueDate)}`,
+							index: idx,
+						})),
+						component: DonationListItem,
+					},
+				]}
+			/>
+		</div>
 	);
 }
 
