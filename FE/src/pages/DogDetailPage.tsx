@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { MdEditNote } from "react-icons/md";
+import { FaStar } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import DogImage from "@/components/dog/DogImage";
 import DogHeader from "@/components/dog/DogHeader";
@@ -97,6 +98,62 @@ const mapDogDetailResponseToDogDetail = (
 	comments: 0,
 });
 
+// Add a StarBadge component for dogs that have become stars
+const StarBadge = ({ className = "" }: { className?: string }) => (
+	<motion.div
+		className={`flex items-center gap-1 bg-gradient-to-r from-purple-600 to-purple-800 text-white px-3 py-1 rounded-full ${className}`}
+		initial={{ scale: 0.8, opacity: 0 }}
+		animate={{ scale: 1, opacity: 1 }}
+		transition={{ duration: 0.5 }}
+	>
+		<FaStar className="text-yellow-300" />
+		<span>별이 된 아이</span>
+	</motion.div>
+);
+
+// Add animated stars for the memorial section
+const StarAnimation = () => {
+	return (
+		<div className="absolute inset-0 overflow-hidden pointer-events-none">
+			{[...Array(25)].map((_, i) => {
+				// Generate random fixed positions for each star
+				const xPos = Math.random() * 100;
+				const yPos = Math.random() * 100;
+				const size = 3 + Math.random() * 7;
+				const delay = Math.random() * 5;
+				const duration = 1.5 + Math.random() * 3;
+
+				return (
+					<motion.div
+						key={`star-${i}-${Math.random().toString(36).substring(2, 9)}`}
+						className="absolute"
+						style={{
+							left: `${xPos}%`,
+							top: `${yPos}%`,
+							width: size,
+							height: size,
+						}}
+						initial={{ opacity: 0 }}
+						animate={{
+							opacity: [0, 0.8, 0],
+							scale: [0.8, 1.2, 0.8],
+						}}
+						transition={{
+							duration: duration,
+							repeat: Number.POSITIVE_INFINITY,
+							repeatType: "loop",
+							delay: delay,
+							ease: "easeInOut",
+						}}
+					>
+						<FaStar className="text-yellow-200 text-opacity-70 w-full h-full" />
+					</motion.div>
+				);
+			})}
+		</div>
+	);
+};
+
 export default function DogDetailPage() {
 	const { selectedCenter } = useCenterStore();
 	const { id } = useParams<{ id: string }>();
@@ -143,6 +200,7 @@ export default function DogDetailPage() {
 		isNeutered: false,
 		locationId: data?.locationId,
 		dogBreed: data?.breed,
+		isStar: false,
 	});
 
 	useEffect(() => {
@@ -156,6 +214,7 @@ export default function DogDetailPage() {
 				isNeutered: data.isNeutered === "O",
 				locationId: data.locationId,
 				dogBreed: data.breed,
+				isStar: data.isStar === 1,
 			});
 		}
 	}, [data]);
@@ -206,6 +265,7 @@ export default function DogDetailPage() {
 					locationId: form.locationId ?? 0,
 					dogBreed:
 						(form.dogBreed as DogBreed) || DogBreedLabel.OTHER,
+					isStar: form.isStar,
 				},
 				form.imageFile,
 			);
@@ -247,6 +307,7 @@ export default function DogDetailPage() {
 			transition={{ duration: 0.5 }}
 		>
 			<div className="relative">
+				{/* Apply a dim overlay effect for star dogs */}
 				<DogImage
 					src={
 						isEditing && form.imagePreview
@@ -254,21 +315,28 @@ export default function DogDetailPage() {
 							: data.profileImageUrl || dog1
 					}
 					alt={data.dogName}
-					className={isEditing ? "cursor-pointer" : ""}
+					className={`${isEditing ? "cursor-pointer" : ""} ${data.isStar === 1 ? "brightness-90" : ""}`}
 				/>
 				{isEditing && (
-					<div
+					<button
+						type="button"
 						className="absolute inset-x-0 top-0 flex justify-center items-center bg-[rgba(0,0,0,0.5)] w-full h-full p-2"
 						onClick={handleImageClick}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" || e.key === " ") {
-								handleImageClick();
-							}
-						}}
 					>
 						<p className="text-xl font-semibold text-superLightBlueGray">
 							이미지 변경하기
 						</p>
+					</button>
+				)}
+
+				{data.isStar === 1 && (
+					<div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full p-2 shadow-lg">
+						<div className="flex items-center gap-2">
+							<FaStar className="text-yellow-400 text-xl animate-pulse" />
+							<span className="text-white font-semibold">
+								별이 된 아이
+							</span>
+						</div>
 					</div>
 				)}
 			</div>
@@ -291,10 +359,14 @@ export default function DogDetailPage() {
 					comments={data.dogCommentCount}
 				/>
 				<div className="flex justify-between items-center">
-					<DogStatus
-						status={data.dogStatus as DogStatusType}
-						gender={data.gender as Gender}
-					/>
+					{data.isStar === 1 ? (
+						<StarBadge className="ml-1" />
+					) : (
+						<DogStatus
+							status={data.dogStatus as DogStatusType}
+							gender={data.gender as Gender}
+						/>
+					)}
 					{selectedCenter?.status === "MANAGER" &&
 						(isEditing ? (
 							<button
@@ -315,6 +387,70 @@ export default function DogDetailPage() {
 							</button>
 						))}
 				</div>
+
+				{isEditing && selectedCenter?.status === "MANAGER" && (
+					<div className="flex items-center gap-2 p-3 border rounded-lg bg-gray-50">
+						<label className="flex items-center gap-2 cursor-pointer">
+							<input
+								type="checkbox"
+								checked={form.isStar}
+								onChange={(e) =>
+									setForm({
+										...form,
+										isStar: e.target.checked,
+									})
+								}
+								className="w-5 h-5"
+							/>
+							<div className="flex items-center gap-1">
+								<FaStar
+									className={`${form.isStar ? "text-yellow-400" : "text-gray-400"} text-xl`}
+								/>
+								<span className="font-medium">
+									별이 된 아이
+								</span>
+							</div>
+						</label>
+					</div>
+				)}
+
+				{data.isStar === 1 && !isEditing && (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8 }}
+						className="relative flex flex-col items-center p-6 mb-4 overflow-hidden rounded-xl"
+						style={{
+							background:
+								"linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #4f46e5 100%)",
+							boxShadow:
+								"0 10px 15px -3px rgba(111, 76, 255, 0.3)",
+						}}
+					>
+						<StarAnimation />
+						<motion.div
+							initial={{ scale: 0.8, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							transition={{ delay: 0.3, duration: 0.5 }}
+							className="flex items-center gap-2 mb-3 z-10"
+						>
+							<FaStar className="text-yellow-300 text-2xl" />
+							<h3 className="font-bold text-xl text-white">
+								별이 된 아이
+							</h3>
+						</motion.div>
+						<motion.p
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.5, duration: 0.8 }}
+							className="text-white text-center font-medium z-10"
+						>
+							{data.dogName}(이)는 더 이상 이 세상에 있지 않지만,
+							<br />
+							우리의 기억 속에서 영원히 빛날 거예요.
+						</motion.p>
+					</motion.div>
+				)}
 
 				<DogSponsors
 					sponsorCount={data.currentSponsorCount}
@@ -465,16 +601,20 @@ export default function DogDetailPage() {
 					/>
 				</DogInfoCard>
 
-				<DogMediInfos
-					isManager={selectedCenter?.status === "MANAGER"}
-					dogId={data.dogId}
-					centerId={data.centerId}
-				/>
+				{data.isStar === 0 && (
+					<div className="flex flex-col gap-4">
+						<DogMediInfos
+							isManager={selectedCenter?.status === "MANAGER"}
+							dogId={data.dogId}
+							centerId={data.centerId}
+						/>
 
-				<DogActionButtons
-					sponsorLink="https://www.ihappynanum.com/Nanum/B/21G6PTU1W5"
-					adoptionLink={`/dogs/${id}/adoption/notice`}
-				/>
+						<DogActionButtons
+							sponsorLink="https://www.ihappynanum.com/Nanum/B/21G6PTU1W5"
+							adoptionLink={`/dogs/${id}/adoption/notice`}
+						/>
+					</div>
+				)}
 			</div>
 		</motion.div>
 	);

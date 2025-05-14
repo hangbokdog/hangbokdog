@@ -109,7 +109,7 @@ export default function DogListPage() {
 	const dogs = data?.pages.flatMap((page) => page.data) || [];
 
 	return (
-		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5 pb-2.5">
+		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5">
 			<div
 				className={`transition-all duration-300 ${
 					isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
