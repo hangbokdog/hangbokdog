@@ -179,7 +179,11 @@ public class VaccinationService {
 		return vaccinationRepository.getVaccinationDogsByVaccinationId(vaccinationId, keyword, pageToken);
 	}
 
-	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(Long vaccinationId, String keyword, String pageToken) {
+	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(
+		Long vaccinationId,
+		String keyword,
+		String pageToken
+	) {
 		Vaccination vaccination = getVaccination(vaccinationId);
 		List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vaccinationId);
 		List<Long> locationIds = vaccination.getLocationIds();
