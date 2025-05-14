@@ -33,4 +33,8 @@ public class AdoptionRepository {
 		var data = adoptionJpaRepository.getAdoptionApplicationsByCenterId(centerId, pageToken, ADOPTION_PAGE_SIZE);
 		return PageInfo.of(data, ADOPTION_PAGE_SIZE, AdoptionApplicationResponse::adoptionId);
 	}
+
+	public boolean checkExist(Long memberId, Long dogId) {
+		return adoptionJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
+	}
 }
