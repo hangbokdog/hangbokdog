@@ -62,8 +62,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			.on(dog.centerId.eq(center.id))
 			.leftJoin(addressBook)
 			.on(dog.locationId.eq(addressBook.id))
-			.where(dog.id.eq(id)
-				.and(dog.centerId.eq(centerId)))
+			.where(dog.id.eq(id))
 			.fetchOne();
 	}
 
