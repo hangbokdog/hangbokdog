@@ -82,5 +82,8 @@ export const getEmergencyPostAPI = async (
 			...(type && { type }),
 		},
 	});
+
+	console.log("🚀 getEmergencyPostAPI 응답:", response.data);
+
 	return response.data;
 };
