@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FaPaw } from "react-icons/fa";
-import { Link } from "react-router-dom";
 
 interface MovingListItemProps {
 	img: string;
@@ -9,13 +8,18 @@ interface MovingListItemProps {
 	date: string;
 	index: number;
 	emergencyId: number;
+	onClick: (emergencyId: number) => void;
 }
 
 export default function MovingListItem(props: MovingListItemProps) {
-	const { img, name, title, date, index, emergencyId } = props;
+	const { img, name, title, date, index, emergencyId, onClick } = props;
 
 	return (
-		<Link to={`/manager/emergency?emergencyId=${emergencyId}`}>
+		<button
+			type="button"
+			onClick={() => onClick(emergencyId)}
+			className={`w-full text-left flex rounded-full ${index % 2 === 1 ? "bg-background" : ""} text-grayText text-base font-medium items-center px-5 py-1`}
+		>
 			<div
 				className={`flex rounded-full ${index % 2 === 1 && "bg-background"} text-grayText text-base font-medium items-center px-5 py-1`}
 			>
@@ -28,7 +32,9 @@ export default function MovingListItem(props: MovingListItemProps) {
 								: "?"}
 						</AvatarFallback>
 					</Avatar>
-					{name}
+					<span className="whitespace-nowrap truncate flex-shrink-0">
+						{name}
+					</span>
 					<FaPaw />
 				</div>
 				<div className="flex-1/4 flex justify-center items-center gap-2.5">
@@ -38,6 +44,6 @@ export default function MovingListItem(props: MovingListItemProps) {
 					{date}
 				</div>
 			</div>
-		</Link>
+		</button>
 	);
 }

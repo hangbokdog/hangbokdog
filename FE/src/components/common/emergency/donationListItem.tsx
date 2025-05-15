@@ -26,7 +26,7 @@ export default function DonationListItem(props: DonationListItemProps) {
 		onClick,
 	} = props;
 
-	const progress = Math.min((current / target) * 100, 100);
+	// const progress = Math.min((current / target) * 100, 100);
 
 	return (
 		<button
@@ -51,14 +51,16 @@ export default function DonationListItem(props: DonationListItemProps) {
 					</span>
 					<FaPaw />
 				</div>
-				<div className="flex-1 pl-8 text-[grayBlue]">{title}</div>
+				<div className="flex-1 pl-8 text-[grayBlue] whitespace-nowrap truncate flex-shrink-0">
+					{title}
+				</div>
 				<div className="flex-1 flex items-center pr-4">
-					<div className="relative w-full h-6 bg-gray-200 rounded-full overflow-hidden">
-						<div
+					{/* <div className="relative w-full h-6 bg-gray-200 rounded-full overflow-hidden">
+						 <div
 							className="h-full bg-[#84A7FB]"
 							style={{ width: `${progress}%` }}
-						/>
-					</div>
+						/> 
+					</div> */}
 				</div>
 				<div className="w-16 font-light text-[var(--color-blueGray)] text-start">
 					{date}

@@ -44,10 +44,29 @@ export default function EmergencyDetailModal({
 						{data.title}
 					</div>
 
-					<div className="text-sm text-gray-700 whitespace-pre-wrap border-t pt-2 mt-2">
+					{data.type === "VOLUNTEER" &&
+						data.capacity !== undefined && (
+							<div className="text-sm text-gray-600 text-center">
+								모집 인원:{" "}
+								<span className="font-semibold">
+									{data.capacity}명
+								</span>
+							</div>
+						)}
+
+					{data.type === "DONATION" &&
+						data.targetAmount !== undefined && (
+							<div className="text-sm text-gray-600 text-center">
+								목표 금액:{" "}
+								<span className="font-semibold">
+									{data.targetAmount.toLocaleString()}원
+								</span>
+							</div>
+						)}
+					<div className="text-sm text-gray-700 whitespace-pre-wrap">
 						{data.content || "내용이 없습니다."}
 					</div>
-					<div className="text-sm font-light text-end text-gray-400">
+					<div className="text-sm font-light text-end text-gray-400 border-t mt-2 pt-2">
 						마감일: {new Date(data.dueDate).toLocaleDateString()}
 					</div>
 				</div>
