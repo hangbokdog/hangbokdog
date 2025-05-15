@@ -2,6 +2,7 @@ import type {
 	ClosedVolunteerResponse,
 	Volunteer,
 	VolunteerApplicantsResponse,
+	SlotApplicant,
 } from "@/types/volunteer";
 import localAxios from "./http-commons";
 
@@ -46,6 +47,17 @@ export const getVolunteerDetailAPI = async ({
 	eventId: string;
 }) => {
 	const response = await localAxios.get(`volunteers/${eventId}`);
+	return response.data;
+};
+
+export const getVolunteerSlotsAPI = async ({
+	eventId,
+}: {
+	eventId: string;
+}) => {
+	const response = await localAxios.get(
+		`volunteers/${eventId}/volunteerSlots`,
+	);
 	return response.data;
 };
 
@@ -294,17 +306,41 @@ export const getVolunteerApplicantsAPI = async ({
 
 // 봉사 신청 승인, 거절 api
 export const updateVolunteerApplicantStatusAPI = async ({
-	eventId,
+	centerId,
 	applicationId,
 	status,
 }: {
-	eventId: number;
+	centerId: string;
 	applicationId: number;
 	status: "APPROVED" | "REJECTED";
 }) => {
 	const response = await localAxios.patch(
-		`/volunteers/${eventId}/applications/${applicationId}/status`,
+		`/volunteers/applications/${applicationId}/status`,
 		{ status },
+		{
+			params: {
+				centerId,
+			},
+		},
+	);
+	return response.data;
+};
+
+// 슬롯별 신청자 목록 조회
+export const getSlotApplicantsAPI = async ({
+	slotId,
+	centerId,
+}: {
+	slotId: number;
+	centerId: string;
+}): Promise<SlotApplicant[]> => {
+	const response = await localAxios.get<SlotApplicant[]>(
+		`volunteers/${slotId}/volunteerSlots`,
+		{
+			params: {
+				centerId,
+			},
+		},
 	);
 	return response.data;
 };

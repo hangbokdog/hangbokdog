@@ -15,6 +15,8 @@ export default function ManagerVolunteerPage() {
 		queryKey: ["addressBooks", selectedCenter?.centerId],
 		queryFn: () => fetchAddressBooks(selectedCenter?.centerId as string),
 		enabled: !!selectedCenter?.centerId,
+		refetchOnMount: "always",
+		refetchOnWindowFocus: "always",
 	});
 
 	return (

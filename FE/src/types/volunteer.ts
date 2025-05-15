@@ -36,6 +36,7 @@ export interface Volunteer {
 	endDate: string;
 	imageUrl: string;
 	addressName?: string;
+	appliedCount?: number;
 }
 
 export interface ClosedVolunteerResponse {
@@ -120,4 +121,20 @@ export interface VolunteerApplicantThumb {
 	volunteerId: number;
 	memberId: number;
 	status: "PENDING" | "APPROVED" | "REJECTED";
+}
+
+export interface SlotApplicant {
+	id: number;
+	memberId: number;
+	volunteerId: number;
+	status: "PENDING" | "APPROVED" | "REJECTED";
+	createdAt: string;
+	name: string;
+	nickname: string;
+	birth: string;
+	phone: string;
+	age: number;
+	grade: string;
+	email: string;
+	profileImage: string;
 }

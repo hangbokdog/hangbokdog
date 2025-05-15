@@ -153,7 +153,7 @@ export default function DogListPage() {
 			</div>
 
 			{isLoading ? (
-				<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
+				<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
 					{[...Array(6)].map((_, i) => (
 						<div
 							key={`skeleton-${
@@ -183,7 +183,7 @@ export default function DogListPage() {
 				</div>
 			) : (
 				<>
-					<div className="max-w-[420px] grid grid-cols-3 gap-2.5">
+					<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
 						{dogs.map((dog) => (
 							<DogCard
 								key={`${dog.dogId}-${dog.name}`}

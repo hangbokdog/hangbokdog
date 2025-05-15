@@ -1,14 +1,17 @@
 import logo from "@/assets/logo.png";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { BuildingIcon, ChevronRightIcon } from "lucide-react";
+import { BuildingIcon, ChevronRightIcon, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelJoinRequestAPI, registerCenterAPI } from "@/api/center";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNotification } from "@/lib/hooks/useNotification";
+import { format, formatDistanceToNow } from "date-fns";
+import { ko } from "date-fns/locale";
 
 type CenterStatus = "NONE" | "APPLIED" | "USER" | "MANAGER";
 
@@ -19,6 +22,16 @@ export default function Header() {
 	const queryClient = useQueryClient();
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const navigate = useNavigate();
+
+	// 알림 관련 상태와 함수
+	const {
+		unreadCount,
+		notifications,
+		isNotificationOpen,
+		toggleNotificationPanel,
+		closeNotificationPanel,
+		handleNotificationClick,
+	} = useNotification();
 
 	const { mutate: registerCenter } = useMutation({
 		mutationFn: () => registerCenterAPI(selectedCenter?.centerId as string),
@@ -79,6 +92,10 @@ export default function Header() {
 
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
+
+		if (isNotificationOpen) {
+			closeNotificationPanel();
+		}
 	};
 
 	const handleClickOutside = () => {
@@ -91,6 +108,14 @@ export default function Header() {
 		clearSelectedCenter();
 		setIsDropdownOpen(false);
 		toast.success("센터를 변경하였습니다.");
+	};
+
+	const toggleNotifications = () => {
+		toggleNotificationPanel();
+
+		if (isDropdownOpen) {
+			setIsDropdownOpen(false);
+		}
 	};
 
 	const isCenterMember =
@@ -128,6 +153,60 @@ export default function Header() {
 		);
 	};
 
+	// 알림 시간 포맷팅 함수
+	const formatNotificationTime = (dateString: string) => {
+		const date = new Date(dateString);
+		const now = new Date();
+		const isToday =
+			date.getDate() === now.getDate() &&
+			date.getMonth() === now.getMonth() &&
+			date.getFullYear() === now.getFullYear();
+
+		if (isToday) {
+			return formatDistanceToNow(date, { addSuffix: true, locale: ko });
+		}
+
+		return format(date, "yyyy.MM.dd HH:mm", { locale: ko });
+	};
+
+	// 알림 아이콘에 표시할 뱃지 색상
+	const getNotificationBadgeColor = (type: string) => {
+		switch (type) {
+			case "VOLUNTEER_APPLICATION":
+				return "bg-blue-500";
+			case "SYSTEM":
+				return "bg-red-500";
+			default:
+				return "bg-gray-500";
+		}
+	};
+
+	// 드롭다운/알림 패널 외부 클릭 시 닫기 처리
+	useEffect(() => {
+		const handleGlobalClick = (e: MouseEvent) => {
+			if (isNotificationOpen || isDropdownOpen) {
+				const target = e.target as HTMLElement;
+
+				// 알림 버튼, 센터 선택 버튼이 아니고 해당 패널에 속하지 않는 경우 닫기
+				if (
+					!target.closest(".notification-panel") &&
+					!target.closest(".notification-button") &&
+					!target.closest(".center-dropdown") &&
+					!target.closest(".center-dropdown-button")
+				) {
+					closeNotificationPanel();
+					setIsDropdownOpen(false);
+				}
+			}
+		};
+
+		document.addEventListener("mousedown", handleGlobalClick);
+
+		return () => {
+			document.removeEventListener("mousedown", handleGlobalClick);
+		};
+	}, [isNotificationOpen, isDropdownOpen, closeNotificationPanel]);
+
 	return (
 		<header className="w-full bg-white/95 backdrop-blur-sm shadow-sm z-30 safe-top">
 			<div className="flex h-12 items-center px-3 justify-between">
@@ -144,7 +223,7 @@ export default function Header() {
 				{/* 오른쪽 영역: 센터 선택기 + 알림 */}
 				<div className="flex items-center gap-2">
 					{selectedCenter?.centerName && (
-						<div className="relative">
+						<div className="relative center-dropdown">
 							<button
 								type="button"
 								onClick={toggleDropdown}
@@ -153,7 +232,7 @@ export default function Header() {
 										toggleDropdown();
 									}
 								}}
-								className="flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
+								className="center-dropdown-button flex items-center gap-1 px-2 py-1 rounded-full bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-100"
 								aria-label="센터 선택"
 							>
 								<BuildingIcon className="w-3 h-3 text-gray-600" />
@@ -166,72 +245,132 @@ export default function Header() {
 							</button>
 
 							{isDropdownOpen && (
-								<>
-									<div
-										className="fixed inset-0 z-10"
-										onClick={handleClickOutside}
-										onKeyDown={(e) => {
-											if (e.key === "Escape") {
-												handleClickOutside();
-											}
-										}}
-										role="button"
-										tabIndex={-1}
-										aria-label="드롭다운 닫기"
-									/>
-									<div className="absolute top-full right-0 mt-1 z-20 bg-white rounded-lg shadow-lg border border-gray-100 w-48 overflow-hidden">
-										<div className="p-2.5">
-											<p className="text-xs text-gray-400 mb-0.5">
-												현재 센터
-											</p>
-											<p className="text-sm font-medium mb-1 break-words">
-												{selectedCenter.centerName}
-											</p>
-											{user.accessToken &&
-												selectedCenter?.centerId &&
-												getStatusButton()}
-										</div>
-										<div className="border-t border-gray-100">
-											<button
-												type="button"
-												className="w-full px-2.5 py-2 flex items-center justify-between text-left text-sm text-main hover:bg-gray-50"
-												onClick={handleCenterChange}
-												onKeyDown={(e) => {
-													if (
-														e.key === "Enter" ||
-														e.key === " "
-													) {
-														handleCenterChange();
-													}
-												}}
-											>
-												<span>센터 변경하기</span>
-												<ChevronRightIcon className="w-3.5 h-3.5" />
-											</button>
-										</div>
+								<div className="absolute top-full right-0 mt-1 z-20 bg-white rounded-lg shadow-lg border border-gray-100 w-48 overflow-hidden">
+									<div className="p-2.5">
+										<p className="text-xs text-gray-400 mb-0.5">
+											현재 센터
+										</p>
+										<p className="text-sm font-medium mb-1 break-words">
+											{selectedCenter.centerName}
+										</p>
+										{user.accessToken &&
+											selectedCenter?.centerId &&
+											getStatusButton()}
 									</div>
-								</>
+									<div className="border-t border-gray-100">
+										<button
+											type="button"
+											className="w-full px-2.5 py-2 flex items-center justify-between text-left text-sm text-main hover:bg-gray-50"
+											onClick={handleCenterChange}
+											onKeyDown={(e) => {
+												if (
+													e.key === "Enter" ||
+													e.key === " "
+												) {
+													handleCenterChange();
+												}
+											}}
+										>
+											<span>센터 변경하기</span>
+											<ChevronRightIcon className="w-3.5 h-3.5" />
+										</button>
+									</div>
+								</div>
 							)}
 						</div>
 					)}
 
 					{/* 알림 버튼은 항상 오른쪽에 배치 */}
 					{isCenterMember && (
-						<button
-							type="button"
-							className="flex items-center justify-center text-gray-600 hover:text-main p-1.5 rounded-full hover:bg-gray-50 touch-manipulation"
-							aria-label="알림"
-							onClick={() => {
-								/* Handle notification click */
-							}}
-							onKeyDown={(e) => {
-								if (e.key === "Enter" || e.key === " ") {
-									// Handle notification click
-								}
-							}}
-						>
-							<IoNotificationsOutline className="w-5 h-5" />
-						</button>
+						<div className="relative">
+							<button
+								type="button"
+								className="notification-button flex items-center justify-center text-gray-600 hover:text-main p-1.5 rounded-full hover:bg-gray-50 touch-manipulation relative"
+								aria-label="알림"
+								onClick={toggleNotifications}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										toggleNotifications();
+									}
+								}}
+							>
+								<IoNotificationsOutline className="w-5 h-5" />
+								{unreadCount > 0 && (
+									<span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+										{unreadCount > 9 ? "9+" : unreadCount}
+									</span>
+								)}
+							</button>
+
+							{isNotificationOpen && (
+								<div className="notification-panel absolute top-full right-0 mt-1 z-20 bg-white rounded-lg shadow-lg border border-gray-100 w-[320px] max-h-[400px] overflow-hidden">
+									<div className="p-3 border-b border-gray-100 flex items-center justify-between">
+										<h3 className="font-medium text-gray-900">
+											알림
+										</h3>
+										<button
+											type="button"
+											className="p-1 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+											onClick={closeNotificationPanel}
+										>
+											<X size={16} />
+										</button>
+									</div>
+
+									<div className="overflow-y-auto max-h-[320px]">
+										{notifications.length === 0 ? (
+											<div className="py-8 text-center text-gray-500">
+												<p>알림이 없습니다</p>
+											</div>
+										) : (
+											<div className="divide-y divide-gray-100">
+												{notifications.map(
+													(notification) => (
+														<button
+															key={
+																notification.id
+															}
+															type="button"
+															className={`w-full p-3 text-left hover:bg-gray-50 transition-colors flex items-start gap-3 ${
+																notification.isRead
+																	? "bg-white"
+																	: "bg-blue-50/30"
+															}`}
+															onClick={() =>
+																handleNotificationClick(
+																	notification,
+																)
+															}
+														>
+															<div
+																className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(notification.type)}`}
+															/>
+															<div className="flex-1 min-w-0">
+																<h4 className="font-medium text-gray-900 text-sm">
+																	{
+																		notification.title
+																	}
+																</h4>
+																<p className="text-gray-600 text-xs mt-1 line-clamp-2">
+																	{
+																		notification.body
+																	}
+																</p>
+																<span className="text-xs text-gray-400 mt-1 block">
+																	{formatNotificationTime(
+																		notification.createdAt,
+																	)}
+																</span>
+															</div>
+														</button>
+													),
+												)}
+											</div>
+										)}
+									</div>
+								</div>
+							)}
+						</div>
 					)}
 				</div>
 			</div>

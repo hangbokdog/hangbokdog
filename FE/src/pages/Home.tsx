@@ -4,10 +4,9 @@ import EmptyState from "@/components/common/EmptyState";
 import { DogPanelSkeleton } from "@/components/dog/SkeletonComponents";
 import CenterJoinPrompt from "@/components/home/CenterJoinPrompt";
 import DogPanel from "@/components/home/DogPanel";
-import DonationPanel from "@/components/home/DonationPanel";
 import EmergencyPanel from "@/components/home/EmergencyPanel";
 import ManagerDashboardPanel from "@/components/home/ManagerDashboardPanel";
-import MyDonationPanel from "@/components/home/MyDonationPanel";
+import PostPanel from "@/components/home/PostPanel";
 import VolunteerPanel from "@/components/home/VolunteerPanel";
 import { VolunteerPanelSkeleton } from "@/components/volunteer/SkeletonComponents";
 import useCenterStore from "@/lib/store/centerStore";
@@ -36,6 +35,8 @@ export default function Home() {
 			{!isCenterMember && <CenterJoinPrompt />}
 			<EmergencyPanel />
 
+			<PostPanel />
+
 			{isVolunteersLoading ? (
 				<VolunteerPanelSkeleton />
 			) : volunteers && volunteers.length > 0 ? (
@@ -57,11 +58,6 @@ export default function Home() {
 					<EmptyState message="보호중인 아이들이 없습니다." />
 				</div>
 			)}
-
-			<div className="max-w-[420px] mx-2.5 grid grid-cols-2 gap-3 pb-2.5">
-				<DonationPanel />
-				<MyDonationPanel />
-			</div>
 		</div>
 	);
 }
