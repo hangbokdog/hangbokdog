@@ -15,17 +15,18 @@ export default function DogPanel({ count, dogSummaries }: DogPanelProps) {
 				link="/dogs"
 				subTitle={String(count)}
 			/>
-			<div className="max-w-[400px] grid grid-cols-3 gap-2.5 pb-2.5">
+			<div className="flex overflow-x-auto scrollbar-hidden gap-2.5 pb-2.5 max-w-[400px]">
 				{dogSummaries.map((dog) => (
-					<DogCard
-						key={dog.dogId}
-						dogId={dog.dogId}
-						name={dog.name}
-						ageMonth={String(dog.ageMonth)}
-						imageUrl={dog.imageUrl}
-						gender={dog.gender as "MALE" | "FEMALE"}
-						isFavorite={dog.isFavorite}
-					/>
+					<div key={dog.dogId} className="min-w-[50%] flex-shrink-0">
+						<DogCard
+							dogId={dog.dogId}
+							name={dog.name}
+							ageMonth={String(dog.ageMonth)}
+							imageUrl={dog.imageUrl}
+							gender={dog.gender as "MALE" | "FEMALE"}
+							isFavorite={dog.isFavorite}
+						/>
+					</div>
 				))}
 			</div>
 		</div>

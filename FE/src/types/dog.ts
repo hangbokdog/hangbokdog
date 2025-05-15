@@ -20,6 +20,16 @@ export const Gender = {
 
 export type Gender = (typeof Gender)[keyof typeof Gender];
 
+export const DogColor = {
+	BEIGE: "BEIGE",
+	BROWN: "BROWN",
+	WHITE: "WHITE",
+	GRAY: "GRAY",
+	BLACK: "BLACK",
+} as const;
+
+export type DogColor = (typeof DogColor)[keyof typeof DogColor];
+
 export const DogBreed = {
 	JINDO: "JINDO",
 	POODLE: "POODLE",
@@ -53,6 +63,22 @@ export const DogStatusLabel: Record<DogStatus, string> = {
 export const GenderLabel: Record<Gender, string> = {
 	FEMALE: "여아",
 	MALE: "남아",
+};
+
+export const DogColorLabel: Record<DogColor, string> = {
+	BEIGE: "베이지",
+	BROWN: "갈색",
+	WHITE: "흰색",
+	GRAY: "회색",
+	BLACK: "검정색",
+};
+
+export const DogColorBgClass: Record<DogColor, string> = {
+	BEIGE: "bg-amber-200",
+	BROWN: "bg-amber-800",
+	WHITE: "bg-gray-100",
+	GRAY: "bg-gray-500",
+	BLACK: "bg-black",
 };
 
 export const DogBreedLabel: Record<DogBreed, string> = {
