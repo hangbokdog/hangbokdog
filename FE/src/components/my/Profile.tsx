@@ -1,23 +1,29 @@
-import { FaPencilAlt } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+import { getUserInfoAPI } from "@/api/auth";
 import { ProfileInfo } from "./ProfileInfo";
+import { FaPencilAlt } from "react-icons/fa";
 
 interface ProfileProps {
-	name: string;
-	imageUrl?: string;
-	email: string;
 	onEdit?: () => void;
 }
 
-export default function Profile({
-	name,
-	imageUrl,
-	email,
-	onEdit,
-}: ProfileProps) {
+export default function Profile({ onEdit }: ProfileProps) {
+	const { data, isLoading, error } = useQuery({
+		queryKey: ["userInfo"],
+		queryFn: getUserInfoAPI,
+	});
+
+	if (isLoading) return <div className="p-4">불러오는 중...</div>;
+	if (error || !data) return <div className="p-4">사용자 정보를 불러올 수 없습니다.</div>;
+
 	return (
 		<div className="flex items-center gap-3 p-4 bg-background">
 			<div className="flex flex-col flex-1">
-				<ProfileInfo name={name} imageUrl={imageUrl} email={email} />
+				<ProfileInfo
+					name={data.name}
+					imageUrl={data.profileImage}
+					nickname={data.nickName} // nickname을 email 자리에 사용
+				/>
 			</div>
 			{onEdit && (
 				<FaPencilAlt
