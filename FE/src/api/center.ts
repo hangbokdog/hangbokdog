@@ -33,6 +33,7 @@ export interface AddressBook {
 	id: number;
 	addressName: string;
 	address: Location;
+	appliedCount?: number;
 }
 
 export const fetchAddressBooks = async (
