@@ -53,7 +53,7 @@ public class Post extends BaseEntity {
 
     @Builder
     public Post(
-            Long centerId,
+        Long centerId,
         Long authorId,
         Long boardTypeId,
         Long dogId,

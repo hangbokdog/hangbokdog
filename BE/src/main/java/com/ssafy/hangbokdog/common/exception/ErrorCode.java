@@ -94,7 +94,9 @@ public enum ErrorCode {
     ADOPTION_NOT_FOUND(20000, "해당 입양 요청을 찾을 수 없습니다"),
     ADOPTION_ALREADY_REJECTED(20001, "이미 거절된 입양 요청입니다."),
     ADOPTION_ALREADY_ACCEPTED(20002, "이미 승인된 입양 요청입니다."),
-    ADOPTION_ALREADY_EXISTS(20003, "이미 존재하는 입양입니다.");
+    ADOPTION_ALREADY_EXISTS(20003, "이미 존재하는 입양입니다."),
+
+    ANNOUNCEMENT_NOT_FOUND(20004, "존재하지 않는 공지입니다.");
 
     private final int code;
     private final String message;
