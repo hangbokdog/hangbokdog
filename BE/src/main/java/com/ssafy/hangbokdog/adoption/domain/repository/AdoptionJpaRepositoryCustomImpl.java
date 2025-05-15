@@ -97,7 +97,8 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 			))
 			.from(adoption)
 			.leftJoin(member).on(adoption.memberId.eq(member.id))
-			.where(adoption.dogId.eq(dogId))
+			.where(adoption.dogId.eq(dogId),
+				adoption.status.eq(AdoptionStatus.APPLIED))
 			.fetch();
 	}
 

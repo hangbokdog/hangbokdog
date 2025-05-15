@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.adoption.presentation;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.geolatte.geom.M;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +18,7 @@ import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplyDogCountResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
@@ -112,5 +114,13 @@ public class AdoptionController {
 			pageToken
 		);
 		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping("/appliesCount")
+	public ResponseEntity<AdoptionApplyDogCountResponse> getAppliesCountOfDogs(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptionApplyDogCount(member.getId(), centerId));
 	}
 }

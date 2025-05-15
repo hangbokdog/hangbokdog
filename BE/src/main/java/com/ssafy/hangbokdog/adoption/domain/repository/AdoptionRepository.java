@@ -44,4 +44,8 @@ public class AdoptionRepository {
 	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long dogId) {
 		return adoptionJpaRepository.getAdoptionApplicationsByDogId(dogId);
 	}
+
+	public Integer countAdoptionWaitingDogs(Long centerId) {
+		return adoptionJpaRepository.countAdoptionWaitingDogs(centerId);
+	}
 }

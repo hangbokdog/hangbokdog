@@ -15,6 +15,7 @@ import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplyDogCountResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
@@ -180,6 +181,16 @@ public class AdoptionService {
 			.toList();
 
 		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
+	}
+
+	public AdoptionApplyDogCountResponse getAdoptionApplyDogCount(Long memberId, Long centerId) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return new AdoptionApplyDogCountResponse(adoptionRepository.countAdoptionWaitingDogs(centerId));
 	}
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
