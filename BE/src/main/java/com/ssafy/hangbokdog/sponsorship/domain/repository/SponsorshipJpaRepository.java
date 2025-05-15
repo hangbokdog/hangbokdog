@@ -8,7 +8,7 @@ import com.ssafy.hangbokdog.sponsorship.domain.Sponsorship;
 public interface SponsorshipJpaRepository extends JpaRepository<Sponsorship, Long>, SponsorshipJpaRepositoryCustom {
 
 	@Query("""
-			SELECT s
+			SELECT COUNT(s.id) > 0
 			FROM Sponsorship s
 			WHERE s.dogId = :dogId AND s.memberId = :memberId AND s.status = 'PENDING'
 		""")

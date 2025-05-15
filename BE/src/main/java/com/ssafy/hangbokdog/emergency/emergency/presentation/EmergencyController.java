@@ -1,9 +1,10 @@
-package com.ssafy.hangbokdog.emergency.presentation;
+package com.ssafy.hangbokdog.emergency.emergency.presentation;
 
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
-import com.ssafy.hangbokdog.emergency.application.EmergencyService;
-import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
-import com.ssafy.hangbokdog.emergency.dto.request.EmergencyDonationRequest;
-import com.ssafy.hangbokdog.emergency.dto.request.EmergencyTransportRequest;
-import com.ssafy.hangbokdog.emergency.dto.request.EmergencyVolunteerRequest;
-import com.ssafy.hangbokdog.emergency.dto.response.EmergencyCreateResponse;
-import com.ssafy.hangbokdog.emergency.dto.response.EmergencyResponse;
+import com.ssafy.hangbokdog.emergency.emergency.application.EmergencyService;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationRequest;
+import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
+import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRequest;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
