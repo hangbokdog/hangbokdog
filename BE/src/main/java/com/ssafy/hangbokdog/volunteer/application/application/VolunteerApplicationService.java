@@ -88,7 +88,7 @@ public class VolunteerApplicationService {
                     new HashSet<>()
             );
             VolunteerSlot slot = slotIdToSlot.get(applicationRequest.volunteerSlotId());
-            slot.increaseAppliedCount(request.applications().size());
+            slot.increaseAppliedCount(applicationRequest.participantIds().size());
 
             for (Long participantId : applicationRequest.participantIds()) {
                 if (participantMemberIds.contains(participantId)) {
