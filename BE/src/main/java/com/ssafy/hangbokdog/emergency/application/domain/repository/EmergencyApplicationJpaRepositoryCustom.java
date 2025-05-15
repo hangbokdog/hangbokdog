@@ -6,5 +6,9 @@ import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicat
 
 public interface EmergencyApplicationJpaRepositoryCustom {
 	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyId(Long emergencyId);
-	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(Long memberId, Long emergencyId);
+
+	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(
+		Long memberId,
+		Long emergencyId
+	);
 }

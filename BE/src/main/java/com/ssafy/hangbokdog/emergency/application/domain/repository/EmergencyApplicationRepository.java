@@ -30,7 +30,10 @@ public class EmergencyApplicationRepository {
 	}
 
 	public int getApprovedVolunteerApplicantsByEmergencyId(Long emergencyId) {
-		return emergencyApplicationJpaRepository.getApprovedVolunteerApplicantsByEmergencyId(emergencyId, EmergencyApplicationStatus.APPROVED);
+		return emergencyApplicationJpaRepository.getApprovedVolunteerApplicantsByEmergencyId(
+			emergencyId,
+			EmergencyApplicationStatus.APPROVED
+		);
 	}
 
 	public boolean existsByEmergencyId(Long emergencyId) {
@@ -44,7 +47,13 @@ public class EmergencyApplicationRepository {
 		return emergencyApplicationJpaRepository.getEmergencyApplicationsByEmergencyId(emergencyId);
 	}
 
-	public List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(Long memberId, Long emergencyId) {
-		return emergencyApplicationJpaRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(memberId, emergencyId);
+	public List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(
+		Long memberId,
+		Long emergencyId
+	) {
+		return emergencyApplicationJpaRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(
+			memberId,
+			emergencyId
+		);
 	}
 }

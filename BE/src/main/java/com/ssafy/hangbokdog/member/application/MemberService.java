@@ -12,6 +12,7 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.request.MemberUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
@@ -48,6 +49,12 @@ public class MemberService {
         Member member = getMember(memberId);
         member.updateFcmToken(null);
         member.denyEmergencyNotification();
+    }
+
+    @Transactional
+    public void updateProfile(Long memberId, MemberUpdateRequest request, String imageUrl) {
+        Member member = getMember(memberId);
+        member.updateProfile(request.nickname(), imageUrl);
     }
 
     public MemberProfileResponse getMemberProfile(Long memberId) {

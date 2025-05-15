@@ -139,6 +139,11 @@ public class Member {
         this.fcmToken = fcmToken;
     }
 
+    public void updateProfile(String nickname, String profileImage) {
+        this.profileImage = profileImage;
+        this.nickName = nickname;
+    }
+
     public void agreeEmergencyNotification() {
         if (emergencyNotificationCheck) {
             throw new BadRequestException(ErrorCode.EMERGENCY_NOTIFICATION_ALREADY_AGREED);
