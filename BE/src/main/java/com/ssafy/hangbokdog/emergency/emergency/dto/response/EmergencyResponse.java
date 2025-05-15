@@ -1,8 +1,8 @@
-package com.ssafy.hangbokdog.emergency.dto.response;
+package com.ssafy.hangbokdog.emergency.emergency.dto.response;
 
 import java.time.LocalDateTime;
 
-import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 
 public record EmergencyResponse(
 	Long emergencyId,

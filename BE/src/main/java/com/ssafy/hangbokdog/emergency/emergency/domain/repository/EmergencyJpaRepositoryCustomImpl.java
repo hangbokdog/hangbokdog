@@ -1,6 +1,5 @@
-package com.ssafy.hangbokdog.emergency.domain.repository;
+package com.ssafy.hangbokdog.emergency.emergency.domain.repository;
 
-import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
 import static com.ssafy.hangbokdog.emergency.domain.QEmergency.*;
 import static com.ssafy.hangbokdog.member.domain.QMember.*;
 
@@ -12,9 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
-import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
-import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
-import com.ssafy.hangbokdog.emergency.dto.response.EmergencyResponse;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 
 import lombok.RequiredArgsConstructor;
 
