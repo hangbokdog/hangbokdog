@@ -18,4 +18,6 @@ public interface VolunteerApplicationJpaRepository
 
     @Query("SELECT va FROM VolunteerApplication va WHERE va.volunteerEventId = :eventId AND va.memberId = :memberId")
     List<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId);
+
+    List<VolunteerApplication> findByVolunteerId(Long slotId);
 }

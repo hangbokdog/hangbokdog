@@ -38,6 +38,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerWithAppliedCountResponse;
@@ -155,7 +156,7 @@ public class VolunteerService {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
-        var volunteerSlots = volunteerSlotRepository.findAllByEventId(eventId);
+        var volunteerSlots = volunteerSlotRepository.findAllByEventIdWithApprovedStatus(eventId);
         return VolunteerDetailResponse.builder()
                 .precaution(event.getPrecaution())
                 .info(event.getInfo())
@@ -171,6 +172,12 @@ public class VolunteerService {
                 .imageUrls(event.getImageUrls())
                 .activityLog(event.getActivityLog())
                 .build();
+    }
+
+    public List<VolunteerSlotResponse> findAllSlotsByVolunteerEventId(Member member, Long eventId) {
+        VolunteerEvent event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
+        return volunteerSlotRepository.findAllByEventIdWithPending(eventId);
     }
 
     public List<VolunteerResponseWithStatus> findLatest(Member member, Long centerId) {

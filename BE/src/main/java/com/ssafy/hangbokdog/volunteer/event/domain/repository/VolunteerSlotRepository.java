@@ -34,8 +34,8 @@ public class VolunteerSlotRepository {
         return volunteerSlotJpaRepository.findByIdIn(volunteerSlotIds);
     }
 
-    public List<VolunteerSlotResponse> findAllByEventId(Long eventId) {
-        return volunteerSlotJpaRepository.findAllByEventId(eventId);
+    public List<VolunteerSlotResponse> findAllByEventIdWithApprovedStatus(Long eventId) {
+        return volunteerSlotJpaRepository.findAllByEventIdWithApprovedStatus(eventId);
     }
 
     public Integer getAppliedCountByVolunteerIdsIn(List<Long> volunteerEventIds) {
@@ -48,5 +48,9 @@ public class VolunteerSlotRepository {
         return volunteerSlotJpaRepository.getAppliedCountByVolunteerIdsInWithGroupByVolunteerId(
                 volunteerEventIds
         );
+    }
+
+    public List<VolunteerSlotResponse> findAllByEventIdWithPending(Long eventId) {
+        return volunteerSlotJpaRepository.findAllByEventIdWithPendingState(eventId);
     }
 }

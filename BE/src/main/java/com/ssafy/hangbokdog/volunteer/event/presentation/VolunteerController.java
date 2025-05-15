@@ -28,6 +28,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerWithAppliedCountResponse;
@@ -83,6 +84,14 @@ public class VolunteerController {
     ) {
         VolunteerDetailResponse response = volunteerService.findById(member, eventId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{eventId}/volunteerSlots")
+    public ResponseEntity<List<VolunteerSlotResponse>> findAllSlots(
+            @AuthMember Member member,
+            @PathVariable Long eventId
+    ) {
+        return ResponseEntity.ok(volunteerService.findAllSlotsByVolunteerEventId(member, eventId));
     }
 
     @GetMapping("/{eventId}/schedule")

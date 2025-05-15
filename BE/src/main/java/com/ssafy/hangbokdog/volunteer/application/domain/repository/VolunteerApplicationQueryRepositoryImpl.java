@@ -24,6 +24,7 @@ import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationSta
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -177,6 +178,19 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                 .leftJoin(member).on(member.id.eq(volunteerApplication.memberId))
                 .where(volunteerApplication.volunteerId.eq(slotId)
                         .and(volunteerApplication.status.eq(status)))
+                .fetch();
+    }
+
+    @Override
+    public List<VolunteerSlotAppliedCount> findSlotsWithAppliedCountByIdIn(List<Long> volunteerSlotIds) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerSlotAppliedCount.class,
+                volunteerApplication.volunteerId,
+                volunteerApplication.volunteerId.count().intValue()
+        )).from(volunteerApplication)
+                .where(volunteerApplication.volunteerId.in(volunteerSlotIds)
+                        .and(volunteerApplication.status.eq(VolunteerApplicationStatus.APPROVED))
+                ).groupBy(volunteerApplication.volunteerId)
                 .fetch();
     }
 

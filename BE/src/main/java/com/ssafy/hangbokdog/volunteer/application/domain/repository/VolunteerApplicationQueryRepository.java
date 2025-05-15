@@ -7,6 +7,7 @@ import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationSta
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 
 public interface VolunteerApplicationQueryRepository {
 
@@ -26,4 +27,6 @@ public interface VolunteerApplicationQueryRepository {
     List<VolunteerApplicationStatusInfo> findByEventIdsIn(Long memberId, List<Long> volunteerIds);
 
     List<ApplicationResponse> findByVolunteerId(Long slotId, VolunteerApplicationStatus status);
+
+    List<VolunteerSlotAppliedCount> findSlotsWithAppliedCountByIdIn(List<Long> volunteerSlotIds);
 }

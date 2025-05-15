@@ -31,10 +31,10 @@ import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicati
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
-import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepository;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 
 import lombok.RequiredArgsConstructor;
 
@@ -71,9 +71,14 @@ public class VolunteerApplicationService {
             throw new BadRequestException(ErrorCode.SLOT_NOT_FOUND);
         }
 
+        var slotsAppliedCount = volunteerApplicationRepository.findSlotsWithAppliedCountByIdIn(volunteerSlotIds);
+        var slotIdsToAppliedCount = mapSlotIdsToAppliedCount(slotsAppliedCount);
+
         for (var applicationRequest : request.applications()) {
             VolunteerSlotCapacity slotCapacity = slotIdToCapacity.get(applicationRequest.volunteerSlotId());
-            if (slotCapacity.appliedCount() + applicationRequest.participantIds().size() > slotCapacity.capacity()) {
+            if (slotIdsToAppliedCount.getOrDefault(applicationRequest.volunteerSlotId(), 0)
+                    + applicationRequest.participantIds().size() < slotCapacity.capacity()
+            ) {
                 throw new BadRequestException(ErrorCode.SLOT_FULL);
             }
         }
@@ -108,20 +113,11 @@ public class VolunteerApplicationService {
         volunteerApplicationRepository.saveAll(volunteerApplications);
     }
 
-    private Map<Long, VolunteerSlot> mapSlotIdToSlot(List<VolunteerSlot> volunteerSlots) {
-        return volunteerSlots.stream()
-                .collect(Collectors.toMap(
-                        VolunteerSlot::getId,
-                        volunteerSlot -> volunteerSlot
-                ));
-    }
-
     public List<WeeklyApplicationResponse> getWeeklyApplications(Member member, LocalDate date) {
         // 1) 이번 주 일요일 ~ 토요일 계산
         LocalDate weekStart = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         LocalDate weekEnd   = date.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 
-        // TODO: PENDING, APPROVED인 것들만 보여야 할까?
         return volunteerApplicationRepository.findByMemberIdAndParticipationDateBetween(
                 member.getId(),
                 weekStart,
@@ -156,8 +152,8 @@ public class VolunteerApplicationService {
             throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_PROCESSING_FAILED);
         }
 
+        slot.decreaseAppliedCount();
         if (request.status().equals(VolunteerApplicationStatus.REJECTED)) {
-            slot.decreaseAppliedCount();
             volunteerApplicationRepository.delete(application);
             return;
         }
@@ -246,5 +242,21 @@ public class VolunteerApplicationService {
         return request.applications().stream()
                 .map(ApplicationRequest::volunteerSlotId)
                 .toList();
+    }
+
+    private Map<Long, Integer> mapSlotIdsToAppliedCount(List<VolunteerSlotAppliedCount> slotsAppliedCount) {
+        return slotsAppliedCount.stream()
+                .collect(Collectors.toMap(
+                        VolunteerSlotAppliedCount::volunteerSlotId,
+                        VolunteerSlotAppliedCount::count
+                ));
+    }
+
+    private Map<Long, VolunteerSlot> mapSlotIdToSlot(List<VolunteerSlot> volunteerSlots) {
+        return volunteerSlots.stream()
+                .collect(Collectors.toMap(
+                        VolunteerSlot::getId,
+                        volunteerSlot -> volunteerSlot
+                ));
     }
 }

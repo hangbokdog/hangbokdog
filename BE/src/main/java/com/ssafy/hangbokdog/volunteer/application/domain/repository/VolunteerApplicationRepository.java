@@ -12,6 +12,7 @@ import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationSta
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 
 import lombok.RequiredArgsConstructor;
 
@@ -70,5 +71,9 @@ public class VolunteerApplicationRepository {
 
     public List<ApplicationResponse> findAll(Long slotId, VolunteerApplicationStatus status) {
         return volunteerApplicationJpaRepository.findByVolunteerId(slotId, status);
+    }
+
+    public List<VolunteerSlotAppliedCount> findSlotsWithAppliedCountByIdIn(List<Long> volunteerSlotIds) {
+        return volunteerApplicationJpaRepository.findSlotsWithAppliedCountByIdIn(volunteerSlotIds);
     }
 }
