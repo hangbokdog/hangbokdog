@@ -34,6 +34,8 @@ import VaccinationDetailPage from "./pages/manager/VaccinationDetailPage";
 import DogListPage from "./pages/DogListPage";
 import AdoptionManagerMainPage from "./pages/manager/AdoptionManagerMainPage";
 import FosterManagerMainPage from "./pages/manager/FosterManagerMainPage";
+import AnnouncementListPage from "./pages/AnnouncementListPage";
+import AnnouncementCreatePage from "./pages/manager/AnnouncementCreatePage";
 import ProfileEdit from "./components/my/ProfileEdit";
 
 const router = createBrowserRouter([
@@ -72,6 +74,21 @@ const router = createBrowserRouter([
 							{
 								index: true,
 								element: <SponsorShipPage />,
+							},
+						],
+					},
+					{
+						path: "announcements",
+						children: [
+							{
+								index: true,
+								element: <AnnouncementListPage />,
+								handle: { showHeader: false },
+							},
+							{
+								path: "create",
+								element: <AnnouncementCreatePage />,
+								handle: { showHeader: false },
 							},
 						],
 					},
