@@ -9,8 +9,16 @@ import useManagerStore from "@/lib/store/managerStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { BuildingIcon, LogInIcon, XIcon, UserPlusIcon } from "lucide-react";
+import {
+	BuildingIcon,
+	LogInIcon,
+	XIcon,
+	UserPlusIcon,
+	ChevronDownIcon,
+	ChevronUpIcon,
+} from "lucide-react";
 import { motion } from "framer-motion";
+import { useState } from "react";
 
 interface CenterDecisionListItemProps {
 	centerId: string;
@@ -33,6 +41,8 @@ export default function CenterDecisionListItem({
 	const { setAddressBook } = useManagerStore();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
+	const [isExpanded, setIsExpanded] = useState(false);
+	const isLongName = centerName.length > 7;
 
 	const { refetch } = useQuery<AddressBook[], Error>({
 		queryKey: ["addressBooks", centerId],
@@ -103,6 +113,10 @@ export default function CenterDecisionListItem({
 		navigate("/");
 	};
 
+	const toggleExpand = () => {
+		setIsExpanded(!isExpanded);
+	};
+
 	// 상태에 따른 배지 색상 및 텍스트
 	const getBadgeInfo = () => {
 		switch (status) {
@@ -158,21 +172,38 @@ export default function CenterDecisionListItem({
 							}`}
 						/>
 					</div>
-					<div>
-						<h3 className="font-medium text-gray-900">
-							{centerName}
-						</h3>
-						{badge.text && (
-							<span
-								className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs ${badge.color}`}
+					<div className="flex items-center">
+						<div className="flex-1">
+							<h3
+								className={`font-medium text-gray-900 ${isLongName && !isExpanded ? "line-clamp-1" : ""}`}
 							>
-								{badge.text}
-							</span>
+								{centerName}
+							</h3>
+							{badge.text && (
+								<span
+									className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs ${badge.color}`}
+								>
+									{badge.text}
+								</span>
+							)}
+						</div>
+						{isLongName && (
+							<button
+								type="button"
+								onClick={toggleExpand}
+								className="ml-1 p-1 rounded-full hover:bg-gray-100 transition-colors"
+							>
+								{isExpanded ? (
+									<ChevronUpIcon className="size-4 text-gray-500" />
+								) : (
+									<ChevronDownIcon className="size-4 text-gray-500" />
+								)}
+							</button>
 						)}
 					</div>
 				</div>
 
-				<div className="flex gap-2">
+				<div className="flex gap-2 ">
 					{status === "NONE" && (
 						<motion.button
 							whileHover={{ scale: 1.05 }}
@@ -183,7 +214,7 @@ export default function CenterDecisionListItem({
 							disabled={isRegistering}
 						>
 							<UserPlusIcon className="size-4" />
-							<span>가입 신청</span>
+							<span className="truncate">가입 신청</span>
 							{isRegistering && (
 								<span className="ml-1 h-3.5 w-3.5 rounded-full border-2 border-t-transparent border-white animate-spin" />
 							)}
@@ -199,7 +230,7 @@ export default function CenterDecisionListItem({
 							disabled={isCancelling}
 						>
 							<XIcon className="size-4" />
-							<span>신청 취소</span>
+							<span className="truncate">신청 취소</span>
 							{isCancelling && (
 								<span className="ml-1 h-3.5 w-3.5 rounded-full border-2 border-t-transparent border-white animate-spin" />
 							)}
@@ -217,7 +248,7 @@ export default function CenterDecisionListItem({
 						onClick={handleVisit}
 					>
 						<LogInIcon className="size-4" />
-						<span>방문하기</span>
+						<span className="truncate">방문하기</span>
 					</motion.button>
 				</div>
 			</div>
