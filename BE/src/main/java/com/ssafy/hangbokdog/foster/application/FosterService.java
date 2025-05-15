@@ -99,7 +99,7 @@ public class FosterService {
 
 	@Transactional
 	public void decideFosterApplication(
-			Long memberId,
+		Long memberId,
 		Long centerId,
 		Long fosterId,
 		FosterStatus request

@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.emergency.emergency.domain.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -23,5 +24,9 @@ public class EmergencyRepository {
 
 	public List<EmergencyResponse> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
 		return emergencyJpaRepository.getEmergenciesByCenterId(centerId, type, now);
+	}
+
+	public Optional<Emergency> getEmergencyById(Long id) {
+		return emergencyJpaRepository.findById(id);
 	}
 }

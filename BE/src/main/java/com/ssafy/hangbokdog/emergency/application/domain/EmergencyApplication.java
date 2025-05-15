@@ -49,6 +49,10 @@ public class EmergencyApplication extends BaseEntity {
 		this.status = EmergencyApplicationStatus.REJECTED;
 	}
 
+	public boolean isAuthor(Long memberId) {
+		return applicantId.equals(memberId);
+	}
+
 	@Builder
 	public EmergencyApplication(Long emergencyId, Long applicantId, EmergencyApplicationStatus status) {
 		this.emergencyId = emergencyId;

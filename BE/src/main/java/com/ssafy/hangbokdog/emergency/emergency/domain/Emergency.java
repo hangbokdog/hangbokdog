@@ -58,6 +58,10 @@ public class Emergency extends BaseEntity {
 	@Column(name = "emergency_type")
 	private EmergencyType emergencyType;
 
+	public boolean checkCapacity(int amount) {
+		return capacity > amount;
+	}
+
 	@Builder
 	public Emergency(
 		Long authorId,
