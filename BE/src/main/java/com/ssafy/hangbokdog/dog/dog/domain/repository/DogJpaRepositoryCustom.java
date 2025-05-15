@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
@@ -29,6 +30,7 @@ public interface DogJpaRepositoryCustom {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken,
 		int pageSize
 	);

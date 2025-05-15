@@ -22,6 +22,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.dog.application.FavoriteDogService;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogCreateRequest;
@@ -211,6 +212,7 @@ public class DogController {
 		@RequestParam(value = "locationId", required = false) List<Long> locationIds,
 		@RequestParam(value = "isStar", required = false) Boolean isStar,
 		@RequestParam(value = "centerId") Long centerId,
+		@RequestParam(value = "status", required = false) DogStatus status,
 		@RequestParam(required = false) String pageToken
 	) {
 		PageInfo<DogSearchResponse> response = dogService.searchDogs(
@@ -224,6 +226,7 @@ public class DogController {
 			locationIds,
 			isStar,
 			centerId,
+			status,
 			pageToken
 		);
 		return ResponseEntity.ok().body(response);

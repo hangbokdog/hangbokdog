@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.FavoriteDogRepository;
@@ -253,6 +254,7 @@ public class DogService {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken
 	) {
 		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchDogs(
@@ -265,6 +267,7 @@ public class DogService {
 			locationIds,
 			isStar,
 			centerId,
+			status,
 			pageToken
 		);
 
