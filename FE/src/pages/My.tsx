@@ -19,7 +19,7 @@ export default function My() {
 	const { clearAuth } = useAuthStore();
 	const { selectedCenter, clearSelectedCenter } = useCenterStore();
 	const navigate = useNavigate();
-
+	
 	const logoutMutation = useMutation({
 		mutationFn: logoutAPI,
 		onSuccess: () => {
@@ -33,7 +33,7 @@ export default function My() {
 			navigate("/");
 		},
 	});
-
+	
 	const handleLogout = () => {
 		logoutMutation.mutate();
 	};
@@ -47,12 +47,7 @@ export default function My() {
 	return (
 		<div className="flex flex-col mt-2.5">
 			<Profile
-				name="멜롱"
-				email="min@naver.com"
-				onEdit={() => {
-					handleEdit();
-					console.log("프로필 수정 클릭됨");
-				}}
+				onEdit={handleEdit}
 			/>
 
 			{selectedCenter && (

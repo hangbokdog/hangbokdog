@@ -34,6 +34,7 @@ import VaccinationDetailPage from "./pages/manager/VaccinationDetailPage";
 import DogListPage from "./pages/DogListPage";
 import AdoptionManagerMainPage from "./pages/manager/AdoptionManagerMainPage";
 import FosterManagerMainPage from "./pages/manager/FosterManagerMainPage";
+import ProfileEdit from "./components/my/ProfileEdit";
 
 const router = createBrowserRouter([
 	{
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
 					{
 						path: "my",
 						element: <My />,
+					},
+					{
+						path: "my/edit",
+						element: <ProfileEdit />,
+						handle: { showHeader: false },
 					},
 					{
 						path: "donations",
