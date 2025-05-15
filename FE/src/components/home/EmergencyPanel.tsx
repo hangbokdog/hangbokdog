@@ -1,60 +1,15 @@
 import siren from "@/assets/images/siren.png";
-import MovingListItem from "../common/emergency/movingListItem";
-import DonationListItem from "../common/emergency/donationListItem";
-import VolunteerListItem from "../common/emergency/volunteerListItem";
-import ListPanel from "../common/ListPanel";
+import ManagerEmergencyPanel from "../manager/main/ManagerEmergencyPanel";
+import useCenterStore from "@/lib/store/centerStore";
 
 export default function EmergencyPanel() {
-	const movingList = [
-		{
-			name: "서현",
-			startLocation: "서울",
-			endLocation: "인천공항",
-			date: "D-10시간",
-			index: 0,
-		},
-		{
-			name: "도넛",
-			startLocation: "부산",
-			endLocation: "대구",
-			date: "D-2일",
-			index: 1,
-		},
-	];
-
-	const volunteerList = [
-		{
-			title: "이삿짐 옮기기",
-			current: 2,
-			target: 5,
-			date: "D-1일",
-			index: 0,
-		},
-		{
-			title: "고양이 돌보기",
-			current: 1,
-			target: 2,
-			date: "D-3일",
-			index: 1,
-		},
-	];
-
-	const donationList = [
-		{
-			title: "수술비 지원",
-			current: 30,
-			target: 100,
-			date: "D-5일",
-			index: 0,
-		},
-		{
-			title: "월세 지원",
-			current: 70,
-			target: 100,
-			date: "D-2일",
-			index: 1,
-		},
-	];
+	const centerId = useCenterStore((state) =>
+		Number(state.selectedCenter?.centerId),
+	);
+	// 선택된 센터가 없을 때는 렌더링하지 않거나 안내 메시지
+	if (!centerId) {
+		return <div>센터 정보를 불러오는 중입니다...</div>;
+	}
 
 	return (
 		<div className="flex flex-col mx-2.5">
@@ -67,30 +22,7 @@ export default function EmergencyPanel() {
 					</span>
 				</span>
 			</div>
-
-			<ListPanel
-				link={"/emergency"}
-				tabs={[
-					{
-						key: "moving",
-						label: "이동",
-						data: movingList,
-						component: MovingListItem,
-					},
-					{
-						key: "volunteer",
-						label: "일손",
-						data: volunteerList,
-						component: VolunteerListItem,
-					},
-					{
-						key: "donation",
-						label: "후원",
-						data: donationList,
-						component: DonationListItem,
-					},
-				]}
-			/>
+			<ManagerEmergencyPanel centerId={centerId} />
 		</div>
 	);
 }

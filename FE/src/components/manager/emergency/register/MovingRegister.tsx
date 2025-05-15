@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { createTransportPostAPI } from "@/api/emergencyRegister";
 import useCenterStore from "@/lib/store/centerStore";
 import { TargetGrade } from "@/types/emergencyRegister";
@@ -13,6 +14,7 @@ export default function MovingRegister() {
 		targetGrade: TargetGrade.ALL,
 	});
 
+	const navigate = useNavigate();
 	const { selectedCenter } = useCenterStore();
 	const centerId = Number(selectedCenter?.centerId);
 
@@ -39,6 +41,7 @@ export default function MovingRegister() {
 				targetGrade: formData.targetGrade,
 			});
 			toast("이동 게시글이 등록되었습니다!");
+			navigate("/manager/emergency");
 
 			// 입력값 초기화
 			setFormData({

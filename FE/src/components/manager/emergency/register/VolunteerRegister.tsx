@@ -1,9 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useCenterStore from "@/lib/store/centerStore";
 import { createVolunteerPostAPI } from "@/api/emergencyRegister";
-import { TargetGrade, type VolunteerRequest } from "@/types/emergencyRegister";
+import {
+	EmergencyType,
+	TargetGrade,
+	type VolunteerRequest,
+} from "@/types/emergencyRegister";
 import TargetGradeTag from "./TargetGradeTag";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function VolunteerRegister() {
 	const [formData, setFormData] = useState<VolunteerRequest>({
@@ -14,6 +20,8 @@ export default function VolunteerRegister() {
 		targetGrade: TargetGrade.ALL,
 	});
 
+	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const { selectedCenter } = useCenterStore();
 	const centerId = Number(selectedCenter?.centerId);
 
@@ -41,6 +49,15 @@ export default function VolunteerRegister() {
 				dueDate: new Date(formData.dueDate).toISOString(), // ISO 포맷 보장
 			});
 			toast("자원봉사 게시글이 등록되었습니다!");
+			navigate("/manager/emergency");
+			// ✅ 캐시된 'emergency-posts' 쿼리를 무효화 → 자동으로 다시 요청됨
+			await queryClient.invalidateQueries({
+				queryKey: [
+					"emergency-posts",
+					centerId,
+					EmergencyType.VOLUNTEER,
+				],
+			});
 
 			setFormData({
 				title: "",
