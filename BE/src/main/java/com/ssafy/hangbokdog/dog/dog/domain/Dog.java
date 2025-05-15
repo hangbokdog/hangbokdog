@@ -86,6 +86,10 @@ public class Dog extends BaseEntity {
 		this.status = DogStatus.FOSTERED;
 	}
 
+	public void goAdopted() {
+		this.status = DogStatus.ADOPTED;
+	}
+
 	public void goProtected() {
 		this.status = DogStatus.PROTECTED;
 	}

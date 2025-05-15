@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.dog.domain.repository;
 
+import static com.ssafy.hangbokdog.adoption.domain.QAdoption.*;
 import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
@@ -13,6 +14,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
@@ -119,6 +121,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken,
 		int pageSize
 	) {
@@ -149,7 +152,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				isStarEq(isStar),
 				inBirthRange(start, end),
 				hasLocationIds(locationIds),
-				dog.status.ne(DogStatus.ADOPTED)
+				hasStatus(status)
 			)
 			.orderBy(dog.id.desc())
 			.limit(pageSize + 1)
@@ -167,6 +170,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken,
 		int pageSize
 	) {
@@ -185,8 +189,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.isStar
 			))
 			.from(dog)
-			.leftJoin(addressBook)
-			.on(dog.locationId.eq(addressBook.id))
+			.leftJoin(addressBook).on(dog.locationId.eq(addressBook.id))
+			.innerJoin(adoption).on(dog.id.eq(adoption.dogId))
 			.where(
 				dog.centerId.eq(centerId),
 				isInRange(pageToken),
@@ -197,9 +201,9 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				isStarEq(isStar),
 				inBirthRange(start, end),
 				hasLocationIds(locationIds),
-				dog.status.eq(DogStatus.ADOPTED)
+				hasStatus(status)
 			)
-			.orderBy(dog.id.desc())
+			.orderBy(adoption.id.desc())
 			.limit(pageSize + 1)
 			.fetch();
 	}
@@ -265,6 +269,13 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		return dog.id.lt(Long.parseLong(pageToken));
 	}
 
+	private BooleanExpression isInRangeAdoption(String pageToken) {
+		if (pageToken == null) {
+			return null;
+		}
+		return adoption.id.lt(Long.parseLong(pageToken));
+	}
+
 	private BooleanExpression hasName(String name) {
 		return (name == null || name.isBlank()) ? null : dog.name.containsIgnoreCase(name);
 	}
@@ -278,6 +289,10 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 
 	private BooleanExpression hasGender(Gender gender) {
 		return (gender == null) ? null : dog.gender.eq(gender);
+	}
+
+	private BooleanExpression hasStatus(DogStatus status) {
+		return (status == null) ? null : dog.status.eq(status);
 	}
 
 	private BooleanExpression isNeuteredEq(Boolean isNeutered) {
