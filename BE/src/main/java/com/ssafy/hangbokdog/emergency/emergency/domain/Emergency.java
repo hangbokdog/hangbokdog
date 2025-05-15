@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.emergency.domain;
+package com.ssafy.hangbokdog.emergency.emergency.domain;
 
 import java.time.LocalDateTime;
 
@@ -11,8 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
-import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
-import com.ssafy.hangbokdog.emergency.domain.enums.TargetGrade;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.TargetGrade;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -57,6 +57,10 @@ public class Emergency extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "emergency_type")
 	private EmergencyType emergencyType;
+
+	public boolean checkCapacity(int amount) {
+		return capacity > amount;
+	}
 
 	@Builder
 	public Emergency(

@@ -1,4 +1,4 @@
-package com.ssafy.hangbokdog.emergency.application;
+package com.ssafy.hangbokdog.emergency.emergency.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,14 +12,14 @@ import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberReposito
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
-import com.ssafy.hangbokdog.emergency.domain.Emergency;
-import com.ssafy.hangbokdog.emergency.domain.enums.EmergencyType;
-import com.ssafy.hangbokdog.emergency.domain.repository.EmergencyRepository;
-import com.ssafy.hangbokdog.emergency.dto.request.EmergencyDonationRequest;
-import com.ssafy.hangbokdog.emergency.dto.request.EmergencyTransportRequest;
-import com.ssafy.hangbokdog.emergency.dto.request.EmergencyVolunteerRequest;
-import com.ssafy.hangbokdog.emergency.dto.response.EmergencyCreateResponse;
-import com.ssafy.hangbokdog.emergency.dto.response.EmergencyResponse;
+import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.domain.repository.EmergencyRepository;
+import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationRequest;
+import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
+import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRequest;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
 
