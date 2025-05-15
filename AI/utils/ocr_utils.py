@@ -24,6 +24,15 @@ def extract_info(texts: List[str]) -> Dict[str, str]:
     info_line = next((t for t in texts if any(x in t for x in ["수컷", "암컷"])), "")
     parts = [p.strip() for p in info_line.split("/")]
 
+    color_mapping = {
+        "검정색": "검",
+        "흰색": "흰",
+        "갈색": "갈",
+        "검": "검",
+        "흰": "흰",
+        "갈": "갈"
+    }
+
     for part in parts:
         if "수컷" in part:
             gender = "수컷"
@@ -38,8 +47,10 @@ def extract_info(texts: List[str]) -> Dict[str, str]:
             elif "중성화 X" in part:
                 neutered = "X"
 
-        if any(c in part for c in ["검", "흰", "갈"]):
-            color = part
+        for color_key, color_value in color_mapping.items():
+                    if color_key in part:
+                        color = color_value
+                        break
 
         if "년생" in part:
             birthYear = part.replace("(년생)", "").strip()
