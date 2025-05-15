@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.dog.domain.repository;
 
+import static com.ssafy.hangbokdog.adoption.domain.QAdoption.*;
 import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
@@ -159,6 +160,55 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	}
 
 	@Override
+	public List<DogSummaryInfo> searchAdoptedDogs(
+		String name,
+		List<DogBreed> breeds,
+		Gender gender,
+		LocalDateTime start,
+		LocalDateTime end,
+		Boolean isNeutered,
+		List<Long> locationIds,
+		Boolean isStar,
+		Long centerId,
+		DogStatus status,
+		String pageToken,
+		int pageSize
+	) {
+		return queryFactory
+			.select(Projections.constructor(
+				DogSummaryInfo.class,
+				dog.id,
+				dog.name,
+				dog.profileImage,
+				Expressions.numberTemplate(
+					Integer.class,
+					"timestampdiff(month, {0}, now())",
+					dog.birth
+				),
+				dog.gender,
+				dog.isStar
+			))
+			.from(dog)
+			.leftJoin(addressBook).on(dog.locationId.eq(addressBook.id))
+			.innerJoin(adoption).on(dog.id.eq(adoption.dogId))
+			.where(
+				dog.centerId.eq(centerId),
+				isInRange(pageToken),
+				hasName(name),
+				hasBreeds(breeds),
+				hasGender(gender),
+				isNeuteredEq(isNeutered),
+				isStarEq(isStar),
+				inBirthRange(start, end),
+				hasLocationIds(locationIds),
+				hasStatus(status)
+			)
+			.orderBy(adoption.id.desc())
+			.limit(pageSize + 1)
+			.fetch();
+	}
+
+	@Override
 	public List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
 		String keyword,
@@ -217,6 +267,13 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 			return null;
 		}
 		return dog.id.lt(Long.parseLong(pageToken));
+	}
+
+	private BooleanExpression isInRangeAdoption(String pageToken) {
+		if (pageToken == null) {
+			return null;
+		}
+		return adoption.id.lt(Long.parseLong(pageToken));
 	}
 
 	private BooleanExpression hasName(String name) {
