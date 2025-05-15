@@ -69,6 +69,12 @@ export default function EmergencyDetailModal({
 					<div className="text-sm font-light text-end text-gray-400 border-t mt-2 pt-2">
 						마감일: {new Date(data.dueDate).toLocaleDateString()}
 					</div>
+					<button
+						type="button"
+						className="w-full bg-blue-500 rounded-lg text-white py-2 mb-2.5"
+					>
+						신청하기
+					</button>
 				</div>
 				<DialogClose />
 			</DialogContent>
