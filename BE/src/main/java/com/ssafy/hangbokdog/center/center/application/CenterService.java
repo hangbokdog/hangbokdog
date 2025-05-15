@@ -146,7 +146,7 @@ public class CenterService {
 		return centerMemberRepository.getMyCenters(memberId);
 	}
 
-	public List<CenterSearchResponse> searchCentersByName(Long memberId, String name, CenterCity centerCity) {
+	public List<CenterSearchResponse> searchCenters(Long memberId, String name, CenterCity centerCity) {
 		List<CenterSearchInfo> searchInfos = centerRepository.findCentersByName(name, centerCity);
 		List<CenterMember> centerMemberList = centerMemberRepository.getCenterMembersByMemberId(memberId);
 		List<CenterJoinRequest> centerJoinRequests = centerJoinRequestRepository

@@ -24,6 +24,7 @@ import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.center.donationaccount.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.donationaccount.dto.response.DonationAccountBalanceResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -74,7 +75,7 @@ public class CenterController {
 		@RequestParam(required = false) String name,
 		@RequestParam(required = false) CenterCity centerCity
 	) {
-		List<CenterSearchResponse> response = centerService.searchCentersByName(
+		List<CenterSearchResponse> response = centerService.searchCenters(
 			member.getId(),
 			name,
 			centerCity
