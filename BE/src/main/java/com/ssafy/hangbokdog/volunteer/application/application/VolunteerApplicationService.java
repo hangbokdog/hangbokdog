@@ -77,7 +77,7 @@ public class VolunteerApplicationService {
         for (var applicationRequest : request.applications()) {
             VolunteerSlotCapacity slotCapacity = slotIdToCapacity.get(applicationRequest.volunteerSlotId());
             if (slotIdsToAppliedCount.getOrDefault(applicationRequest.volunteerSlotId(), 0)
-                    + applicationRequest.participantIds().size() < slotCapacity.capacity()
+                    + applicationRequest.participantIds().size() >= slotCapacity.capacity()
             ) {
                 throw new BadRequestException(ErrorCode.SLOT_FULL);
             }
