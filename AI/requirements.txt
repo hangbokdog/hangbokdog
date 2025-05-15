@@ -8,3 +8,4 @@ uvicorn==0.34.0
 python-multipart==0.0.20
 python-dotenv==1.0.1
 easyocr==1.7.2
+ultralytics
