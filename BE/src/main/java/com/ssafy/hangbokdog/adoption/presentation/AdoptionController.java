@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hangbokdog.adoption.application.AdoptionService;
 import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
@@ -54,16 +55,24 @@ public class AdoptionController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PageInfo<AdoptionApplicationResponse>> getAdoptionApplications(
+	public ResponseEntity<List<AdoptionApplicationResponse>> getAdoptionApplications(
 		@AuthMember Member member,
-		@RequestParam Long centerId,
-		@RequestParam(required = false) String pageToken
+		@RequestParam Long centerId
 	) {
-		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByCenterId(
+		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByCenterId(member.getId(), centerId));
+	}
+
+	@GetMapping("/{dogId}/applications")
+	public ResponseEntity<List<AdoptionApplicationByDogResponse>> getAdoptionApplicationsByDog(
+		@AuthMember Member member,
+		@PathVariable Long dogId,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByDogId(
 			member.getId(),
 			centerId,
-			pageToken)
-		);
+			dogId
+		));
 	}
 
 	@GetMapping("/adopted/{dogId}")

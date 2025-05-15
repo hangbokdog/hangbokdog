@@ -16,6 +16,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -28,28 +29,22 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 
 	@Override
 	public List<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(
-		Long centerId,
-		String pageToken,
-		int pageSize
+		Long centerId
 	) {
 		return queryFactory
 			.select(Projections.constructor(
 				AdoptionApplicationResponse.class,
-				adoption.id,
 				adoption.dogId,
 				dog.name,
 				dog.profileImage,
-				adoption.memberId,
-				member.name,
-				adoption.createdAt
+				adoption.dogId.count().intValue()
 			))
 			.from(adoption)
 			.leftJoin(dog).on(adoption.dogId.eq(dog.id))
-			.leftJoin(member).on(adoption.memberId.eq(member.id))
 			.where(dog.centerId.eq(centerId),
 				adoption.status.eq(AdoptionStatus.APPLIED))
+			.groupBy(adoption.dogId, dog.name, dog.profileImage)
 			.orderBy(adoption.id.desc())
-			.limit(pageSize + 1)
 			.fetch();
 	}
 
@@ -88,6 +83,22 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 			.leftJoin(center).on(dog.centerId.eq(center.id))
 			.where(dog.id.eq(dogId))
 			.fetchOne();
+	}
+
+	@Override
+	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long dogId) {
+		return queryFactory
+			.select(Projections.constructor(
+				AdoptionApplicationByDogResponse.class,
+				member.id,
+				member.name,
+				member.profileImage,
+				adoption.createdAt
+			))
+			.from(adoption)
+			.leftJoin(member).on(adoption.memberId.eq(member.id))
+			.where(adoption.dogId.eq(dogId))
+			.fetch();
 	}
 
 	private BooleanExpression isInRange(String pageToken) {

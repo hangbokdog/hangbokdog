@@ -13,6 +13,7 @@ import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.domain.repository.AdoptionRepository;
 import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
@@ -88,11 +89,7 @@ public class AdoptionService {
 		}
 	}
 
-	public PageInfo<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(
-		Long memberId,
-		Long centerId,
-		String pageToken
-	) {
+	public List<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(Long memberId, Long centerId) {
 
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
@@ -100,7 +97,17 @@ public class AdoptionService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
-		return adoptionRepository.getAdoptionApplicationsByCenterId(centerId, pageToken);
+		return adoptionRepository.getAdoptionApplicationsByCenterId(centerId);
+	}
+
+	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long memberId, Long centerId, Long dogId) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return adoptionRepository.getAdoptionApplicationsByDogId(dogId);
 	}
 
 	public AdoptedDogDetailResponse getAdoptedDogDetail(Member member, Long dogId) {

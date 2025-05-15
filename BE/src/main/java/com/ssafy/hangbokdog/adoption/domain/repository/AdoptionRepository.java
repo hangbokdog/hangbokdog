@@ -1,11 +1,13 @@
 package com.ssafy.hangbokdog.adoption.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.adoption.domain.Adoption;
 import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 
@@ -27,12 +29,8 @@ public class AdoptionRepository {
 		return adoptionJpaRepository.findById(id);
 	}
 
-	public PageInfo<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(
-		Long centerId,
-		String pageToken
-	) {
-		var data = adoptionJpaRepository.getAdoptionApplicationsByCenterId(centerId, pageToken, ADOPTION_PAGE_SIZE);
-		return PageInfo.of(data, ADOPTION_PAGE_SIZE, AdoptionApplicationResponse::adoptionId);
+	public List<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(Long centerId) {
+		return adoptionJpaRepository.getAdoptionApplicationsByCenterId(centerId);
 	}
 
 	public boolean checkExist(Long memberId, Long dogId) {
@@ -41,5 +39,9 @@ public class AdoptionRepository {
 
 	public AdoptedDogDetailInfo getAdoptedDogDetail(Long dogId) {
 		return adoptionJpaRepository.getAdoptedDogDetail(dogId);
+	}
+
+	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long dogId) {
+		return adoptionJpaRepository.getAdoptionApplicationsByDogId(dogId);
 	}
 }
