@@ -1,11 +1,12 @@
+import { useState } from "react";
 import ListPanel from "@/components/common/ListPanel";
 import MovingListItem from "@/components/common/emergency/movingListItem";
 import DonationListItem from "@/components/common/emergency/donationListItem";
 import VolunteerListItem from "@/components/common/emergency/volunteerListItem";
+import EmergencyDetailModal from "@/components/common/emergency/EmergencyDetailModal";
 import { useQuery } from "@tanstack/react-query";
 import { getEmergencyPostAPI } from "@/api/emergencyRegister";
-import { EmergencyType } from "@/types/emergencyRegister";
-import { useNavigate } from "react-router-dom";
+import { EmergencyType, type EmergencyPost } from "@/types/emergencyRegister";
 
 interface EmergencyPanelProps {
 	centerId: number;
@@ -14,8 +15,9 @@ interface EmergencyPanelProps {
 export default function ManagerEmergencyPanel({
 	centerId,
 }: EmergencyPanelProps) {
-	const navigate = useNavigate();
-	// ✅ 일손 게시글
+	const [selectedId, setSelectedId] = useState<number | null>(null);
+	const [open, setOpen] = useState(false);
+
 	const { data: volunteerPosts = [], isLoading: isLoadingVolunteer } =
 		useQuery({
 			queryKey: ["emergency-posts", centerId, EmergencyType.VOLUNTEER],
@@ -26,9 +28,6 @@ export default function ManagerEmergencyPanel({
 			staleTime: 0,
 		});
 
-	console.log("volunteerPosts(raw):", volunteerPosts);
-
-	// ✅ 이동 게시글
 	const { data: transportPosts = [], isLoading: isLoadingTransport } =
 		useQuery({
 			queryKey: ["emergency-posts", centerId, EmergencyType.TRANSPORT],
@@ -39,7 +38,6 @@ export default function ManagerEmergencyPanel({
 			staleTime: 0,
 		});
 
-	// ✅ 후원 게시글
 	const { data: donationPosts = [], isLoading: isLoadingDonation } = useQuery(
 		{
 			queryKey: ["emergency-posts", centerId, EmergencyType.DONATION],
@@ -51,10 +49,17 @@ export default function ManagerEmergencyPanel({
 		},
 	);
 
-	// ✅ 전체 로딩 처리
 	if (isLoadingVolunteer || isLoadingTransport || isLoadingDonation) {
 		return <div>불러오는 중...</div>;
 	}
+
+	const allPosts: EmergencyPost[] = [
+		...volunteerPosts,
+		...transportPosts,
+		...donationPosts,
+	];
+	const selectedPost =
+		allPosts.find((p) => p.emergencyId === selectedId) ?? null;
 
 	return (
 		<div className="flex flex-col">
@@ -70,6 +75,11 @@ export default function ManagerEmergencyPanel({
 							target: p.capacity ?? 0,
 							date: `D-${calculateDDay(p.dueDate)}`,
 							index: idx,
+							emergencyId: p.emergencyId,
+							onClick: () => {
+								setSelectedId(p.emergencyId);
+								setOpen(true);
+							},
 						})),
 						component: VolunteerListItem,
 					},
@@ -81,6 +91,11 @@ export default function ManagerEmergencyPanel({
 							name: p.name ?? "알 수 없음",
 							date: `D-${calculateDDay(p.dueDate)}`,
 							index: idx,
+							emergencyId: p.emergencyId,
+							onClick: () => {
+								setSelectedId(p.emergencyId);
+								setOpen(true);
+							},
 						})),
 						component: MovingListItem,
 					},
@@ -93,11 +108,27 @@ export default function ManagerEmergencyPanel({
 							target: p.targetAmount ?? 0,
 							date: `D-${calculateDDay(p.dueDate)}`,
 							index: idx,
+							emergencyId: p.emergencyId,
+							onClick: () => {
+								setSelectedId(p.emergencyId);
+								setOpen(true);
+							},
 						})),
 						component: DonationListItem,
 					},
 				]}
 			/>
+
+			{selectedPost && (
+				<EmergencyDetailModal
+					data={selectedPost}
+					open={open}
+					onClose={() => {
+						setOpen(false);
+						setSelectedId(null);
+					}}
+				/>
+			)}
 		</div>
 	);
 }

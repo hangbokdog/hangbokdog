@@ -63,7 +63,7 @@ export default function DonationRegister() {
 		}
 
 		try {
-			const response = await createDonationPostAPI(centerId, {
+			await createDonationPostAPI(centerId, {
 				...formData,
 				dueDate: `${formData.dueDate}T00:00:00`,
 			});

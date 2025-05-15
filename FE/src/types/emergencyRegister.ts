@@ -43,6 +43,7 @@ export interface EmergencyPost {
 	authorId: number;
 	name: string;
 	title: string;
+	content: string;
 	memberImage: string;
 	dueDate: string;
 	capacity?: number;
