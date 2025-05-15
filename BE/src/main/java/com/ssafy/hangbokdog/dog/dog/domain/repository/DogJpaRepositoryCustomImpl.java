@@ -157,54 +157,6 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	}
 
 	@Override
-	public List<DogSummaryInfo> searchAdoptedDogs(
-		String name,
-		List<DogBreed> breeds,
-		Gender gender,
-		LocalDateTime start,
-		LocalDateTime end,
-		Boolean isNeutered,
-		List<Long> locationIds,
-		Boolean isStar,
-		Long centerId,
-		String pageToken,
-		int pageSize
-	) {
-		return queryFactory
-			.select(Projections.constructor(
-				DogSummaryInfo.class,
-				dog.id,
-				dog.name,
-				dog.profileImage,
-				Expressions.numberTemplate(
-					Integer.class,
-					"timestampdiff(month, {0}, now())",
-					dog.birth
-				),
-				dog.gender,
-				dog.isStar
-			))
-			.from(dog)
-			.leftJoin(addressBook)
-			.on(dog.locationId.eq(addressBook.id))
-			.where(
-				dog.centerId.eq(centerId),
-				isInRange(pageToken),
-				hasName(name),
-				hasBreeds(breeds),
-				hasGender(gender),
-				isNeuteredEq(isNeutered),
-				isStarEq(isStar),
-				inBirthRange(start, end),
-				hasLocationIds(locationIds),
-				dog.status.eq(DogStatus.ADOPTED)
-			)
-			.orderBy(dog.id.desc())
-			.limit(pageSize + 1)
-			.fetch();
-	}
-
-	@Override
 	public List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
 		String keyword,

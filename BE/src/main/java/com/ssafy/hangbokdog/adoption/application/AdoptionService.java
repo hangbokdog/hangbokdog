@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hangbokdog.adoption.domain.Adoption;
 import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.domain.repository.AdoptionRepository;
+import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
@@ -13,8 +15,11 @@ import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberReposito
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.dog.dog.domain.repository.FavoriteDogRepository;
+import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +30,8 @@ public class AdoptionService {
 	private final AdoptionRepository adoptionRepository;
 	private final DogRepository dogRepository;
 	private final CenterMemberRepository centerMemberRepository;
+	private final FavoriteDogRepository favoriteDogRepository;
+	private final DogCommentRepository dogCommentRepository;
 
 	public AdoptionCreateResponse applyAdoption(Long memberId, Long dogId) {
 		Dog dog = dogRepository.getDog(dogId)
@@ -57,10 +64,14 @@ public class AdoptionService {
 		Adoption adoption = adoptionRepository.findById(adoptionId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.ADOPTION_NOT_FOUND));
 
+		Dog dog = dogRepository.getDog(adoption.getDogId())
+			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));
+
 		if (request == AdoptionStatus.REJECTED) {
 			adoption.reject();
 		} else if (request == AdoptionStatus.ACCEPTED) {
 			adoption.accept();
+			dog.goAdopted();
 		} else {
 			throw new BadRequestException(ErrorCode.INVALID_REQUEST);
 		}
@@ -79,6 +90,20 @@ public class AdoptionService {
 		}
 
 		return adoptionRepository.getAdoptionApplicationsByCenterId(centerId, pageToken);
+	}
+
+	public AdoptedDogDetailResponse getAdoptedDogDetail(Member member, Long dogId) {
+		AdoptedDogDetailInfo info = adoptionRepository.getAdoptedDogDetail(dogId);
+		boolean isFavorite = favoriteDogRepository.existsByDogIdAndMemberId(dogId, member.getId());
+		int favoriteCount = favoriteDogRepository.getFavoriteCountByDogId(dogId).intValue();
+		int dogCommentCount = dogCommentRepository.countByDogId(dogId);
+
+		return AdoptedDogDetailResponse.from(
+			info,
+			isFavorite,
+			favoriteCount,
+			dogCommentCount
+		);
 	}
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {

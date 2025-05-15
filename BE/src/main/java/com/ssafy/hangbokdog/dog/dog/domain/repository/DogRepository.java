@@ -91,34 +91,6 @@ public class DogRepository {
 		return PageInfo.of(data, DOG_PAGE_SIZE, DogSummaryInfo::dogId);
 	}
 
-	public PageInfo<DogSummaryInfo> searchAdoptedDogs(
-		String name,
-		List<DogBreed> breeds,
-		Gender gender,
-		LocalDateTime start,
-		LocalDateTime end,
-		Boolean isNeutered,
-		List<Long> locationIds,
-		Boolean isStar,
-		Long centerId,
-		String pageToken
-	) {
-		var data = dogJpaRepository.searchAdoptedDogs(
-			name,
-			breeds,
-			gender,
-			start,
-			end,
-			isNeutered,
-			locationIds,
-			isStar,
-			centerId,
-			pageToken,
-			DOG_PAGE_SIZE
-		);
-		return PageInfo.of(data, DOG_PAGE_SIZE, DogSummaryInfo::dogId);
-	}
-
 	public void deleteMedicalHistory(Long id) {
 		medicalHistoryJpaRepository.deleteById(id);
 	}

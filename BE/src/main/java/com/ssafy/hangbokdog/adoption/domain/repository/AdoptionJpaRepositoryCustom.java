@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.adoption.domain.repository;
 
 import java.util.List;
 
+import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 
 public interface AdoptionJpaRepositoryCustom {
@@ -10,4 +11,6 @@ public interface AdoptionJpaRepositoryCustom {
 		String pageToken,
 		int pageSize
 	);
+
+	AdoptedDogDetailInfo getAdoptedDogDetail(Long dogId);
 }

@@ -33,20 +33,6 @@ public interface DogJpaRepositoryCustom {
 		int pageSize
 	);
 
-	List<DogSummaryInfo> searchAdoptedDogs(
-		String name,
-		List<DogBreed> breed,
-		Gender gender,
-		LocalDateTime start,
-		LocalDateTime end,
-		Boolean isNeutered,
-		List<Long> locationIds,
-		Boolean isStar,
-		Long centerId,
-		String pageToken,
-		int pageSize
-	);
-
 	List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
 		String keyword,

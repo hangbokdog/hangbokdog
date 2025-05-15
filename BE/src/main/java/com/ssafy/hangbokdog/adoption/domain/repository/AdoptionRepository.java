@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.adoption.domain.Adoption;
+import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 
@@ -36,5 +37,9 @@ public class AdoptionRepository {
 
 	public boolean checkExist(Long memberId, Long dogId) {
 		return adoptionJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
+	}
+
+	public AdoptedDogDetailInfo getAdoptedDogDetail(Long dogId) {
+		return adoptionJpaRepository.getAdoptedDogDetail(dogId);
 	}
 }

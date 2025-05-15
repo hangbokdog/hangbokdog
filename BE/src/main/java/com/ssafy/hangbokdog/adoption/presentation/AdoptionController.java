@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.adoption.presentation;
 
+import org.geolatte.geom.M;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.adoption.application.AdoptionService;
 import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
@@ -56,5 +58,13 @@ public class AdoptionController {
 			centerId,
 			pageToken)
 		);
+	}
+
+	@GetMapping("/adopted/{dogId}")
+	public ResponseEntity<AdoptedDogDetailResponse> getAdoptedDogDetails(
+		@AuthMember Member member,
+		@PathVariable Long dogId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptedDogDetail(member, dogId));
 	}
 }
