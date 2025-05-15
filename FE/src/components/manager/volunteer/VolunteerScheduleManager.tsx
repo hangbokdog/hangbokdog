@@ -25,6 +25,8 @@ export default function VolunteerScheduleManager({
 			getVolunteersByAddressBookAPI({
 				addressBookId: address.id.toString(),
 			}),
+		refetchOnMount: "always",
+		refetchOnWindowFocus: "always",
 	});
 
 	// 봉사활동 삭제

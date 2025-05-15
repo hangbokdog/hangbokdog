@@ -9,7 +9,7 @@ import CautionContent from "@/components/volunteer/CautionContent";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getVolunteerDetailAPI } from "@/api/volunteer";
-import { format } from "date-fns";
+import { format, parseISO, eachDayOfInterval } from "date-fns";
 import { ko } from "date-fns/locale";
 import ApplicationStatusCard from "@/components/volunteer/ApplicationStatusCard";
 
@@ -25,6 +25,16 @@ const formatApplicationDate = (dateString: string) => {
 	return format(date, "M.dd(E)", { locale: ko });
 };
 
+interface Slot {
+	id: number;
+	slotType: "MORNING" | "AFTERNOON";
+	startTime: string;
+	endTime: string;
+	volunteerDate: string;
+	capacity: number;
+	applicationCount: number;
+}
+
 export default function VolunteerDetailPage() {
 	const { id } = useParams();
 
@@ -33,6 +43,8 @@ export default function VolunteerDetailPage() {
 		queryFn: () => getVolunteerDetailAPI({ eventId: id as string }),
 		enabled: !!id,
 	});
+
+	console.log(volunteerDetail);
 
 	// 로딩 중일 때 표시할 내용
 	if (isLoading) {
@@ -52,16 +64,23 @@ export default function VolunteerDetailPage() {
 		);
 	}
 
+	// 첫 번째 오전과 오후 슬롯을 가져와 시간대 정보 생성
+	const morningSlot = volunteerDetail.slots.find(
+		(slot: Slot) => slot.slotType === "MORNING",
+	);
+	const afternoonSlot = volunteerDetail.slots.find(
+		(slot: Slot) => slot.slotType === "AFTERNOON",
+	);
+
 	// 시간대 정보 생성 (오전 10:00 ~ 14:00 / 오후 15:00 ~ 18:00)
-	const timeInfo = volunteerDetail.slots
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		.map((slot: any) => {
-			const timeType = slot.slotType === "MORNING" ? "오전" : "오후";
-			const startTime = slot.startTime.substring(0, 5);
-			const endTime = slot.endTime.substring(0, 5);
-			return `${timeType} ${startTime} ~ ${endTime}`;
-		})
-		.join(" / ");
+	let timeInfo = "";
+	if (morningSlot) {
+		timeInfo += `오전 ${morningSlot.startTime.substring(0, 5)} ~ ${morningSlot.endTime.substring(0, 5)}`;
+	}
+	if (afternoonSlot) {
+		timeInfo += timeInfo ? " / " : "";
+		timeInfo += `오후 ${afternoonSlot.startTime.substring(0, 5)} ~ ${afternoonSlot.endTime.substring(0, 5)}`;
+	}
 
 	// 날짜 범위 정보 생성 (2025.04.14(월) ~ 2025.04.20(일))
 	const dateRange = `${formatDateWithDay(volunteerDetail.startDate)} ~ ${formatDateWithDay(volunteerDetail.endDate)}`;
@@ -75,24 +94,59 @@ export default function VolunteerDetailPage() {
 
 	const status = statusMap[volunteerDetail.status] || "접수중";
 
-	// 신청 정보를 ScheduleTable에 맞게 변환
-	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	const scheduleData = volunteerDetail.applicationInfo.map((info: any) => {
-		return {
-			date: formatApplicationDate(info.date),
-			morning: `${info.morning.appliedCount}/${info.morning.capacity}`,
-			afternoon: `${info.afternoon.appliedCount}/${info.afternoon.capacity}`,
+	// 시작일부터 종료일까지의 모든 날짜 구하기
+	const startDate = parseISO(volunteerDetail.startDate);
+	const endDate = parseISO(volunteerDetail.endDate);
+
+	// 시작일부터 종료일까지의 모든 날짜 배열 생성
+	const allDates = eachDayOfInterval({ start: startDate, end: endDate });
+
+	// 날짜별로 슬롯을 그룹화하기 위한 객체 생성
+	const slotsByDate: Record<
+		string,
+		{ morning: Slot | null; afternoon: Slot | null }
+	> = {};
+
+	// 모든 날짜에 대한 기본 슬롯 정보 초기화
+	for (const date of allDates) {
+		const dateStr = format(date, "yyyy-MM-dd");
+		slotsByDate[dateStr] = {
+			morning: null,
+			afternoon: null,
 		};
-	});
+	}
+
+	// volunteerDate를 기준으로 슬롯 그룹화
+	for (const slot of volunteerDetail.slots) {
+		if (slot.volunteerDate) {
+			if (slot.slotType === "MORNING") {
+				slotsByDate[slot.volunteerDate].morning = slot;
+			} else if (slot.slotType === "AFTERNOON") {
+				slotsByDate[slot.volunteerDate].afternoon = slot;
+			}
+		}
+	}
+
+	// 스케줄 데이터 생성
+	const scheduleData = [];
+	for (const date of allDates) {
+		const dateStr = format(date, "yyyy-MM-dd");
+		const slots = slotsByDate[dateStr];
+
+		scheduleData.push({
+			date: formatApplicationDate(dateStr),
+			morning: `${slots.morning?.applicationCount || 0}/${slots.morning?.capacity || 0}`,
+			afternoon: `${slots.afternoon?.applicationCount || 0}/${slots.afternoon?.capacity || 0}`,
+		});
+	}
 
 	// 사용자 신청 상태 (예시로 넣었습니다. 실제로는 API에서 받아오는 값 사용)
-	// 실제 구현시 API 응답에서 applicationStatus 필드를 가져와야 합니다
-	const applicationStatus = volunteerDetail.applicationStatus || "PENDING";
+	const applicationStatus = volunteerDetail.applicationStatus || "NONE";
 	// 참여일/시간 정보 (예시)
 	const applicationDate =
 		volunteerDetail.applicationDate || volunteerDetail.startDate;
 	const applicationTime =
-		volunteerDetail.applicationTime || timeInfo.split(" / ")[0];
+		volunteerDetail.applicationTime || (morningSlot ? "오전" : "오후");
 
 	return (
 		<div className="flex flex-col mt-2.5">

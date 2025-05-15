@@ -63,19 +63,36 @@ export default function AddressDropdown({
 										setOpen(false);
 									}}
 								>
-									<Check
-										className={cn(
-											"mr-2 h-4 w-4",
-											selectedId === address.id
-												? "opacity-100"
-												: "opacity-0",
-										)}
-									/>
-									<div className="flex flex-col">
-										<span>{address.addressName}</span>
-										<span className="text-xs text-gray-500">
-											{LocationLabel[address.address]}
-										</span>
+									<div className="w-full flex items-center justify-between">
+										<div className="flex items-center gap-2 flex-1">
+											<Check
+												className={cn(
+													"mr-2 h-4 w-4",
+													selectedId === address.id
+														? "opacity-100"
+														: "opacity-0",
+												)}
+											/>
+											<div className="flex flex-col">
+												<span>
+													{address.addressName}
+												</span>
+												<span className="text-xs text-gray-500">
+													{
+														LocationLabel[
+															address.address
+														]
+													}
+												</span>
+											</div>
+										</div>
+										{typeof address.appliedCount ===
+											"number" &&
+											address.appliedCount > 0 && (
+												<span className="flex items-center justify-center rounded-full bg-red px-1.5 text-white">
+													{address.appliedCount}
+												</span>
+											)}
 									</div>
 								</CommandItem>
 							))}
