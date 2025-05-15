@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.emergency.emergency.domain.repository;
 
-import static com.ssafy.hangbokdog.emergency.domain.QEmergency.*;
+import static com.ssafy.hangbokdog.emergency.emergency.domain.QEmergency.*;
 import static com.ssafy.hangbokdog.member.domain.QMember.*;
 
 import java.time.LocalDateTime;
