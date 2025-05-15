@@ -9,7 +9,6 @@ import com.ssafy.hangbokdog.adoption.domain.Adoption;
 import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
-import com.ssafy.hangbokdog.common.model.PageInfo;
 
 import lombok.RequiredArgsConstructor;
 

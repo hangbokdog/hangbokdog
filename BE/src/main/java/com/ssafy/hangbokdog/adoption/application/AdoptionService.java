@@ -1,9 +1,6 @@
 package com.ssafy.hangbokdog.adoption.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +18,10 @@ import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
-import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
-import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
-import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
-import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.FavoriteDogRepository;
-import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
-import com.ssafy.hangbokdog.dog.dog.dto.FavoriteDogCount;
-import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -101,7 +91,11 @@ public class AdoptionService {
 		return adoptionRepository.getAdoptionApplicationsByCenterId(centerId);
 	}
 
-	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long memberId, Long centerId, Long dogId) {
+	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(
+		Long memberId,
+		Long centerId,
+		Long dogId
+	) {
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		if (!centerMember.isManager()) {
@@ -123,64 +117,6 @@ public class AdoptionService {
 			favoriteCount,
 			dogCommentCount
 		);
-	}
-
-	public PageInfo<DogSearchResponse> searchAdoptedDogs(
-		Long memberId,
-		String name,
-		List<DogBreed> breeds,
-		Gender gender,
-		LocalDateTime start,
-		LocalDateTime end,
-		Boolean isNeutered,
-		List<Long> locationIds,
-		Boolean isStar,
-		Long centerId,
-		DogStatus status,
-		String pageToken
-	) {
-		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchAdoptedDogs(
-			name,
-			breeds,
-			gender,
-			start,
-			end,
-			isNeutered,
-			locationIds,
-			isStar,
-			centerId,
-			status,
-			pageToken
-		);
-
-		List<Long> dogIds = dogSummaryInfos.data().stream()
-			.map(DogSummaryInfo::dogId)
-			.toList();
-
-		List<Long> favoriteDogIds = favoriteDogRepository.getFavoriteDogIds(memberId);
-
-		List<FavoriteDogCount> favoriteDogCounts = favoriteDogRepository.getFavoriteCountByDogIds(dogIds);
-
-		Map<Long, Integer> favoriteCountMap = favoriteDogCounts.stream()
-			.collect(Collectors.toMap(
-				FavoriteDogCount::dogId,
-				FavoriteDogCount::count
-			));
-
-		List<DogSearchResponse> responses = dogSummaryInfos.data().stream()
-			.map(dog -> new DogSearchResponse(
-				dog.dogId(),
-				dog.name(),
-				dog.imageUrl(),
-				dog.ageMonth(),
-				dog.gender(),
-				favoriteDogIds.contains(dog.dogId()),
-				favoriteCountMap.getOrDefault(dog.dogId(), 0),
-				dog.isStar()
-			))
-			.toList();
-
-		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
 	}
 
 	public AdoptionDogCountResponse getAdoptionApplyDogCount(Long memberId, Long centerId) {

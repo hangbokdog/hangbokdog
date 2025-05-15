@@ -85,37 +85,6 @@ public class AdoptionController {
 		return ResponseEntity.ok().body(adoptionService.getAdoptedDogDetail(member, dogId));
 	}
 
-	@GetMapping("/adopted/search")
-	public ResponseEntity<PageInfo<DogSearchResponse>> search(
-		@AuthMember Member member,
-		@RequestParam(value = "name", required = false) String name,
-		@RequestParam(value = "breed", required = false) List<DogBreed> breeds,
-		@RequestParam(value = "gender", required = false) Gender gender,
-		@RequestParam(value = "start", required = false) LocalDateTime start,
-		@RequestParam(value = "end", required = false) LocalDateTime end,
-		@RequestParam(value = "isNeutered", required = false) Boolean isNeutered,
-		@RequestParam(value = "locationId", required = false) List<Long> locationIds,
-		@RequestParam(value = "isStar", required = false) Boolean isStar,
-		@RequestParam(value = "centerId") Long centerId,
-		@RequestParam(required = false) String pageToken
-	) {
-		PageInfo<DogSearchResponse> response = adoptionService.searchAdoptedDogs(
-			member.getId(),
-			name,
-			breeds,
-			gender,
-			start,
-			end,
-			isNeutered,
-			locationIds,
-			isStar,
-			centerId,
-			DogStatus.ADOPTED,
-			pageToken
-		);
-		return ResponseEntity.ok().body(response);
-	}
-
 	@GetMapping("/appliesCount")
 	public ResponseEntity<AdoptionDogCountResponse> getAppliesCountOfDogs(
 		@AuthMember Member member,
