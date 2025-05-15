@@ -311,7 +311,7 @@ public class DogService {
 		Long centerId,
 		String pageToken
 	) {
-		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchDogs(
+		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchAdoptedDogs(
 			name,
 			breeds,
 			gender,

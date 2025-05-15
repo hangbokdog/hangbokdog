@@ -103,7 +103,7 @@ public class DogRepository {
 		Long centerId,
 		String pageToken
 	) {
-		var data = dogJpaRepository.searchDogs(
+		var data = dogJpaRepository.searchAdoptedDogs(
 			name,
 			breeds,
 			gender,

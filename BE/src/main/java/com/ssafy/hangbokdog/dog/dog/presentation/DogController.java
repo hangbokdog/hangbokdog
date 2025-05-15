@@ -243,7 +243,7 @@ public class DogController {
 		@RequestParam(value = "centerId") Long centerId,
 		@RequestParam(required = false) String pageToken
 	) {
-		PageInfo<DogSearchResponse> response = dogService.searchDogs(
+		PageInfo<DogSearchResponse> response = dogService.searchAdoptedDogs(
 			member.getId(),
 			name,
 			breeds,
