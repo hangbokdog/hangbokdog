@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.center.application.CenterService;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
@@ -54,8 +55,8 @@ public class CenterController {
 
 	@PostMapping("/{centerId}/join-request")
 	public ResponseEntity<CenterJoinResponse> join(
-			@AuthMember Member member,
-			@PathVariable Long centerId
+		@AuthMember Member member,
+		@PathVariable Long centerId
 	) {
 		return ResponseEntity.ok().body(centerService.join(member, centerId));
 	}
@@ -70,10 +71,15 @@ public class CenterController {
 
 	@GetMapping("/search")
 	public ResponseEntity<List<CenterSearchResponse>> search(
-			@AuthMember Member member,
-			@RequestParam String name
+		@AuthMember Member member,
+		@RequestParam(required = false) String name,
+		@RequestParam(required = false) CenterCity centerCity
 	) {
-		List<CenterSearchResponse> response = centerService.searchCentersByName(member.getId(), name);
+		List<CenterSearchResponse> response = centerService.searchCenters(
+			member.getId(),
+			name,
+			centerCity
+		);
 
 		return ResponseEntity.ok().body(response);
 	}
@@ -86,8 +92,8 @@ public class CenterController {
 
 	@DeleteMapping("/{centerId}")
 	public ResponseEntity<Void> deleteCenterMember(
-			@AuthMember Member member,
-			@PathVariable Long centerId
+		@AuthMember Member member,
+		@PathVariable Long centerId
 	) {
 		centerService.deleteCenterMember(member.getId(), centerId);
 		return ResponseEntity.ok().build();

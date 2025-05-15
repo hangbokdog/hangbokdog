@@ -38,7 +38,7 @@ public class CenterRepository {
 		return centerJpaRepository.getExistingCities();
 	}
 
-	public List<CenterSearchInfo> findCentersByName(String name) {
-		return centerJpaRepository.getCentersByName(name);
+	public List<CenterSearchInfo> findCentersByName(String name, CenterCity centerCity) {
+		return centerJpaRepository.getCentersByName(name, centerCity);
 	}
 }
