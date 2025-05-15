@@ -15,8 +15,8 @@ import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
-import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplyDogCountResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionDogCountResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -183,14 +183,24 @@ public class AdoptionService {
 		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
 	}
 
-	public AdoptionApplyDogCountResponse getAdoptionApplyDogCount(Long memberId, Long centerId) {
+	public AdoptionDogCountResponse getAdoptionApplyDogCount(Long memberId, Long centerId) {
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
-		return new AdoptionApplyDogCountResponse(adoptionRepository.countAdoptionWaitingDogs(centerId));
+		return new AdoptionDogCountResponse(adoptionRepository.countAdoptionWaitingDogs(centerId));
+	}
+
+	public AdoptionDogCountResponse getAdoptedDogCount(Long memberId, Long centerId) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return new AdoptionDogCountResponse(adoptionRepository.countAdoptedDogs(centerId));
 	}
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {

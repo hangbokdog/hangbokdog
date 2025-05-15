@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.adoption.dto.response;
 
-public record AdoptionApplyDogCountResponse(
+public record AdoptionDogCountResponse(
 	Integer count
 ) {
 }

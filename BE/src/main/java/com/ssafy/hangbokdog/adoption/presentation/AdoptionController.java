@@ -18,8 +18,8 @@ import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
-import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplyDogCountResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionDogCountResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
@@ -117,10 +117,18 @@ public class AdoptionController {
 	}
 
 	@GetMapping("/appliesCount")
-	public ResponseEntity<AdoptionApplyDogCountResponse> getAppliesCountOfDogs(
+	public ResponseEntity<AdoptionDogCountResponse> getAppliesCountOfDogs(
 		@AuthMember Member member,
 		@RequestParam Long centerId
 	) {
 		return ResponseEntity.ok().body(adoptionService.getAdoptionApplyDogCount(member.getId(), centerId));
+	}
+
+	@GetMapping("/adoptedCount")
+	public ResponseEntity<AdoptionDogCountResponse> getAdoptedDogCount(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptedDogCount(member.getId(), centerId));
 	}
 }

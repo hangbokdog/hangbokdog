@@ -48,4 +48,8 @@ public class AdoptionRepository {
 	public Integer countAdoptionWaitingDogs(Long centerId) {
 		return adoptionJpaRepository.countAdoptionWaitingDogs(centerId);
 	}
+
+	public Integer countAdoptedDogs(Long centerId) {
+		return adoptionJpaRepository.countAdoptedDogs(centerId);
+	}
 }

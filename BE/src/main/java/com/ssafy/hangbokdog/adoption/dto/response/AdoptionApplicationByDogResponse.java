@@ -6,6 +6,7 @@ public record AdoptionApplicationByDogResponse(
 	Long memberId,
 	String name,
 	String profileImage,
+	String phoneNumber,
 	LocalDateTime createdAt
 ) {
 }

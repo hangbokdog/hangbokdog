@@ -93,6 +93,7 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 				member.id,
 				member.name,
 				member.profileImage,
+				member.phone,
 				adoption.createdAt
 			))
 			.from(adoption)
