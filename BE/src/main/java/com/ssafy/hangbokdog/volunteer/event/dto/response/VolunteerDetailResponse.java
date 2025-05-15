@@ -3,9 +3,7 @@ package com.ssafy.hangbokdog.volunteer.event.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEventStatus;
-import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 
 import lombok.Builder;
 
@@ -19,12 +17,10 @@ public record VolunteerDetailResponse(
         String addressName,
         LocalDate startDate,
         LocalDate endDate,
-        List<SlotDto> slots,
+        List<VolunteerSlotResponse> slots,
         List<String> imageUrls,
         String activityLog,
-        List<DailyApplicationInfo> applicationInfo,
         String precaution,
-        String info,
-        VolunteerApplicationStatus applicationStatus
+        String info
 ) {
 }

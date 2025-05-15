@@ -156,6 +156,30 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                 .fetch();
     }
 
+    @Override
+    public List<ApplicationResponse> findByVolunteerId(Long slotId, VolunteerApplicationStatus status) {
+        return queryFactory.select(Projections.constructor(
+                        ApplicationResponse.class,
+                        volunteerApplication.id,
+                        volunteerApplication.memberId,
+                        volunteerApplication.volunteerId,
+                        volunteerApplication.status,
+                        volunteerApplication.createdAt,
+                        member.name,
+                        member.nickName,
+                        member.birth,
+                        member.phone,
+                        member.age,
+                        member.grade,
+                        member.email,
+                        member.profileImage
+                )).from(volunteerApplication)
+                .leftJoin(member).on(member.id.eq(volunteerApplication.memberId))
+                .where(volunteerApplication.volunteerId.eq(slotId)
+                        .and(volunteerApplication.status.eq(status)))
+                .fetch();
+    }
+
     private BooleanExpression isInRange(String pageToken) {
         if (pageToken == null) {
             return null;

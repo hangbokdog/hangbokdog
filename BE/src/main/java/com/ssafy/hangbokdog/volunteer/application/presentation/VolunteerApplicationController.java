@@ -53,15 +53,24 @@ public class VolunteerApplicationController {
         return ResponseEntity.ok(responses);
     }
 
+    @GetMapping("/{slotId}/volunteerSlots")
+    public ResponseEntity<List<ApplicationResponse>> findAllBySlots(
+            @PathVariable Long slotId,
+            @AuthMember Member member,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok(volunteerApplicationService.findAllBySlotId(slotId, member, centerId));
+    }
+
     // 관리자: PENDING -> APPROVED or REJECTED
-    @PatchMapping("/{eventId}/applications/{applicationId}/status")
+    @PatchMapping("/applications/{applicationId}/status")
     public ResponseEntity<Void> updateStatus(
             @AuthMember Member member,
-            @PathVariable Long eventId,
             @PathVariable Long applicationId,
+            @RequestParam Long centerId,
             @RequestBody VolunteerApplicationStatusUpdateRequest request
     ) {
-        volunteerApplicationService.updateStatus(member.getId(), applicationId, request);
+        volunteerApplicationService.updateStatus(member.getId(), applicationId, request, centerId);
         return ResponseEntity.noContent().build();
     }
 

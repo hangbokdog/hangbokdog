@@ -24,4 +24,6 @@ public interface VolunteerApplicationQueryRepository {
     );
 
     List<VolunteerApplicationStatusInfo> findByEventIdsIn(Long memberId, List<Long> volunteerIds);
+
+    List<ApplicationResponse> findByVolunteerId(Long slotId, VolunteerApplicationStatus status);
 }

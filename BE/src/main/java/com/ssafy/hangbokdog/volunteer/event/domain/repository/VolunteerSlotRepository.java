@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,5 +31,9 @@ public class VolunteerSlotRepository {
 
     public List<VolunteerSlot> findByIdIn(List<Long> volunteerSlotIds) {
         return volunteerSlotJpaRepository.findByIdIn(volunteerSlotIds);
+    }
+
+    public List<VolunteerSlotResponse> findAllByEventId(Long eventId) {
+        return volunteerSlotJpaRepository.findAllByEventId(eventId);
     }
 }

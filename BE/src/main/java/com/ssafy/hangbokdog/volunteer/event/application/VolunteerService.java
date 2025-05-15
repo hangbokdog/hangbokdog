@@ -55,6 +55,7 @@ public class VolunteerService {
     private final AddressBookRepository addressBookRepository;
     private final VolunteerTemplateRepository volunteerTemplateRepository;
     private final VolunteerApplicationRepository volunteerApplicationRepository;
+    private final VolunteerSlotRepository volunteerSlotRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
@@ -149,11 +150,10 @@ public class VolunteerService {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
-        List<SlotDto> slots = slotRepository.findByEventId(eventId);
-        var volunteerApplication = volunteerApplicationRepository.findByEventIdAndMemberId(eventId, member.getId());
-        List<DailyApplicationInfo> applicationInfos = eventRepository.findDailyApplications(eventId);
-
+        var volunteerSlots = volunteerSlotRepository.findAllByEventId(eventId);
         return VolunteerDetailResponse.builder()
+                .precaution(event.getPrecaution())
+                .info(event.getInfo())
                 .id(event.getId())
                 .status(event.getStatus())
                 .title(event.getTitle())
@@ -162,14 +162,9 @@ public class VolunteerService {
                 .addressName(event.getAddressName())
                 .startDate(event.getStartDate())
                 .endDate(event.getEndDate())
-                .slots(slots)
+                .slots(volunteerSlots)
                 .imageUrls(event.getImageUrls())
                 .activityLog(event.getActivityLog())
-                .applicationInfo(applicationInfos)
-                .precaution(event.getPrecaution())
-                .info(event.getInfo())
-                .applicationStatus(volunteerApplication.isEmpty()
-                        ? VolunteerApplicationStatus.NONE : volunteerApplication.get(0).getStatus())
                 .build();
     }
 

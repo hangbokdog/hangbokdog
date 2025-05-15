@@ -130,21 +130,21 @@ public class VolunteerApplicationService {
     }
 
     @Transactional
-    public void updateStatus(Long memberId, Long applicationId, VolunteerApplicationStatusUpdateRequest request) {
-
-        VolunteerApplication application = volunteerApplicationRepository.findById(applicationId)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_NOT_FOUND));
-
-        VolunteerEvent volunteerEvent = volunteerEventRepository.findById(application.getVolunteerId())
-            .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
-
-        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(
-            memberId, volunteerEvent.getCenterId())
-            .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+    public void updateStatus(
+            Long memberId,
+            Long applicationId,
+            VolunteerApplicationStatusUpdateRequest request,
+            Long centerId
+    ) {
+        CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 
         if (!centerMember.isManager()) {
             throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
         }
+
+        VolunteerApplication application = volunteerApplicationRepository.findById(applicationId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_NOT_FOUND));
 
         VolunteerSlot slot = volunteerSlotRepository.findById(application.getVolunteerId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.SLOT_NOT_FOUND));
@@ -199,7 +199,18 @@ public class VolunteerApplicationService {
             throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
         }
 
-        return volunteerApplicationRepository.findAll(volunteerEventId, status, pageToken);
+        return volunteerApplicationRepository.findAllWithPage(volunteerEventId, status, pageToken);
+    }
+
+    public List<ApplicationResponse> findAllBySlotId(Long slotId, Member member, Long centerId) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        return volunteerApplicationRepository.findAll(slotId, VolunteerApplicationStatus.PENDING);
     }
 
     private Map<Long, HashSet<Long>> mapSlotIdToMemberIds(List<VolunteerApplication> previousVolunteerApplications) {

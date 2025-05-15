@@ -47,7 +47,7 @@ public class VolunteerApplicationRepository {
         volunteerApplicationJpaRepository.delete(application);
     }
 
-    public PageInfo<ApplicationResponse> findAll(
+    public PageInfo<ApplicationResponse> findAllWithPage(
             Long volunteerEventId,
             VolunteerApplicationStatus status,
             String pageToken
@@ -66,5 +66,9 @@ public class VolunteerApplicationRepository {
 
     public List<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId) {
         return volunteerApplicationJpaRepository.findByEventIdAndMemberId(eventId, memberId);
+    }
+
+    public List<ApplicationResponse> findAll(Long slotId, VolunteerApplicationStatus status) {
+        return volunteerApplicationJpaRepository.findByVolunteerId(slotId, status);
     }
 }
