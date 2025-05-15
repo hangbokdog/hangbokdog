@@ -298,6 +298,62 @@ public class DogService {
 		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
 	}
 
+	public PageInfo<DogSearchResponse> searchAdoptedDogs(
+		Long memberId,
+		String name,
+		List<DogBreed> breeds,
+		Gender gender,
+		LocalDateTime start,
+		LocalDateTime end,
+		Boolean isNeutered,
+		List<Long> locationIds,
+		Boolean isStar,
+		Long centerId,
+		String pageToken
+	) {
+		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchDogs(
+			name,
+			breeds,
+			gender,
+			start,
+			end,
+			isNeutered,
+			locationIds,
+			isStar,
+			centerId,
+			pageToken
+		);
+
+		List<Long> dogIds = dogSummaryInfos.data().stream()
+			.map(DogSummaryInfo::dogId)
+			.toList();
+
+		List<Long> favoriteDogIds = favoriteDogRepository.getFavoriteDogIds(memberId);
+
+		List<FavoriteDogCount> favoriteDogCounts = favoriteDogRepository.getFavoriteCountByDogIds(dogIds);
+
+		Map<Long, Integer> favoriteCountMap = favoriteDogCounts.stream()
+			.collect(Collectors.toMap(
+				FavoriteDogCount::dogId,
+				FavoriteDogCount::count
+			));
+
+		List<DogSearchResponse> responses = dogSummaryInfos.data().stream()
+			.map(dog -> new DogSearchResponse(
+				dog.dogId(),
+				dog.name(),
+				dog.imageUrl(),
+				dog.ageMonth(),
+				dog.gender(),
+				favoriteDogIds.contains(dog.dogId()),
+				favoriteCountMap.getOrDefault(dog.dogId(), 0),
+				dog.isStar()
+			))
+			.toList();
+
+		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
+	}
+
 	public LocationDogCountResponse getLocationDogCount(Long locationId) {
 		return new LocationDogCountResponse(dogRepository.getLocationDogCount(locationId));
 	}

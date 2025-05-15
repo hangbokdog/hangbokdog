@@ -229,6 +229,36 @@ public class DogController {
 		return ResponseEntity.ok().body(response);
 	}
 
+	@GetMapping("/search/adopted")
+	public ResponseEntity<PageInfo<DogSearchResponse>> searchAdoptedDogs(
+		@AuthMember Member member,
+		@RequestParam(value = "name", required = false) String name,
+		@RequestParam(value = "breed", required = false) List<DogBreed> breeds,
+		@RequestParam(value = "gender", required = false) Gender gender,
+		@RequestParam(value = "start", required = false) LocalDateTime start,
+		@RequestParam(value = "end", required = false) LocalDateTime end,
+		@RequestParam(value = "isNeutered", required = false) Boolean isNeutered,
+		@RequestParam(value = "locationId", required = false) List<Long> locationIds,
+		@RequestParam(value = "isStar", required = false) Boolean isStar,
+		@RequestParam(value = "centerId") Long centerId,
+		@RequestParam(required = false) String pageToken
+	) {
+		PageInfo<DogSearchResponse> response = dogService.searchDogs(
+			member.getId(),
+			name,
+			breeds,
+			gender,
+			start,
+			end,
+			isNeutered,
+			locationIds,
+			isStar,
+			centerId,
+			pageToken
+		);
+		return ResponseEntity.ok().body(response);
+	}
+
 
 	@GetMapping("/location/{locationId}/count")
 	public ResponseEntity<LocationDogCountResponse> locationDogCount(@PathVariable Long locationId) {
