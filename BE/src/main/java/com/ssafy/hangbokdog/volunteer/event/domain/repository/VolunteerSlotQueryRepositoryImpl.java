@@ -43,6 +43,7 @@ public class VolunteerSlotQueryRepositoryImpl implements VolunteerSlotQueryRepos
                 volunteerSlot.slotType,
                 volunteerSlot.startTime,
                 volunteerSlot.endTime,
+                volunteerSlot.volunteerDate,
                 volunteerSlot.capacity,
                 volunteerSlot.appliedCount
         )).from(volunteerSlot)
