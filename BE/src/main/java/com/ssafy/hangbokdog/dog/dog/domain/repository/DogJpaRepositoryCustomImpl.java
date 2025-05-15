@@ -269,13 +269,6 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 		return dog.id.lt(Long.parseLong(pageToken));
 	}
 
-	private BooleanExpression isInRangeAdoption(String pageToken) {
-		if (pageToken == null) {
-			return null;
-		}
-		return adoption.id.lt(Long.parseLong(pageToken));
-	}
-
 	private BooleanExpression hasName(String name) {
 		return (name == null || name.isBlank()) ? null : dog.name.containsIgnoreCase(name);
 	}

@@ -3,7 +3,6 @@ package com.ssafy.hangbokdog.adoption.presentation;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.geolatte.geom.M;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,12 +19,11 @@ import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogRespon
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionDogCountResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionSearchResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
-import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
-import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -68,12 +66,15 @@ public class AdoptionController {
 	public ResponseEntity<List<AdoptionApplicationByDogResponse>> getAdoptionApplicationsByDog(
 		@AuthMember Member member,
 		@PathVariable Long dogId,
-		@RequestParam Long centerId
+		@RequestParam Long centerId,
+		@RequestParam(required = false) String name
+
 	) {
 		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByDogId(
 			member.getId(),
 			centerId,
-			dogId
+			dogId,
+			name
 		));
 	}
 
@@ -99,5 +100,32 @@ public class AdoptionController {
 		@RequestParam Long centerId
 	) {
 		return ResponseEntity.ok().body(adoptionService.getAdoptedDogCount(member.getId(), centerId));
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<PageInfo<AdoptionSearchResponse>> search(
+		@AuthMember Member member,
+		@RequestParam(value = "name", required = false) String name,
+		@RequestParam(value = "centerId") Long centerId,
+		@RequestParam(value = "breed", required = false) List<DogBreed> breeds,
+		@RequestParam(value = "gender", required = false) Gender gender,
+		@RequestParam(value = "start", required = false) LocalDateTime start,
+		@RequestParam(value = "end", required = false) LocalDateTime end,
+		@RequestParam(value = "isNeutered", required = false) Boolean isNeutered,
+		@RequestParam(value = "isStar", required = false) Boolean isStar,
+		@RequestParam(required = false) String pageToken
+	) {
+		return ResponseEntity.ok().body(adoptionService.search(
+			member.getId(),
+			name,
+			centerId,
+			breeds,
+			gender,
+			start,
+			end,
+			isNeutered,
+			isStar,
+			pageToken
+		));
 	}
 }

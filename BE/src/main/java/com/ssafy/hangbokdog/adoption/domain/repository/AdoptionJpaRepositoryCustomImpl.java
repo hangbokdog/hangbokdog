@@ -16,8 +16,11 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
 import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
+import com.ssafy.hangbokdog.adoption.dto.AdoptionSearchInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 
 import lombok.RequiredArgsConstructor;
 
@@ -86,7 +89,7 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 	}
 
 	@Override
-	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long dogId) {
+	public List<AdoptionApplicationByDogResponse> getAdoptionApplicationsByDogId(Long dogId, String name) {
 		return queryFactory
 			.select(Projections.constructor(
 				AdoptionApplicationByDogResponse.class,
@@ -99,8 +102,84 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 			.from(adoption)
 			.leftJoin(member).on(adoption.memberId.eq(member.id))
 			.where(adoption.dogId.eq(dogId),
-				adoption.status.eq(AdoptionStatus.APPLIED))
+				adoption.status.eq(AdoptionStatus.APPLIED),
+				containsName(name))
 			.fetch();
+	}
+
+	@Override
+	public List<AdoptionSearchInfo> search(
+		String name,
+		Long centerId,
+		List<DogBreed> breeds,
+		Gender gender,
+		LocalDateTime start,
+		LocalDateTime end,
+		Boolean isNeutered,
+		Boolean isStar,
+		String pageToken,
+		int pageSize
+	) {
+		return queryFactory
+			.select(Projections.constructor(
+				AdoptionSearchInfo.class,
+				adoption.id,
+				dog.id,
+				dog.name,
+				dog.profileImage,
+				Expressions.numberTemplate(Integer.class, "timestampdiff(MONTH, {0}, {1})", dog.birth,
+					LocalDateTime.now()),
+				dog.gender,
+				dog.isStar
+			))
+			.from(adoption)
+			.join(dog).on(adoption.dogId.eq(dog.id))
+			.where(
+				dog.centerId.eq(centerId),
+				adoption.status.eq(AdoptionStatus.ACCEPTED),
+				containsName(name),
+				inBreeds(breeds),
+				genderEq(gender),
+				betweenBirth(start, end),
+				isNeuteredEq(isNeutered),
+				isStarEq(isStar),
+				isInRange(pageToken)
+			)
+			.orderBy(adoption.id.desc())
+			.limit(pageSize + 1)
+			.fetch();
+	}
+
+	private BooleanExpression containsName(String name) {
+		return name != null ? dog.name.contains(name) : null;
+	}
+
+	private BooleanExpression inBreeds(List<DogBreed> breeds) {
+		return breeds != null && !breeds.isEmpty() ? dog.dogBreed.in(breeds) : null;
+	}
+
+	private BooleanExpression genderEq(Gender gender) {
+		return gender != null ? dog.gender.eq(gender) : null;
+	}
+
+	private BooleanExpression betweenBirth(LocalDateTime start, LocalDateTime end) {
+		if (start != null && end != null) {
+			return dog.birth.between(start, end);
+		} else if (start != null) {
+			return dog.birth.goe(start);
+		} else if (end != null) {
+			return dog.birth.loe(end);
+		} else {
+			return null;
+		}
+	}
+
+	private BooleanExpression isNeuteredEq(Boolean isNeutered) {
+		return isNeutered != null ? dog.isNeutered.eq(isNeutered) : null;
+	}
+
+	private BooleanExpression isStarEq(Boolean isStar) {
+		return isStar != null ? dog.isStar.eq(isStar) : null;
 	}
 
 	private BooleanExpression isInRange(String pageToken) {
