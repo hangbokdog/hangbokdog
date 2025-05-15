@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.dog.comment.domain.repository.DogCommentRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.FavoriteDogRepository;
@@ -253,6 +254,7 @@ public class DogService {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken
 	) {
 		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchDogs(
@@ -265,62 +267,7 @@ public class DogService {
 			locationIds,
 			isStar,
 			centerId,
-			pageToken
-		);
-
-		List<Long> dogIds = dogSummaryInfos.data().stream()
-			.map(DogSummaryInfo::dogId)
-			.toList();
-
-		List<Long> favoriteDogIds = favoriteDogRepository.getFavoriteDogIds(memberId);
-
-		List<FavoriteDogCount> favoriteDogCounts = favoriteDogRepository.getFavoriteCountByDogIds(dogIds);
-
-		Map<Long, Integer> favoriteCountMap = favoriteDogCounts.stream()
-			.collect(Collectors.toMap(
-				FavoriteDogCount::dogId,
-				FavoriteDogCount::count
-			));
-
-		List<DogSearchResponse> responses = dogSummaryInfos.data().stream()
-			.map(dog -> new DogSearchResponse(
-				dog.dogId(),
-				dog.name(),
-				dog.imageUrl(),
-				dog.ageMonth(),
-				dog.gender(),
-				favoriteDogIds.contains(dog.dogId()),
-				favoriteCountMap.getOrDefault(dog.dogId(), 0),
-				dog.isStar()
-			))
-			.toList();
-
-		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
-	}
-
-	public PageInfo<DogSearchResponse> searchAdoptedDogs(
-		Long memberId,
-		String name,
-		List<DogBreed> breeds,
-		Gender gender,
-		LocalDateTime start,
-		LocalDateTime end,
-		Boolean isNeutered,
-		List<Long> locationIds,
-		Boolean isStar,
-		Long centerId,
-		String pageToken
-	) {
-		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.searchAdoptedDogs(
-			name,
-			breeds,
-			gender,
-			start,
-			end,
-			isNeutered,
-			locationIds,
-			isStar,
-			centerId,
+			status,
 			pageToken
 		);
 

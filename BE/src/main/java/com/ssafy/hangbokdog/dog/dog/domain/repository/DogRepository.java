@@ -10,6 +10,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.domain.Dog;
 import com.ssafy.hangbokdog.dog.dog.domain.MedicalHistory;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.DogDetailInfo;
@@ -73,6 +74,7 @@ public class DogRepository {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken
 	) {
 		var data = dogJpaRepository.searchDogs(
@@ -85,6 +87,7 @@ public class DogRepository {
 			locationIds,
 			isStar,
 			centerId,
+			status,
 			pageToken,
 			DOG_PAGE_SIZE
 		);
@@ -101,6 +104,7 @@ public class DogRepository {
 		List<Long> locationIds,
 		Boolean isStar,
 		Long centerId,
+		DogStatus status,
 		String pageToken
 	) {
 		var data = dogJpaRepository.searchAdoptedDogs(
@@ -113,6 +117,7 @@ public class DogRepository {
 			locationIds,
 			isStar,
 			centerId,
+			status,
 			pageToken,
 			DOG_PAGE_SIZE
 		);

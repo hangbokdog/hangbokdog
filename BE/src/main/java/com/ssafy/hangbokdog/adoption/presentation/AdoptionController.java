@@ -1,5 +1,9 @@
 package com.ssafy.hangbokdog.adoption.presentation;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.geolatte.geom.M;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,10 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.hangbokdog.adoption.application.AdoptionService;
 import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptedDogDetailResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionDogCountResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
+import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -46,15 +57,47 @@ public class AdoptionController {
 	}
 
 	@GetMapping
-	public ResponseEntity<PageInfo<AdoptionApplicationResponse>> getAdoptionApplications(
+	public ResponseEntity<List<AdoptionApplicationResponse>> getAdoptionApplications(
 		@AuthMember Member member,
-		@RequestParam Long centerId,
-		@RequestParam(required = false) String pageToken
+		@RequestParam Long centerId
 	) {
-		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByCenterId(
+		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByCenterId(member.getId(), centerId));
+	}
+
+	@GetMapping("/{dogId}/applications")
+	public ResponseEntity<List<AdoptionApplicationByDogResponse>> getAdoptionApplicationsByDog(
+		@AuthMember Member member,
+		@PathVariable Long dogId,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptionApplicationsByDogId(
 			member.getId(),
 			centerId,
-			pageToken)
-		);
+			dogId
+		));
+	}
+
+	@GetMapping("/adopted/{dogId}")
+	public ResponseEntity<AdoptedDogDetailResponse> getAdoptedDogDetails(
+		@AuthMember Member member,
+		@PathVariable Long dogId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptedDogDetail(member, dogId));
+	}
+
+	@GetMapping("/appliesCount")
+	public ResponseEntity<AdoptionDogCountResponse> getAppliesCountOfDogs(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptionApplyDogCount(member.getId(), centerId));
+	}
+
+	@GetMapping("/adoptedCount")
+	public ResponseEntity<AdoptionDogCountResponse> getAdoptedDogCount(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getAdoptedDogCount(member.getId(), centerId));
 	}
 }

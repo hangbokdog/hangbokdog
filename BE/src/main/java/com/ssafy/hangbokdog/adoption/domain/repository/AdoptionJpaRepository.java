@@ -13,4 +13,20 @@ public interface AdoptionJpaRepository extends JpaRepository<Adoption, Long>, Ad
 		WHERE a.memberId = :memberId AND a.dogId = :dogId AND a.status = 'APPLIED'
 		""")
 	boolean existsByMemberIdAndDogId(Long memberId, Long dogId);
+
+	@Query("""
+		SELECT COUNT(DISTINCT a.dogId)
+		FROM Adoption a
+		LEFT JOIN Dog d ON d.id = a.dogId
+		WHERE a.status = 'APPLIED' AND d.centerId = :centerId
+		""")
+	Integer countAdoptionWaitingDogs(Long centerId);
+
+	@Query("""
+		SELECT COUNT(DISTINCT a.dogId)
+		FROM Adoption a
+		LEFT JOIN Dog d ON d.id = a.dogId
+		WHERE a.status = 'ACCEPTED' AND d.centerId = :centerId
+		""")
+	Integer countAdoptedDogs(Long centerId);
 }

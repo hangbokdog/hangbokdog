@@ -22,6 +22,7 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.application.DogService;
 import com.ssafy.hangbokdog.dog.dog.application.FavoriteDogService;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
+import com.ssafy.hangbokdog.dog.dog.domain.enums.DogStatus;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogCreateRequest;
@@ -211,6 +212,7 @@ public class DogController {
 		@RequestParam(value = "locationId", required = false) List<Long> locationIds,
 		@RequestParam(value = "isStar", required = false) Boolean isStar,
 		@RequestParam(value = "centerId") Long centerId,
+		@RequestParam(value = "status", required = false) DogStatus status,
 		@RequestParam(required = false) String pageToken
 	) {
 		PageInfo<DogSearchResponse> response = dogService.searchDogs(
@@ -224,41 +226,11 @@ public class DogController {
 			locationIds,
 			isStar,
 			centerId,
+			status,
 			pageToken
 		);
 		return ResponseEntity.ok().body(response);
 	}
-
-	@GetMapping("/search/adopted")
-	public ResponseEntity<PageInfo<DogSearchResponse>> searchAdoptedDogs(
-		@AuthMember Member member,
-		@RequestParam(value = "name", required = false) String name,
-		@RequestParam(value = "breed", required = false) List<DogBreed> breeds,
-		@RequestParam(value = "gender", required = false) Gender gender,
-		@RequestParam(value = "start", required = false) LocalDateTime start,
-		@RequestParam(value = "end", required = false) LocalDateTime end,
-		@RequestParam(value = "isNeutered", required = false) Boolean isNeutered,
-		@RequestParam(value = "locationId", required = false) List<Long> locationIds,
-		@RequestParam(value = "isStar", required = false) Boolean isStar,
-		@RequestParam(value = "centerId") Long centerId,
-		@RequestParam(required = false) String pageToken
-	) {
-		PageInfo<DogSearchResponse> response = dogService.searchAdoptedDogs(
-			member.getId(),
-			name,
-			breeds,
-			gender,
-			start,
-			end,
-			isNeutered,
-			locationIds,
-			isStar,
-			centerId,
-			pageToken
-		);
-		return ResponseEntity.ok().body(response);
-	}
-
 
 	@GetMapping("/location/{locationId}/count")
 	public ResponseEntity<LocationDogCountResponse> locationDogCount(@PathVariable Long locationId) {
