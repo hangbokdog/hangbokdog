@@ -9,6 +9,7 @@ import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponseWithoutAppliedCount;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,8 +35,8 @@ public class VolunteerSlotRepository {
         return volunteerSlotJpaRepository.findByIdIn(volunteerSlotIds);
     }
 
-    public List<VolunteerSlotResponse> findAllByEventIdWithApprovedStatus(Long eventId) {
-        return volunteerSlotJpaRepository.findAllByEventIdWithApprovedStatus(eventId);
+    public List<VolunteerSlotResponseWithoutAppliedCount> findAllByEventId(Long eventId) {
+        return volunteerSlotJpaRepository.findAllByEventId(eventId);
     }
 
     public Integer getAppliedCountByVolunteerIdsIn(List<Long> volunteerEventIds) {

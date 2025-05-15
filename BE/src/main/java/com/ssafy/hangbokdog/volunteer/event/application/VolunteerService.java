@@ -29,6 +29,7 @@ import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepos
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerTemplateRepository;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
@@ -39,6 +40,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantRes
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponseWithoutAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerWithAppliedCountResponse;
@@ -156,10 +158,23 @@ public class VolunteerService {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
 
-        var volunteerSlots = volunteerSlotRepository.findAllByEventIdWithApprovedStatus(eventId);
+        var volunteerSlots = volunteerSlotRepository.findAllByEventId(eventId);
+        List<Long> volunteerSlotIds = extractVolunteerSlotIds(volunteerSlots);
+        var slotAppliedCount = volunteerApplicationRepository.findSlotsWithAppliedCountByIdIn(volunteerSlotIds);
+        var slotsToAppliedCount = mapSlotToAppliedCount(slotAppliedCount);
+
+        List<VolunteerSlotResponse> slotResponses = volunteerSlots.stream()
+                .map(slot -> VolunteerSlotResponse.builder()
+                        .applicationCount(slotsToAppliedCount.getOrDefault(slot.id(), 0))
+                        .startTime(slot.startTime())
+                        .endTime(slot.endTime())
+                        .volunteerDate(slot.volunteerDate())
+                        .capacity(slot.capacity())
+                        .slotType(slot.slotType())
+                        .build()
+                ).toList();
+
         return VolunteerDetailResponse.builder()
-                .precaution(event.getPrecaution())
-                .info(event.getInfo())
                 .id(event.getId())
                 .status(event.getStatus())
                 .title(event.getTitle())
@@ -168,9 +183,11 @@ public class VolunteerService {
                 .addressName(event.getAddressName())
                 .startDate(event.getStartDate())
                 .endDate(event.getEndDate())
-                .slots(volunteerSlots)
+                .slots(slotResponses)
                 .imageUrls(event.getImageUrls())
                 .activityLog(event.getActivityLog())
+                .precaution(event.getPrecaution())
+                .info(event.getInfo())
                 .build();
     }
 
@@ -344,6 +361,20 @@ public class VolunteerService {
                 .collect(Collectors.toMap(
                         VolunteerAppliedCount::id,
                         VolunteerAppliedCount::count
+                ));
+    }
+
+    private List<Long> extractVolunteerSlotIds(List<VolunteerSlotResponseWithoutAppliedCount> volunteerSlots) {
+        return volunteerSlots.stream()
+                .map(VolunteerSlotResponseWithoutAppliedCount::id)
+                .toList();
+    }
+
+    private Map<Long, Integer> mapSlotToAppliedCount(List<VolunteerSlotAppliedCount> slotAppliedCount) {
+        return slotAppliedCount.stream()
+                .collect(Collectors.toMap(
+                        VolunteerSlotAppliedCount::volunteerSlotId,
+                        VolunteerSlotAppliedCount::count
                 ));
     }
 }

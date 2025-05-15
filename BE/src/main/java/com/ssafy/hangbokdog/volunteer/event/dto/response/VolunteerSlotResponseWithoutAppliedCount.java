@@ -5,16 +5,12 @@ import java.time.LocalTime;
 
 import com.ssafy.hangbokdog.volunteer.event.domain.SlotType;
 
-import lombok.Builder;
-
-@Builder
-public record VolunteerSlotResponse(
+public record VolunteerSlotResponseWithoutAppliedCount(
         Long id,
         SlotType slotType,
         LocalTime startTime,
         LocalTime endTime,
         LocalDate volunteerDate,
-        int capacity,
-        int applicationCount
+        int capacity
 ) {
 }

@@ -5,11 +5,12 @@ import java.util.List;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponseWithoutAppliedCount;
 
 public interface VolunteerSlotQueryRepository {
     List<SlotDto> findByEventId(Long eventId);
 
-    List<VolunteerSlotResponse> findAllByEventIdWithApprovedStatus(Long eventId);
+    List<VolunteerSlotResponseWithoutAppliedCount> findAllByEventId(Long eventId);
 
     Integer getAppliedCountByVolunteerIdsIn(List<Long> volunteerEventIds);
 

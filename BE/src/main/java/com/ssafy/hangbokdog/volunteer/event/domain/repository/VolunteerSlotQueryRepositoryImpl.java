@@ -1,6 +1,5 @@
 package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 
-import static com.ssafy.hangbokdog.volunteer.application.domain.QVolunteerApplication.volunteerApplication;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
 
 import java.util.List;
@@ -9,10 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponseWithoutAppliedCount;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,21 +38,18 @@ public class VolunteerSlotQueryRepositoryImpl implements VolunteerSlotQueryRepos
     }
 
     @Override
-    public List<VolunteerSlotResponse> findAllByEventIdWithApprovedStatus(Long eventId) {
+    public List<VolunteerSlotResponseWithoutAppliedCount> findAllByEventId(Long eventId) {
         return queryFactory.select(Projections.constructor(
-                VolunteerSlotResponse.class,
+                VolunteerSlotResponseWithoutAppliedCount.class,
                 volunteerSlot.id,
                 volunteerSlot.slotType,
                 volunteerSlot.startTime,
                 volunteerSlot.endTime,
                 volunteerSlot.volunteerDate,
-                volunteerSlot.capacity,
-                volunteerSlot.appliedCount
-        )).from(volunteerApplication)
-                .leftJoin(volunteerSlot).on(volunteerSlot.id.eq(volunteerApplication.volunteerId))
-                .where(volunteerApplication.volunteerId.eq(eventId).and(
-                        volunteerApplication.status.eq(VolunteerApplicationStatus.APPROVED)
-                )).fetch();
+                volunteerSlot.capacity
+        )).from(volunteerSlot)
+                .where(volunteerSlot.eventId.eq(eventId))
+                .fetch();
     }
 
     @Override
