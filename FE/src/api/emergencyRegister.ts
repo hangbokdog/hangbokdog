@@ -83,7 +83,5 @@ export const getEmergencyPostAPI = async (
 		},
 	});
 
-	console.log("🚀 getEmergencyPostAPI 응답:", response.data);
-
 	return response.data;
 };

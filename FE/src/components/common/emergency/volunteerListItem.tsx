@@ -13,7 +13,6 @@ interface VolunteerListItemProps {
 }
 
 export default function VolunteerListItem(props: VolunteerListItemProps) {
-	console.log("VolunteerListItem props:", props);
 	const { img, name, title, target, date, index, emergencyId } = props;
 
 	return (
