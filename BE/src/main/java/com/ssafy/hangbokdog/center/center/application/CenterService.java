@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hangbokdog.center.center.domain.Center;
 import com.ssafy.hangbokdog.center.center.domain.CenterJoinRequest;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterStatus;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterJoinRequestRepository;
@@ -145,8 +146,8 @@ public class CenterService {
 		return centerMemberRepository.getMyCenters(memberId);
 	}
 
-	public List<CenterSearchResponse> searchCentersByName(Long memberId, String name) {
-		List<CenterSearchInfo> searchInfos = centerRepository.findCentersByName(name);
+	public List<CenterSearchResponse> searchCentersByName(Long memberId, String name, CenterCity centerCity) {
+		List<CenterSearchInfo> searchInfos = centerRepository.findCentersByName(name, centerCity);
 		List<CenterMember> centerMemberList = centerMemberRepository.getCenterMembersByMemberId(memberId);
 		List<CenterJoinRequest> centerJoinRequests = centerJoinRequestRepository
 				.getCenterJoinRequestsByMemberId(memberId);
