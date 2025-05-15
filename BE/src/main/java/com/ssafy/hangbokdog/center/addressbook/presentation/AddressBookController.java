@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.addressbook.application.AddressBookService;
 import com.ssafy.hangbokdog.center.addressbook.dto.request.AddressBookRequest;
-import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookResponse;
+import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookAppliedCountResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -52,11 +52,11 @@ public class AddressBookController {
 	}
 
 	@GetMapping("/{centerId}")
-	public ResponseEntity<List<AddressBookResponse>> getAddressBooks(
+	public ResponseEntity<List<AddressBookAppliedCountResponse>> getAddressBooks(
 		@AuthMember Member member,
 		@PathVariable Long centerId
 	) {
-		List<AddressBookResponse> response = addressBookService.getAddressBooks(centerId);
+		List<AddressBookAppliedCountResponse> response = addressBookService.getAddressBooks(centerId);
 		return ResponseEntity.ok(response);
 	}
 

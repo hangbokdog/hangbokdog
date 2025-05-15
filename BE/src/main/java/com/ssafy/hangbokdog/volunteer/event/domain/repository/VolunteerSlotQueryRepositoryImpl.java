@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,28 @@ public class VolunteerSlotQueryRepositoryImpl implements VolunteerSlotQueryRepos
                 volunteerSlot.appliedCount
         )).from(volunteerSlot)
                 .where(volunteerSlot.eventId.eq(eventId))
+                .fetch();
+    }
+
+    @Override
+    public Integer getAppliedCountByVolunteerIdsIn(List<Long> volunteerEventIds) {
+        return queryFactory.select(volunteerSlot.appliedCount.sum())
+                .from(volunteerSlot)
+                .where(volunteerSlot.eventId.in(volunteerEventIds))
+                .fetchOne();
+    }
+
+    @Override
+    public List<VolunteerAppliedCount> getAppliedCountByVolunteerIdsInWithGroupByVolunteerId(
+            List<Long> volunteerEventIds
+    ) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerAppliedCount.class,
+                volunteerSlot.eventId,
+                volunteerSlot.appliedCount.sum().intValue()
+        )).from(volunteerSlot)
+                .where(volunteerSlot.eventId.in(volunteerEventIds))
+                .groupBy(volunteerSlot.eventId)
                 .fetch();
     }
 }
