@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addDogFavoriteAPI, removeDogFavoriteAPI } from "@/api/dog";
 import { toast } from "sonner";
+import clsx from "clsx";
 import useCenterStore from "@/lib/store/centerStore";
 
 interface DogCardProps {
@@ -91,56 +92,64 @@ export default function DogCard({
 	return (
 		<Link to={`/dogs/${dogId}`}>
 			<div
-				className={`flex flex-col rounded-xl ${bgColor && "shadow-custom-sm"}`}
+				className={clsx(
+					"rounded-lg shadow-sm border border-gray-100 overflow-hidden",
+					"bg-white",
+					bgColor && `bg-${bgColor}`,
+				)}
 			>
-				<div
-					className={`${bgColor ? "rounded-tl-xl rounded-tr-xl" : "rounded-xl"} overflow-hidden relative`}
-				>
+				<div className="relative">
 					{imgError ? (
-						<div className="aspect-square object-cover flex justify-center items-center">
-							<SiDatadog className="text-6xl text-gray-400" />
+						<div className="w-full h-32 flex justify-center items-center bg-gray-100">
+							<SiDatadog className="text-5xl text-gray-400" />
 						</div>
 					) : (
 						<img
 							src={imageUrl}
 							alt={name}
-							className="aspect-square object-cover"
+							className="w-full h-42 object-cover"
 							referrerPolicy="no-referrer"
 							onError={() => setImgError(true)}
 						/>
 					)}
-					{gender === "MALE" ? (
-						<span className="absolute right-1 top-1 px-1.5 py-0.5 text-sm text-white bg-male rounded-full">
-							남아
-						</span>
-					) : (
-						<span className="absolute right-1 top-1 px-1.5 py-0.5 text-sm text-white bg-female rounded-full">
-							여아
-						</span>
-					)}
-				</div>
-				<div className="flex justify-between items-center px-1 py-1.5">
-					<div>
-						<p className="text-sm font-medium text-grayText">
-							{name}{" "}
-							<span className="text-xs text-blueGray">
-								{Number(ageMonth) >= 12
-									? `${Math.floor(Number(ageMonth) / 12)}살`
-									: `${ageMonth}개월`}
-							</span>
-						</p>
+					<div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2 flex justify-end">
+						<div
+							className={`text-xs px-2 py-0.5 rounded-full ${
+								gender === "MALE"
+									? "bg-blue-100 text-blue-700"
+									: "bg-pink-100 text-pink-700"
+							}`}
+						>
+							{Number(ageMonth) >= 12
+								? `${Math.floor(Number(ageMonth) / 12)}살 · `
+								: `${ageMonth}개월 · `}
+							{gender === "MALE" ? "남아" : "여아"}
+						</div>
 					</div>
-					{isLiked ? (
-						<FaHeart
-							className="text-red size-4 cursor-pointer"
-							onClick={handleToggleFavorite}
-						/>
-					) : (
-						<FaRegHeart
-							className="text-blueGray size-4 cursor-pointer"
-							onClick={handleToggleFavorite}
-						/>
-					)}
+				</div>
+				<div className="p-3">
+					<div className="flex items-center justify-start mb-1">
+						<span className="text-sm font-medium">{name}</span>
+					</div>
+					<div className="flex justify-between items-center">
+						<button
+							type="button"
+							className="mt-2 text-xs text-blue-600 font-medium"
+						>
+							상세 정보
+						</button>
+						{isLiked ? (
+							<FaHeart
+								className="text-red size-4 cursor-pointer"
+								onClick={handleToggleFavorite}
+							/>
+						) : (
+							<FaRegHeart
+								className="text-blueGray size-4 cursor-pointer"
+								onClick={handleToggleFavorite}
+							/>
+						)}
+					</div>
 				</div>
 			</div>
 		</Link>
