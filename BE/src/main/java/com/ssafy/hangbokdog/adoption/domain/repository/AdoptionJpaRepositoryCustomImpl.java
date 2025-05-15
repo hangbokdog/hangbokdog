@@ -31,9 +31,7 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(
-		Long centerId
-	) {
+	public List<AdoptionApplicationResponse> getAdoptionApplicationsByCenterId(Long centerId) {
 		return queryFactory
 			.select(Projections.constructor(
 				AdoptionApplicationResponse.class,
@@ -47,7 +45,7 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 			.where(dog.centerId.eq(centerId),
 				adoption.status.eq(AdoptionStatus.APPLIED))
 			.groupBy(adoption.dogId, dog.name, dog.profileImage)
-			.orderBy(adoption.id.desc())
+			.orderBy(adoption.dogId.count().desc())
 			.fetch();
 	}
 

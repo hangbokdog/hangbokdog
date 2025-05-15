@@ -28,6 +28,7 @@ import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepo
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepository;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerTemplateRepository;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
@@ -39,6 +40,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerWithAppliedCountResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -140,7 +142,10 @@ public class VolunteerService {
                         volunteerInfo.endDate(),
                         volunteerInfo.imageUrls().isEmpty()
                                 ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0),
-                        volunteerIdToApplicationStatus.getOrDefault(volunteerInfo.id(), VolunteerApplicationStatus.NONE)
+                        volunteerIdToApplicationStatus.getOrDefault(
+                                volunteerInfo.id(),
+                                VolunteerApplicationStatus.NONE
+                        )
                         )
                 )
                 .toList();
@@ -196,20 +201,24 @@ public class VolunteerService {
         return eventRepository.findEndedVolunteerEvent(centerId, pageToken);
     }
 
-    public List<VolunteerResponse> findOngoingVolunteersInAddressBook(Long addressBookId) {
-        return eventRepository.findAllOpenEventsInAddressBook(addressBookId).stream()
-                .map(volunteerInfo -> VolunteerResponse.of(
-                        volunteerInfo.id(),
-                        volunteerInfo.title(),
-                        volunteerInfo.content(),
-                        volunteerInfo.address(),
-                        volunteerInfo.addressName(),
-                        volunteerInfo.startDate(),
-                        volunteerInfo.endDate(),
-                        volunteerInfo.imageUrls().isEmpty()
-                                ? DEFAULT_VOLUNTEER_IMAGE : volunteerInfo.imageUrls().get(0)
-                ))
-                .toList();
+    public List<VolunteerWithAppliedCountResponse> findOngoingVolunteersInAddressBook(Long addressBookId) {
+        var volunteerInfo = eventRepository.findAllOpenEventsInAddressBook(addressBookId);
+        var volunteerEventIds = extractVolunteerEventIds(volunteerInfo);
+        var volunteerAppliedCounts = volunteerSlotRepository
+                .getAppliedCountByVolunteerIdsInWithGroupByVolunteerId(volunteerEventIds);
+        var volunteerEventIdToAppliedCount = mapVolunteerEventIdToAppliedCount(volunteerAppliedCounts);
+        return volunteerInfo.stream()
+                .map(volunteer -> VolunteerWithAppliedCountResponse.of(
+                        volunteer.id(),
+                        volunteer.title(),
+                        volunteer.content(),
+                        volunteer.address(),
+                        volunteer.addressName(),
+                        volunteer.startDate(),
+                        volunteer.endDate(),
+                        volunteer.imageUrls().isEmpty() ? DEFAULT_VOLUNTEER_IMAGE : volunteer.imageUrls().get(0),
+                        volunteerEventIdToAppliedCount.getOrDefault(volunteer.id(), 0)
+                )).toList();
     }
 
     public PageInfo<VolunteerResponse> findEndedVolunteersInAddressBook(Long addressBookId, String pageToken) {
@@ -321,5 +330,13 @@ public class VolunteerService {
                 .map(img -> img.attr("src"))
                 .distinct()
                 .toList();
+    }
+
+    private Map<Long, Integer> mapVolunteerEventIdToAppliedCount(List<VolunteerAppliedCount> volunteerAppliedCounts) {
+        return volunteerAppliedCounts.stream()
+                .collect(Collectors.toMap(
+                        VolunteerAppliedCount::id,
+                        VolunteerAppliedCount::count
+                ));
     }
 }

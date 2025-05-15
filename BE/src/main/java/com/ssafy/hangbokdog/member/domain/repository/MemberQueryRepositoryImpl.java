@@ -36,7 +36,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
                         member.profileImage
                 ))
                 .from(member)
-                .where(member.nickName.containsIgnoreCase(nickname))
+                .where(member.nickName.eq(nickname))
                 .fetchOne()
         );
     }

@@ -236,6 +236,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.id.notIn(dogIds),
 				isInRange(pageToken))
 			.orderBy(dog.id.desc())
+			.limit(pageSize + 1)
 			.fetch();
 	}
 

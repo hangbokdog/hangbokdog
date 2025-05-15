@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 
 import java.util.List;
 
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerIdInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 
@@ -17,4 +18,6 @@ public interface VolunteerEventQueryRepository {
     List<VolunteerInfo> findAllOpenEventsInAddressBook(Long addressBookId);
 
     List<VolunteerInfo> findAllClosedEventsInAddressBook(Long addressBookId, String pageToken, int pageSize);
+
+    List<VolunteerIdInfo> findActiveEventIds(List<Long> addressBookIds);
 }

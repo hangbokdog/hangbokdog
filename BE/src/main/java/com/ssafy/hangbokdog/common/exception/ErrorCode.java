@@ -96,10 +96,7 @@ public enum ErrorCode {
     ADOPTION_ALREADY_ACCEPTED(20002, "이미 승인된 입양 요청입니다."),
     ADOPTION_ALREADY_EXISTS(20003, "이미 존재하는 입양입니다."),
 
-    EMERGENCY_NOT_FOUND(20000, "존재하지 않는 응급입니다,"),
-    EMERGENCY_APPLICATION_NOT_FOUND(20001, "존재하지 않는 응급 신청입니다."),
-    EMERGENCY_ALREADY_APPROVED(20002, "이미 승인된 응급 신청입니다."),
-    EMERGENCY_ALREADY_REJECTED(20003, "이미 거절된 응급 신청입니다.");
+    ANNOUNCEMENT_NOT_FOUND(20004, "존재하지 않는 공지입니다.");
 
     private final int code;
     private final String message;

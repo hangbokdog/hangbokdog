@@ -10,4 +10,5 @@ public interface AddressBookJpaRepositoryCustom {
 	List<AddressBookResponse> getAddressBookByCenter(Long centerId);
 
 	List<LocationInfo> getLocationInfosIn(List<Long> locationIds);
+
 }

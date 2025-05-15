@@ -1,6 +1,8 @@
 package com.ssafy.hangbokdog.center.addressbook.application;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -8,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hangbokdog.center.addressbook.domain.AddressBook;
 import com.ssafy.hangbokdog.center.addressbook.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.addressbook.dto.request.AddressBookRequest;
+import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookAppliedCountResponse;
 import com.ssafy.hangbokdog.center.addressbook.dto.response.AddressBookResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
@@ -15,7 +18,10 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerTemplate;
+import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
+import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepository;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerTemplateRepository;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerIdInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +35,8 @@ public class AddressBookService {
 	private final AddressBookRepository addressBookRepository;
 	private final CenterMemberRepository centerMemberRepository;
 	private final VolunteerTemplateRepository volunteerTemplateRepository;
+	private final VolunteerEventRepository volunteerEventRepository;
+	private final VolunteerSlotRepository volunteerSlotRepository;
 
 	@Transactional
 	public void save(AddressBookRequest request, Long centerId, Long memberId) {
@@ -70,8 +78,26 @@ public class AddressBookService {
 		addressBook.updateAddress(request.addressName(), request.address());
 	}
 
-	public List<AddressBookResponse> getAddressBooks(Long centerId) {
-		return addressBookRepository.getAddressBookByCenter(centerId);
+	public List<AddressBookAppliedCountResponse> getAddressBooks(Long centerId) {
+		var addressBookResponse = addressBookRepository.getAddressBookByCenter(centerId);
+		var addressBookIds = extractAddressBookIds(addressBookResponse);
+		var activeEventIds = volunteerEventRepository.findActiveEventIds(addressBookIds);
+		var addressIdToVolunteerIds = mapAddressIdToVolunteerIds(activeEventIds);
+		Map<Long, Integer> addressIdToApplicationCount = addressIdToVolunteerIds.entrySet().stream()
+						.collect(Collectors.toMap(
+								Map.Entry::getKey,
+								entry -> {
+									List<Long> volunteerEventIds = entry.getValue();
+									return volunteerSlotRepository.getAppliedCountByVolunteerIdsIn(volunteerEventIds);
+								}));
+
+		return addressBookResponse.stream()
+				.map(addressBook -> AddressBookAppliedCountResponse.of(
+						addressBook.id(),
+						addressBook.addressName(),
+						addressBook.address(),
+						addressIdToApplicationCount.getOrDefault(addressBook.id(), 0)
+				)).toList();
 	}
 
 	public void deleteAddressBook(Member member, Long addressBookId, Long centerId) {
@@ -87,5 +113,22 @@ public class AddressBookService {
 	private CenterMember getCenterMember(Long centerId, Long memberId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+	}
+
+	private Map<Long, List<Long>> mapAddressIdToVolunteerIds(List<VolunteerIdInfo> activeEventIds) {
+		return activeEventIds.stream()
+				.collect(Collectors.groupingBy(
+						VolunteerIdInfo::addressId,
+						Collectors.mapping(
+								VolunteerIdInfo::volunteerEventId,
+								Collectors.toList()
+						)
+				));
+	}
+
+	private List<Long> extractAddressBookIds(List<AddressBookResponse> addressBook) {
+		return addressBook.stream()
+				.map(AddressBookResponse::id)
+				.toList();
 	}
 }
