@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerIdInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
@@ -83,5 +84,9 @@ public class VolunteerEventRepository {
                 .toList();
 
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, VolunteerResponse::endDate, VolunteerResponse::id);
+    }
+
+    public List<VolunteerIdInfo> findActiveEventIds(List<Long> addressBookIds) {
+        return volunteerEventJpaRepository.findActiveEventIds(addressBookIds);
     }
 }

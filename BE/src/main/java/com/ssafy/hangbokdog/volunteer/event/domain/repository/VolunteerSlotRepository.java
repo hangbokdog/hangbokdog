@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerSlotResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,17 @@ public class VolunteerSlotRepository {
 
     public List<VolunteerSlotResponse> findAllByEventId(Long eventId) {
         return volunteerSlotJpaRepository.findAllByEventId(eventId);
+    }
+
+    public Integer getAppliedCountByVolunteerIdsIn(List<Long> volunteerEventIds) {
+        return volunteerSlotJpaRepository.getAppliedCountByVolunteerIdsIn(volunteerEventIds);
+    }
+
+    public List<VolunteerAppliedCount> getAppliedCountByVolunteerIdsInWithGroupByVolunteerId(
+            List<Long> volunteerEventIds
+    ) {
+        return volunteerSlotJpaRepository.getAppliedCountByVolunteerIdsInWithGroupByVolunteerId(
+                volunteerEventIds
+        );
     }
 }

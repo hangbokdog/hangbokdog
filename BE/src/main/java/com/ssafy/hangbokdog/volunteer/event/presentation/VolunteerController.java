@@ -30,6 +30,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponseWithStatus;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplateInfoResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerTemplatePrecautionResponse;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerWithAppliedCountResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -110,7 +111,7 @@ public class VolunteerController {
     }
 
     @GetMapping("/{addressBookId}/addressBooks")
-    public ResponseEntity<List<VolunteerResponse>> findOngoingVolunteersInAddressBook(
+    public ResponseEntity<List<VolunteerWithAppliedCountResponse>> findOngoingVolunteersInAddressBook(
             @AuthMember Member member,
             @PathVariable Long addressBookId
     ) {

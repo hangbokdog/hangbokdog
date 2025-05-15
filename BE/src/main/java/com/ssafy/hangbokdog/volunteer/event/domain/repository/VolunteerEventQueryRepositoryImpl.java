@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.volunteer.event.domain.repository;
 import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.addressBook;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerSlot.volunteerSlot;
+import static com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEventStatus.OPEN;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.common.util.PageTokenParser;
 import com.ssafy.hangbokdog.volunteer.event.domain.SlotType;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEventStatus;
+import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerIdInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 
@@ -31,7 +33,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
 
     @Override
     public List<VolunteerInfo> findAllOpenEvents(Long centerId) {
-        BooleanExpression openCondition = volunteerEvent.status.eq(VolunteerEventStatus.OPEN);
+        BooleanExpression openCondition = volunteerEvent.status.eq(OPEN);
         // centerId 가 넘어오면 추가 필터
         BooleanExpression centerCondition = centerId != null
                 ? volunteerEvent.centerId.eq(centerId)
@@ -138,7 +140,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.imageUrls
                 ))
                 .from(volunteerEvent)
-                .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN).and(
+                .where(volunteerEvent.status.eq(OPEN).and(
                         volunteerEvent.centerId.eq(centerId)).and(
                                 volunteerEvent.endDate.after((LocalDate.now()))
                         )
@@ -184,7 +186,7 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                 volunteerEvent.imageUrls
         )).from(volunteerEvent)
                 .leftJoin(addressBook).on(addressBook.id.eq(volunteerEvent.addressBookId))
-                .where(volunteerEvent.status.eq(VolunteerEventStatus.OPEN).and(
+                .where(volunteerEvent.status.eq(OPEN).and(
                         volunteerEvent.addressBookId.eq(addressBookId)
                 ))
                 .fetch();
@@ -208,6 +210,17 @@ public class VolunteerEventQueryRepositoryImpl implements VolunteerEventQueryRep
                         volunteerEvent.addressBookId.eq(addressBookId)), isInRange(pageToken))
                 .orderBy(volunteerEvent.endDate.desc())
                 .limit(pageSize)
+                .fetch();
+    }
+
+    @Override
+    public List<VolunteerIdInfo> findActiveEventIds(List<Long> addressBookIds) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerIdInfo.class,
+                volunteerEvent.addressBookId,
+                volunteerEvent.id
+        )).from(volunteerEvent)
+                .where(volunteerEvent.status.eq(OPEN).and(volunteerEvent.addressBookId.in(addressBookIds)))
                 .fetch();
     }
 
