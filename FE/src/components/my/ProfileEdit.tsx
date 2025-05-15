@@ -1,10 +1,13 @@
-import { getUserInfoAPI } from "@/api/auth";
-import { useQuery } from "@tanstack/react-query";
+import { getUserInfoAPI, updateUserInfoAPI } from "@/api/auth";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 export default function ProfileEdit() {
+  const queryClient = useQueryClient();
+
+  // GET: 사용자 정보 가져오기
   const { data, isLoading, error } = useQuery({
     queryKey: ["userInfo"],
     queryFn: getUserInfoAPI,
@@ -12,14 +15,27 @@ export default function ProfileEdit() {
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userNickname, setUserNickname] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
 
-  // API로 받아온 데이터를 state에 설정
+  // PATCH: 사용자 정보 수정
+  const mutation = useMutation({
+    mutationFn: updateUserInfoAPI,
+    onSuccess: () => {
+      alert("프로필이 저장되었습니다.");
+      queryClient.invalidateQueries({ queryKey: ["userInfo"] });
+    },
+    onError: () => {
+      alert("프로필 저장에 실패했습니다.");
+    },
+  });
+
+  // API로 받아온 데이터로 초기값 설정
   useEffect(() => {
     if (data) {
-      setUserNickname(data.nickName); // name으로 수정
+      setUserNickname(data.nickName);
       setProfileImage(data.profileImage || null);
     }
   }, [data]);
@@ -31,6 +47,7 @@ export default function ProfileEdit() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onload = (event) => {
         setProfileImage(event.target?.result as string);
@@ -62,12 +79,15 @@ export default function ProfileEdit() {
   };
 
   const handleSave = () => {
-    // 여기에 저장 API 호출 추가 가능
-    console.log("저장 요청 →", {
-      userNickname,
-      profileImage,
+    if (!userNickname) {
+      alert("닉네임을 입력해주세요.");
+      return;
+    }
+
+    mutation.mutate({
+      nickname: userNickname,
+      profileImageFile: imageFile,
     });
-    alert("프로필이 저장되었습니다.");
   };
 
   if (isLoading) return <div className="p-4">불러오는 중...</div>;

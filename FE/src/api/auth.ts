@@ -98,3 +98,42 @@ export const getNicknameSearchAPI = async ({
 	);
 	return response.data;
 };
+
+export interface UpdateUserInfoRequest {
+  nickname: string;
+  profileImageFile?: File | null;
+}
+
+/**
+ * 내 정보 수정 API
+ * - nickname: 새 닉네임
+ * - profileImageFile: 선택적 프로필 이미지 파일
+ */
+export const updateUserInfoAPI = async ({
+  nickname,
+  profileImageFile,
+}: UpdateUserInfoRequest): Promise<UserInfoResponse> => {
+  const formData = new FormData();
+
+  // JSON 형태의 nickname 객체를 'request' 필드에 담아서 전송
+  formData.append("request", JSON.stringify({ nickname }));
+
+  // 파일이 있을 때만 'files' 필드로 추가
+  if (profileImageFile) {
+    formData.append("files", profileImageFile);
+  }
+
+  // PATCH /members/my (baseURL + "/members/my")
+  const response = await localAxios.patch<UserInfoResponse>(
+    "members/my",
+    formData,
+    {
+      headers: {
+        // 기본 application/json 헤더를 덮어쓰기
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
+  return response.data;
+};
