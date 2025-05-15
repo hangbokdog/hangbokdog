@@ -148,7 +148,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				isNeuteredEq(isNeutered),
 				isStarEq(isStar),
 				inBirthRange(start, end),
-				hasLocationIds(locationIds)
+				hasLocationIds(locationIds),
+				dog.status.ne(DogStatus.ADOPTED)
 			)
 			.orderBy(dog.id.desc())
 			.limit(pageSize + 1)
