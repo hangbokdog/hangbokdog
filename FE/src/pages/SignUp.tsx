@@ -21,6 +21,8 @@ export default function SignUp() {
 	const [isPhoneValid, setIsPhoneValid] = useState<boolean>(false);
 	const [isBirthDateValid, setIsBirthDateValid] = useState<boolean>(false);
 	const [isTermsChecked, setIsTermsChecked] = useState<boolean>(false);
+	const [isEmergencyAlertChecked, setIsEmergencyAlertChecked] =
+		useState<boolean>(false);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 	const signupTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const { formatBirthDate } = useFormatDate();
@@ -102,6 +104,8 @@ export default function SignUp() {
 			<SignUpTerms
 				isChecked={isTermsChecked}
 				onChange={setIsTermsChecked}
+				isEmergencyAlertChecked={isEmergencyAlertChecked}
+				onEmergencyAlertChange={setIsEmergencyAlertChecked}
 			/>
 			<SignUpButton
 				isEnabled={isFormValid && !isSubmitting}
