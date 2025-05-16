@@ -54,7 +54,7 @@ public class MemberService {
     @Transactional
     public void updateProfile(Long memberId, MemberUpdateRequest request, String imageUrl) {
         Member member = getMember(memberId);
-        member.updateProfile(request.nickname(), imageUrl);
+        member.updateProfile(request.nickName(), imageUrl);
     }
 
     public MemberProfileResponse getMemberProfile(Long memberId) {
