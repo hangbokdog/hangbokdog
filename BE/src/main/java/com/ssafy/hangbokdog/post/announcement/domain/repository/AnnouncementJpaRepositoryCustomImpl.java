@@ -35,6 +35,7 @@ public class AnnouncementJpaRepositoryCustomImpl implements AnnouncementJpaRepos
 				announcement.createdAt
 			))
 			.from(announcement)
+			.leftJoin(member).on(member.id.eq(announcement.authorId))
 			.where(announcement.centerId.eq(centerId),
 				isInRange(pageToken))
 			.limit(pageSize + 1)
