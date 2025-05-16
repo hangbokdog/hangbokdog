@@ -35,7 +35,7 @@ export default function InputField({
 				/>
 			</div>
 			<input
-				className={`flex-1 outline-none ml-2 ${error ? "text-red" : ""} placeholder:text-grayText`}
+				className={`flex-1 w-full outline-none ml-2 ${error ? "text-red" : ""} placeholder:text-grayText truncate`}
 				type={type}
 				placeholder={placeholder}
 				value={value}

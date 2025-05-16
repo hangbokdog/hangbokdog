@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import SignUpHeader from "@/components/signup/SignUpHeader";
 import SignUpForm from "@/components/signup/SignUpForm";
@@ -9,6 +9,8 @@ import { signUpAPI } from "@/api/auth";
 import { toast } from "sonner";
 import useAuthStore from "@/lib/store/authStore";
 import { useFormatDate } from "@/lib/hooks/useFormatDate";
+import { registerFCMToken } from "@/api/notification";
+import { requestFCMToken } from "@/config/firebase";
 
 export default function SignUp() {
 	const navigate = useNavigate();
@@ -34,6 +36,27 @@ export default function SignUp() {
 		isBirthDateValid &&
 		isTermsChecked;
 
+	// FCM 토큰을 요청하고 백엔드에 저장하는 함수
+	const handleFCMTokenSetup = useCallback(async () => {
+		try {
+			// FCM 토큰 요청
+			const fcmToken = await requestFCMToken();
+
+			if (fcmToken) {
+				console.log("FCM 토큰 등록 시작:", fcmToken);
+
+				// 토큰을 백엔드에 저장
+				await registerFCMToken(fcmToken);
+				console.log("FCM 토큰 등록 성공");
+			} else {
+				console.warn("FCM 토큰을 가져올 수 없어 등록할 수 없습니다.");
+			}
+		} catch (error) {
+			console.error("FCM 토큰 처리 중 오류 발생:", error);
+			// FCM 토큰 등록 실패는 사용자 경험에 영향을 주지 않도록 처리
+		}
+	}, []);
+
 	const signUpMutation = useMutation({
 		mutationFn: signUpAPI,
 		onSuccess: () => {
@@ -41,6 +64,11 @@ export default function SignUp() {
 				setToken(user.tempToken);
 				setTempToken("");
 			}
+
+			if (isEmergencyAlertChecked) {
+				handleFCMTokenSetup();
+			}
+
 			toast.success("회원가입에 성공했습니다!");
 			navigate("/center-decision");
 		},
@@ -70,6 +98,7 @@ export default function SignUp() {
 				nickname,
 				phoneNumber,
 				birthDate: formattedBirthDate,
+				emergencyNotification: isEmergencyAlertChecked,
 			});
 		}, 300);
 	};
