@@ -7,6 +7,7 @@ import useCenterStore from "@/lib/store/centerStore";
 import { useMutation } from "@tanstack/react-query";
 import { createAnnouncementAPI } from "@/api/announcement";
 import { toast } from "sonner";
+import { uploadImageAPI } from "@/api/common";
 
 export default function AnnouncementCreatePage() {
 	const navigate = useNavigate();
@@ -17,8 +18,6 @@ export default function AnnouncementCreatePage() {
 	const [content, setContent] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [imageUploading, setImageUploading] = useState(false);
-	const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-	const [imageUrls, setImageUrls] = useState<string[]>([]);
 
 	// ReactQuill 에디터 참조
 	const quillRef = useRef<ReactQuill>(null);
@@ -29,7 +28,7 @@ export default function AnnouncementCreatePage() {
 			createAnnouncementAPI(
 				Number(selectedCenter?.centerId),
 				{ title, content },
-				uploadedFiles,
+				[], // 이미지는 에디터에 이미 S3 URL로 삽입되었으므로 빈 배열 전달
 			),
 		onSuccess: () => {
 			toast.success("공지사항이 성공적으로 등록되었습니다.");
@@ -41,7 +40,7 @@ export default function AnnouncementCreatePage() {
 		},
 	});
 
-	// 파일 추가 및 에디터에 이미지 임시 표시
+	// 파일 업로드 및 에디터에 이미지 삽입
 	const handleImageUpload = useCallback(async (file: File) => {
 		// 파일 크기 검증 (10MB 제한)
 		if (file.size > 10 * 1024 * 1024) {
@@ -57,9 +56,11 @@ export default function AnnouncementCreatePage() {
 
 		try {
 			setImageUploading(true);
+			console.log("이미지 업로드 시작:", file.name);
 
-			// 이미지를 로컬에서 미리보기 위한 URL 생성
-			const tempUrl = URL.createObjectURL(file);
+			// 이미지 업로드 API 호출 - S3에 업로드
+			const s3ImageUrl = await uploadImageAPI(file);
+			console.log("S3 업로드 성공. URL:", s3ImageUrl);
 
 			// 에디터 선택 정보 가져오기
 			const editor = quillRef.current?.getEditor();
@@ -68,22 +69,29 @@ export default function AnnouncementCreatePage() {
 			// 에디터에 포커스 주기
 			editor?.focus();
 
-			// 에디터에 임시 이미지 URL 삽입
+			// 에디터에 S3 이미지 URL 삽입
 			if (range && editor) {
-				editor.insertEmbed(range.index, "image", tempUrl);
+				// 이미지 삽입
+				console.log(`이미지 삽입 시도: 위치=${range.index}`);
+				editor.insertEmbed(range.index, "image", s3ImageUrl);
+
+				// 이미지 후에 커서 이동
 				editor.setSelection(range.index + 1, 0);
+				console.log("이미지 삽입 완료");
 			} else if (editor) {
-				editor.insertEmbed(0, "image", tempUrl);
+				console.error("에디터 선택 범위를 가져올 수 없습니다");
+				// 위치를 명시적으로 지정해서 시도
+				editor.insertEmbed(0, "image", s3ImageUrl);
 			}
 
-			// 업로드된 파일 목록에 추가
-			setUploadedFiles((prev) => [...prev, file]);
-			setImageUrls((prev) => [...prev, tempUrl]);
-
-			toast.success("이미지가 추가되었습니다.");
+			toast.success("이미지가 업로드되었습니다.");
 		} catch (error) {
-			toast.error("이미지 처리 중 오류가 발생했습니다.");
-			console.error("이미지 처리 오류:", error);
+			const errorMessage =
+				error instanceof Error
+					? error.message
+					: "이미지 업로드 중 오류가 발생했습니다.";
+			toast.error(errorMessage);
+			console.error("이미지 업로드 에러:", error);
 		} finally {
 			setImageUploading(false);
 		}
@@ -125,6 +133,17 @@ export default function AnnouncementCreatePage() {
 				// 기본 붙여넣기 동작 커스터마이징 (이미지 붙여넣기 제한)
 				matchVisual: false,
 			},
+			// 드래그 앤 드롭 비활성화
+			keyboard: {
+				bindings: {
+					// 이미지 붙여넣기 단축키 비활성화
+					"image-paste": {
+						key: "V",
+						shortKey: true,
+						handler: () => false, // 핸들러가 false를 반환하면 기본 동작 중지
+					},
+				},
+			},
 		}),
 		[createImageHandler],
 	);
@@ -134,7 +153,7 @@ export default function AnnouncementCreatePage() {
 		<div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-70 z-10">
 			<div className="flex flex-col items-center">
 				<div className="w-10 h-10 border-4 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin" />
-				<p className="mt-2 text-sm">이미지 처리 중...</p>
+				<p className="mt-2 text-sm">이미지 업로드 중...</p>
 			</div>
 		</div>
 	);
@@ -187,14 +206,96 @@ export default function AnnouncementCreatePage() {
 		}
 	};
 
-	// 컴포넌트 언마운트 시 임시 URL 해제
+	// 드래그 앤 드롭 방지를 위한 이벤트 핸들러 등록
 	useEffect(() => {
-		return () => {
-			for (const url of imageUrls) {
-				URL.revokeObjectURL(url);
+		const preventDragDrop = (e: DragEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		};
+
+		const preventPasteImage = (e: ClipboardEvent) => {
+			// 텍스트 붙여넣기는 허용하고 이미지만 차단
+			if (e.clipboardData) {
+				for (let i = 0; i < e.clipboardData.items.length; i++) {
+					const item = e.clipboardData.items[i];
+					if (item.type.indexOf("image") !== -1) {
+						e.preventDefault();
+						toast.warning(
+							"이미지는 툴바의 이미지 버튼을 통해서만 추가할 수 있습니다.",
+						);
+						return;
+					}
+				}
 			}
 		};
-	}, [imageUrls]);
+
+		// 에디터 컨테이너에 이벤트 리스너 등록
+		if (quillRef.current) {
+			try {
+				const editor = quillRef.current.getEditor();
+				if (editor?.root) {
+					const editorRoot = editor.root;
+
+					// 드래그 앤 드롭 이벤트 방지
+					editorRoot.addEventListener(
+						"dragover",
+						preventDragDrop,
+						true,
+					);
+					editorRoot.addEventListener("drop", preventDragDrop, true);
+					editorRoot.addEventListener(
+						"dragenter",
+						preventDragDrop,
+						true,
+					);
+
+					// 이미지 붙여넣기 방지
+					editorRoot.addEventListener(
+						"paste",
+						preventPasteImage,
+						true,
+					);
+				}
+			} catch (error) {
+				console.log("에디터가 아직 초기화되지 않았습니다.");
+			}
+		}
+
+		return () => {
+			if (quillRef.current) {
+				try {
+					const editor = quillRef.current.getEditor();
+					if (editor?.root) {
+						const editorRoot = editor.root;
+
+						editorRoot.removeEventListener(
+							"dragover",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.removeEventListener(
+							"drop",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.removeEventListener(
+							"dragenter",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.removeEventListener(
+							"paste",
+							preventPasteImage,
+							true,
+						);
+					}
+				} catch (error) {
+					// 무시
+				}
+			}
+		};
+	}, []);
 
 	return (
 		<div className="flex flex-col min-h-screen bg-white text-grayText font-medium">
