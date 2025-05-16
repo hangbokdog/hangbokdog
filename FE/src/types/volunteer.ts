@@ -84,16 +84,21 @@ export interface ApplicantItemProps {
 export interface ApplicantsListProps {
 	formatDate: (dateString: string) => string;
 	eventId: number;
+	refetchVolunteers: () => void;
+	refetchAddresses: () => void;
 }
 
 export interface VolunteerItemProps {
 	volunteer: Volunteer;
 	onDelete: (id: number) => void;
 	formatDate: (dateString: string) => string;
+	refetchVolunteers: () => void;
+	refetchAddresses: () => void;
 }
 
 export interface VolunteerScheduleManagerProps {
 	address: AddressBook;
+	refetchAddresses: () => void;
 }
 
 export interface APIScheduleItem {

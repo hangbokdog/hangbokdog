@@ -24,6 +24,7 @@ export default function My() {
 		mutationFn: logoutAPI,
 		onSuccess: () => {
 			clearAuth();
+			clearSelectedCenter();
 			toast.success("로그아웃되었습니다.");
 			navigate("/");
 		},
