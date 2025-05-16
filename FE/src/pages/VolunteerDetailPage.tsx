@@ -165,7 +165,8 @@ export default function VolunteerDetailPage() {
 					title={volunteerDetail.title}
 					status={status}
 					date={dateRange}
-					location={volunteerDetail.addressName}
+					location={volunteerDetail.address}
+					addressName={volunteerDetail.addressName}
 					time={timeInfo}
 					pets={volunteerDetail.content || ""}
 				/>
@@ -185,7 +186,10 @@ export default function VolunteerDetailPage() {
 						/>
 					</TabsContent>
 					<TabsContent value="apply" className="mt-2.5">
-						<ScheduleTable scheduleData={scheduleData} />
+						<ScheduleTable
+							scheduleData={scheduleData}
+							timeInfo={timeInfo}
+						/>
 					</TabsContent>
 					<TabsContent value="guide" className="mt-2.5">
 						<GuideContent content={volunteerDetail.info} />

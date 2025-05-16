@@ -42,7 +42,7 @@ export default function CenterDecisionListItem({
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [isExpanded, setIsExpanded] = useState(false);
-
+	console.log(status);
 	const isLongName = centerName ? centerName.length > 7 : false;
 
 	const { refetch } = useQuery<AddressBook[], Error>({
@@ -105,7 +105,7 @@ export default function CenterDecisionListItem({
 			setAddressBook(data);
 		}
 
-		if (status === "MANAGER" || status === "USER") {
+		if (status === "MANAGER" || status === "USER" || status === "MEMBER") {
 			setIsCenterMember(true);
 		} else {
 			setIsCenterMember(false);

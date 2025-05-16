@@ -15,12 +15,12 @@ export default function Footer() {
 	const footerItems = [
 		{ path: "/", icon: MdHome, size: 24, label: "홈" },
 		{ path: "/dogs", icon: FaDog, size: 20, label: "아이들" },
-		{
-			path: "/bazaar",
-			icon: FaHandHoldingHeart,
-			size: 20,
-			label: "바자회",
-		},
+		// {
+		// 	path: "/bazaar",
+		// 	icon: FaHandHoldingHeart,
+		// 	size: 20,
+		// 	label: "바자회",
+		// },
 		{
 			path: "/volunteer",
 			icon: FaHandHoldingHeart,

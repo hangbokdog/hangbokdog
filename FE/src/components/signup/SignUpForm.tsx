@@ -131,7 +131,7 @@ export default function SignUpForm({
 	}, []);
 
 	return (
-		<div className="flex flex-col gap-4 items-center w-full">
+		<div className="flex flex-col gap-4 items-center w-full text-sm">
 			<InputField
 				icon={FaUserTie}
 				placeholder="닉네임을 입력해주세요. (2~10자)"
@@ -157,7 +157,7 @@ export default function SignUpForm({
 						!isCheckingNickname
 							? "bg-primary"
 							: "bg-superLightGray cursor-not-allowed"
-					} text-white rounded-[8px] px-4 py-2 font-bold flex items-center justify-center min-w-[80px]`}
+					} text-white rounded-[8px] px-1 py-2 font-bold flex items-center justify-center max-w-[80px]`}
 					onClick={() => checkNicknameDuplicate(nickname)}
 					disabled={
 						!isNicknameValid ||

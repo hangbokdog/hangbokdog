@@ -11,7 +11,6 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import useCenterStore from "@/lib/store/centerStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import {
 	getVolunteerInfoTemplateAPI,
 	getVolunteerPrecautionTemplateAPI,
@@ -99,6 +98,11 @@ export default function AddVolunteerSchedulePage() {
 	const [newInfoTemplate, setNewInfoTemplate] = useState("");
 	const [newPrecautionTemplate, setNewPrecautionTemplate] = useState("");
 
+	// 탭 관리를 위한 상태 추가
+	const [activeTab, setActiveTab] = useState<
+		"activityLog" | "info" | "precaution"
+	>("activityLog");
+
 	// 에디터 타입에 따른 상태 설정 함수
 	const getEditorState = useMemo(
 		() => (type: EditorType) => {
@@ -163,11 +167,9 @@ export default function AddVolunteerSchedulePage() {
 
 			try {
 				setUploading(true);
-				console.log("이미지 업로드 시작:", file.name);
 
 				// 이미지 업로드 API 호출 - S3에 업로드
 				const s3ImageUrl = await uploadImageAPI(file);
-				console.log("S3 업로드 성공. URL:", s3ImageUrl);
 
 				// 에디터 선택 정보 가져오기
 				const editor = ref.current?.getEditor();
@@ -284,7 +286,7 @@ export default function AddVolunteerSchedulePage() {
 		[createEditorModules],
 	);
 
-	// ReactQuill용 스타일 추가
+	// useEffect 추가: 에디터 스타일 설정
 	useEffect(() => {
 		// 스타일시트 생성
 		const styleElement = document.createElement("style");
@@ -360,121 +362,52 @@ export default function AddVolunteerSchedulePage() {
 				z-index: 1;
 				pointer-events: none;
 			}
+			
+			/* 에디터 높이 증가 */
+			.tall-editor .ql-editor {
+				min-height: 300px;
+				max-height: 500px;
+				overflow-y: auto;
+			}
+			
+			/* 에디터 탭 스타일 */
+			.editor-tabs {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				border-bottom: 1px solid #e5e7eb;
+			}
+			
+			.editor-tab {
+				padding: 0.75rem 0.25rem;
+				font-size: 0.875rem;
+				font-weight: 500;
+				color: #6b7280;
+				cursor: pointer;
+				transition: all 0.2s;
+				border-bottom: 2px solid transparent;
+			}
+			
+			.editor-tab.active {
+				color: #3b82f6;
+				border-bottom: 2px solid #3b82f6;
+			}
+			
+			.editor-tab:hover:not(.active) {
+				color: #4b5563;
+				background-color: #f9fafb;
+			}
+			
+			.editor-tab-icon {
+				display: inline-flex;
+				align-items: center;
+				margin-right: 0.5rem;
+			}
 		`;
 		document.head.appendChild(styleElement);
 
 		// 클린업 함수
 		return () => {
 			document.head.removeChild(styleElement);
-		};
-	}, []);
-
-	// 드래그 앤 드롭 방지를 위한 이벤트 핸들러 등록
-	useEffect(() => {
-		const preventDragDrop = (e: DragEvent) => {
-			e.preventDefault();
-			e.stopPropagation();
-			return false;
-		};
-
-		const preventPasteImage = (e: ClipboardEvent) => {
-			// 텍스트 붙여넣기는 허용하고 이미지만 차단
-			if (e.clipboardData) {
-				for (let i = 0; i < e.clipboardData.items.length; i++) {
-					const item = e.clipboardData.items[i];
-					if (item.type.indexOf("image") !== -1) {
-						e.preventDefault();
-						toast.warning(
-							"이미지는 툴바의 이미지 버튼을 통해서만 추가할 수 있습니다.",
-						);
-						return;
-					}
-				}
-			}
-		};
-
-		// 모든 에디터에 이벤트 핸들러 등록
-		const editorRefs = [
-			activityLogQuillRef,
-			infoQuillRef,
-			precautionQuillRef,
-			infoTemplateQuillRef,
-			precautionTemplateQuillRef,
-		];
-
-		// 각 에디터 컨테이너에 이벤트 리스너 등록
-		for (const ref of editorRefs) {
-			if (ref.current) {
-				try {
-					const editor = ref.current.getEditor();
-					if (editor?.root) {
-						const editorRoot = editor.root;
-
-						// 드래그 앤 드롭 이벤트 방지
-						editorRoot.addEventListener(
-							"dragover",
-							preventDragDrop,
-							true,
-						);
-						editorRoot.addEventListener(
-							"drop",
-							preventDragDrop,
-							true,
-						);
-						editorRoot.addEventListener(
-							"dragenter",
-							preventDragDrop,
-							true,
-						);
-
-						// 이미지 붙여넣기 방지
-						editorRoot.addEventListener(
-							"paste",
-							preventPasteImage,
-							true,
-						);
-					}
-				} catch (error) {
-					console.log("에디터가 아직 초기화되지 않았습니다.");
-				}
-			}
-		}
-
-		// 클린업 함수
-		return () => {
-			for (const ref of editorRefs) {
-				if (ref.current) {
-					try {
-						const editor = ref.current.getEditor();
-						if (editor?.root) {
-							const editorRoot = editor.root;
-
-							editorRoot.removeEventListener(
-								"dragover",
-								preventDragDrop,
-								true,
-							);
-							editorRoot.removeEventListener(
-								"drop",
-								preventDragDrop,
-								true,
-							);
-							editorRoot.removeEventListener(
-								"dragenter",
-								preventDragDrop,
-								true,
-							);
-							editorRoot.removeEventListener(
-								"paste",
-								preventPasteImage,
-								true,
-							);
-						}
-					} catch (error) {
-						// 무시
-					}
-				}
-			}
 		};
 	}, []);
 
@@ -700,6 +633,115 @@ export default function AddVolunteerSchedulePage() {
 			</div>
 		</div>
 	);
+
+	// 드래그 앤 드롭 방지를 위한 이벤트 핸들러 등록
+	useEffect(() => {
+		const preventDragDrop = (e: DragEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		};
+
+		const preventPasteImage = (e: ClipboardEvent) => {
+			// 텍스트 붙여넣기는 허용하고 이미지만 차단
+			if (e.clipboardData) {
+				for (let i = 0; i < e.clipboardData.items.length; i++) {
+					const item = e.clipboardData.items[i];
+					if (item.type.indexOf("image") !== -1) {
+						e.preventDefault();
+						toast.warning(
+							"이미지는 툴바의 이미지 버튼을 통해서만 추가할 수 있습니다.",
+						);
+						return;
+					}
+				}
+			}
+		};
+
+		// 모든 에디터에 이벤트 핸들러 등록
+		const editorRefs = [
+			activityLogQuillRef,
+			infoQuillRef,
+			precautionQuillRef,
+			infoTemplateQuillRef,
+			precautionTemplateQuillRef,
+		];
+
+		// 각 에디터 컨테이너에 이벤트 리스너 등록
+		for (const ref of editorRefs) {
+			if (ref.current) {
+				try {
+					const editor = ref.current.getEditor();
+					if (editor?.root) {
+						const editorRoot = editor.root;
+
+						// 드래그 앤 드롭 이벤트 방지
+						editorRoot.addEventListener(
+							"dragover",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.addEventListener(
+							"drop",
+							preventDragDrop,
+							true,
+						);
+						editorRoot.addEventListener(
+							"dragenter",
+							preventDragDrop,
+							true,
+						);
+
+						// 이미지 붙여넣기 방지
+						editorRoot.addEventListener(
+							"paste",
+							preventPasteImage,
+							true,
+						);
+					}
+				} catch (error) {
+					console.log("에디터가 아직 초기화되지 않았습니다.");
+				}
+			}
+		}
+
+		// 클린업 함수
+		return () => {
+			for (const ref of editorRefs) {
+				if (ref.current) {
+					try {
+						const editor = ref.current.getEditor();
+						if (editor?.root) {
+							const editorRoot = editor.root;
+
+							editorRoot.removeEventListener(
+								"dragover",
+								preventDragDrop,
+								true,
+							);
+							editorRoot.removeEventListener(
+								"drop",
+								preventDragDrop,
+								true,
+							);
+							editorRoot.removeEventListener(
+								"dragenter",
+								preventDragDrop,
+								true,
+							);
+							editorRoot.removeEventListener(
+								"paste",
+								preventPasteImage,
+								true,
+							);
+						}
+					} catch (error) {
+						// 무시
+					}
+				}
+			}
+		};
+	}, []);
 
 	// 폼 제출 핸들러
 	const handleSubmit = async () => {
@@ -1003,143 +1045,208 @@ export default function AddVolunteerSchedulePage() {
 
 				<MobileHelpBanner />
 
-				{/* 활동 일지 작성 예시 - 에디터 모듈 적용 */}
-				<div className="flex flex-col gap-3">
-					<label
-						htmlFor="activity-log"
-						className="text-lg flex items-center"
-					>
-						활동 일지
-					</label>
-
-					<div className="relative">
-						{activityLogImageUploading && <LoadingIndicator />}
-						<ReactQuill
-							ref={activityLogQuillRef}
-							theme="snow"
-							value={activityLog}
-							onChange={setActivityLog}
-							modules={activityLogModules}
-							placeholder="활동 일지를 작성하세요."
-						/>
-					</div>
-				</div>
-
-				{/* 봉사 안내 - 에디터 모듈 적용 */}
-				<div className="flex flex-col gap-3">
-					<div className="flex items-center justify-between">
-						<label
-							htmlFor="info"
-							className="text-lg flex items-center gap-2"
+				{/* 에디터 탭 섹션 */}
+				<div className="flex flex-col mt-4 bg-white border rounded-lg shadow-sm">
+					<div className="editor-tabs">
+						<button
+							type="button"
+							className={`editor-tab ${activeTab === "activityLog" ? "active" : ""}`}
+							onClick={() => setActiveTab("activityLog")}
 						>
-							<Info size={18} className="text-blue-500" />
+							<span className="editor-tab-icon">📝</span>
+							활동 일지
+						</button>
+						<button
+							type="button"
+							className={`editor-tab ${activeTab === "info" ? "active" : ""}`}
+							onClick={() => setActiveTab("info")}
+						>
+							<span className="editor-tab-icon">
+								<Info size={16} className="text-blue-500" />
+							</span>
 							봉사 안내
-						</label>
-						<div className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								id="use-info-template"
-								checked={useInfoTemplate}
-								onChange={(e) =>
-									handleInfoTemplateToggle(e.target.checked)
-								}
-								disabled={
-									isInfoTemplateLoading ||
-									infoTemplateNotFound
-								}
-								className="rounded border-gray-300"
-							/>
-							<label
-								htmlFor="use-info-template"
-								className="text-sm"
-							>
-								{isInfoTemplateLoading
-									? "불러오는 중..."
-									: "기존 템플릿 사용"}
-							</label>
-							{infoTemplateNotFound && (
-								<button
-									type="button"
-									onClick={() =>
-										setShowInfoTemplateModal(true)
-									}
-									className="text-sm text-blue-500 hover:underline"
-								>
-									기본 템플릿 생성
-								</button>
+							{useInfoTemplate && (
+								<span className="ml-1 text-xs text-blue-500">
+									<br />
+									(템플릿)
+								</span>
 							)}
-						</div>
-					</div>
-					<div className="relative">
-						{infoImageUploading && <LoadingIndicator />}
-						<ReactQuill
-							ref={infoQuillRef}
-							theme="snow"
-							value={info}
-							onChange={setInfo}
-							modules={infoModules}
-							placeholder="봉사 안내를 작성하세요."
-						/>
-					</div>
-				</div>
-
-				{/* 주의 사항 - 에디터 모듈 적용 */}
-				<div className="flex flex-col gap-3">
-					<div className="flex items-center justify-between">
-						<label
-							htmlFor="precaution"
-							className="text-lg flex items-center gap-2"
+						</button>
+						<button
+							type="button"
+							className={`editor-tab ${activeTab === "precaution" ? "active" : ""}`}
+							onClick={() => setActiveTab("precaution")}
 						>
-							<AlertTriangle size={18} className="text-red-500" />
+							<span className="editor-tab-icon">
+								<AlertTriangle
+									size={16}
+									className="text-red-500"
+								/>
+							</span>
 							주의 사항
-						</label>
-						<div className="flex items-center gap-2">
-							<input
-								type="checkbox"
-								id="use-precaution-template"
-								checked={usePrecautionTemplate}
-								onChange={(e) =>
-									handlePrecautionTemplateToggle(
-										e.target.checked,
-									)
-								}
-								disabled={
-									isPrecautionTemplateLoading ||
-									precautionTemplateNotFound
-								}
-								className="rounded border-gray-300"
-							/>
-							<label
-								htmlFor="use-precaution-template"
-								className="text-sm"
-							>
-								{isPrecautionTemplateLoading
-									? "불러오는 중..."
-									: "기존 템플릿 사용"}
-							</label>
-							{precautionTemplateNotFound && (
-								<button
-									type="button"
-									onClick={() =>
-										setShowPrecautionTemplateModal(true)
-									}
-									className="text-sm text-blue-500 hover:underline"
-								>
-									기본 템플릿 생성
-								</button>
+							{usePrecautionTemplate && (
+								<span className="ml-1 text-xs text-red-500">
+									<br />
+									(템플릿)
+								</span>
 							)}
-						</div>
+						</button>
 					</div>
-					<div className="relative">
-						{precautionImageUploading && <LoadingIndicator />}
-						<ReactQuill
-							ref={precautionQuillRef}
-							theme="snow"
-							value={precaution}
-							onChange={setPrecaution}
-							modules={precautionModules}
-							placeholder="주의 사항을 작성하세요."
-						/>
+
+					<div className="p-4">
+						{/* 활동 일지 에디터 */}
+						{activeTab === "activityLog" && (
+							<div className="relative">
+								<div className="flex items-center justify-between mb-3">
+									<h3 className="font-medium text-lg">
+										활동 일지 작성
+									</h3>
+								</div>
+								{activityLogImageUploading && (
+									<LoadingIndicator />
+								)}
+								<div className="tall-editor">
+									<ReactQuill
+										ref={activityLogQuillRef}
+										theme="snow"
+										value={activityLog}
+										onChange={setActivityLog}
+										modules={activityLogModules}
+										placeholder="활동 일지를 작성하세요."
+									/>
+								</div>
+							</div>
+						)}
+
+						{/* 봉사 안내 에디터 */}
+						{activeTab === "info" && (
+							<div className="relative">
+								<div className="flex items-center justify-between mb-3">
+									<h3 className="font-medium text-lg flex items-center gap-2">
+										<Info
+											size={18}
+											className="text-blue-500"
+										/>
+										봉사 안내
+									</h3>
+									<div className="flex items-center gap-2">
+										<input
+											type="checkbox"
+											id="use-info-template"
+											checked={useInfoTemplate}
+											onChange={(e) =>
+												handleInfoTemplateToggle(
+													e.target.checked,
+												)
+											}
+											disabled={
+												isInfoTemplateLoading ||
+												infoTemplateNotFound
+											}
+											className="rounded border-gray-300"
+										/>
+										<label
+											htmlFor="use-info-template"
+											className="text-sm"
+										>
+											{isInfoTemplateLoading
+												? "불러오는 중..."
+												: "기존 템플릿 사용"}
+										</label>
+										{infoTemplateNotFound && (
+											<button
+												type="button"
+												onClick={() =>
+													setShowInfoTemplateModal(
+														true,
+													)
+												}
+												className="text-sm text-blue-500 hover:underline"
+											>
+												기본 템플릿 생성
+											</button>
+										)}
+									</div>
+								</div>
+								{infoImageUploading && <LoadingIndicator />}
+								<div className="tall-editor">
+									<ReactQuill
+										ref={infoQuillRef}
+										theme="snow"
+										value={info}
+										onChange={setInfo}
+										modules={infoModules}
+										placeholder="봉사 안내를 작성하세요."
+									/>
+								</div>
+							</div>
+						)}
+
+						{/* 주의 사항 에디터 */}
+						{activeTab === "precaution" && (
+							<div className="relative">
+								<div className="flex items-center justify-between mb-3">
+									<h3 className="font-medium text-lg flex items-center gap-2">
+										<AlertTriangle
+											size={18}
+											className="text-red-500"
+										/>
+										주의 사항
+									</h3>
+									<div className="flex items-center gap-2">
+										<input
+											type="checkbox"
+											id="use-precaution-template"
+											checked={usePrecautionTemplate}
+											onChange={(e) =>
+												handlePrecautionTemplateToggle(
+													e.target.checked,
+												)
+											}
+											disabled={
+												isPrecautionTemplateLoading ||
+												precautionTemplateNotFound
+											}
+											className="rounded border-gray-300"
+										/>
+										<label
+											htmlFor="use-precaution-template"
+											className="text-sm"
+										>
+											{isPrecautionTemplateLoading
+												? "불러오는 중..."
+												: "기존 템플릿 사용"}
+										</label>
+										{precautionTemplateNotFound && (
+											<button
+												type="button"
+												onClick={() =>
+													setShowPrecautionTemplateModal(
+														true,
+													)
+												}
+												className="text-sm text-blue-500 hover:underline"
+											>
+												기본 템플릿 생성
+											</button>
+										)}
+									</div>
+								</div>
+								{precautionImageUploading && (
+									<LoadingIndicator />
+								)}
+								<div className="tall-editor">
+									<ReactQuill
+										ref={precautionQuillRef}
+										theme="snow"
+										value={precaution}
+										onChange={setPrecaution}
+										modules={precautionModules}
+										placeholder="주의 사항을 작성하세요."
+									/>
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
@@ -1191,14 +1298,16 @@ export default function AddVolunteerSchedulePage() {
 								{infoTemplateImageUploading && (
 									<LoadingIndicator />
 								)}
-								<ReactQuill
-									ref={infoTemplateQuillRef}
-									theme="snow"
-									value={newInfoTemplate}
-									onChange={setNewInfoTemplate}
-									modules={infoTemplateModules}
-									className="h-64"
-								/>
+								<div className="tall-editor">
+									<ReactQuill
+										ref={infoTemplateQuillRef}
+										theme="snow"
+										value={newInfoTemplate}
+										onChange={setNewInfoTemplate}
+										modules={infoTemplateModules}
+										className="h-64"
+									/>
+								</div>
 							</div>
 						</div>
 						<div className="flex justify-end gap-3 mt-6">
@@ -1251,14 +1360,16 @@ export default function AddVolunteerSchedulePage() {
 								{precautionTemplateImageUploading && (
 									<LoadingIndicator />
 								)}
-								<ReactQuill
-									ref={precautionTemplateQuillRef}
-									theme="snow"
-									value={newPrecautionTemplate}
-									onChange={setNewPrecautionTemplate}
-									modules={precautionTemplateModules}
-									className="h-64"
-								/>
+								<div className="tall-editor">
+									<ReactQuill
+										ref={precautionTemplateQuillRef}
+										theme="snow"
+										value={newPrecautionTemplate}
+										onChange={setNewPrecautionTemplate}
+										modules={precautionTemplateModules}
+										className="h-64"
+									/>
+								</div>
 							</div>
 						</div>
 						<div className="flex justify-end gap-3 mt-6">
