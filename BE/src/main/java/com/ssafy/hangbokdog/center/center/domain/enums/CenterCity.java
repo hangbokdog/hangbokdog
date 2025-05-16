@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.center.center.domain.enums;
 
 public enum CenterCity {
 	SEOUL,
+	PAJU,
 
 	BUSAN,
 	DAEGU,
