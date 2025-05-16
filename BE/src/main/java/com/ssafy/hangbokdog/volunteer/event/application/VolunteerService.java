@@ -336,18 +336,29 @@ public class VolunteerService {
                 .collect(Collectors.groupingBy(VolunteerSlotResponseWithoutAppliedCount::volunteerDate));
 
         List<DailyApplicationInfo> dailyApplications = new ArrayList<>();
-        for (var slots : slotsGroupByDate.entrySet()) {
-            LocalDate date = slots.getKey();
-            var slotInfo = slots.getValue();
-            var firstSlot = slotInfo.get(0);
-            var secondSlot = slotInfo.get(1);
+        slotsGroupByDate.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    LocalDate date = entry.getKey();
+                    var slotInfo = entry.getValue();
+                    var firstSlot = slotInfo.get(0);
+                    var secondSlot = slotInfo.get(1);
 
-            if (firstSlot.slotType().equals(SlotType.MORNING)) {
-                dailyApplications.add(generateDailyApplicationInfo(date, firstSlot, secondSlot, slotsToAppliedCount));
-                continue;
-            }
-            dailyApplications.add(generateDailyApplicationInfo(date, secondSlot, firstSlot, slotsToAppliedCount));
-        }
+                    if (firstSlot.slotType().equals(SlotType.MORNING)) {
+                        dailyApplications.add(generateDailyApplicationInfo(date,
+                                firstSlot,
+                                secondSlot,
+                                slotsToAppliedCount
+                        ));
+                    } else {
+                        dailyApplications.add(generateDailyApplicationInfo(
+                                date,
+                                secondSlot,
+                                firstSlot,
+                                slotsToAppliedCount
+                        ));
+                    }
+                });
 
         return dailyApplications;
     }
