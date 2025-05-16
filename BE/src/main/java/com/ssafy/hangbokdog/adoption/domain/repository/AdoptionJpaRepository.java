@@ -1,7 +1,9 @@
 package com.ssafy.hangbokdog.adoption.domain.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ssafy.hangbokdog.adoption.domain.Adoption;
 
@@ -29,4 +31,8 @@ public interface AdoptionJpaRepository extends JpaRepository<Adoption, Long>, Ad
 		WHERE a.status = 'ACCEPTED' AND d.centerId = :centerId
 		""")
 	Integer countAdoptedDogs(Long centerId);
+
+	@Modifying
+	@Query("DELETE FROM Adoption a WHERE a.dogId = :dogId AND a.status != 'ACCEPTED'")
+	void deleteByDogId(@Param("dogId") Long dogId);
 }
