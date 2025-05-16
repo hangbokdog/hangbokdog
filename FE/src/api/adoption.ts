@@ -22,6 +22,7 @@ export const fetchAdoptionApplicationsAPI = async (
 };
 
 export interface AdoptionApplicationByDogResponse {
+	adoptionId: number;
 	memberId: number;
 	name: string;
 	profileImage: string;

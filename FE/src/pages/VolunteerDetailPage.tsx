@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
-import ActivityLog from "@/components/volunteer/ActivityLog";
+import PostContentItem from "@/components/common/PostContentItem";
 import TabsHeader from "@/components/volunteer/TabsHeader";
 import ImageCarousel from "@/components/volunteer/ImageCarousel";
 import VolunteerInfoHeader from "@/components/volunteer/VolunteerInfoHeader";
@@ -180,7 +180,9 @@ export default function VolunteerDetailPage() {
 						<TabsHeader value="caution" title="주의 사항" />
 					</TabsList>
 					<TabsContent value="activity" className="mt-2.5">
-						<ActivityLog content={volunteerDetail.activityLog} />
+						<PostContentItem
+							content={volunteerDetail.activityLog}
+						/>
 					</TabsContent>
 					<TabsContent value="apply" className="mt-2.5">
 						<ScheduleTable scheduleData={scheduleData} />

@@ -6,6 +6,7 @@ import {
 } from "@/api/announcement";
 import useCenterStore from "@/lib/store/centerStore";
 import { ChevronRight, Loader2 } from "lucide-react";
+import AnnouncementItem from "@/components/announcement/AnnouncementItem";
 
 export default function PostPanel() {
 	const [announcements, setAnnouncements] = useState<AnnouncementResponse[]>(
@@ -46,11 +47,6 @@ export default function PostPanel() {
 		navigate("/announcements");
 	};
 
-	const formatDate = (dateString: string) => {
-		const date = new Date(dateString);
-		return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
-	};
-
 	return (
 		<div className="flex flex-col mx-2.5 p-2.5 rounded-lg bg-white shadow-custom-sm">
 			<div className="flex justify-between items-center mb-2 border-b pb-2">
@@ -78,27 +74,13 @@ export default function PostPanel() {
 			) : (
 				<div className="flex flex-col">
 					{announcements.map((announcement) => (
-						<button
+						<AnnouncementItem
 							key={announcement.id}
-							type="button"
-							onClick={() =>
-								handleAnnouncementClick(announcement.id)
-							}
-							className="flex justify-between items-center w-full text-left py-2 px-1 border-b border-gray-100 cursor-pointer hover:bg-gray-50"
-						>
-							<div className="flex flex-col">
-								<span className="text-sm font-medium text-gray-800">
-									{announcement.title}
-								</span>
-								<div className="flex items-center mt-1 text-xs text-gray-500">
-									<span>{announcement.authorName}</span>
-									<span className="mx-1">•</span>
-									<span>
-										{formatDate(announcement.createdAt)}
-									</span>
-								</div>
-							</div>
-						</button>
+							announcement={announcement}
+							onClick={handleAnnouncementClick}
+							compact={true}
+							className="border-b border-gray-100"
+						/>
 					))}
 				</div>
 			)}
