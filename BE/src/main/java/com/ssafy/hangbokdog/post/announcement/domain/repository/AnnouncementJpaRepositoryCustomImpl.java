@@ -58,6 +58,7 @@ public class AnnouncementJpaRepositoryCustomImpl implements AnnouncementJpaRepos
 				announcement.createdAt
 			))
 			.from(announcement)
+			.leftJoin(member).on(member.id.eq(announcement.authorId))
 			.where(announcement.id.eq(announcementId))
 			.fetchOne();
 	}
