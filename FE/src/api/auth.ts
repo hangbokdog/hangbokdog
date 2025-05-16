@@ -48,11 +48,13 @@ export const signUpAPI = async ({
 	nickname,
 	phoneNumber,
 	birthDate,
+	emergencyNotification = false,
 }: {
 	name: string;
 	nickname: string;
 	phoneNumber: string;
 	birthDate: string;
+	emergencyNotification: boolean;
 }) => {
 	const tempToken = useAuthStore.getState().user.tempToken;
 	const response = await axios.post(
@@ -62,6 +64,7 @@ export const signUpAPI = async ({
 			nickname,
 			phoneNumber,
 			birth: birthDate,
+			emergencyNotification,
 		},
 		{
 			withCredentials: true,
