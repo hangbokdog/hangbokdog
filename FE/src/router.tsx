@@ -39,6 +39,7 @@ import AnnouncementCreatePage from "./pages/manager/AnnouncementCreatePage";
 import BazaarPage from "./pages/BazaarPage";
 import BazaarDetailPage from "./pages/BazaarDetailPage";
 import BazaarNewPage from "./pages/BazaarNewPage";
+import AnnouncementDetailPage from "./pages/AnnouncementDetailPage";
 
 const router = createBrowserRouter([
 	{
@@ -108,6 +109,11 @@ const router = createBrowserRouter([
 							{
 								path: "create",
 								element: <AnnouncementCreatePage />,
+								handle: { showHeader: false },
+							},
+							{
+								path: ":id",
+								element: <AnnouncementDetailPage />,
 								handle: { showHeader: false },
 							},
 						],
