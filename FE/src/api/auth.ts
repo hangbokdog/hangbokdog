@@ -3,6 +3,7 @@ import type {
 	NicknameSearchResponse,
 	OauthLoginResponse,
 	UserInfoResponse,
+	UpdateUserInfoRequest,
 } from "@/types/auth";
 import localAxios from "./http-commons";
 import axios from "axios";
@@ -96,5 +97,44 @@ export const getNicknameSearchAPI = async ({
 			},
 		},
 	);
+	return response.data;
+};
+
+/**
+ * 내 정보 수정 API
+ * - nickname: 새 닉네임
+ * - profileImageFile: 선택적 프로필 이미지 파일
+ */
+export const updateUserInfoAPI = async ({
+	nickName,
+	profileImageFile,
+}: UpdateUserInfoRequest): Promise<UserInfoResponse> => {
+	const formData = new FormData();
+
+	// 서버가 기대하는 구조에 맞게 JSON 객체를 문자열로 추가
+	formData.append(
+		"request",
+		new Blob([JSON.stringify({ nickName })], { type: "application/json" }),
+	);
+
+	if (profileImageFile instanceof File) {
+		formData.append("files", profileImageFile);
+	}
+
+	// 디버깅 출력
+	for (const [key, value] of formData.entries()) {
+		console.log("🧾 FormData:", key, value);
+	}
+
+	const response = await localAxios.patch<UserInfoResponse>(
+		"members/my",
+		formData,
+		{
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		},
+	);
+
 	return response.data;
 };

@@ -10,6 +10,7 @@ import { MdLogout } from "react-icons/md";
 import { BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import AdoptionPanel from "@/components/my/AdoptionPanel";
 
 function handleEdit() {
 	//프로필 수정 로직
@@ -47,14 +48,7 @@ export default function My() {
 
 	return (
 		<div className="flex flex-col mt-2.5">
-			<Profile
-				name="멜롱"
-				email="min@naver.com"
-				onEdit={() => {
-					handleEdit();
-					console.log("프로필 수정 클릭됨");
-				}}
-			/>
+			<Profile onEdit={handleEdit} />
 
 			{selectedCenter && (
 				<div className="mx-2.5 mb-3">
@@ -91,6 +85,7 @@ export default function My() {
 				<Order />
 			</div>
 			<div>
+				<AdoptionPanel />
 				<ProtectDogPanel />
 			</div>
 			<button

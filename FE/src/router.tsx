@@ -40,6 +40,7 @@ import BazaarPage from "./pages/BazaarPage";
 import BazaarDetailPage from "./pages/BazaarDetailPage";
 import BazaarNewPage from "./pages/BazaarNewPage";
 import AnnouncementDetailPage from "./pages/AnnouncementDetailPage";
+import ProfileEdit from "./components/my/ProfileEdit";
 
 const router = createBrowserRouter([
 	{
@@ -64,6 +65,11 @@ const router = createBrowserRouter([
 					{
 						path: "my",
 						element: <My />,
+					},
+					{
+						path: "my/edit",
+						element: <ProfileEdit />,
+						handle: { showHeader: false },
 					},
 					{
 						path: "donations",
@@ -231,7 +237,11 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "register",
-								element: <EmergencyRegisterPage />,
+								element: (
+									<CenterMemberProtectedRoute>
+										<EmergencyRegisterPage />
+									</CenterMemberProtectedRoute>
+								),
 							},
 						],
 					},
