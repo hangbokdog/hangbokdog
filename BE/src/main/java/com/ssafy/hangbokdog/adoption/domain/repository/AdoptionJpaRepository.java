@@ -33,6 +33,6 @@ public interface AdoptionJpaRepository extends JpaRepository<Adoption, Long>, Ad
 	Integer countAdoptedDogs(Long centerId);
 
 	@Modifying
-	@Query("DELETE FROM Adoption a WHERE a.dogId = :dogId")
+	@Query("DELETE FROM Adoption a WHERE a.dogId = :dogId AND a.status != 'ACCEPTED'")
 	void deleteByDogId(@Param("dogId") Long dogId);
 }
