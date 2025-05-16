@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.vaccination.presentation;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -84,22 +86,20 @@ public class VaccinationController {
 	}
 
 	@GetMapping("/{vaccinationId}/done")
-	public ResponseEntity<PageInfo<VaccinationDoneResponse>> getVaccinatedDogs(
+	public ResponseEntity<List<VaccinationDoneResponse>> getVaccinatedDogs(
 		@AuthMember Member member,
-		@RequestParam(required = false) String pageToken,
 		@PathVariable Long vaccinationId,
 		@RequestParam(required = false) String keyword
 	) {
-		return ResponseEntity.ok().body(vaccinationService.getVaccinatedDogs(vaccinationId, keyword, pageToken));
+		return ResponseEntity.ok().body(vaccinationService.getVaccinatedDogs(vaccinationId, keyword));
 	}
 
 	@GetMapping("/{vaccinationId}/yet")
-	public ResponseEntity<PageInfo<VaccinationDoneResponse>> getNotYetVaccinatedDogs(
+	public ResponseEntity<List<VaccinationDoneResponse>> getNotYetVaccinatedDogs(
 		@AuthMember Member member,
-		@RequestParam(required = false) String pageToken,
 		@PathVariable Long vaccinationId,
 		@RequestParam(required = false) String keyword
 	) {
-		return ResponseEntity.ok().body(vaccinationService.getNotVaccinatedDogs(vaccinationId, keyword, pageToken));
+		return ResponseEntity.ok().body(vaccinationService.getNotVaccinatedDogs(vaccinationId, keyword));
 	}
 }

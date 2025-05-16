@@ -1,13 +1,17 @@
 package com.ssafy.hangbokdog.vaccination.application;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hangbokdog.center.addressbook.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
@@ -31,16 +35,22 @@ import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationDoneResponse;
 import com.ssafy.hangbokdog.vaccination.dto.response.VaccinationSummaryResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class VaccinationService {
+
+	private static final String VACCINATION_REDIS_KEY_PREFIX = "vaccination:";
 
 	private final VaccinationRepository vaccinationRepository;
 	private final CenterMemberRepository centerMemberRepository;
 	private final CenterRepository centerRepository;
 	private final DogRepository dogRepository;
 	private final AddressBookRepository addressBookRepository;
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final ObjectMapper objectMapper;
 
 	public VaccinationCreateResponse createVaccination(Long centerId, Long memberId, VaccinationCreateRequest request) {
 
@@ -125,10 +135,14 @@ public class VaccinationService {
 
 		Vaccination vaccination = getVaccination(vaccinationId);
 
-		return new SavedDogCountResponse(vaccinationRepository.bulkInsertVaccinatedDog(
-			request.dogIds(),
-			vaccinationId
-		));
+		int count = vaccinationRepository.bulkInsertVaccinatedDog(request.dogIds(), vaccinationId);
+
+		String doneKey = VACCINATION_REDIS_KEY_PREFIX + vaccinationId + ":done:all";
+		String yetKey = VACCINATION_REDIS_KEY_PREFIX + vaccinationId + ":yet:all";
+		redisTemplate.delete(doneKey);
+		redisTemplate.delete(yetKey);
+
+		return new SavedDogCountResponse(count);
 	}
 
 	public PageInfo<VaccinationSummaryResponse> getVaccinationSummaries(Long centerId, String pageToken) {
@@ -176,20 +190,79 @@ public class VaccinationService {
 		return new PageInfo<>(vaccinationSummaryInfo.pageToken(), responses, vaccinationSummaryInfo.hasNext());
 	}
 
-	public PageInfo<VaccinationDoneResponse> getVaccinatedDogs(Long vaccinationId, String keyword, String pageToken) {
-		return vaccinationRepository.getVaccinationDogsByVaccinationId(vaccinationId, keyword, pageToken);
+	public List<VaccinationDoneResponse> getVaccinatedDogs(Long vaccinationId, String keyword) {
+		String key = VACCINATION_REDIS_KEY_PREFIX + vaccinationId + ":done:all";
+
+		List<VaccinationDoneResponse> cached = null;
+
+		try {
+			String json = (String) redisTemplate.opsForValue().get(key);
+			if (json != null) {
+				cached = objectMapper.readValue(json, new TypeReference<>() {});
+			}
+		} catch (Exception e) {
+			log.warn("Redis 캐시 읽기 실패 - done: {}", e.getMessage(), e);
+		}
+
+		if (cached == null) {
+			cached = vaccinationRepository.getVaccinationDogsByVaccinationId(vaccinationId, null);
+			try {
+				String json = objectMapper.writeValueAsString(cached);
+				redisTemplate.opsForValue().set(key, json, Duration.ofHours(24));
+			} catch (Exception e) {
+				log.warn("Redis 캐시 쓰기 실패 - done: {}", e.getMessage(), e);
+			}
+		}
+
+		if (keyword == null || keyword.isBlank()) {
+			return cached;
+		}
+
+		return cached.stream()
+			.filter(dog -> dog.name() != null && dog.name().toLowerCase().contains(keyword.toLowerCase()))
+			.toList();
 	}
 
-	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(
-		Long vaccinationId,
-		String keyword,
-		String pageToken
-	) {
-		Vaccination vaccination = getVaccination(vaccinationId);
-		List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vaccinationId);
-		List<Long> locationIds = vaccination.getLocationIds();
-		return dogRepository.getNotVaccinatedDogs(dogIds, keyword, locationIds, pageToken);
+
+	public List<VaccinationDoneResponse> getNotVaccinatedDogs(Long vaccinationId, String keyword) {
+		String key = VACCINATION_REDIS_KEY_PREFIX + vaccinationId + ":yet:all";
+
+		List<VaccinationDoneResponse> cached = null;
+
+		try {
+			String json = (String) redisTemplate.opsForValue().get(key);
+			if (json != null) {
+				cached = objectMapper.readValue(json, new TypeReference<>() {});
+			}
+		} catch (Exception e) {
+			log.warn("Redis 캐시 읽기 실패 - yet: {}", e.getMessage(), e);
+		}
+
+		if (cached == null) {
+			Vaccination vaccination = getVaccination(vaccinationId);
+			List<Long> dogIds = vaccinationRepository.getVaccinatedDogIdsByVaccinationId(vaccinationId);
+			List<Long> locationIds = vaccination.getLocationIds();
+
+			cached = dogRepository.getNotVaccinatedDogs(dogIds, null, locationIds);
+
+			try {
+				String json = objectMapper.writeValueAsString(cached);
+				redisTemplate.opsForValue().set(key, json, Duration.ofHours(24));
+			} catch (Exception e) {
+				log.warn("Redis 캐시 쓰기 실패 - yet: {}", e.getMessage(), e);
+			}
+		}
+
+		if (keyword == null || keyword.isBlank()) {
+			return cached;
+		}
+
+		return cached.stream()
+			.filter(dog -> dog.name() != null && dog.name().toLowerCase().contains(keyword.toLowerCase()))
+			.toList();
 	}
+
+
 
 	private Vaccination getVaccination(Long vaccinationId) {
 		return vaccinationRepository.getVaccinationById(vaccinationId)
