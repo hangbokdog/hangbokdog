@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 
@@ -13,4 +14,11 @@ public interface CenterMemberJpaRepository extends JpaRepository<CenterMember, L
     Optional<CenterMember> findByMemberIdAndCenterId(Long memberId, Long centerId);
 
 	List<CenterMember> findByMemberId(Long memberId);
+
+	@Query("""
+		SELECT cm
+		FROM CenterMember cm
+		WHERE cm.memberId = :memberId AND cm.main = true
+		""")
+	CenterMember getMainCenterByMemberId(Long memberId);
 }
