@@ -37,8 +37,8 @@ public class AdoptionRepository {
 		return adoptionJpaRepository.getAdoptionApplicationsByCenterId(centerId);
 	}
 
-	public boolean checkExist(Long memberId, Long dogId) {
-		return adoptionJpaRepository.existsByMemberIdAndDogId(memberId, dogId);
+	public Boolean checkExist(Long memberId, Long dogId) {
+		return adoptionJpaRepository.checkExist(memberId, dogId);
 	}
 
 	public AdoptedDogDetailInfo getAdoptedDogDetail(Long dogId) {

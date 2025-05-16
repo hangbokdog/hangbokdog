@@ -29,4 +29,6 @@ public interface AdoptionJpaRepositoryCustom {
 		String pageToken,
 		int pageSize
 	);
+
+	Boolean checkExist(Long memberId, Long dogId);
 }

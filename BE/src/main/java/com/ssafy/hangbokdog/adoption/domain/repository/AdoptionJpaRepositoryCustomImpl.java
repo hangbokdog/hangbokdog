@@ -149,6 +149,21 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 			.fetch();
 	}
 
+	@Override
+	public Boolean checkExist(Long memberId, Long dogId) {
+		return queryFactory
+			.selectOne()
+			.from(adoption)
+			.where(
+				adoption.memberId.eq(memberId),
+				adoption.dogId.eq(dogId),
+				adoption.status.ne(AdoptionStatus.REJECTED)
+			)
+			.limit(1)
+			.fetchFirst() != null;
+	}
+
+
 	private BooleanExpression containsName(String name) {
 		return name != null ? dog.name.contains(name) : null;
 	}

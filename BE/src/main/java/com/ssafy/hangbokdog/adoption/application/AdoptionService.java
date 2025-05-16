@@ -30,7 +30,6 @@ import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.FavoriteDogRepository;
-import com.ssafy.hangbokdog.dog.dog.dto.DogSummaryInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.FavoriteDogCount;
 import com.ssafy.hangbokdog.member.domain.Member;
 

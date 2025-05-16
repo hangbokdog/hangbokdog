@@ -8,14 +8,6 @@ import org.springframework.data.repository.query.Param;
 import com.ssafy.hangbokdog.adoption.domain.Adoption;
 
 public interface AdoptionJpaRepository extends JpaRepository<Adoption, Long>, AdoptionJpaRepositoryCustom {
-
-	@Query("""
-		SELECT COUNT(a.id) > 0
-		FROM Adoption a
-		WHERE a.memberId = :memberId AND a.dogId = :dogId AND a.status = 'APPLIED'
-		""")
-	boolean existsByMemberIdAndDogId(Long memberId, Long dogId);
-
 	@Query("""
 		SELECT COUNT(DISTINCT a.dogId)
 		FROM Adoption a
