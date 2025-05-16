@@ -53,7 +53,7 @@ public class VolunteerApplicationController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/{slotId}/applications")
+    @GetMapping("/{slotId}/pendingApplications")
     public ResponseEntity<List<ApplicationResponse>> findAllBySlots(
             @PathVariable Long slotId,
             @AuthMember Member member,
