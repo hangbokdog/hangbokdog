@@ -23,7 +23,6 @@ export default function ClosedVolunteerCard({
 }: ClosedVolunteerCardProps) {
 	return (
 		<div className="relative bg-white rounded-[8px] shadow-custom-sm flex overflow-hidden h-24 opacity-60 grayscale cursor-not-allowed">
-			{/* 마감 뱃지 */}
 			<span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full z-10 shadow">
 				마감
 			</span>
@@ -39,7 +38,6 @@ export default function ClosedVolunteerCard({
 				description={content}
 			/>
 			<OngoingVolunteerImage src={imageUrl} alt="dog1" />
-			{/* 클릭 방지용 오버레이 */}
 			<div className="absolute inset-0 cursor-not-allowed z-20" />
 		</div>
 	);

@@ -30,7 +30,7 @@ export default function Home() {
 	});
 
 	return (
-		<div className="flex flex-col gap-3 w-full mt-2.5">
+		<div className="flex flex-col gap-3 w-full my-2.5">
 			{isManager && <ManagerDashboardPanel />}
 			{!isCenterMember && <CenterJoinPrompt />}
 			<EmergencyPanel />

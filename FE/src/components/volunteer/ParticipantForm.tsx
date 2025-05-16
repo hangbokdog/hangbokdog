@@ -69,12 +69,7 @@ export default function ParticipantForm({
 	return (
 		<div className="flex flex-col space-y-3">
 			<div className="flex items-center gap-2">
-				<label
-					htmlFor={`schedule-${scheduleIndex}-nickname-${participantIndex}`}
-					className="font-bold w-20"
-				>
-					닉네임
-				</label>
+				<span className="font-bold">닉네임</span>
 				<div className="flex-1 flex gap-2">
 					<input
 						id={`schedule-${scheduleIndex}-nickname-${participantIndex}`}
@@ -82,7 +77,7 @@ export default function ParticipantForm({
 						value={inputValue}
 						onChange={handleInputChange}
 						placeholder="닉네임 검색"
-						className={`flex-1 px-3 py-2 border rounded-md text-sm ${
+						className={`w-full px-3 py-2 border rounded-md text-sm ${
 							isSearched ? "bg-superLightGray" : "bg-white"
 						}`}
 						maxLength={10}
