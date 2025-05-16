@@ -9,6 +9,7 @@ import com.ssafy.hangbokdog.center.center.domain.Center;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
 
+import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import lombok.RequiredArgsConstructor;
 
 
@@ -34,7 +35,7 @@ public class CenterRepository {
 		return centerJpaRepository.findNameById(id);
 	}
 
-	public List<CenterCity> getExistingCities() {
+	public List<ExistingCityResponse> getExistingCities() {
 		return centerJpaRepository.getExistingCities();
 	}
 

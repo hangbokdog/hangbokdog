@@ -12,6 +12,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
 
+import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -33,6 +34,19 @@ public class CenterJpaRepositoryCustomImpl implements CenterJpaRepositoryCustom 
 				.where(hasName(name),
 					hasCity(centerCity))
 				.fetch();
+	}
+
+	@Override
+	public List<ExistingCityResponse> getExistingCities() {
+		return queryFactory
+			.select(Projections.constructor(
+				ExistingCityResponse.class,
+				center.id.count().intValue(),
+				center.centerCity
+			))
+			.from(center)
+			.groupBy(center.centerCity)
+			.fetch();
 	}
 
 	private BooleanExpression hasName(String name) {
