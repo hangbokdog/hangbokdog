@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,5 +98,28 @@ public class CenterController {
 	) {
 		centerService.deleteCenterMember(member.getId(), centerId);
 		return ResponseEntity.ok().build();
+	}
+
+	@PatchMapping("/{centerId}/main")
+	public ResponseEntity<Void> updateMain(
+		@AuthMember Member member,
+		@PathVariable Long centerId
+	) {
+		centerService.registerMainCenter(member.getId(), centerId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@PatchMapping("/{centerId}/main/cancel")
+	public ResponseEntity<Void> cancelMain(
+		@AuthMember Member member,
+		@PathVariable Long centerId
+	) {
+		centerService.cancelMainCenter(member.getId(), centerId);
+		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/main")
+	public ResponseEntity<Long> getMain(@AuthMember Member member) {
+		return ResponseEntity.ok().body(centerService.getMainCenter(member.getId()));
 	}
 }

@@ -250,6 +250,10 @@ public class CenterService {
 		centerMember.cancelMain();
 	}
 
+	public Long getMainCenter(Long memberId) {
+		return centerMemberRepository.getMainCenter(memberId).getCenterId();
+	}
+
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
