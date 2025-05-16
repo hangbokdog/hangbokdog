@@ -91,6 +91,7 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 		return queryFactory
 			.select(Projections.constructor(
 				AdoptionApplicationByDogResponse.class,
+				adoption.id,
 				member.id,
 				member.name,
 				member.profileImage,

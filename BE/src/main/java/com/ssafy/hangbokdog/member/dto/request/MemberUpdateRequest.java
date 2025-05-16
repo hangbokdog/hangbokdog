@@ -1,6 +1,6 @@
 package com.ssafy.hangbokdog.member.dto.request;
 
 public record MemberUpdateRequest(
-	String nickname
+	String nickName
 ) {
 }
