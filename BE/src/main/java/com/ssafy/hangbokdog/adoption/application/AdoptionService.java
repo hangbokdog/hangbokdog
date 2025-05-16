@@ -51,7 +51,7 @@ public class AdoptionService {
 
 		CenterMember centerMember = getCenterMember(memberId, dog.getCenterId());
 
-		if (!adoptionRepository.checkExist(memberId, dogId)) {
+		if (adoptionRepository.checkExist(memberId, dogId)) {
 			throw new BadRequestException(ErrorCode.ADOPTION_ALREADY_EXISTS);
 		}
 
