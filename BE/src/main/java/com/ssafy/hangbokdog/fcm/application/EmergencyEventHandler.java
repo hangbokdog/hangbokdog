@@ -25,7 +25,6 @@ public class EmergencyEventHandler {
 
 		log.info("emergency event: " + event);
 
-		//TODO: 나중에 등급별로 보내는 기능 추가
 		List<String> targetTokens = memberRepository.findFcmTokensByCenterId(centerId);
 
 		for (String targetToken : targetTokens) {

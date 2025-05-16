@@ -44,12 +44,15 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
     @Override
     public List<String> findFcmTokensByCenterId(Long centerId) {
         return queryFactory
-                .select(member.fcmToken)
-                .from(member)
-                .leftJoin(centerMember)
-                .on(member.id.eq(centerMember.memberId))
-                .where(centerMember.centerId.eq(centerId))
-                .fetch();
+            .select(member.fcmToken)
+            .from(member)
+            .leftJoin(centerMember).on(member.id.eq(centerMember.memberId))
+            .where(
+                centerMember.centerId.eq(centerId)
+                    .and(member.fcmToken.isNotNull())
+                    .and(member.fcmToken.ne(""))
+            )
+            .fetch();
     }
 
     @Override
