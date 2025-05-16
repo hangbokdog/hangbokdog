@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.auth.application;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -116,7 +117,8 @@ public class LoginService {
                 signUpRequest.name(),
                 signUpRequest.nickname(),
                 signUpRequest.phone(),
-                signUpRequest.birth()
+                signUpRequest.birth(),
+                LocalDate.now().getYear() - signUpRequest.birth().getYear()
         );
     }
 

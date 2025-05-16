@@ -121,7 +121,8 @@ public class Member {
             String name,
             String nickname,
             String phone,
-            LocalDate birth
+            LocalDate birth,
+            int age
     ) {
         this.name = name;
         this.nickName = nickname;
@@ -129,6 +130,7 @@ public class Member {
         this.phone = phone;
         this.grade = Grade.USER;
         this.status = MemberStatus.ACTIVE;
+        this.age = age;
     }
 
     public boolean isAdult() {

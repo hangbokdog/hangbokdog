@@ -191,6 +191,7 @@ public class VolunteerService {
                 .build();
     }
 
+    //TODO
     public List<VolunteerSlotResponse> findAllSlotsByVolunteerEventId(Member member, Long eventId) {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
