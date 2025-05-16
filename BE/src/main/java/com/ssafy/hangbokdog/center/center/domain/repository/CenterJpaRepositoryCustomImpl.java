@@ -11,8 +11,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
-
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
+
 import lombok.RequiredArgsConstructor;
 
 @Repository
