@@ -93,6 +93,11 @@ public class VolunteerApplicationService {
                     new HashSet<>()
             );
             VolunteerSlot slot = slotIdToSlot.get(applicationRequest.volunteerSlotId());
+
+            if (slot.getVolunteerDate().isBefore(LocalDate.now())) {
+                throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_PROCESSING_FAILED);
+            }
+
             slot.increaseAppliedCount(applicationRequest.participantIds().size());
 
             for (Long participantId : applicationRequest.participantIds()) {
