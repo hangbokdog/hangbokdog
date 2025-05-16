@@ -23,7 +23,7 @@ import com.ssafy.hangbokdog.center.center.dto.response.AppliedCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
-import com.ssafy.hangbokdog.center.center.dto.response.ExistingCenterCityResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.center.donationaccount.domain.DonationAccount;
 import com.ssafy.hangbokdog.center.donationaccount.domain.repository.DonationAccountRepository;
@@ -197,8 +197,8 @@ public class CenterService {
 		return searchResponses;
 	}
 
-	public ExistingCenterCityResponse getExistingCity() {
-		return new ExistingCenterCityResponse(centerRepository.getExistingCities());
+	public List<ExistingCityResponse> getExistingCity() {
+		return centerRepository.getExistingCities();
 	}
 
 	public List<AppliedCenterResponse> getAppliedCenters(Long memberId) {

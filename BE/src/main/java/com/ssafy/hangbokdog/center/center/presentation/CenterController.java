@@ -19,7 +19,7 @@ import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
-import com.ssafy.hangbokdog.center.center.dto.response.ExistingCenterCityResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.center.donationaccount.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.donationaccount.dto.response.DonationAccountBalanceResponse;
@@ -85,8 +85,8 @@ public class CenterController {
 	}
 
 	@GetMapping("/existing-cities")
-	public ResponseEntity<ExistingCenterCityResponse> getExistingCities() {
-		ExistingCenterCityResponse response = centerService.getExistingCity();
+	public ResponseEntity<List<ExistingCityResponse>> getExistingCities() {
+		List<ExistingCityResponse> response = centerService.getExistingCity();
 		return ResponseEntity.ok().body(response);
 	}
 

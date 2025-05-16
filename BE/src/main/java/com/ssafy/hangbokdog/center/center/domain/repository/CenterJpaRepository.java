@@ -1,12 +1,9 @@
 package com.ssafy.hangbokdog.center.center.domain.repository;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.ssafy.hangbokdog.center.center.domain.Center;
-import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 
 public interface CenterJpaRepository extends JpaRepository<Center, Long>, CenterJpaRepositoryCustom {
 
@@ -16,10 +13,4 @@ public interface CenterJpaRepository extends JpaRepository<Center, Long>, Center
 			WHERE c.id = :id
 			""")
 	String findNameById(Long id);
-
-	@Query("""
-			SELECT DISTINCT c.centerCity
-			FROM Center c
-			""")
-	List<CenterCity> getExistingCities();
 }
