@@ -335,7 +335,7 @@ export const getSlotApplicantsAPI = async ({
 	centerId: string;
 }): Promise<SlotApplicant[]> => {
 	const response = await localAxios.get<SlotApplicant[]>(
-		`volunteers/${slotId}/volunteerSlots`,
+		`volunteers/${slotId}/pendingApplications`,
 		{
 			params: {
 				centerId,

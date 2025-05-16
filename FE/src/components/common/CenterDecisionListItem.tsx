@@ -42,7 +42,8 @@ export default function CenterDecisionListItem({
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [isExpanded, setIsExpanded] = useState(false);
-	const isLongName = centerName.length > 7;
+
+	const isLongName = centerName ? centerName.length > 7 : false;
 
 	const { refetch } = useQuery<AddressBook[], Error>({
 		queryKey: ["addressBooks", centerId],

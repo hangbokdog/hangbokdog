@@ -6,11 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface FilteredContentProps {
 	addressId: number | null;
 	addresses: AddressBook[];
+	refetchAddresses: () => void;
 }
 
 export default function FilteredContent({
 	addressId,
 	addresses,
+	refetchAddresses,
 }: FilteredContentProps) {
 	const [activeTab, setActiveTab] = useState("schedule");
 	const selectedAddress = addresses.find(
@@ -32,7 +34,10 @@ export default function FilteredContent({
 					</TabsList>
 
 					<TabsContent value="schedule" className="mt-0">
-						<VolunteerScheduleManager address={selectedAddress} />
+						<VolunteerScheduleManager
+							address={selectedAddress}
+							refetchAddresses={refetchAddresses}
+						/>
 					</TabsContent>
 
 					<TabsContent value="statistics" className="mt-0">

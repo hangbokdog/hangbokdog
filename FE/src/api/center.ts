@@ -12,9 +12,12 @@ export const createCenter = async (data: centerCreateRequest) => {
 	return response.data;
 };
 
-export const fetchCenters = async (name: string) => {
+export const fetchCenters = async (
+	name?: string | null,
+	centerCity?: string | null,
+) => {
 	const response = await localAxios.get("/centers/search", {
-		params: { name },
+		params: { name, centerCity },
 	});
 	return response.data;
 };
@@ -126,5 +129,10 @@ export const rejectCenterJoinRequestAPI = async (
 	const response = await localAxios.patch(
 		`/centerJoinRequests/${centerJoinRequestId}/reject`,
 	);
+	return response.data;
+};
+
+export const fetchExistingCenterCities = async () => {
+	const response = await localAxios.get("/centers/existing-cities");
 	return response.data;
 };

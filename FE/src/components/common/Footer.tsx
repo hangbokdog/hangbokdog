@@ -1,5 +1,4 @@
 import { FaDog, FaHandHoldingHeart, FaUser } from "react-icons/fa";
-import { IoMdHeart } from "react-icons/io";
 import { MdHome, MdLogin } from "react-icons/md";
 import { useLocation } from "react-router-dom";
 import FooterItem from "./FooterItem";
@@ -16,7 +15,12 @@ export default function Footer() {
 	const footerItems = [
 		{ path: "/", icon: MdHome, size: 24, label: "홈" },
 		{ path: "/dogs", icon: FaDog, size: 20, label: "아이들" },
-		{ path: "/donations", icon: IoMdHeart, size: 20, label: "후원" },
+		{
+			path: "/bazaar",
+			icon: FaHandHoldingHeart,
+			size: 20,
+			label: "바자회",
+		},
 		{
 			path: "/volunteer",
 			icon: FaHandHoldingHeart,
