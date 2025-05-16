@@ -148,20 +148,12 @@ public class DogRepository {
 		return dogJpaRepository.countByLocationIdsIn(locationIds);
 	}
 
-	public PageInfo<VaccinationDoneResponse> getNotVaccinatedDogs(
+	public List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
 		String keyword,
-		List<Long> locationIds,
-		String pageToken
+		List<Long> locationIds
 	) {
-		var data = dogJpaRepository.getNotVaccinatedDogs(
-			dogIds,
-			keyword,
-			locationIds,
-			pageToken,
-			DOG_PAGE_SIZE
-		);
-		return PageInfo.of(data, DOG_PAGE_SIZE, VaccinationDoneResponse::dogId);
+		return dogJpaRepository.getNotVaccinatedDogs(dogIds, keyword, locationIds);
 	}
 
 	public void bulkInsertMedicalHistories(

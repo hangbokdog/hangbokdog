@@ -212,9 +212,7 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 	public List<VaccinationDoneResponse> getNotVaccinatedDogs(
 		List<Long> dogIds,
 		String keyword,
-		List<Long> locationIds,
-		String pageToken,
-		int pageSize
+		List<Long> locationIds
 	) {
 		return queryFactory
 			.select(Projections.constructor(
@@ -233,10 +231,8 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				hasName(keyword),
 				dog.status.eq(DogStatus.PROTECTED),
 				dog.isStar.eq(false),
-				dog.id.notIn(dogIds),
-				isInRange(pageToken))
+				dog.id.notIn(dogIds))
 			.orderBy(dog.id.desc())
-			.limit(pageSize + 1)
 			.fetch();
 	}
 

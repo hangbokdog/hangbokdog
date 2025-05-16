@@ -25,9 +25,7 @@ public class VaccinatedDogJpaRepositoryCustomImpl implements VaccinatedDogJpaRep
 	@Override
 	public List<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(
 		Long vaccinationId,
-		String keyword,
-		String pageToken,
-		int pageSize
+		String keyword
 	) {
 		return queryFactory
 			.select(Projections.constructor(
@@ -44,10 +42,8 @@ public class VaccinatedDogJpaRepositoryCustomImpl implements VaccinatedDogJpaRep
 			.from(vaccinatedDog)
 			.leftJoin(dog).on(vaccinatedDog.dogId.eq(dog.id))
 			.where(vaccinatedDog.vaccinationId.eq(vaccinationId),
-				hasName(keyword),
-				isInRange(pageToken))
+				hasName(keyword))
 			.orderBy(vaccinatedDog.id.desc())
-			.limit(pageSize + 1)
 			.fetch();
 	}
 

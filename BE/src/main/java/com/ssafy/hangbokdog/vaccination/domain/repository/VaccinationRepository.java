@@ -53,14 +53,14 @@ public class VaccinationRepository {
 		return PageInfo.of(data, VACCINATION_PAGE_SIZE, VaccinationSummaryInfo::vaccinationId);
 	}
 
-	public PageInfo<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(
+	public List<VaccinationDoneResponse> getVaccinationDogsByVaccinationId(
 		Long vaccinationId,
-		String keyword,
-		String pageToken
+		String keyword
 	) {
-		var data = vaccinatedDogJpaRepository
-			.getVaccinationDogsByVaccinationId(vaccinationId, keyword, pageToken, DOG_PAGE_SIZE);
-		return PageInfo.of(data, DOG_PAGE_SIZE, VaccinationDoneResponse::dogId);
+		return vaccinatedDogJpaRepository.getVaccinationDogsByVaccinationId(
+			vaccinationId,
+			keyword
+		);
 	}
 
 	public List<Long> getVaccinatedDogIdsByVaccinationId(Long vaccinationId) {
