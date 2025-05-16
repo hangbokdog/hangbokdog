@@ -104,11 +104,14 @@ export default function AdoptionApplicationsList({
 	};
 
 	// 입양 신청 수락/거절 처리 함수
-	const handleAdoptionAction = (memberId: number, action: AdoptionStatus) => {
+	const handleAdoptionAction = (
+		adoptionId: number,
+		action: AdoptionStatus,
+	) => {
 		if (!selectedCenter?.centerId) return;
 
 		manageAdoption({
-			adoptionId: memberId,
+			adoptionId: adoptionId,
 			request: action,
 			centerId: Number(selectedCenter.centerId),
 		});
@@ -292,7 +295,7 @@ export default function AdoptionApplicationsList({
 															className="flex items-center bg-green-100 hover:bg-green-200 text-green-700 rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 															onClick={() =>
 																handleAdoptionAction(
-																	applicant.memberId,
+																	applicant.adoptionId,
 																	"ACCEPTED",
 																)
 															}
@@ -312,7 +315,7 @@ export default function AdoptionApplicationsList({
 															className="flex items-center bg-red-100 hover:bg-red-200 text-red-700 rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
 															onClick={() =>
 																handleAdoptionAction(
-																	applicant.memberId,
+																	applicant.adoptionId,
 																	"REJECTED",
 																)
 															}
