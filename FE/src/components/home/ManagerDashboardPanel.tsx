@@ -36,7 +36,7 @@ export default function ManagerDashboardPanel() {
 		},
 		{
 			id: 3,
-			title: "아이들관리",
+			title: "아이관리",
 			icon: <Dog className="w-5 h-5 text-amber-600" />,
 			color: "bg-gradient-to-br from-amber-100 to-amber-200",
 			hover: "hover:bg-amber-100",
@@ -76,16 +76,14 @@ export default function ManagerDashboardPanel() {
 	};
 
 	return (
-		<div className="mx-2.5 p-4 bg-white rounded-lg shadow-custom-sm border border-gray-100">
+		<div className="mx-2.5 py-4">
 			<div className="flex justify-between items-center mb-4">
 				<div className="flex items-center">
 					<div className="bg-main h-5 w-1 rounded-full mr-2" />
 					<h3 className="text-lg font-bold">관리자 대시보드</h3>
 				</div>
-				<div className="px-2 py-0.5 bg-gray-100 rounded-full">
-					<span className="text-xs text-gray-600">
-						{selectedCenter?.centerName}
-					</span>
+				<div className="px-4 py-0.5 bg-gray-100 rounded-full text-sm text-grayText">
+					{selectedCenter?.centerName}
 				</div>
 			</div>
 
@@ -96,7 +94,7 @@ export default function ManagerDashboardPanel() {
 						type="button"
 						key={item.id}
 						onClick={() => navigate(item.path)}
-						className={`flex flex-col items-center justify-center p-2.5 rounded-xl ${item.hover} transition-all duration-200 hover:shadow-md hover:-translate-y-1 active:translate-y-0 active:shadow-none`}
+						className={`flex flex-col items-center justify-center p-2.5 rounded-xl ${item.hover} transition-all duration-200 hover:shadow-md hover:-translate-y-1 active:shadow-md active:-translate-y-1 touch-action-manipulation`}
 					>
 						<div
 							className={`${item.color} rounded-full p-2.5 mb-1.5 shadow-sm`}
@@ -110,30 +108,22 @@ export default function ManagerDashboardPanel() {
 				))}
 			</div>
 
-			{/* 더 보기 버튼 (추가 메뉴가 표시되지 않을 때만) */}
-			{!showMoreMenu && (
-				<div className="flex justify-center mt-1 mb-2">
-					<button
-						type="button"
-						onClick={toggleMoreMenu}
-						className="flex items-center justify-center p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-						aria-label="더 보기"
-					>
-						<ChevronDown className="w-5 h-5 text-gray-600" />
-					</button>
-				</div>
-			)}
-
-			{/* 두 번째 줄 메뉴 (펼쳐졌을 때만 표시) */}
-			{showMoreMenu && (
-				<div className="animate-fadeIn">
-					<div className="flex gap-3 mb-3">
+			{/* 애니메이션 적용된 컨테이너 */}
+			<div className="relative">
+				<div
+					className={`transition-all duration-500 ease-in-out ${
+						showMoreMenu
+							? "max-h-60 opacity-100 mb-3"
+							: "max-h-0 opacity-0 mb-0 overflow-hidden"
+					}`}
+				>
+					<div className="flex gap-3 pt-2">
 						{additionalMenuItems.map((item) => (
 							<button
 								type="button"
 								key={item.id}
 								onClick={() => navigate(item.path)}
-								className={`flex flex-col items-center justify-center p-2.5 rounded-xl ${item.hover} transition-all duration-200 hover:shadow-md hover:-translate-y-1 active:translate-y-0 active:shadow-none w-[calc(25%-9px)]`}
+								className={`flex flex-col items-center justify-center p-2.5 rounded-xl ${item.hover} transition-all duration-200 hover:shadow-md hover:-translate-y-1 active:shadow-md active:-translate-y-1 touch-action-manipulation w-[calc(25%-9px)]`}
 							>
 								<div
 									className={`${item.color} rounded-full p-2.5 mb-1.5 shadow-sm`}
@@ -146,20 +136,34 @@ export default function ManagerDashboardPanel() {
 							</button>
 						))}
 					</div>
+				</div>
 
-					{/* 접기 버튼 */}
-					<div className="flex justify-center mt-1">
+				{/* 줄과 버튼 (함께 움직임) */}
+				<div
+					className={`flex justify-center transition-all duration-500 ease-in-out ${showMoreMenu ? "mt-0" : "mt-1 mb-2"}`}
+				>
+					<div className="relative w-full flex items-center justify-center">
+						{/* 가로선 */}
+						<div className="absolute inset-0 flex items-center">
+							<div className="w-full border-t border-gray-200" />
+						</div>
+
+						{/* 버튼 */}
 						<button
 							type="button"
 							onClick={toggleMoreMenu}
-							className="flex items-center justify-center p-1 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-							aria-label="접기"
+							className="relative z-10 flex items-center justify-center py-1 px-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300"
+							aria-label={showMoreMenu ? "접기" : "더 보기"}
 						>
-							<ChevronUp className="w-5 h-5 text-gray-600" />
+							{showMoreMenu ? (
+								<ChevronUp className="w-5 h-5 text-gray-600" />
+							) : (
+								<ChevronDown className="w-5 h-5 text-gray-600" />
+							)}
 						</button>
 					</div>
 				</div>
-			)}
+			</div>
 		</div>
 	);
 }

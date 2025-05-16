@@ -48,9 +48,12 @@ export default function PostPanel() {
 	};
 
 	return (
-		<div className="flex flex-col mx-2.5 p-2.5 rounded-lg bg-white shadow-custom-sm">
-			<div className="flex justify-between items-center mb-2 border-b pb-2">
-				<h3 className="font-bold text-lg text-gray-800">공지사항</h3>
+		<div className="flex flex-col mx-2.5 py-4">
+			<div className="flex justify-between items-center mb-4">
+				<div className="flex items-center">
+					<div className="bg-blueGray h-5 w-1 rounded-full mr-2" />
+					<h3 className="text-lg font-bold">공지사항</h3>
+				</div>
 				<button
 					type="button"
 					onClick={handleViewAllClick}

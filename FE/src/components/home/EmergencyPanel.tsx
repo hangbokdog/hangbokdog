@@ -1,4 +1,3 @@
-import siren from "@/assets/images/siren.png";
 import ManagerEmergencyPanel from "../manager/main/ManagerEmergencyPanel";
 import useCenterStore from "@/lib/store/centerStore";
 
@@ -12,15 +11,12 @@ export default function EmergencyPanel() {
 	}
 
 	return (
-		<div className="flex flex-col mx-2.5">
-			<div className="flex items-center">
-				<img className="size-10" src={siren} alt="siren" />
-				<span className="relative text-lg font-semibold text-grayText ml-2">
-					긴급요청
-					<span className="absolute top-[-12px] right-[-17px] size-5 text-center rounded-full bg-red text-white shadow-custom-sm text-sm font-bold">
-						6
-					</span>
-				</span>
+		<div className="flex flex-col mx-2.5 pb-4">
+			<div className="flex justify-between items-center mb-4">
+				<div className="flex items-center">
+					<div className="bg-red h-5 w-1 rounded-full mr-2" />
+					<h3 className="text-lg font-bold">긴급 요청</h3>
+				</div>
 			</div>
 			<ManagerEmergencyPanel centerId={centerId} />
 		</div>
