@@ -33,7 +33,6 @@ export default function CenterDecisionListItem({
 	centerId,
 	centerName,
 	status,
-	index,
 	query,
 	centerJoinRequestId,
 }: CenterDecisionListItemProps) {
@@ -42,8 +41,7 @@ export default function CenterDecisionListItem({
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [isExpanded, setIsExpanded] = useState(false);
-	console.log(status);
-	const isLongName = centerName ? centerName.length > 7 : false;
+	const isLongName = centerName ? centerName.length > 12 : false;
 
 	const { refetch } = useQuery<AddressBook[], Error>({
 		queryKey: ["addressBooks", centerId],
@@ -148,7 +146,7 @@ export default function CenterDecisionListItem({
 				status === "APPLIED" ? "border-amber-200" : "border-gray-100"
 			} ${isMember ? "border-l-4 border-l-blue-500" : ""}`}
 		>
-			<div className="p-4 flex items-center justify-between">
+			<div className="p-4 flex flex-col gap-3">
 				<div className="flex items-center">
 					<div
 						className={`p-2.5 rounded-full mr-3 ${
@@ -175,11 +173,26 @@ export default function CenterDecisionListItem({
 					</div>
 					<div className="flex items-center">
 						<div className="flex-1">
-							<h3
-								className={`font-medium text-gray-900 ${isLongName && !isExpanded ? "line-clamp-1" : ""}`}
-							>
-								{centerName}
-							</h3>
+							<div className="flex items-center gap-1">
+								<h3
+									className={`font-medium text-gray-900 ${isLongName && !isExpanded ? "line-clamp-1" : ""}`}
+								>
+									{centerName}
+								</h3>
+								{isLongName && (
+									<button
+										type="button"
+										onClick={toggleExpand}
+										className="ml-0.5 p-0.5 rounded-full hover:bg-gray-100 transition-colors flex-shrink-0"
+									>
+										{isExpanded ? (
+											<ChevronUpIcon className="size-4 text-gray-500" />
+										) : (
+											<ChevronDownIcon className="size-4 text-gray-500" />
+										)}
+									</button>
+								)}
+							</div>
 							{badge.text && (
 								<span
 									className={`inline-block mt-1 px-2 py-0.5 rounded-full text-xs ${badge.color}`}
@@ -188,23 +201,10 @@ export default function CenterDecisionListItem({
 								</span>
 							)}
 						</div>
-						{isLongName && (
-							<button
-								type="button"
-								onClick={toggleExpand}
-								className="ml-1 p-1 rounded-full hover:bg-gray-100 transition-colors"
-							>
-								{isExpanded ? (
-									<ChevronUpIcon className="size-4 text-gray-500" />
-								) : (
-									<ChevronDownIcon className="size-4 text-gray-500" />
-								)}
-							</button>
-						)}
 					</div>
 				</div>
 
-				<div className="flex gap-2 ">
+				<div className="flex gap-2 justify-end">
 					{status === "NONE" && (
 						<motion.button
 							whileHover={{ scale: 1.05 }}
