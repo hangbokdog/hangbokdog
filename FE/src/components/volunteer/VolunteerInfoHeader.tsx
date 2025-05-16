@@ -5,6 +5,7 @@ interface VolunteerInfoHeaderProps {
 	status: string;
 	date: string;
 	location: string;
+	addressName: string;
 	time: string;
 	pets: string;
 }
@@ -14,6 +15,7 @@ export default function VolunteerInfoHeader({
 	status,
 	date,
 	location,
+	addressName,
 	time,
 	pets,
 }: VolunteerInfoHeaderProps) {
@@ -29,6 +31,7 @@ export default function VolunteerInfoHeader({
 			<span className="inline-flex gap-1 items-center">
 				<VscLocation className="size-5 text-blueGray" />
 				<span className="text-blueGray font-medium">{location}</span>
+				<span className="text-blueGray font-medium">{addressName}</span>
 			</span>
 			<span className="text-grayText font-medium">{time}</span>
 			<span className="text-grayText font-medium">{pets}</span>

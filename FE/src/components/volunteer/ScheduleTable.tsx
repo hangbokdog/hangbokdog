@@ -15,6 +15,7 @@ interface ScheduleTableProps {
 	onClickCell?: (date: string, period: "morning" | "afternoon") => void;
 	selectedDate?: string;
 	selectedPeriod?: "morning" | "afternoon";
+	timeInfo?: string;
 }
 
 export default function ScheduleTable({
@@ -23,9 +24,13 @@ export default function ScheduleTable({
 	onClickCell,
 	selectedDate,
 	selectedPeriod,
+	timeInfo,
 }: ScheduleTableProps) {
 	return (
 		<div className="flex flex-col gap-4">
+			<span className="text-primary font-medium text-center">
+				{timeInfo}
+			</span>
 			<Table className="border-collapse">
 				<TableHeader>
 					<TableRow className="border-b border-gray-200">

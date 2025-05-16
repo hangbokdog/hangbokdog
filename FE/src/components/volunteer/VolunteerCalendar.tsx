@@ -25,6 +25,21 @@ export default function VolunteerCalendar({ events }: VolunteerCalendarProps) {
 	const calendarRef = useRef<FullCalendar>(null);
 	const [currentDate, setCurrentDate] = useState(() => new Date());
 
+	// 종료일을 하루 더 추가하여 실제 종료일까지 표시되도록 수정
+	const processedEvents = events.map((event) => {
+		// 원본 이벤트 객체를 변경하지 않기 위해 새 객체 생성
+		const newEvent = { ...event };
+
+		if (newEvent.end) {
+			// 종료일 파싱 후 하루 추가
+			const endDate = new Date(newEvent.end);
+			endDate.setDate(endDate.getDate() + 1);
+			newEvent.end = endDate.toISOString().split("T")[0];
+		}
+
+		return newEvent;
+	});
+
 	const updateCalendarDate = (date: Date) => {
 		const calendarApi = calendarRef.current?.getApi();
 		if (calendarApi) {
@@ -103,7 +118,7 @@ export default function VolunteerCalendar({ events }: VolunteerCalendarProps) {
 					initialDate="2025-05-01"
 					locale={koLocale}
 					firstDay={1}
-					events={events}
+					events={processedEvents}
 					headerToolbar={false}
 					height="auto"
 					eventContent={renderEventContent}

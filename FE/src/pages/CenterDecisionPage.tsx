@@ -613,7 +613,7 @@ export default function CenterDecisionPage() {
 															)}
 														</span>
 													</div>
-													<div className="mt-2 flex justify-between items-end">
+													<div className="flex justify-between items-end">
 														<span className="text-xl font-bold">
 															{count}
 														</span>

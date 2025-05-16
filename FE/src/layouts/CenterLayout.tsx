@@ -15,7 +15,7 @@ export default function CenterLayout() {
 		<>
 			{showHeader ? <Header /> : <RouteBackHeader />}
 			<main
-				className={`flex-1 overflow-y-auto ${showHeader && "mb-14"} scrollbar-hidden`}
+				className={`flex-1 overflow-y-auto ${showHeader && "mb-16"} scrollbar-hidden`}
 			>
 				<Outlet />
 			</main>
