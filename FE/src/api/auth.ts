@@ -3,6 +3,7 @@ import type {
 	NicknameSearchResponse,
 	OauthLoginResponse,
 	UserInfoResponse,
+	UpdateUserInfoRequest,
 } from "@/types/auth";
 import localAxios from "./http-commons";
 import axios from "axios";
@@ -99,41 +100,41 @@ export const getNicknameSearchAPI = async ({
 	return response.data;
 };
 
-export interface UpdateUserInfoRequest {
-  nickname: string;
-  profileImageFile?: File | null;
-}
-
 /**
  * 내 정보 수정 API
  * - nickname: 새 닉네임
  * - profileImageFile: 선택적 프로필 이미지 파일
  */
 export const updateUserInfoAPI = async ({
-  nickname,
-  profileImageFile,
+	nickName,
+	profileImageFile,
 }: UpdateUserInfoRequest): Promise<UserInfoResponse> => {
-  const formData = new FormData();
+	const formData = new FormData();
 
-  // JSON 형태의 nickname 객체를 'request' 필드에 담아서 전송
-  formData.append("request", JSON.stringify({ nickname }));
+	// 서버가 기대하는 구조에 맞게 JSON 객체를 문자열로 추가
+	formData.append(
+		"request",
+		new Blob([JSON.stringify({ nickName })], { type: "application/json" }),
+	);
 
-  // 파일이 있을 때만 'files' 필드로 추가
-  if (profileImageFile) {
-    formData.append("files", profileImageFile);
-  }
+	if (profileImageFile instanceof File) {
+		formData.append("files", profileImageFile);
+	}
 
-  // PATCH /members/my (baseURL + "/members/my")
-  const response = await localAxios.patch<UserInfoResponse>(
-    "members/my",
-    formData,
-    {
-      headers: {
-        // 기본 application/json 헤더를 덮어쓰기
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+	// 디버깅 출력
+	for (const [key, value] of formData.entries()) {
+		console.log("🧾 FormData:", key, value);
+	}
 
-  return response.data;
+	const response = await localAxios.patch<UserInfoResponse>(
+		"members/my",
+		formData,
+		{
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		},
+	);
+
+	return response.data;
 };

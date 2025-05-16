@@ -24,3 +24,8 @@ export interface NicknameSearchResponse {
 	grade: string;
 	profileImage: string;
 }
+
+export interface UpdateUserInfoRequest {
+	nickName: string;
+	profileImageFile?: File | null;
+}
