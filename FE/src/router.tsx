@@ -237,7 +237,11 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "register",
-								element: <EmergencyRegisterPage />,
+								element: (
+									<CenterMemberProtectedRoute>
+										<EmergencyRegisterPage />
+									</CenterMemberProtectedRoute>
+								),
 							},
 						],
 					},
