@@ -36,11 +36,7 @@ public class FcmService {
 	private final MemberRepository memberRepository;
 
 	@Async("fcmExecutor")
-	public void sendMessageTo(
-		String targetToken,
-		String title,
-		String body
-	) {
+	public void sendMessageTo(String targetToken, String title, String body) {
 		try {
 			String message = makeMessage(targetToken, title, body);
 
@@ -53,7 +49,11 @@ public class FcmService {
 				.addHeader(HttpHeaders.CONTENT_TYPE, mediaType)
 				.build();
 
-			Response response = client.newCall(request).execute();
+			try (Response response = client.newCall(request).execute()) {
+				if (!response.isSuccessful()) {
+					System.err.println("FCM 전송 실패: " + response.body().string());
+				}
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to send message", e);
 		}
