@@ -7,7 +7,6 @@ public record AnnouncementResponse(
 	Long authorId,
 	String authorName,
 	String authorImage,
-	Long announcementId,
 	String title,
 	LocalDateTime createdAt
 ) {

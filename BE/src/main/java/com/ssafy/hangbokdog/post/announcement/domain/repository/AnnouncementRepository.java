@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.post.announcement.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.swing.text.html.Option;
@@ -40,5 +41,9 @@ public class AnnouncementRepository {
 
 	public void delete(Announcement announcement) {
 		announcementJpaRepository.delete(announcement);
+	}
+
+	public List<AnnouncementResponse> getLatest(Long centerId) {
+		return announcementJpaRepository.getLatest(centerId);
 	}
 }

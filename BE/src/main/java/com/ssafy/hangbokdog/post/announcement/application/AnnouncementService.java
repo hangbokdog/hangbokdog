@@ -92,6 +92,10 @@ public class AnnouncementService {
 		announcementRepository.delete(announcement);
 	}
 
+	public List<AnnouncementResponse> getLatest(Long centerId) {
+		return announcementRepository.getLatest(centerId);
+	}
+
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));

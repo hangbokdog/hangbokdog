@@ -10,4 +10,6 @@ public interface AnnouncementJpaRepositoryCustom {
 	List<AnnouncementResponse> getAllAnnouncements(Long centerId, String pageToken, int pageSize);
 
 	AnnouncementDetailResponse getAnnouncement(Long announcementId);
+
+	List<AnnouncementResponse> getLatest(Long centerId);
 }

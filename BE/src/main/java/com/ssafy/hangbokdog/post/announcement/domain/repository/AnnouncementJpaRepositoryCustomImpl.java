@@ -61,6 +61,25 @@ public class AnnouncementJpaRepositoryCustomImpl implements AnnouncementJpaRepos
 			.fetchOne();
 	}
 
+	@Override
+	public List<AnnouncementResponse> getLatest(Long centerId) {
+		return queryFactory
+			.select(Projections.constructor(
+				AnnouncementResponse.class,
+				announcement.id,
+				announcement.authorId,
+				member.nickName,
+				member.profileImage,
+				announcement.title,
+				announcement.createdAt
+			))
+			.from(announcement)
+			.where(announcement.centerId.eq(centerId))
+			.orderBy(announcement.id.desc())
+			.limit(5)
+			.fetch();
+	}
+
 	private BooleanExpression isInRange(String pageToken) {
 		if (pageToken == null) {
 			return null;

@@ -95,4 +95,12 @@ public class AnnouncementController {
 		announcementService.delete(member, announcementId);
 		return ResponseEntity.noContent().build();
 	}
+
+	@GetMapping("/latest}")
+	public ResponseEntity<List<AnnouncementResponse>> getLatest(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(announcementService.getLatest(centerId));
+	}
 }
