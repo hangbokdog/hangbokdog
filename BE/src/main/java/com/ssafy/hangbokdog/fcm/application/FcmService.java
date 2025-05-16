@@ -51,12 +51,6 @@ public class FcmService {
 
 			try (Response response = client.newCall(request).execute()) {
 				String responseBody = response.body().string();
-
-				if (!response.isSuccessful()) {
-					System.err.println("❌ FCM 전송 실패: " + responseBody);
-				} else {
-					System.out.println("✅ FCM 전송 성공: " + responseBody);
-				}
 			}
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to send message", e);

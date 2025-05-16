@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.member.application;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +52,9 @@ public class MemberService {
     @Transactional
     public void updateProfile(Long memberId, MemberUpdateRequest request, String imageUrl) {
         Member member = getMember(memberId);
+        if (imageUrl == null) {
+            imageUrl = member.getProfileImage();
+        }
         member.updateProfile(request.nickName(), imageUrl);
     }
 
