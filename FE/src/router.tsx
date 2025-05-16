@@ -36,6 +36,9 @@ import AdoptionManagerMainPage from "./pages/manager/AdoptionManagerMainPage";
 import FosterManagerMainPage from "./pages/manager/FosterManagerMainPage";
 import AnnouncementListPage from "./pages/AnnouncementListPage";
 import AnnouncementCreatePage from "./pages/manager/AnnouncementCreatePage";
+import BazaarPage from "./pages/BazaarPage";
+import BazaarDetailPage from "./pages/BazaarDetailPage";
+import BazaarNewPage from "./pages/BazaarNewPage";
 
 const router = createBrowserRouter([
 	{
@@ -68,6 +71,29 @@ const router = createBrowserRouter([
 							{
 								index: true,
 								element: <SponsorShipPage />,
+							},
+						],
+					},
+					{
+						path: "bazaar",
+						children: [
+							{
+								index: true,
+								element: <BazaarPage />,
+							},
+							{
+								path: "new",
+								element: (
+									<CenterMemberProtectedRoute>
+										<BazaarNewPage />
+									</CenterMemberProtectedRoute>
+								),
+								handle: { showHeader: false },
+							},
+							{
+								path: ":id",
+								element: <BazaarDetailPage />,
+								handle: { showHeader: false },
 							},
 						],
 					},

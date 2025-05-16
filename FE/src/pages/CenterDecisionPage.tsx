@@ -7,21 +7,20 @@ import {
 	fetchMyCenters,
 	fetchMyJoinRequestCenters,
 	createCenter,
+	fetchExistingCenterCities,
 } from "@/api/center";
 import useCenterStore from "@/lib/store/centerStore";
-import { locations } from "@/types/center";
+import { locations, LocationLabel, type Location } from "@/types/center";
 import {
 	BuildingIcon,
 	Search as SearchIcon,
 	Clock,
-	Check,
 	Plus,
 	ChevronRight,
 	MapPinIcon,
-	TrendingUpIcon,
 	ChevronDown,
-	StarIcon,
 	CompassIcon,
+	ChevronLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -49,68 +48,157 @@ interface MyJoinRequestCenterResponseData {
 	address?: string;
 }
 
-// 지역별 센터 목록 (실제 API 연동 전 샘플 데이터)
-const regionCenters = {
-	서울: [
-		{
-			centerId: "seoul1",
-			centerName: "강남 휘트니스",
-			location: "서울 강남구",
-			category: "피트니스",
-			status: "NONE",
-		},
-		{
-			centerId: "seoul2",
-			centerName: "마포 요가 스튜디오",
-			location: "서울 마포구",
-			category: "요가",
-			status: "NONE",
-		},
-		{
-			centerId: "seoul3",
-			centerName: "송파 수영장",
-			location: "서울 송파구",
-			category: "수영",
-			status: "NONE",
-		},
-	],
-	경기: [
-		{
-			centerId: "gyeonggi1",
-			centerName: "분당 스포츠 센터",
-			location: "경기 성남시 분당구",
-			category: "종합 스포츠",
-			status: "NONE",
-		},
-		{
-			centerId: "gyeonggi2",
-			centerName: "일산 테니스 클럽",
-			location: "경기 고양시 일산서구",
-			category: "테니스",
-			status: "NONE",
-		},
-	],
-	인천: [
-		{
-			centerId: "incheon1",
-			centerName: "송도 스포츠 컴플렉스",
-			location: "인천 연수구 송도동",
-			category: "종합 스포츠",
-			status: "NONE",
-		},
-	],
-};
+interface CenterCityData {
+	count: number;
+	centerCity: Location;
+}
+
+interface SearchCenterCityData {
+	centerJoinRequestId: string | null;
+	centerId: number;
+	centerName: string;
+	centerCity: Location;
+	status: string;
+}
 
 // Debounce search function
 const debouncedSearch = debounce((val: string, setter: (s: string) => void) => {
 	setter(val);
 }, 300);
 
+// 지역 이름 표시용 매핑 - LocationLabel 사용으로 교체
+// const cityNameMapping: { [key: string]: string } = { ... }
+
+// 지역별 색상 매핑 - 모든 지역에 동일한 bg-male 클래스를 사용하므로 객체 맵 필요 없음
+// const cityColorMapping: { [key: string]: string } = { ... };
+
+// 지역 그룹 설정 - 지역을 그룹화하여 UI에서 쉽게 탐색할 수 있도록 함
+const cityGroups = {
+	수도권: [
+		"SEOUL",
+		"INCHEON",
+		"GYEONGGI",
+		"SUWON",
+		"SEONGNAM",
+		"GOYANG",
+		"YONGIN",
+		"BUCHEON",
+		"ANYANG",
+		"NAMYANGJU",
+		"HWASEONG",
+		"UIJEONGBU",
+		"SIHEUNG",
+		"PYEONGTAEK",
+		"GIMPO",
+		"GWANGMYEONG",
+		"GURI",
+		"OSAN",
+		"GUNPO",
+		"UIWANG",
+		"HANAM",
+		"ICHON",
+		"ANSEONG",
+		"POCHEON",
+		"YANGJU",
+		"DONGDUCHEON",
+		"PAJU",
+	],
+	강원권: [
+		"GANGWON",
+		"CHUNCHEON",
+		"WONJU",
+		"GANGNEUNG",
+		"DONGHAE",
+		"TAEBAEK",
+		"SOKCHO",
+		"SAMCHEOK",
+	],
+	충청권: [
+		"CHUNGBUK",
+		"CHUNGNAM",
+		"DAEJEON",
+		"SEJONG",
+		"CHEONGJU",
+		"CHUNGJU",
+		"JECHEON",
+		"CHEONAN",
+		"GONGJU",
+		"ASAN",
+		"BORYEONG",
+		"SEOSAN",
+		"NONSAN",
+		"GYERYONG",
+	],
+	전라권: [
+		"JEONBUK",
+		"JEONNAM",
+		"GWANGJU",
+		"JEONJU",
+		"GUNSAN",
+		"IKSAN",
+		"NAMWON",
+		"GIMJE",
+		"MOKPO",
+		"YEOSU",
+		"SUNCHEON",
+		"GWANGYANG",
+		"NAJU",
+	],
+	경상권: [
+		"GYEONGBUK",
+		"GYEONGNAM",
+		"DAEGU",
+		"BUSAN",
+		"ULSAN",
+		"POHANG",
+		"GUMI",
+		"GYEONGJU",
+		"ANDONG",
+		"YEONGJU",
+		"MUNGYEONG",
+		"SANGJU",
+		"YEONGCHEON",
+		"CHANGWON",
+		"JINJU",
+		"TONGYEONG",
+		"SACHEON",
+		"GIMHAE",
+		"MIRYANG",
+		"YANGSAN",
+	],
+	제주권: ["JEJU", "SEOGWIPO"],
+};
+
+// 지역별 아이콘 (예시)
+const cityIconMapping: { [key: string]: React.ReactNode } = {
+	// 대표 도시들만 특별 아이콘 설정, 나머지는 DEFAULT 사용
+	SEOUL: <BuildingIcon size={16} className="mr-1.5" />,
+	BUSAN: <BuildingIcon size={16} className="mr-1.5" />,
+	DAEGU: <BuildingIcon size={16} className="mr-1.5" />,
+	INCHEON: <BuildingIcon size={16} className="mr-1.5" />,
+	GWANGJU: <BuildingIcon size={16} className="mr-1.5" />,
+	DAEJEON: <BuildingIcon size={16} className="mr-1.5" />,
+	ULSAN: <BuildingIcon size={16} className="mr-1.5" />,
+	SEJONG: <BuildingIcon size={16} className="mr-1.5" />,
+	JEJU: <MapPinIcon size={16} className="mr-1.5" />,
+	GYEONGGI: <MapPinIcon size={16} className="mr-1.5" />,
+	GANGWON: <MapPinIcon size={16} className="mr-1.5" />,
+	CHUNGBUK: <MapPinIcon size={16} className="mr-1.5" />,
+	CHUNGNAM: <MapPinIcon size={16} className="mr-1.5" />,
+	JEONBUK: <MapPinIcon size={16} className="mr-1.5" />,
+	JEONNAM: <MapPinIcon size={16} className="mr-1.5" />,
+	GYEONGBUK: <MapPinIcon size={16} className="mr-1.5" />,
+	GYEONGNAM: <MapPinIcon size={16} className="mr-1.5" />,
+	DEFAULT: <MapPinIcon size={16} className="mr-1.5" />,
+};
+
 export default function CenterDecisionPage() {
 	const [query, setQuery] = useState("");
 	const [activeTab, setActiveTab] = useState<
 		"search" | "joined" | "pending" | "explore"
 	>("explore");
+	const [selectedCity, setSelectedCity] = useState<string | null>(null);
+	const [activeGroup, setActiveGroup] = useState<string | null>(null);
 	const [activeRegion, setActiveRegion] = useState<string | null>(null);
 	const [activeCategory, setActiveCategory] = useState<string | null>(null);
 	const { selectedCenter, clearSelectedCenter } = useCenterStore();
@@ -118,7 +206,7 @@ export default function CenterDecisionPage() {
 
 	const { data: searchResults, isLoading } = useQuery({
 		queryKey: ["centerSearch", query],
-		queryFn: () => fetchCenters(query),
+		queryFn: () => fetchCenters(query, null),
 		enabled: query.length > 0,
 		staleTime: 0,
 	});
@@ -148,6 +236,20 @@ export default function CenterDecisionPage() {
 		},
 	});
 
+	const { data: existingCenterCities, isLoading: isCitiesLoading } = useQuery(
+		{
+			queryKey: ["centerCities"],
+			queryFn: () => fetchExistingCenterCities(),
+		},
+	);
+
+	const { data: cityResults, isLoading: isCityResultsLoading } = useQuery({
+		queryKey: ["searchCenterCities", selectedCity],
+		queryFn: () => fetchCenters(null, selectedCity),
+		enabled: !!selectedCity,
+		staleTime: 0,
+	});
+
 	const handleDummyCenterCreate = () => {
 		createCenterMutate({
 			name: "신청 확인용",
@@ -173,11 +275,37 @@ export default function CenterDecisionPage() {
 	const joinedCount = myCenters?.length || 0;
 	const pendingCount = myJoinRequestCenters?.length || 0;
 
+	const selectCity = (city: string) => {
+		setSelectedCity(city);
+	};
+
+	// 지역 이름 포맷팅 함수 - LocationLabel 사용으로 수정
+	const formatCityName = (cityCode: string): string => {
+		return (
+			LocationLabel[cityCode as keyof typeof LocationLabel] || cityCode
+		);
+	};
+
+	// 지역 아이콘 가져오는 함수
+	const getCityIcon = (cityCode: string): React.ReactNode => {
+		return cityIconMapping[cityCode] || cityIconMapping.DEFAULT;
+	};
+
+	// 뒤로가기 버튼 클릭 핸들러 함수 추가
+	const handleBackButton = () => {
+		if (activeGroup) {
+			setSelectedCity(null);
+		} else {
+			setSelectedCity(null);
+			setActiveGroup(null);
+		}
+	};
+
 	return (
 		<div className="flex flex-col min-h-screen bg-gray-50">
 			{/* Header with welcome message */}
 			<div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-5 shadow-md">
-				<h1 className="text-2xl font-bold mb-2">반가워요!</h1>
+				<h1 className="text-2xl font-bold mb-2">행복하개!</h1>
 				<p className="text-blue-100 text-sm">
 					센터를 선택하고 더 많은 기능을 이용해보세요
 				</p>
@@ -187,7 +315,11 @@ export default function CenterDecisionPage() {
 			<div className="flex bg-white shadow-sm sticky top-0 z-10 overflow-x-auto">
 				<button
 					type="button"
-					onClick={() => setActiveTab("explore")}
+					onClick={() => {
+						setActiveTab("explore");
+						setSelectedCity(null);
+						setActiveGroup(null);
+					}}
 					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-4 ${
 						activeTab === "explore"
 							? "text-blue-600"
@@ -290,142 +422,382 @@ export default function CenterDecisionPage() {
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: -10 }}
 							transition={{ duration: 0.2 }}
-							className="space-y-6"
+							className="space-y-4"
 						>
-							{/* 지도로 보기 섹션 */}
-							<section className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-								<h2 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-									<MapPinIcon
-										size={18}
-										className="mr-1.5 text-blue-500"
-									/>
-									지역별 센터 찾기
-								</h2>
-								<div className="relative h-48 bg-blue-50 rounded-xl mb-4 overflow-hidden">
-									{/* 간단한 지도 UI (실제 구현에서는 지도 컴포넌트로 대체) */}
-									<div className="h-full w-full flex items-center justify-center">
-										<div className="text-center">
-											<p className="text-blue-500 font-medium mb-2">
-												지역별 센터 현황
-											</p>
-											<div className="flex gap-3 text-xs text-gray-500">
-												<div>서울: 24개</div>
-												<div>경기: 18개</div>
-												<div>인천: 7개</div>
-												<div>부산: 12개</div>
-											</div>
-										</div>
+							{selectedCity ? (
+								<>
+									{/* 선택된 지역 헤더와 뒤로가기 */}
+									<div className="flex items-center mb-2">
+										<button
+											type="button"
+											onClick={handleBackButton}
+											className="mr-2 p-2 rounded-full hover:bg-gray-100"
+										>
+											<ChevronLeft
+												size={20}
+												className="text-gray-500"
+											/>
+										</button>
+										<h2 className="text-lg font-bold flex items-center">
+											{formatCityName(selectedCity)} 지역
+											센터
+										</h2>
 									</div>
-								</div>
 
-								{/* 지역별 아코디언 메뉴 */}
-								<div className="space-y-2">
-									{Object.keys(regionCenters).map(
-										(region) => (
-											<div
-												key={region}
-												className="border border-gray-100 rounded-lg overflow-hidden"
-											>
-												<button
-													type="button"
-													className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 transition-colors"
-													onClick={() =>
-														toggleRegion(region)
-													}
-												>
-													<span className="font-medium text-gray-800">
-														{region}
-													</span>
-													<ChevronDown
-														size={18}
-														className={`text-gray-500 transition-transform ${activeRegion === region ? "rotate-180" : ""}`}
-													/>
-												</button>
-												{activeRegion === region && (
+									{/* 지역별 센터 목록 */}
+									{isCityResultsLoading ? (
+										<div className="py-8">
+											<div className="space-y-3">
+												{[1, 2, 3].map((i) => (
 													<motion.div
+														key={i}
 														initial={{
-															height: 0,
 															opacity: 0,
+															y: 10,
 														}}
 														animate={{
-															height: "auto",
 															opacity: 1,
-														}}
-														exit={{
-															height: 0,
-															opacity: 0,
+															y: 0,
 														}}
 														transition={{
-															duration: 0.2,
+															delay: i * 0.1,
 														}}
-														className="border-t border-gray-100"
+														className="animate-pulse bg-white rounded-xl p-4 shadow-sm"
 													>
-														<div className="divide-y divide-gray-100">
-															{regionCenters[
-																region as keyof typeof regionCenters
-															].map((center) => (
-																<div
-																	key={
-																		center.centerId
-																	}
-																	className="p-3 hover:bg-gray-50"
-																>
-																	<div className="flex justify-between items-center">
-																		<div>
-																			<h3 className="text-gray-800 font-medium">
-																				{
-																					center.centerName
-																				}
-																			</h3>
-																			<div className="flex items-center text-xs text-gray-500 mt-1">
-																				<MapPinIcon
-																					size={
-																						12
-																					}
-																					className="mr-1"
-																				/>
-																				{
-																					center.location
-																				}
-																				<span className="mx-1.5">
-																					•
-																				</span>
-																				<span>
-																					{
-																						center.category
-																					}
-																				</span>
-																			</div>
-																		</div>
-																		<button
-																			type="button"
-																			className="text-blue-500 hover:text-blue-600"
-																			onClick={() => {
-																				setActiveTab(
-																					"search",
-																				);
-																				setQuery(
-																					center.centerName,
-																				);
-																			}}
-																		>
-																			<ChevronRight
-																				size={
-																					20
-																				}
-																			/>
-																		</button>
+														<div className="h-5 bg-gray-200 rounded w-3/4 mb-2" />
+														<div className="h-4 bg-gray-100 rounded w-1/2" />
+													</motion.div>
+												))}
+											</div>
+										</div>
+									) : cityResults?.length === 0 ? (
+										<div className="flex flex-col items-center justify-center py-6 bg-white rounded-xl shadow-sm">
+											<div className="bg-gray-100 rounded-full p-4 mb-3">
+												<BuildingIcon
+													size={24}
+													className="text-gray-400"
+												/>
+											</div>
+											<p className="text-gray-500 text-center">
+												이 지역에 등록된 센터가 없습니다
+											</p>
+											<button
+												type="button"
+												onClick={() =>
+													setSelectedCity(null)
+												}
+												className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full text-sm"
+											>
+												다른 지역 보기
+											</button>
+										</div>
+									) : (
+										<div className="space-y-3">
+											{cityResults?.map(
+												(
+													center: SearchCenterCityData,
+													index: number,
+												) => (
+													<motion.div
+														key={center.centerId}
+														initial={{
+															opacity: 0,
+															y: 10,
+														}}
+														animate={{
+															opacity: 1,
+															y: 0,
+														}}
+														transition={{
+															delay: index * 0.05,
+														}}
+														className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
+													>
+														<div className="p-4">
+															<div className="flex justify-between items-start">
+																<div>
+																	<h3 className="font-medium text-gray-800">
+																		{
+																			center.centerName
+																		}
+																	</h3>
+																	<div className="flex items-center text-xs text-gray-500 mt-1">
+																		<MapPinIcon
+																			size={
+																				12
+																			}
+																			className="mr-1"
+																		/>
+																		{formatCityName(
+																			center.centerCity,
+																		)}
 																	</div>
 																</div>
-															))}
+																<button
+																	type="button"
+																	className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-medium hover:bg-blue-100 transition-colors"
+																	onClick={() => {
+																		setActiveTab(
+																			"search",
+																		);
+																		setQuery(
+																			center.centerName,
+																		);
+																	}}
+																>
+																	상세보기
+																</button>
+															</div>
 														</div>
 													</motion.div>
-												)}
-											</div>
-										),
+												),
+											)}
+										</div>
 									)}
-								</div>
-							</section>
+								</>
+							) : activeGroup ? (
+								<>
+									{/* 선택된 지역 그룹 헤더와 뒤로가기 */}
+									<div className="flex items-center mb-3">
+										<button
+											type="button"
+											onClick={() => setActiveGroup(null)}
+											className="mr-2 p-2 rounded-full hover:bg-gray-100"
+										>
+											<ChevronLeft
+												size={20}
+												className="text-gray-500"
+											/>
+										</button>
+										<h2 className="text-lg font-bold flex items-center">
+											{activeGroup} 센터
+										</h2>
+									</div>
+
+									{/* 지역 그룹 내 지역 목록 */}
+									<div className="grid grid-cols-2 gap-3">
+										{cityGroups[
+											activeGroup as keyof typeof cityGroups
+										]?.map((cityCode) => {
+											// existingCenterCities에서 해당 도시의 센터 개수 찾기
+											const cityData =
+												existingCenterCities?.find(
+													(city: CenterCityData) =>
+														city.centerCity ===
+														cityCode,
+												);
+											const count = cityData
+												? cityData.count
+												: 0;
+
+											// 센터 개수가 0개인 도시는 표시하지 않음
+											if (count === 0) return null;
+
+											return (
+												<motion.button
+													key={cityCode}
+													type="button"
+													whileTap={{ scale: 0.98 }}
+													onClick={() =>
+														selectCity(cityCode)
+													}
+													className="bg-male
+														text-white rounded-xl p-4 shadow-sm h-20 
+														flex flex-col justify-between text-left"
+												>
+													<div className="flex items-center">
+														{getCityIcon(cityCode)}
+														<span className="font-bold">
+															{formatCityName(
+																cityCode,
+															)}
+														</span>
+													</div>
+													<div className="mt-2 flex justify-between items-end">
+														<span className="text-xl font-bold">
+															{count}
+														</span>
+														<span className="text-xs opacity-80">
+															개 센터
+														</span>
+													</div>
+												</motion.button>
+											);
+										})}
+									</div>
+								</>
+							) : (
+								<>
+									{/* 지역 그룹 선택 화면 */}
+									<div className="mb-3">
+										<h2 className="text-lg font-bold mb-2">
+											지역별 센터 찾기
+										</h2>
+										<p className="text-sm text-gray-500">
+											지역을 선택하여 센터를 찾아보세요
+										</p>
+									</div>
+
+									{/* 지역 그룹 그리드 */}
+									<div className="grid grid-cols-2 gap-4">
+										{Object.keys(cityGroups).map(
+											(groupName) => {
+												// 그룹 내 도시들의 센터 총 개수 계산
+												const groupCities =
+													cityGroups[
+														groupName as keyof typeof cityGroups
+													];
+												let totalCount = 0;
+
+												if (existingCenterCities) {
+													for (const city of existingCenterCities) {
+														if (
+															groupCities.includes(
+																city.centerCity,
+															)
+														) {
+															totalCount +=
+																city.count;
+														}
+													}
+												}
+
+												// 센터 개수가 0개인 그룹은 표시하지 않음
+												if (totalCount === 0)
+													return null;
+
+												// 모든 카드는 bg-male 사용
+												return (
+													<motion.div
+														key={groupName}
+														whileHover={{
+															scale: 1.02,
+														}}
+														whileTap={{
+															scale: 0.98,
+														}}
+														onClick={() =>
+															setActiveGroup(
+																groupName,
+															)
+														}
+														className="bg-male text-white 
+															rounded-xl p-4 shadow-md h-36 cursor-pointer
+															flex flex-col justify-between"
+													>
+														<div>
+															<h3 className="text-xl font-bold">
+																{groupName}
+															</h3>
+															<p className="text-sm opacity-80 mt-1">
+																{
+																	groupCities.filter(
+																		(
+																			cityCode,
+																		) => {
+																			const cityData =
+																				existingCenterCities?.find(
+																					(
+																						city: CenterCityData,
+																					) =>
+																						city.centerCity ===
+																						cityCode,
+																				);
+																			return (
+																				cityData &&
+																				cityData.count >
+																					0
+																			);
+																		},
+																	).length
+																}
+																개 지역
+															</p>
+														</div>
+														<div className="flex justify-between items-end">
+															<div className="text-2xl font-bold">
+																{totalCount}
+															</div>
+															<div className="text-xs opacity-80">
+																등록된 센터
+															</div>
+														</div>
+													</motion.div>
+												);
+											},
+										)}
+									</div>
+
+									{/* 전체 지역 통계 카드 */}
+									{!isCitiesLoading &&
+										existingCenterCities && (
+											<motion.div
+												initial={{ opacity: 0, y: 10 }}
+												animate={{ opacity: 1, y: 0 }}
+												transition={{ delay: 0.2 }}
+												className="mt-6 bg-white rounded-xl p-4 shadow-sm"
+											>
+												<h3 className="text-base font-medium mb-3 text-gray-700">
+													전체 센터 현황
+												</h3>
+												<div className="flex items-center justify-between">
+													<div className="text-gray-500 text-sm">
+														등록된 지역:{" "}
+														<span className="font-semibold text-gray-800">
+															{
+																existingCenterCities.length
+															}
+															개 지역
+														</span>
+													</div>
+													<div className="text-gray-500 text-sm">
+														전체 센터:{" "}
+														<span className="font-semibold text-gray-800">
+															{existingCenterCities.reduce(
+																(
+																	sum: number,
+																	city: CenterCityData,
+																) =>
+																	sum +
+																	city.count,
+																0,
+															)}
+															개 센터
+														</span>
+													</div>
+												</div>
+											</motion.div>
+										)}
+								</>
+							)}
+
+							{/* 데이터 없을 때 표시 (지역 그룹 화면이 아닐 때만) */}
+							{!activeGroup &&
+								!selectedCity &&
+								existingCenterCities?.length === 0 &&
+								!isCitiesLoading && (
+									<div className="flex flex-col items-center justify-center py-6 mt-4 bg-white rounded-xl shadow-sm">
+										<div className="bg-blue-100 rounded-full p-4 mb-3">
+											<MapPinIcon
+												size={24}
+												className="text-blue-500"
+											/>
+										</div>
+										<p className="text-gray-700 text-center font-medium">
+											등록된 센터가 없습니다
+										</p>
+										<p className="text-gray-500 text-center text-sm mt-1">
+											새로운 센터를 만들어보세요
+										</p>
+										<button
+											type="button"
+											onClick={handleDummyCenterCreate}
+											className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full text-sm"
+										>
+											테스트 센터 생성하기
+										</button>
+									</div>
+								)}
 						</motion.div>
 					)}
 

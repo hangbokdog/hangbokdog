@@ -14,12 +14,17 @@ import type { VolunteerScheduleManagerProps } from "@/types/volunteer";
 
 export default function VolunteerScheduleManager({
 	address,
+	refetchAddresses,
 }: VolunteerScheduleManagerProps) {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
 	// API 데이터 가져오기
-	const { data: volunteers = [], isLoading: isVolunteersLoading } = useQuery({
+	const {
+		data: volunteers = [],
+		isLoading: isVolunteersLoading,
+		refetch: refetchVolunteers,
+	} = useQuery({
 		queryKey: ["volunteers", address.id],
 		queryFn: () =>
 			getVolunteersByAddressBookAPI({
@@ -94,6 +99,8 @@ export default function VolunteerScheduleManager({
 								volunteer={volunteer}
 								onDelete={handleDeleteSchedule}
 								formatDate={formatDate}
+								refetchVolunteers={refetchVolunteers}
+								refetchAddresses={refetchAddresses}
 							/>
 						))}
 					</div>

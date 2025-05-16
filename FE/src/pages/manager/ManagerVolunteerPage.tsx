@@ -11,7 +11,11 @@ export default function ManagerVolunteerPage() {
 		null,
 	);
 
-	const { data: addresses = [], isLoading } = useQuery({
+	const {
+		data: addresses = [],
+		isLoading,
+		refetch: refetchAddresses,
+	} = useQuery({
 		queryKey: ["addressBooks", selectedCenter?.centerId],
 		queryFn: () => fetchAddressBooks(selectedCenter?.centerId as string),
 		enabled: !!selectedCenter?.centerId,
@@ -59,6 +63,7 @@ export default function ManagerVolunteerPage() {
 					<FilteredContent
 						addressId={selectedAddressId}
 						addresses={addresses}
+						refetchAddresses={refetchAddresses}
 					/>
 				</>
 			)}

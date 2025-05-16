@@ -55,7 +55,11 @@ interface SlotProps {
 	applicationCount: number;
 }
 
-export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
+export const ApplicantsList = ({
+	eventId,
+	refetchVolunteers,
+	refetchAddresses,
+}: ApplicantsListProps) => {
 	const { selectedCenter } = useCenterStore();
 	const queryClient = useQueryClient();
 	const [openSlots, setOpenSlots] = useState<Record<number, boolean>>({});
@@ -88,59 +92,12 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 		refetchOnWindowFocus: "always",
 	});
 
-	// 각 슬롯별 승인 대기 중인 신청자 수 파악을 위한 쿼리
-	const { data: slotApplicationStatus } = useQuery({
-		queryKey: ["slotApplicationStatus", eventId, selectedCenter?.centerId],
-		queryFn: async () => {
-			if (!volunteerSlots || !selectedCenter?.centerId) return {};
-
-			const result: Record<
-				number,
-				{ pending: number; approved: number; rejected: number }
-			> = {};
-
-			// 슬롯별 데이터 초기화
-			for (const slot of volunteerSlots) {
-				result[slot.id] = { pending: 0, approved: 0, rejected: 0 };
-			}
-
-			// 각 슬롯의 신청자 정보 가져오기
-			await Promise.all(
-				volunteerSlots.map(async (slot: SlotProps) => {
-					try {
-						const applicants = await getSlotApplicantsAPI({
-							slotId: slot.id,
-							centerId: selectedCenter.centerId as string,
-						});
-
-						// 상태별 카운트
-						for (const applicant of applicants) {
-							if (applicant.status === "PENDING")
-								result[slot.id].pending++;
-							else if (applicant.status === "APPROVED")
-								result[slot.id].approved++;
-							else if (applicant.status === "REJECTED")
-								result[slot.id].rejected++;
-						}
-					} catch (error) {
-						console.error(
-							`슬롯 ID ${slot.id}의 신청자 정보를 불러오는데 실패했습니다`,
-							error,
-						);
-					}
-				}),
-			);
-
-			return result;
-		},
-		enabled: !!volunteerSlots && !!selectedCenter?.centerId,
-	});
-
-	// 슬롯별 신청자 목록 조회
+	// 슬롯별 신청자 목록 조회 - 선택된 슬롯이 있을 때만 활성화
 	const {
 		data: slotApplicants,
 		isLoading: isApplicantsLoading,
 		error: applicantsError,
+		refetch: refetchApplicants,
 	} = useQuery({
 		queryKey: ["slotApplicants", selectedCenter?.centerId, selectedSlot],
 		queryFn: () =>
@@ -148,11 +105,15 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 				slotId: selectedSlot as number,
 				centerId: selectedCenter?.centerId as string,
 			}),
-		enabled: !!selectedSlot && !!selectedCenter?.centerId,
+		enabled:
+			!!selectedSlot &&
+			!!selectedCenter?.centerId &&
+			!!openSlots[selectedSlot],
 		refetchOnMount: "always",
 		refetchOnWindowFocus: "always",
 	});
 
+	// 승인 대기중인 모든 신청자 (필요한 경우만 활성화)
 	const {
 		data: _pendingApplicants,
 		fetchNextPage: _fetchNextPending,
@@ -179,9 +140,10 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 			if (!lastPage) return undefined;
 			return lastPage.hasNext ? lastPage.pageToken : undefined;
 		},
-		enabled: !!selectedCenter?.centerId,
+		enabled: false, // 기본적으로 비활성화, 필요할 때만 활성화
 	});
 
+	// 승인된 모든 신청자 (필요한 경우만 활성화)
 	const {
 		data: _approvedApplicants,
 		fetchNextPage: _fetchNextApproved,
@@ -208,7 +170,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 			if (!lastPage) return undefined;
 			return lastPage.hasNext ? lastPage.pageToken : undefined;
 		},
-		enabled: !!selectedCenter?.centerId,
+		enabled: false, // 기본적으로 비활성화, 필요할 때만 활성화
 	});
 
 	// 승인 mutation
@@ -234,34 +196,19 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 			// 관련 쿼리 무효화
 			queryClient.invalidateQueries({
 				queryKey: [
-					"approvedApplicants",
-					selectedCenter?.centerId,
-					eventId,
-					"approved",
-				],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [
-					"pendingApplicants",
-					selectedCenter?.centerId,
-					eventId,
-					"pending",
-				],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [
 					"slotApplicants",
 					selectedCenter?.centerId,
 					selectedSlot,
 				],
 			});
+
+			// 봉사활동 슬롯 정보 갱신 (신청자 수 변경 가능성)
 			queryClient.invalidateQueries({
-				queryKey: [
-					"slotApplicationStatus",
-					eventId,
-					selectedCenter?.centerId,
-				],
+				queryKey: ["volunteerDetail", eventId],
 			});
+
+			refetchVolunteers();
+			refetchAddresses();
 		},
 		onError: () => {
 			toast.error("봉사 신청 승인에 실패했습니다.", {
@@ -305,34 +252,19 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 			// 관련 쿼리 무효화
 			queryClient.invalidateQueries({
 				queryKey: [
-					"approvedApplicants",
-					selectedCenter?.centerId,
-					eventId,
-					"approved",
-				],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [
-					"pendingApplicants",
-					selectedCenter?.centerId,
-					eventId,
-					"pending",
-				],
-			});
-			queryClient.invalidateQueries({
-				queryKey: [
 					"slotApplicants",
 					selectedCenter?.centerId,
 					selectedSlot,
 				],
 			});
+
+			// 봉사활동 슬롯 정보 갱신 (신청자 수 변경 가능성)
 			queryClient.invalidateQueries({
-				queryKey: [
-					"slotApplicationStatus",
-					eventId,
-					selectedCenter?.centerId,
-				],
+				queryKey: ["volunteerDetail", eventId],
 			});
+
+			refetchVolunteers();
+			refetchAddresses();
 		},
 		onError: () => {
 			toast.error("봉사 신청 거절에 실패했습니다.", {
@@ -397,12 +329,12 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 		applicationCount: number,
 		capacity: number,
 	) => {
-		if (applicationCount === 0) return "bg-gray-100 text-gray-500";
+		if (applicationCount === 0) return "bg-slate-100 text-slate-500";
 		const ratio = applicationCount / capacity;
-		if (ratio >= 1) return "bg-red-100 text-red-700";
-		if (ratio >= 0.75) return "bg-orange-100 text-orange-700";
+		if (ratio >= 1) return "bg-rose-100 text-rose-700";
+		if (ratio >= 0.75) return "bg-amber-100 text-amber-700";
 		if (ratio >= 0.5) return "bg-yellow-100 text-yellow-700";
-		return "bg-green-100 text-green-700";
+		return "bg-emerald-100 text-emerald-700";
 	};
 
 	if (isDetailLoading) {
@@ -450,25 +382,25 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 			transition={{ duration: 0.3 }}
 		>
 			<motion.div
-				className="text-lg font-semibold text-primary border-b pb-2 flex items-center gap-2"
+				className="text-lg font-semibold text-indigo-600 border-b pb-2 flex items-center gap-2"
 				initial={{ y: -10 }}
 				animate={{ y: 0 }}
 				transition={{ type: "spring", stiffness: 300, damping: 30 }}
 			>
-				<Award className="text-primary" size={20} />
+				<Award className="text-indigo-600" size={20} />
 				{volunteerSlots.title} - 신청자 관리
 			</motion.div>
 
 			{!hasSlots ? (
 				<motion.div
-					className="text-center py-10 text-gray-500 bg-gray-50 rounded-lg"
+					className="text-center py-10 text-slate-500 bg-slate-50 rounded-lg"
 					initial={{ opacity: 0, scale: 0.95 }}
 					animate={{ opacity: 1, scale: 1 }}
 					transition={{ duration: 0.3 }}
 				>
 					<Calendar
 						size={32}
-						className="mx-auto text-gray-300 mb-2"
+						className="mx-auto text-slate-300 mb-2"
 					/>
 					등록된 봉사 일정이 없습니다.
 				</motion.div>
@@ -489,11 +421,11 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 								boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
 							}}
 						>
-							<div className="bg-primary/10 p-3">
-								<h3 className="font-semibold flex items-center gap-2 text-primary">
+							<div className="bg-indigo-50 p-3">
+								<h3 className="font-semibold flex items-center gap-2 text-indigo-700">
 									<Calendar
 										size={16}
-										className="text-primary"
+										className="text-indigo-500"
 									/>
 									{formatDate(slot.volunteerDate)}
 								</h3>
@@ -505,7 +437,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 									<div className="flex items-center gap-2">
 										<Clock
 											size={16}
-											className="text-primary"
+											className="text-indigo-500"
 										/>
 										<span className="font-medium">
 											{getSlotTypeText(slot.slotType)}{" "}
@@ -527,71 +459,38 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 								<div
 									className={`rounded-lg border p-3 ${
 										slot.applicationCount > 0
-											? "bg-white border-gray-200"
-											: "bg-gray-50 border-gray-100"
+											? "bg-white border-slate-200"
+											: "bg-slate-50 border-slate-100"
 									}`}
 								>
 									{slot.applicationCount > 0 ? (
 										<div className="space-y-2">
 											<div className="flex justify-between items-center">
-												<span className="text-sm font-medium text-gray-700 flex items-center gap-1.5">
+												<span className="text-sm font-medium text-slate-700 flex items-center gap-1.5">
 													<Users
 														size={14}
-														className="text-primary"
+														className="text-indigo-500"
 													/>
 													신청자 현황
 												</span>
 
-												{slotApplicationStatus?.[
-													slot.id
-												] && (
-													<div className="flex items-center gap-2">
-														{slotApplicationStatus[
-															slot.id
-														].pending > 0 && (
-															<div className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full text-xs">
-																<Clock3
-																	size={10}
-																/>
-																<span>
-																	{
-																		slotApplicationStatus[
-																			slot
-																				.id
-																		]
-																			.pending
-																	}
-																	명
-																</span>
-															</div>
-														)}
-
-														{slotApplicationStatus[
-															slot.id
-														].approved > 0 && (
-															<div className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-xs">
-																<CheckCircle2
-																	size={10}
-																/>
-																<span>
-																	{
-																		slotApplicationStatus[
-																			slot
-																				.id
-																		]
-																			.approved
-																	}
-																	명
-																</span>
-															</div>
-														)}
+												{/* 간소화된 신청자 상태 - 슬롯의 기본 정보만 표시 */}
+												<div className="flex items-center gap-2">
+													<div className="flex items-center gap-1 bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full text-xs">
+														<Users size={10} />
+														<span>
+															{
+																slot.applicationCount
+															}
+															명
+														</span>
 													</div>
-												)}
+												</div>
 											</div>
 
 											{/* 슬롯 확장/축소 버튼 */}
 											<button
-												className="flex justify-center items-center w-full py-1.5 bg-gray-50 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+												className="flex justify-center items-center w-full py-1.5 bg-slate-50 rounded-md cursor-pointer hover:bg-slate-100 transition-colors"
 												onClick={() =>
 													toggleSlot(slot.id)
 												}
@@ -600,28 +499,22 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 												}
 												type="button"
 											>
-												<motion.div
-													className="flex items-center gap-1.5 text-gray-500 text-sm"
-													animate={{
-														rotateX: openSlots[
-															slot.id
-														]
-															? 180
-															: 0,
-													}}
-													transition={{
-														duration: 0.3,
-													}}
-												>
+												<div className="flex items-center gap-1.5 text-slate-500 text-sm">
 													{openSlots[slot.id]
 														? "접기"
 														: "상세보기"}
-													<ChevronDown size={16} />
-												</motion.div>
+													{openSlots[slot.id] ? (
+														<ChevronUp size={16} />
+													) : (
+														<ChevronDown
+															size={16}
+														/>
+													)}
+												</div>
 											</button>
 										</div>
 									) : (
-										<div className="flex flex-col items-center justify-center py-2 text-gray-400 gap-1">
+										<div className="flex flex-col items-center justify-center py-2 text-slate-400 gap-1">
 											<User size={16} />
 											<span className="text-xs">
 												신청자 없음
@@ -635,7 +528,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 							<AnimatePresence>
 								{openSlots[slot.id] && (
 									<motion.div
-										className="bg-gray-50 overflow-hidden border-t border-gray-100"
+										className="bg-slate-50 overflow-hidden border-t border-slate-100"
 										initial={{ height: 0, opacity: 0 }}
 										animate={{
 											height: "auto",
@@ -669,10 +562,10 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 													>
 														<Loader2
 															size={24}
-															className="text-primary mb-2"
+															className="text-indigo-600 mb-2"
 														/>
 													</motion.div>
-													<p className="text-sm text-gray-500">
+													<p className="text-sm text-slate-500">
 														신청자 정보를 불러오는
 														중...
 													</p>
@@ -681,7 +574,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 												<>
 													{applicantsError ? (
 														<motion.div
-															className="text-center p-4 border border-red-200 rounded-lg bg-red-50"
+															className="text-center p-4 border border-rose-200 rounded-lg bg-rose-50"
 															initial={{
 																opacity: 0,
 																scale: 0.9,
@@ -694,13 +587,13 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																duration: 0.3,
 															}}
 														>
-															<p className="text-red-500 mb-2">
+															<p className="text-rose-500 mb-2">
 																데이터를
 																불러오는데
 																실패했습니다
 															</p>
 															<motion.button
-																className="px-3 py-1 bg-white border border-red-300 rounded-md text-sm text-red-600 hover:bg-red-50"
+																className="px-3 py-1 bg-white border border-rose-300 rounded-md text-sm text-rose-600 hover:bg-rose-50"
 																type="button"
 																whileHover={{
 																	scale: 1.05,
@@ -708,6 +601,9 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																whileTap={{
 																	scale: 0.95,
 																}}
+																onClick={() =>
+																	refetchApplicants()
+																}
 															>
 																다시 시도
 															</motion.button>
@@ -725,7 +621,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																		key={
 																			applicant.id
 																		}
-																		className="bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:border-primary/20 transition-colors"
+																		className="bg-white rounded-lg p-4 shadow-sm border border-slate-100 hover:border-indigo-200 transition-colors"
 																		initial={{
 																			opacity: 0,
 																			y: 20,
@@ -776,12 +672,12 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																							className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm"
 																						/>
 																					) : (
-																						<div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center border-2 border-white shadow-sm">
+																						<div className="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-100 to-violet-50 flex items-center justify-center border-2 border-white shadow-sm">
 																							<User
 																								size={
 																									18
 																								}
-																								className="text-primary"
+																								className="text-indigo-500"
 																							/>
 																						</div>
 																					)}
@@ -791,8 +687,8 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																							className={`absolute -bottom-1 -right-1 rounded-full p-1 ${
 																								applicant.status ===
 																								"APPROVED"
-																									? "bg-green-500"
-																									: "bg-red-500"
+																									? "bg-emerald-500"
+																									: "bg-rose-500"
 																							}`}
 																							initial={{
 																								scale: 0,
@@ -828,7 +724,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																						{
 																							applicant.name
 																						}
-																						<span className="text-sm text-gray-500">
+																						<span className="text-sm text-slate-500">
 																							(
 																							{
 																								applicant.nickname
@@ -836,7 +732,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																							)
 																						</span>
 																					</div>
-																					<div className="text-sm text-gray-500">
+																					<div className="text-sm text-slate-500">
 																						{
 																							applicant.age
 																						}
@@ -872,13 +768,13 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																									size={
 																										18
 																									}
-																									className="text-primary mr-2"
+																									className="text-indigo-600 mr-2"
 																								/>
 																							</motion.div>
 																						) : (
 																							<>
 																								<motion.button
-																									className="rounded-full p-1.5 text-green-500 hover:bg-green-50 transition-colors"
+																									className="rounded-full p-1.5 text-emerald-500 hover:bg-emerald-50 transition-colors"
 																									aria-label="승인"
 																									title="승인"
 																									type="button"
@@ -909,7 +805,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																									/>
 																								</motion.button>
 																								<motion.button
-																									className="rounded-full p-1.5 text-red-500 hover:bg-red-50 transition-colors"
+																									className="rounded-full p-1.5 text-rose-500 hover:bg-rose-50 transition-colors"
 																									aria-label="거절"
 																									title="거절"
 																									type="button"
@@ -947,8 +843,8 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																						className={`px-2.5 py-1 rounded-full text-xs font-medium ${
 																							applicant.status ===
 																							"APPROVED"
-																								? "bg-green-100 text-green-800"
-																								: "bg-red-100 text-red-800"
+																								? "bg-emerald-100 text-emerald-800"
+																								: "bg-rose-100 text-rose-800"
 																						}`}
 																						initial={{
 																							opacity: 0,
@@ -972,7 +868,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																		</div>
 
 																		<motion.div
-																			className="mt-3 grid grid-cols-1 gap-2 text-sm bg-gray-50 p-2.5 rounded-lg"
+																			className="mt-3 grid grid-cols-1 gap-2 text-sm bg-slate-50 p-2.5 rounded-lg"
 																			initial={{
 																				opacity: 0,
 																			}}
@@ -988,7 +884,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																					size={
 																						14
 																					}
-																					className="text-gray-400"
+																					className="text-indigo-400"
 																				/>
 																				<span className="font-medium">
 																					{applicant.phone ||
@@ -1000,14 +896,14 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 																					size={
 																						14
 																					}
-																					className="text-gray-400"
+																					className="text-indigo-400"
 																				/>
 																				<span>
 																					{applicant.email ||
 																						"-"}
 																				</span>
 																			</div>
-																			<div className="text-xs text-gray-400 mt-1">
+																			<div className="text-xs text-slate-400 mt-1">
 																				신청일:{" "}
 																				{format(
 																					new Date(
@@ -1023,7 +919,7 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 														</div>
 													) : (
 														<motion.div
-															className="text-center py-6 bg-gray-50 rounded-lg border border-gray-200"
+															className="text-center py-6 bg-slate-50 rounded-lg border border-slate-200"
 															initial={{
 																opacity: 0,
 																y: 10,
@@ -1038,9 +934,9 @@ export const ApplicantsList = ({ eventId }: ApplicantsListProps) => {
 														>
 															<User
 																size={24}
-																className="mx-auto text-gray-300 mb-2"
+																className="mx-auto text-slate-300 mb-2"
 															/>
-															<p className="text-gray-500">
+															<p className="text-slate-500">
 																신청자가 없거나
 																정보를 불러올 수
 																없습니다.

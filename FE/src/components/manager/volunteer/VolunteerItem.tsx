@@ -31,6 +31,8 @@ export const VolunteerItem = ({
 	volunteer,
 	onDelete,
 	formatDate,
+	refetchVolunteers,
+	refetchAddresses,
 }: VolunteerItemProps) => {
 	return (
 		<div key={volunteer.id} className="border rounded-md p-3 bg-gray-50">
@@ -122,6 +124,10 @@ export const VolunteerItem = ({
 										<ApplicantsList
 											formatDate={formatDate}
 											eventId={volunteer.id}
+											refetchVolunteers={
+												refetchVolunteers
+											}
+											refetchAddresses={refetchAddresses}
 										/>
 									</div>
 
