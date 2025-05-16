@@ -27,12 +27,9 @@ public class EmergencyEventHandler {
 
 		List<String> targetTokens = memberRepository.findFcmTokensByCenterId(centerId);
 
-		for (String targetToken : targetTokens) {
-			fcmService.sendMessageTo(
-					targetToken,
-					event.title(),
-					event.centerName()
-			);
+		for (String token : targetTokens) {
+			log.info("🔔 FCM 대상 토큰: {}", token);
+			fcmService.sendMessageTo(token, event.title(), event.centerName());
 		}
 	}
 }
