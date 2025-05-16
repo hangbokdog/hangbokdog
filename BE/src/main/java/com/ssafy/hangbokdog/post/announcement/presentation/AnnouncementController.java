@@ -96,7 +96,7 @@ public class AnnouncementController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/latest}")
+	@GetMapping("/latest")
 	public ResponseEntity<List<AnnouncementResponse>> getLatest(
 		@AuthMember Member member,
 		@RequestParam Long centerId
