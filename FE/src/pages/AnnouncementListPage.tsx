@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { fetchAnnouncementsAPI } from "@/api/announcement";
 import useCenterStore from "@/lib/store/centerStore";
 import { Loader2 } from "lucide-react";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import AnnouncementItem from "@/components/announcement/AnnouncementItem";
 
 export default function AnnouncementListPage() {
 	const navigate = useNavigate();
@@ -63,11 +64,6 @@ export default function AnnouncementListPage() {
 		navigate(`/announcements/${id}`);
 	};
 
-	const formatDate = (dateString: string) => {
-		const date = new Date(dateString);
-		return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
-	};
-
 	const allAnnouncements = data?.pages.flatMap((page) => page.data) || [];
 	return (
 		<div className="flex flex-col min-h-screen bg-gray-50 pb-16">
@@ -118,37 +114,12 @@ export default function AnnouncementListPage() {
 					<div className="bg-white rounded-lg shadow-sm overflow-hidden">
 						<div className="divide-y divide-gray-100">
 							{allAnnouncements.map((announcement) => (
-								<button
+								<AnnouncementItem
 									key={announcement.id}
-									type="button"
-									onClick={() =>
-										handleAnnouncementClick(announcement.id)
-									}
-									className="w-full text-left p-4 hover:bg-gray-50 transition-colors"
-								>
-									<div className="flex flex-col">
-										<div className="flex items-center mb-2">
-											<span className="text-lg font-medium text-gray-800">
-												{announcement.title}
-											</span>
-										</div>
-										<div className="flex items-center text-sm text-gray-500">
-											<div className="flex items-center">
-												<span className="text-gray-700">
-													{announcement.authorName}
-												</span>
-												<span className="mx-2 text-gray-300">
-													|
-												</span>
-												<span>
-													{formatDate(
-														announcement.createdAt,
-													)}
-												</span>
-											</div>
-										</div>
-									</div>
-								</button>
+									announcement={announcement}
+									onClick={handleAnnouncementClick}
+									className="border-b border-gray-100"
+								/>
 							))}
 						</div>
 
