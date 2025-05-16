@@ -198,7 +198,11 @@ public class VaccinationService {
 		try {
 			String json = (String) redisTemplate.opsForValue().get(key);
 			if (json != null) {
-				cached = objectMapper.readValue(json, new TypeReference<>() {});
+				cached = objectMapper.readValue(
+					json, new TypeReference<>() {
+
+					}
+				);
 			}
 		} catch (Exception e) {
 			log.warn("Redis 캐시 읽기 실패 - done: {}", e.getMessage(), e);
@@ -232,7 +236,9 @@ public class VaccinationService {
 		try {
 			String json = (String) redisTemplate.opsForValue().get(key);
 			if (json != null) {
-				cached = objectMapper.readValue(json, new TypeReference<>() {});
+				cached = objectMapper.readValue(json, new TypeReference<>() {
+
+				});
 			}
 		} catch (Exception e) {
 			log.warn("Redis 캐시 읽기 실패 - yet: {}", e.getMessage(), e);
