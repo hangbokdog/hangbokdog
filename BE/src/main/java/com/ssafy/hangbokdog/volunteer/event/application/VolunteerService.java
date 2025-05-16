@@ -22,6 +22,7 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
+import com.ssafy.hangbokdog.volunteer.event.domain.SlotType;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
@@ -34,6 +35,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
+import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo.SlotCapacity;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantResponse;
@@ -191,7 +193,6 @@ public class VolunteerService {
                 .build();
     }
 
-    //TODO
     public List<VolunteerSlotResponse> findAllSlotsByVolunteerEventId(Member member, Long eventId) {
         VolunteerEvent event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
@@ -327,7 +328,49 @@ public class VolunteerService {
     }
 
     public List<DailyApplicationInfo> findAllSchedule(Long eventId) {
-        return eventRepository.findDailyApplications(eventId);
+        var volunteerSlots = volunteerSlotRepository.findAllByEventId(eventId);
+        var volunteerSlotIds = extractVolunteerSlotIds(volunteerSlots);
+        var slotAppliedCount = volunteerApplicationRepository.findSlotsWithAppliedCountByIdIn(volunteerSlotIds);
+        var slotsToAppliedCount = mapSlotToAppliedCount(slotAppliedCount);
+        Map<LocalDate, List<VolunteerSlotResponseWithoutAppliedCount>> slotsGroupByDate = volunteerSlots.stream()
+                .collect(Collectors.groupingBy(VolunteerSlotResponseWithoutAppliedCount::volunteerDate));
+
+        List<DailyApplicationInfo> dailyApplications = new ArrayList<>();
+        for (var slots : slotsGroupByDate.entrySet()) {
+            LocalDate date = slots.getKey();
+            var slotInfo = slots.getValue();
+            var firstSlot = slotInfo.get(0);
+            var secondSlot = slotInfo.get(1);
+
+            if (firstSlot.slotType().equals(SlotType.MORNING)) {
+                dailyApplications.add(generateDailyApplicationInfo(date, firstSlot, secondSlot, slotsToAppliedCount));
+                continue;
+            }
+            dailyApplications.add(generateDailyApplicationInfo(date, secondSlot, firstSlot, slotsToAppliedCount));
+        }
+
+        return dailyApplications;
+    }
+
+    private DailyApplicationInfo generateDailyApplicationInfo(
+            LocalDate date,
+            VolunteerSlotResponseWithoutAppliedCount firstSlot,
+            VolunteerSlotResponseWithoutAppliedCount secondSlot,
+            Map<Long, Integer> slotsToAppliedCount
+    ) {
+        return DailyApplicationInfo.of(
+                date,
+                SlotCapacity.of(
+                        firstSlot.id(),
+                        slotsToAppliedCount.getOrDefault(firstSlot.id(), 0),
+                        firstSlot.capacity()
+                ),
+                SlotCapacity.of(
+                        secondSlot.id(),
+                        slotsToAppliedCount.getOrDefault(secondSlot.id(), 0),
+                        secondSlot.capacity()
+                )
+        );
     }
 
     private List<Long> extractVolunteerEventIds(List<VolunteerInfo> volunteers) {
