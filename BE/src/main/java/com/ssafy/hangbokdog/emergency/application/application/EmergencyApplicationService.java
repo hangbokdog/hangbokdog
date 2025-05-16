@@ -59,7 +59,6 @@ public class EmergencyApplicationService {
 		Long emergencyApplicationId,
 		EmergencyApplicationStatus request
 	) {
-		//TODO: 락 잡아서 동일한 이동 응급에 대해 여러 명이 수행 못하게 하고, 봉사 응급 정원 유지
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		EmergencyApplication emergencyApplication = getEmergencyApplication(emergencyApplicationId);
@@ -81,7 +80,6 @@ public class EmergencyApplicationService {
 					}
 
 					emergencyApplication.approve();
-					//TODO: 응급 승인 알림 추가
 					break;
 
 				case VOLUNTEER:

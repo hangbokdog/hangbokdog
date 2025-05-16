@@ -45,4 +45,12 @@ public class CenterMemberRepository {
     public void delete(CenterMember centerMember) {
         centerMemberJpaRepository.delete(centerMember);
     }
+
+    public Boolean existsMainCenter(Long memberId) {
+        return centerMemberJpaRepository.existsMainCenter(memberId);
+    }
+
+    public CenterMember getMainCenter(Long memberId) {
+        return centerMemberJpaRepository.getMainCenterByMemberId(memberId);
+    }
 }

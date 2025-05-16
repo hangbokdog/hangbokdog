@@ -99,8 +99,7 @@ public class CenterService {
 				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
 
 		Long centerId = centerJoinRequest.getCenterId();
-		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		var centerMember = getCenterMember(member.getId(), centerId);
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -121,8 +120,7 @@ public class CenterService {
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_JOIN_REQUEST_NOT_FOUND));
 
 		Long centerId = centerJoinRequest.getCenterId();
-		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		var centerMember = getCenterMember(member.getId(), centerId);
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -132,8 +130,7 @@ public class CenterService {
 	}
 
 	public PageInfo<CenterJoinRequestResponse> findAll(Member member, Long centerId, String pageToken) {
-		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		var centerMember = getCenterMember(member.getId(), centerId);
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -217,13 +214,44 @@ public class CenterService {
 	}
 
 	public void deleteCenterMember(Long memberId, Long centerId) {
-		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
-				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		if (!centerMember.isSelf(memberId) && !centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_CENTER_MEMBER_HIMSELF);
 		}
 
 		centerMemberRepository.delete(centerMember);
+	}
+
+	@Transactional
+	public void registerMainCenter(Long memberId, Long centerId) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (centerMember.isMain()) {
+			throw new BadRequestException(ErrorCode.CENTER_ALREADY_MAIN);
+		}
+
+		CenterMember mainCenter = centerMemberRepository.getMainCenter(memberId);
+
+		if (mainCenter != null) {
+			mainCenter.cancelMain();
+		}
+
+		centerMember.makeMain();
+	}
+
+	public void cancelMainCenter(Long memberId, Long centerId) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.isMain()) {
+			throw new BadRequestException(ErrorCode.NOT_MAIN_CENTER);
+		}
+
+		centerMember.cancelMain();
+	}
+
+	private CenterMember getCenterMember(Long memberId, Long centerId) {
+		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 	}
 }
