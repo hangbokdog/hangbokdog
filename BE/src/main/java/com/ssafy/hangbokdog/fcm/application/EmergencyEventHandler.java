@@ -9,9 +9,7 @@ import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class EmergencyEventHandler {
@@ -23,12 +21,9 @@ public class EmergencyEventHandler {
 	public void handleEmergencyEvent(EmergencyEvent event) {
 		Long centerId = event.centerId();
 
-		log.info("emergency event: " + event);
-
 		List<String> targetTokens = memberRepository.findFcmTokensByCenterId(centerId);
 
 		for (String token : targetTokens) {
-			log.info("🔔 FCM 대상 토큰: {}", token);
 			fcmService.sendMessageTo(token, event.title(), event.centerName());
 		}
 	}

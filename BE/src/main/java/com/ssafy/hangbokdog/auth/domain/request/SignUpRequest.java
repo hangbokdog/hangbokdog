@@ -6,6 +6,7 @@ public record SignUpRequest(
         String name,
         String nickname,
         String phone,
-        LocalDate birth
+        LocalDate birth,
+		Boolean emergencyNotification
 ) {
 }
