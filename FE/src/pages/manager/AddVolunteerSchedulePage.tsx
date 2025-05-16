@@ -21,32 +21,7 @@ import {
 	type VolunteerData,
 } from "@/api/volunteer";
 import { toast } from "sonner";
-import localAxios from "@/api/http-commons";
-
-// 이미지 업로드 API 함수
-const uploadVolunteerImageAPI = async (file: File) => {
-	try {
-		// FormData 생성
-		const formData = new FormData();
-		formData.append("file", file);
-
-		// API 요청 (axios 사용)
-		const response = await localAxios.post("/volunteers/images", formData, {
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-		});
-
-		// 서버에서 반환한 S3 이미지 URL 반환
-		return response.data;
-	} catch (error) {
-		// 413 Request Entity Too Large 오류 처리
-		if (axios.isAxiosError(error) && error.response?.status === 413) {
-			throw new Error("파일 크기가 너무 큽니다 (최대 10MB)");
-		}
-		throw new Error("이미지 업로드에 실패했습니다");
-	}
-};
+import { uploadImageAPI } from "@/api/common";
 
 // 에디터 타입 정의
 type EditorType =
@@ -191,7 +166,7 @@ export default function AddVolunteerSchedulePage() {
 				console.log("이미지 업로드 시작:", file.name);
 
 				// 이미지 업로드 API 호출 - S3에 업로드
-				const s3ImageUrl = await uploadVolunteerImageAPI(file);
+				const s3ImageUrl = await uploadImageAPI(file);
 				console.log("S3 업로드 성공. URL:", s3ImageUrl);
 
 				// 에디터 선택 정보 가져오기

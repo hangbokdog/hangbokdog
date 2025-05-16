@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Home, Search } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
 import AdoptedDogsGrid from "@/components/adoption/AdoptedDogsGrid";
