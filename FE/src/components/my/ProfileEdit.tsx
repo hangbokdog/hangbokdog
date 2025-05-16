@@ -150,9 +150,9 @@ export default function ProfileEdit() {
 				</div>
 
 				{/* 설명 텍스트 */}
-				<p className="text-sm text-gray-400 text-center mb-8">
+				{/* <p className="text-sm text-gray-400 text-center mb-8">
 					누구인지 한줄로 작성해 보세요. 다시 한번 수정할 수 있어요.
-				</p>
+				</p> */}
 
 				{/* 저장 버튼 */}
 				<Button
