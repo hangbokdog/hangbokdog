@@ -82,4 +82,8 @@ public class AdoptionRepository {
 		);
 		return PageInfo.of(data, ADOPTION_DOG_PAGE_SIZE, AdoptionSearchInfo::adoptionId);
 	}
+
+	public void deleteByDogId(Long dogId) {
+		adoptionJpaRepository.deleteByDogId(dogId);
+	}
 }

@@ -85,6 +85,7 @@ public class AdoptionService {
 		} else if (request == AdoptionStatus.ACCEPTED) {
 			adoption.accept();
 			dog.goAdopted();
+			adoptionRepository.deleteByDogId(dog.getId());
 		} else {
 			throw new BadRequestException(ErrorCode.INVALID_REQUEST);
 		}
