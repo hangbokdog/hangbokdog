@@ -44,9 +44,6 @@ public class Member {
 	@Column(name = "phone")
 	private String phone;
 
-	@Column(name = "age")
-	private int age;
-
 	@Column(name = "social_id", nullable = false, length = 256)
 	private String socialId;
 
@@ -86,8 +83,7 @@ public class Member {
 		String socialId,
 		String profileImage,
 		String email,
-		String description,
-		int age
+		String description
 	) {
 		this.id = id;
 		this.nickName = nickName;
@@ -102,7 +98,6 @@ public class Member {
 		this.status = MemberStatus.INACTIVE;
 		this.description = description;
 		this.grade = Grade.GUEST;
-		this.age = age;
 	}
 
 	public boolean isAdmin() {
@@ -131,7 +126,6 @@ public class Member {
 		this.phone = phone;
 		this.grade = Grade.USER;
 		this.status = MemberStatus.ACTIVE;
-		this.age = age;
 		this.emergencyNotificationCheck = emergencyNotificationCheck;
 	}
 

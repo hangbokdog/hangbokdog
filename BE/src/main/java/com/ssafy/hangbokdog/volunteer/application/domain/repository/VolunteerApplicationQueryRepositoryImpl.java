@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
@@ -132,7 +133,11 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                     member.nickName,
                     member.birth,
                     member.phone,
-                    member.age,
+                        Expressions.numberTemplate(
+                                Integer.class,
+                                "timestampdiff(year, {0}, now())",
+                                member.birth
+                        ),
                     member.grade,
                     member.email,
                     member.profileImage
@@ -170,7 +175,11 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                         member.nickName,
                         member.birth,
                         member.phone,
-                        member.age,
+                        Expressions.numberTemplate(
+                                Integer.class,
+                                "timestampdiff(year, {0}, now())",
+                                member.birth
+                        ),
                         member.grade,
                         member.email,
                         member.profileImage
