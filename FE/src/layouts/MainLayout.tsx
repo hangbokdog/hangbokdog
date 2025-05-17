@@ -7,7 +7,7 @@ export default function MainLayout() {
 			<div className="flex flex-col h-full w-full max-w-[440px] overflow-y-auto scrollbar-hidden bg-background shadow-custom-xs">
 				<Outlet />
 			</div>
-			<Toaster />
+			<Toaster richColors={true} />
 		</div>
 	);
 }
