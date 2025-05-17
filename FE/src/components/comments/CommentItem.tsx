@@ -3,8 +3,8 @@ import ReplyList from "./ReplyList";
 import ReplyForm from "./ReplyForm";
 import CommentDropdown from "../common/CommentDropdown";
 import useCenterStore from "@/lib/store/centerStore";
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { toggleDogCommentLikeAPI } from "@/api/dog";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
@@ -34,23 +34,30 @@ export default function CommentItem({
 	const { dogComment, replies } = comment;
 	const { isCenterMember } = useCenterStore();
 	const { id: dogId } = useParams();
-	const queryClient = useQueryClient();
 
 	const [isLiked, setIsLiked] = useState(dogComment.isLiked);
 	const [likeCount, setLikeCount] = useState(dogComment.likeCount);
 	const [isDisabled, setIsDisabled] = useState(false);
 
+	// useEffect를 사용하여 dogComment가 변경될 때마다 로컬 상태 업데이트
+	useEffect(() => {
+		setIsLiked(dogComment.isLiked);
+		setLikeCount(dogComment.likeCount);
+	}, [dogComment]);
+
 	const toggleLikeMutation = useMutation({
 		mutationFn: () => toggleDogCommentLikeAPI(Number(dogId), dogComment.id),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["dogComments", dogId] });
-			if (isLiked) {
+			// 성공 시 쿼리 무효화 대신 로컬 상태만 유지
+			// 최적화: 전체 쿼리를 다시 가져오지 않고 UI만 업데이트
+			if (!isLiked) {
 				toast.success("댓글을 좋아요 했습니다.");
 			} else {
 				toast.success("좋아요를 취소했습니다.");
 			}
 		},
 		onError: () => {
+			// 실패 시 UI 상태 되돌리기
 			setIsLiked(!isLiked);
 			setLikeCount((prevCount) =>
 				isLiked ? prevCount + 1 : Math.max(0, prevCount - 1),

@@ -58,8 +58,47 @@ function DialogContent({
 					className,
 				)}
 				{...props}
+				aria-describedby="dialog-description"
+				tabIndex={-1}
+				onOpenAutoFocus={(e) => {
+					e.preventDefault();
+					const focusableElements = document.querySelectorAll(
+						'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+					);
+					if (focusableElements.length > 0) {
+						(focusableElements[0] as HTMLElement).focus();
+					}
+				}}
+				onEscapeKeyDown={(e) => {
+					if (props.onEscapeKeyDown) {
+						props.onEscapeKeyDown(e);
+					}
+				}}
+				onPointerDownOutside={(e) => {
+					if (props.onPointerDownOutside) {
+						props.onPointerDownOutside(e);
+					}
+				}}
+				onInteractOutside={(e) => {
+					const target = e.target as HTMLElement;
+					if (
+						target.closest('[role="menu"]') ||
+						target.closest('[role="menuitem"]')
+					) {
+						e.preventDefault();
+					}
+					if (props.onInteractOutside) {
+						props.onInteractOutside(e);
+					}
+				}}
 			>
 				{children}
+				<DialogPrimitive.Description
+					id="dialog-description"
+					className="sr-only"
+				>
+					대화상자 내용
+				</DialogPrimitive.Description>
 				<DialogPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
 					<XIcon />
 					<span className="sr-only">Close</span>

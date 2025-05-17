@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import CommentList from "@/components/comments/CommentList";
 import CommentForm from "@/components/comments/CommentForm";
-import RouteBackHeader from "@/components/common/RouteBackHeader";
 import useCenterStore from "@/lib/store/centerStore";
 import useAuthStore from "@/lib/store/authStore";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,20 +22,35 @@ export default function DogCommentsPage() {
 	const queryClient = useQueryClient();
 	const { id } = useParams();
 
+	// 수동으로 댓글 데이터를 리프레시
+	const refreshComments = useCallback(() => {
+		queryClient.invalidateQueries({
+			queryKey: ["dogComments", id],
+			refetchType: "all",
+		});
+	}, [queryClient, id]);
+
+	// 댓글 데이터 조회 - 수동 리프레시 키를 추가하고 staleTime을 0으로 설정
 	const { data: comments = [] } = useQuery<DogCommentItem[]>({
 		queryKey: ["dogComments", id],
 		queryFn: () => getDogCommentsAPI(Number(id)),
+		staleTime: 0, // 항상 최신 데이터를 가져오도록 설정
+		refetchOnWindowFocus: true,
+		refetchOnMount: true,
 	});
 
+	// 컴포넌트가 마운트될 때 데이터 리프레시
+	useEffect(() => {
+		refreshComments();
+	}, [refreshComments]);
+
+	// 댓글 수 계산 함수
 	const getTotalCommentCount = () => {
 		let totalCount = 0;
-
 		totalCount += comments.length;
-
 		for (const comment of comments) {
 			totalCount += comment.replies.length;
 		}
-
 		return totalCount;
 	};
 
@@ -87,10 +101,9 @@ export default function DogCommentsPage() {
 		mutationFn: () =>
 			createDogCommentAPI(Number(id), commentValue, replyOpenId || null),
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["dogComments", id],
-			});
+			refreshComments();
 			setCommentValue("");
+			toast.success("댓글이 등록되었습니다.");
 		},
 		onError: () => {
 			toast.error("댓글 작성에 실패했습니다.");
@@ -106,12 +119,11 @@ export default function DogCommentsPage() {
 
 		createDogCommentAPI(Number(id), replyValue, commentId)
 			.then(() => {
-				queryClient.invalidateQueries({
-					queryKey: ["dogComments", id],
-				});
+				refreshComments();
 				setReplyValue("");
 				setReplyOpenId(null);
 				setReplyLength(0);
+				toast.success("답글이 등록되었습니다.");
 			})
 			.catch(() => {
 				toast.error("답글 작성에 실패했습니다.");
@@ -125,7 +137,6 @@ export default function DogCommentsPage() {
 			return;
 		}
 
-		console.log(commentValue);
 		createDogComment();
 	};
 
@@ -176,7 +187,12 @@ export default function DogCommentsPage() {
 
 	return (
 		<div className="flex flex-col h-full relative bg-white">
-			<RouteBackHeader title="댓글" sub={`${getTotalCommentCount()}개`} />
+			<div className="flex items-center gap-1 mx-2.5">
+				<span className="text-lg font-bold leading-6">댓글</span>
+				<span className="text-sm font-medium text-blueGray">
+					{getTotalCommentCount()}
+				</span>
+			</div>
 			<CommentList
 				comments={comments}
 				replyOpenId={replyOpenId}
