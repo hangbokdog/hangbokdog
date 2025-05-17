@@ -10,12 +10,8 @@ export default function OngoingVolunteerImage({
 	alt,
 }: OngoingVolunteerImageProps) {
 	return (
-		<div className="relative">
-			<img
-				className="object-cover h-full aspect-square"
-				src={src}
-				alt={alt}
-			/>
+		<div className="relative w-full h-full">
+			<img className="w-full h-full object-cover" src={src} alt={alt} />
 			<div className="absolute inset-0 bg-custom-gradient" />
 			<span className="absolute bg-white right-1 bottom-1 rounded-full inline-flex items-center justify-center px-2 py-1">
 				<IoIosArrowForward className="size-4 text-grayText" />
