@@ -142,3 +142,10 @@ export const adoptionSearchAPI = async (
 	});
 	return response.data;
 };
+
+export const fetchApprovedDogDetailsAPI = async (
+	dogId: number,
+): Promise<AdoptedDogDetailsResponse> => {
+	const response = await localAxios.get(`/adoptions/adopted/${dogId}`);
+	return response.data;
+};

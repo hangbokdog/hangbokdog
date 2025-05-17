@@ -1,64 +1,78 @@
+import { useEffect, useState } from "react";
 import PanelTitle from "../common/PanelTitle";
 import ProtectDogCard from "@/components/my/ProtectDogCard";
-import dog1 from "@/assets/images/dog1.png";
-import dog2 from "@/assets/images/dog2.png";
-import dog3 from "@/assets/images/dog3.png";
-
-const dummyDogs = [
-	{
-		id: 1,
-		name: "모리",
-		age: "7개월",
-		imageUrl: dog1,
-		gender: "MALE",
-		status: "APPROVED",
-		startDate: "2025.02.01",
-	},
-	{
-		id: 2,
-		name: "찬희",
-		age: "6살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		status: "CANCELLED",
-		startDate: "2025.02.02",
-		endDate: "2025.02.28",
-	},
-	{
-		id: 3,
-		name: "백돌",
-		age: "2개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		status: "PENDING",
-		startDate: "2025.02.02",
-	},
-];
+import {
+	type AdoptedDogDetailsResponse,
+	fetchAdoptionApplicationsAPI,
+	fetchApprovedDogDetailsAPI,
+} from "@/api/adoption";
+import useCenterStore from "@/lib/store/centerStore";
 
 export default function ProtectDogPanel() {
+	const { selectedCenter } = useCenterStore();
+	const centerId = Number(selectedCenter?.centerId);
+	const [dogDetailsList, setDogDetailsList] = useState<
+		AdoptedDogDetailsResponse[]
+	>([]);
+	const [isLoading, setIsLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchAllData = async () => {
+			try {
+				if (!centerId) return;
+
+				// 1. 내가 신청한 입양 목록 가져오기
+				const appliedDogs =
+					await fetchAdoptionApplicationsAPI(centerId);
+
+				// 2. 각 dogId에 대해 승인된 상세 정보 가져오기
+				const results = await Promise.allSettled(
+					appliedDogs.map((dog) =>
+						fetchApprovedDogDetailsAPI(dog.dogId),
+					),
+				);
+
+				// 3. 성공한 것만 필터링
+				const fulfilled = results
+					.map((res, idx) =>
+						res.status === "fulfilled" ? res.value : null,
+					)
+					.filter((v) => v !== null);
+
+				setDogDetailsList(fulfilled);
+			} catch (err) {
+				console.error("입양양 정보 불러오기 실패", err);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		fetchAllData();
+	}, [centerId]);
+
+	if (isLoading) return <div className="p-4">불러오는 중...</div>;
+
 	return (
 		<div className="flex flex-col p-2.5 mx-2.5 rounded-xl bg-white shadow-custom-xs">
-			<PanelTitle title="임보 정보" link="/dogs" />
+			<PanelTitle title="입양 정보" link="/dogs" />
 			<div className="max-w-[400px] grid grid-rows-3 gap-2.5 pb-2.5">
-				{dummyDogs.map((dog) => (
-					<ProtectDogCard
-						key={dog.id}
-						id={dog.id}
-						name={dog.name}
-						age={dog.age}
-						imageUrl={dog.imageUrl}
-						gender={dog.gender as "MALE" | "FEMALE"}
-						status={
-							dog.status as
-								| "PENDING"
-								| "APPROVED"
-								| "REJECTED"
-								| "CANCELLED"
-						}
-						startDate={dog.startDate}
-						endDate={dog.endDate}
-					/>
-				))}
+				{dogDetailsList.map((dog) => {
+					const ageText = `${Math.floor(dog.age / 12)}세 ${dog.age % 12}개월`;
+
+					return (
+						<ProtectDogCard
+							key={dog.dogId}
+							id={dog.dogId}
+							name={dog.dogName}
+							age={ageText}
+							imageUrl={dog.profileImageUrl}
+							gender={dog.gender}
+							status={"APPROVED"} // 임보 완료 기준
+							startDate={dog.rescuedDate.slice(0, 10)}
+							endDate={dog.adoptedDate?.slice(0, 10)}
+						/>
+					);
+				})}
 			</div>
 		</div>
 	);
