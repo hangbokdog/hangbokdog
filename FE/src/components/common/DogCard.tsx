@@ -112,6 +112,7 @@ export default function DogCard({
 							alt={name}
 							className="w-full h-42 object-cover"
 							referrerPolicy="no-referrer"
+							loading="lazy"
 							onError={() => setImgError(true)}
 						/>
 					)}

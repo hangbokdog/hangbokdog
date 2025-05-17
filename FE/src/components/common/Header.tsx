@@ -120,7 +120,8 @@ export default function Header() {
 
 	const isCenterMember =
 		selectedCenter?.status === "USER" ||
-		selectedCenter?.status === "MANAGER";
+		selectedCenter?.status === "MANAGER" ||
+		selectedCenter?.status === "MEMBER";
 
 	// 상태별 버튼 텍스트와 스타일
 	const getStatusButton = () => {
