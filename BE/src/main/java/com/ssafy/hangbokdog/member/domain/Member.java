@@ -143,16 +143,10 @@ public class Member {
 	}
 
 	public void agreeEmergencyNotification() {
-		if (emergencyNotificationCheck) {
-			throw new BadRequestException(ErrorCode.EMERGENCY_NOTIFICATION_ALREADY_AGREED);
-		}
 		emergencyNotificationCheck = true;
 	}
 
 	public void denyEmergencyNotification() {
-		if (!emergencyNotificationCheck) {
-			throw new BadRequestException(ErrorCode.EMERGENCY_NOTIFICATION_ALREADY_DISAGREED);
-		}
 		emergencyNotificationCheck = false;
 	}
 }
