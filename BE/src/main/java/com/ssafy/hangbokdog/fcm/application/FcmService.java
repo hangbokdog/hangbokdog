@@ -15,12 +15,14 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.ssafy.hangbokdog.fcm.dto.FcmMessage;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FcmService {
@@ -50,6 +52,7 @@ public class FcmService {
 
 			try (Response response = client.newCall(request).execute()) {
 				String responseBody = response.body().string();
+				log.info("success");
 			}
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to send message", e);
