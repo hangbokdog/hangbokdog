@@ -52,4 +52,8 @@ public class MemberRepository {
     public List<MemberAgeInfo> findByIdInWithAge(List<Long> allParticipantIds) {
         return memberJpaRepository.findByIdWithAge(allParticipantIds);
     }
+
+    public String getFcmTokenByMemberId(Long memberId) {
+        return memberJpaRepository.getFcmTokenById(memberId);
+    }
 }
