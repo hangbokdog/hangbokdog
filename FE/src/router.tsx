@@ -187,6 +187,7 @@ const router = createBrowserRouter([
 												<VolunteerApplyPage />
 											</CenterMemberProtectedRoute>
 										),
+										handle: { showHeader: false },
 									},
 								],
 							},

@@ -25,19 +25,23 @@ export default function OngoingVolunteerCard({
 }: OngoingVolunteerCardProps) {
 	return (
 		<Link to={`/volunteer/${id}`}>
-			<div className="bg-white rounded-[8px] shadow-custom-sm flex overflow-hidden h-24">
-				<OngoingVolunteerDateBox
-					startMonth={Number.parseInt(startDate.split("-")[1])}
-					startDay={Number.parseInt(startDate.split("-")[2])}
-					endMonth={Number.parseInt(endDate.split("-")[1])}
-					endDay={Number.parseInt(endDate.split("-")[2])}
-				/>
-				<OngoingVolunteerInfo
-					title={title}
-					location={address}
-					description={content}
-				/>
-				<OngoingVolunteerImage src={imageUrl} alt="dog1" />
+			<div className="bg-white rounded-[8px] shadow-custom-sm flex justify-between overflow-hidden h-24">
+				<div className="flex flex-grow">
+					<OngoingVolunteerDateBox
+						startMonth={Number.parseInt(startDate.split("-")[1])}
+						startDay={Number.parseInt(startDate.split("-")[2])}
+						endMonth={Number.parseInt(endDate.split("-")[1])}
+						endDay={Number.parseInt(endDate.split("-")[2])}
+					/>
+					<OngoingVolunteerInfo
+						title={title}
+						location={address}
+						description={content}
+					/>
+				</div>
+				<div className="w-24 h-24 flex-shrink-0">
+					<OngoingVolunteerImage src={imageUrl} alt="dog1" />
+				</div>
 			</div>
 		</Link>
 	);

@@ -1,5 +1,5 @@
 import { BsThreeDots } from "react-icons/bs";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateDogCommentAPI, deleteDogCommentAPI } from "@/api/dog";
@@ -11,6 +11,7 @@ import {
 	DialogTitle,
 	DialogFooter,
 	DialogClose,
+	DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,14 +35,28 @@ export default function CommentDropdown({
 	const [isEditOpen, setIsEditOpen] = useState(false);
 	const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 	const [editValue, setEditValue] = useState(content);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const triggerRef = useRef<HTMLButtonElement>(null);
 
 	const updateMutation = useMutation({
 		mutationFn: (newContent: string) =>
 			updateDogCommentAPI(Number(dogId), commentId, newContent),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["dogComments", dogId] });
+			// 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: ["dogComments", dogId],
+				refetchType: "all",
+			});
+
 			toast.success("댓글이 수정되었습니다.");
 			setIsEditOpen(false);
+
+			// 포커스 원복
+			setTimeout(() => {
+				if (triggerRef.current) {
+					triggerRef.current.focus();
+				}
+			}, 0);
 		},
 		onError: () => {
 			toast.error("댓글 수정에 실패했습니다.");
@@ -51,9 +66,21 @@ export default function CommentDropdown({
 	const deleteMutation = useMutation({
 		mutationFn: () => deleteDogCommentAPI(Number(dogId), commentId),
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["dogComments", dogId] });
+			// 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: ["dogComments", dogId],
+				refetchType: "all",
+			});
+
 			toast.success("댓글이 삭제되었습니다.");
 			setIsDeleteOpen(false);
+
+			// 포커스 원복
+			setTimeout(() => {
+				if (triggerRef.current) {
+					triggerRef.current.focus();
+				}
+			}, 0);
 		},
 		onError: () => {
 			toast.error("댓글 삭제에 실패했습니다.");
@@ -73,11 +100,26 @@ export default function CommentDropdown({
 		deleteMutation.mutate();
 	};
 
+	const handleOpenEditDialog = () => {
+		setDropdownOpen(false); // 드롭다운 먼저 닫기
+		setTimeout(() => {
+			setIsEditOpen(true);
+		}, 10);
+	};
+
+	const handleOpenDeleteDialog = () => {
+		setDropdownOpen(false); // 드롭다운 먼저 닫기
+		setTimeout(() => {
+			setIsDeleteOpen(true);
+		}, 10);
+	};
+
 	return (
 		<>
-			<DropdownMenu>
+			<DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
 				<DropdownMenuTrigger asChild>
 					<button
+						ref={triggerRef}
 						type="button"
 						className="p-1 text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 bg-white dark:bg-gray-800"
 					>
@@ -87,23 +129,39 @@ export default function CommentDropdown({
 				<DropdownMenuContent align="end" side="bottom">
 					<DropdownMenuItem
 						className="justify-center"
-						onClick={() => setIsEditOpen(true)}
+						onClick={handleOpenEditDialog}
 					>
 						수정
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						className="justify-center"
-						onClick={() => setIsDeleteOpen(true)}
+						onClick={handleOpenDeleteDialog}
 					>
 						삭제
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
-			<Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+			<Dialog
+				open={isEditOpen}
+				onOpenChange={(open) => {
+					setIsEditOpen(open);
+					if (!open) {
+						// 다이얼로그가 닫힐 때 포커스 복원
+						setTimeout(() => {
+							if (triggerRef.current) {
+								triggerRef.current.focus();
+							}
+						}, 0);
+					}
+				}}
+			>
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle>댓글 수정</DialogTitle>
+						<DialogDescription>
+							댓글 내용을 수정하고 수정하기 버튼을 클릭하세요.
+						</DialogDescription>
 					</DialogHeader>
 					<div className="grid gap-4 py-4">
 						<textarea
@@ -132,17 +190,28 @@ export default function CommentDropdown({
 				</DialogContent>
 			</Dialog>
 
-			<Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+			<Dialog
+				open={isDeleteOpen}
+				onOpenChange={(open) => {
+					setIsDeleteOpen(open);
+					if (!open) {
+						// 다이얼로그가 닫힐 때 포커스 복원
+						setTimeout(() => {
+							if (triggerRef.current) {
+								triggerRef.current.focus();
+							}
+						}, 0);
+					}
+				}}
+			>
 				<DialogContent className="sm:max-w-md">
 					<DialogHeader>
 						<DialogTitle>댓글 삭제</DialogTitle>
+						<DialogDescription>
+							이 댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수
+							없습니다.
+						</DialogDescription>
 					</DialogHeader>
-					<div className="py-4">
-						<p>
-							정말로 이 댓글을 삭제하시겠습니까? 이 작업은 되돌릴
-							수 없습니다.
-						</p>
-					</div>
 					<DialogFooter className="sm:justify-end">
 						<DialogClose asChild>
 							<Button type="button" variant="secondary">

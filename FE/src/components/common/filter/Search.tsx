@@ -44,7 +44,8 @@ export default function Search({
 	value,
 	onChange,
 	filter = true,
-	ai = true,
+	// 기본으로 ai 비활성화
+	ai = false,
 	currentFilter = {},
 	onFilterChange,
 }: SearchProps) {

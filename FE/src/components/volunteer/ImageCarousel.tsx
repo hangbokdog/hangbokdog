@@ -61,7 +61,7 @@ export default function ImageCarousel({ images }: { images: string[] }) {
 						delay: 4000,
 					}),
 				]}
-				className="w-full h-full flex items-center"
+				className="w-full h-full flex justify-center items-center"
 				setApi={(api) => {
 					if (!api) return;
 					api.on("select", () => handleSelect(api));

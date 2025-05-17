@@ -184,7 +184,7 @@ export default function SignUpForm({
 			/>
 			<InputField
 				icon={FaBirthdayCake}
-				placeholder="생년월일을 입력해주세요. (주민등록번호 앞자리)"
+				placeholder="생년월일을 입력해주세요. (6자리)"
 				maxLength={6}
 				value={birthDate}
 				onChange={handleBirthDateChange}

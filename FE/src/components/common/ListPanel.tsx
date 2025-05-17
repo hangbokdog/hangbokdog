@@ -20,17 +20,17 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 
 	return (
 		<div className="flex flex-col">
-			<div className="flex flex-1 flex-col items-center p-2 gap-3 rounded-lg bg-white shadow-custom-sm">
-				<div className="relative flex w-full justify-around mb-2">
+			<div className="flex flex-1 flex-col items-center p-3 gap-3 rounded-xl bg-white shadow-[0_0_10px_0_rgba(50,100,200,0.1)] border border-gray-100">
+				<div className="relative flex w-full justify-around mb-3">
 					{tabs.map((tab) => (
 						<button
 							key={tab.key}
 							type="button"
-							className={`flex-1 py-2 text-center font-bold rounded-full z-10 ${
+							className={`flex-1 py-2.5 text-center font-bold rounded-full z-10 ${
 								activeTabKey === tab.key
-									? "text-black"
-									: "text-grayText"
-							}`}
+									? "text-male"
+									: "text-gray-400"
+							} transition-colors duration-200`}
 							onClick={() => setActiveTabKey(tab.key)}
 						>
 							{tab.label}
@@ -38,7 +38,7 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 					))}
 
 					<div
-						className="absolute bottom-0 h-full bg-background rounded-full transition-all duration-300"
+						className="absolute bottom-0 h-full bg-gradient-to-r from-blue-50 to-blue-100 rounded-full transition-all duration-300 shadow-sm"
 						style={{
 							width: `${100 / tabs.length}%`,
 							left: `${(activeIndex * 100) / tabs.length}%`,
@@ -54,8 +54,8 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 					})}
 				</div>
 
-				<Link to={link}>
-					<span className="text-grayText font-bold text-sm">
+				<Link to={link} className="mt-1 hover:underline">
+					<span className="text-male font-medium text-sm">
 						더보기
 					</span>
 				</Link>

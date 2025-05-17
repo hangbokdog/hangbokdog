@@ -16,9 +16,7 @@ import {
 	Search as SearchIcon,
 	Clock,
 	Plus,
-	ChevronRight,
 	MapPinIcon,
-	ChevronDown,
 	CompassIcon,
 	ChevronLeft,
 } from "lucide-react";
@@ -66,13 +64,6 @@ const debouncedSearch = debounce((val: string, setter: (s: string) => void) => {
 	setter(val);
 }, 300);
 
-// 지역 이름 표시용 매핑 - LocationLabel 사용으로 교체
-// const cityNameMapping: { [key: string]: string } = { ... }
-
-// 지역별 색상 매핑 - 모든 지역에 동일한 bg-male 클래스를 사용하므로 객체 맵 필요 없음
-// const cityColorMapping: { [key: string]: string } = { ... };
-
-// 지역 그룹 설정 - 지역을 그룹화하여 UI에서 쉽게 탐색할 수 있도록 함
 const cityGroups = {
 	수도권: [
 		"SEOUL",
@@ -194,13 +185,12 @@ const cityIconMapping: { [key: string]: React.ReactNode } = {
 
 export default function CenterDecisionPage() {
 	const [query, setQuery] = useState("");
+	const [inputValue, setInputValue] = useState("");
 	const [activeTab, setActiveTab] = useState<
 		"search" | "joined" | "pending" | "explore"
 	>("explore");
 	const [selectedCity, setSelectedCity] = useState<string | null>(null);
 	const [activeGroup, setActiveGroup] = useState<string | null>(null);
-	const [activeRegion, setActiveRegion] = useState<string | null>(null);
-	const [activeCategory, setActiveCategory] = useState<string | null>(null);
 	const { selectedCenter, clearSelectedCenter } = useCenterStore();
 	const queryClient = useQueryClient();
 
@@ -259,12 +249,9 @@ export default function CenterDecisionPage() {
 	};
 
 	const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-		debouncedSearch(e.target.value, setQuery);
-	};
-
-	const toggleRegion = (region: string) => {
-		setActiveRegion(activeRegion === region ? null : region);
-		setActiveCategory(null);
+		const value = e.target.value;
+		setInputValue(value);
+		debouncedSearch(value, setQuery);
 	};
 
 	useEffect(() => {
@@ -302,11 +289,11 @@ export default function CenterDecisionPage() {
 	};
 
 	return (
-		<div className="flex flex-col min-h-screen bg-gray-50">
+		<div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white">
 			{/* Header with welcome message */}
-			<div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-5 shadow-md">
-				<h1 className="text-2xl font-bold mb-2">행복하개!</h1>
-				<p className="text-blue-100 text-sm">
+			<div className="text-gray-800 p-5 shadow-md">
+				<div className="text-2xl font-bold mb-2">행복하개</div>
+				<p className="text-blueGray text-sm">
 					센터를 선택하고 더 많은 기능을 이용해보세요
 				</p>
 			</div>
@@ -320,7 +307,7 @@ export default function CenterDecisionPage() {
 						setSelectedCity(null);
 						setActiveGroup(null);
 					}}
-					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-4 ${
+					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-1 ${
 						activeTab === "explore"
 							? "text-blue-600"
 							: "text-gray-500"
@@ -328,7 +315,7 @@ export default function CenterDecisionPage() {
 				>
 					<span className="flex items-center justify-center gap-1">
 						<CompassIcon size={16} />
-						지역별 센터
+						지역 센터
 					</span>
 					{activeTab === "explore" && (
 						<motion.div
@@ -341,7 +328,7 @@ export default function CenterDecisionPage() {
 				<button
 					type="button"
 					onClick={() => setActiveTab("search")}
-					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-4 ${
+					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-1 ${
 						activeTab === "search"
 							? "text-blue-600"
 							: "text-gray-500"
@@ -362,7 +349,7 @@ export default function CenterDecisionPage() {
 				<button
 					type="button"
 					onClick={() => setActiveTab("joined")}
-					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-4 ${
+					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-1 ${
 						activeTab === "joined"
 							? "text-blue-600"
 							: "text-gray-500"
@@ -370,9 +357,9 @@ export default function CenterDecisionPage() {
 				>
 					<span className="relative flex items-center justify-center gap-1">
 						<BuildingIcon size={16} />
-						가입한 센터
+						가입 센터
 						{joinedCount > 0 && (
-							<span className="absolute -top-2 -right-6 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+							<span className="absolute -top-2 -right-3 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
 								{joinedCount}
 							</span>
 						)}
@@ -388,7 +375,7 @@ export default function CenterDecisionPage() {
 				<button
 					type="button"
 					onClick={() => setActiveTab("pending")}
-					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-4 ${
+					className={`flex-1 py-4 text-center text-sm font-medium relative whitespace-nowrap px-1 ${
 						activeTab === "pending"
 							? "text-blue-600"
 							: "text-gray-500"
@@ -398,7 +385,7 @@ export default function CenterDecisionPage() {
 						<Clock size={16} />
 						신청중
 						{pendingCount > 0 && (
-							<span className="absolute -top-2 -right-6 bg-amber-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+							<span className="absolute -top-2 -right-3 bg-amber-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
 								{pendingCount}
 							</span>
 						)}
@@ -498,58 +485,22 @@ export default function CenterDecisionPage() {
 													center: SearchCenterCityData,
 													index: number,
 												) => (
-													<motion.div
+													<CenterDecisionListItem
 														key={center.centerId}
-														initial={{
-															opacity: 0,
-															y: 10,
-														}}
-														animate={{
-															opacity: 1,
-															y: 0,
-														}}
-														transition={{
-															delay: index * 0.05,
-														}}
-														className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100"
-													>
-														<div className="p-4">
-															<div className="flex justify-between items-start">
-																<div>
-																	<h3 className="font-medium text-gray-800">
-																		{
-																			center.centerName
-																		}
-																	</h3>
-																	<div className="flex items-center text-xs text-gray-500 mt-1">
-																		<MapPinIcon
-																			size={
-																				12
-																			}
-																			className="mr-1"
-																		/>
-																		{formatCityName(
-																			center.centerCity,
-																		)}
-																	</div>
-																</div>
-																<button
-																	type="button"
-																	className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-xs font-medium hover:bg-blue-100 transition-colors"
-																	onClick={() => {
-																		setActiveTab(
-																			"search",
-																		);
-																		setQuery(
-																			center.centerName,
-																		);
-																	}}
-																>
-																	상세보기
-																</button>
-															</div>
-														</div>
-													</motion.div>
+														centerId={center.centerId.toString()}
+														centerName={
+															center.centerName
+														}
+														status={
+															center.status ||
+															"NONE"
+														}
+														centerJoinRequestId={
+															center.centerJoinRequestId ||
+															undefined
+														}
+														index={index}
+													/>
 												),
 											)}
 										</div>
@@ -682,7 +633,7 @@ export default function CenterDecisionPage() {
 															)
 														}
 														className="bg-male text-white 
-															rounded-xl p-4 shadow-md h-36 cursor-pointer
+															rounded-xl p-4 pb-2 shadow-md h-36 cursor-pointer
 															flex flex-col justify-between"
 													>
 														<div>
@@ -714,12 +665,12 @@ export default function CenterDecisionPage() {
 																개 지역
 															</p>
 														</div>
-														<div className="flex justify-between items-end">
-															<div className="text-2xl font-bold">
-																{totalCount}
-															</div>
+														<div className="flex justify-end gap-4 items-center">
 															<div className="text-xs opacity-80">
 																등록된 센터
+															</div>
+															<div className="text-2xl font-bold">
+																{totalCount}
 															</div>
 														</div>
 													</motion.div>
@@ -822,7 +773,7 @@ export default function CenterDecisionPage() {
 									type="text"
 									placeholder="센터 이름으로 검색"
 									onChange={handleInput}
-									value={query}
+									value={inputValue}
 									className="w-full pl-10 pr-4 py-3 bg-white rounded-xl shadow-sm border border-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
 								/>
 							</div>

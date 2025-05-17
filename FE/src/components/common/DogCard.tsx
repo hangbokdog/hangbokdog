@@ -17,6 +17,7 @@ interface DogCardProps {
 	isFavorite: boolean;
 	bgColor?: string;
 	isManager?: boolean;
+	maxWidth?: number;
 }
 
 export default function DogCard({
@@ -27,6 +28,7 @@ export default function DogCard({
 	gender,
 	isFavorite,
 	bgColor,
+	maxWidth,
 }: DogCardProps) {
 	const centerId = useCenterStore.getState().selectedCenter?.centerId;
 	const [isLiked, setIsLiked] = useState(isFavorite);
@@ -97,6 +99,7 @@ export default function DogCard({
 					"bg-white",
 					bgColor && `bg-${bgColor}`,
 				)}
+				style={maxWidth ? { maxWidth: `${maxWidth}px` } : undefined}
 			>
 				<div className="relative">
 					{imgError ? (
@@ -109,6 +112,7 @@ export default function DogCard({
 							alt={name}
 							className="w-full h-42 object-cover"
 							referrerPolicy="no-referrer"
+							loading="lazy"
 							onError={() => setImgError(true)}
 						/>
 					)}
