@@ -23,7 +23,6 @@ public class PostRepository {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final PostJpaRepository postJpaRepository;
-    private final PostTypeJpaRepository postTypeJpaRepository;
     private final PostLikeJpaRepository postLikeJpaRepository;
 
     public Post save(Post post) {
@@ -59,15 +58,15 @@ public class PostRepository {
         return postJpaRepository.findFostersWithInsufficientDiaries(infos, startDate, endDate);
     }
 
-    public String findPostTypeNameByPostTypeId(Long postTypeId) {
-        return postTypeJpaRepository.findNameById(postTypeId);
-    }
-
     public List<PostLikeCount> findPostLikeCountIn(List<Long> postIds) {
         return postLikeJpaRepository.findPostLikeCountIn(postIds);
     }
 
     public List<Long> findLikedPostIdsByMemberId(Long memberId) {
         return postLikeJpaRepository.findLikedPostIdsByMemberId(memberId);
+    }
+
+    public List<PostSummaryInfo> getLatestPosts(Long centerId) {
+        return postJpaRepository.getLatestPosts(centerId);
     }
 }

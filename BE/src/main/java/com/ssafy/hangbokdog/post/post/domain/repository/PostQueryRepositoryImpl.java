@@ -87,6 +87,26 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
     }
 
     @Override
+    public List<PostSummaryInfo> getLatestPosts(Long centerId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        PostSummaryInfo.class,
+                        member.id,
+                        member.nickName,
+                        member.profileImage,
+                        post.id,
+                        post.title,
+                        post.createdAt
+                ))
+                .from(post)
+                .leftJoin(member).on(member.id.eq(post.authorId))
+                .where(post.centerId.eq(centerId))
+                .orderBy(post.id.desc())
+                .limit(5)
+                .fetch();
+    }
+
+    @Override
     public List<FosterDiaryCheckQuery> findFostersWithInsufficientDiaries(
         List<StartedFosterInfo> infos,
         LocalDateTime startDate,
