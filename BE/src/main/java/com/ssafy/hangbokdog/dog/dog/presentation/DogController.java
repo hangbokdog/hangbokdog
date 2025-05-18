@@ -159,7 +159,7 @@ public class DogController {
 			.build();
 	}
 
-	@PatchMapping(value = "/{medicalHistoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PatchMapping(value = "medicalHistory/{medicalHistoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<Void> updateMedicalHistory(
 			@AuthMember Member member,
 			@PathVariable(name = "medicalHistoryId") Long medicalHistoryId,
