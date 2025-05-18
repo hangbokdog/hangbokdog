@@ -82,9 +82,7 @@ export default function DogTabsPanel() {
 	const formatFosterCardProps = (dog: MyFosterDog) => ({
 		id: dog.dogId,
 		name: dog.dogName,
-		age: "나이 미상", // ❗추가 정보 없으므로 생략
 		imageUrl: dog.profileImage,
-		gender: "MALE", // ❗추정 불가 → 기본값
 		status: dog.status === FosterStatus.APPLYING ? "APPLYING" : "FOSTERING",
 		startDate: dog.startDate.slice(0, 10),
 		endDate: undefined,
