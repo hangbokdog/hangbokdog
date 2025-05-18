@@ -24,19 +24,27 @@ export default function DogTabsPanel() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		console.log("🐾 DogTabsPanel 렌더링됨");
+
 		const fetchAllData = async () => {
 			try {
-				if (!centerId) return;
+				console.log("📦 fetchAllData 실행됨");
 
-				// ✅ 1. 입양 정보
+				console.log("🐶 fetchMyFosterDogsAPI 실행 전");
+				const fosters = await fetchMyFosterDogsAPI();
+				console.log("✅ fetchMyFosterDogsAPI 응답", fosters);
+				setProtectedDogs(fosters);
+
 				const appliedDogs =
 					await fetchAdoptionApplicationsAPI(centerId);
+				console.log("✅ 입양 목록 완료", appliedDogs);
 
 				const results = await Promise.allSettled(
 					appliedDogs.map((dog) =>
 						fetchApprovedDogDetailsAPI(dog.dogId),
 					),
 				);
+				console.log("✅ 입양 상세 완료", results);
 
 				const fulfilled = results
 					.map((res) =>
@@ -46,12 +54,8 @@ export default function DogTabsPanel() {
 
 				const adopted = fulfilled.filter((dog) => dog.adoptedDate);
 				setAdoptedDogs(adopted);
-
-				// ✅ 2. 임보 정보
-				const fosters = await fetchMyFosterDogsAPI();
-				setProtectedDogs(fosters);
 			} catch (err) {
-				console.error("입양/임보 정보 불러오기 실패", err);
+				console.error("🔥 전체 에러 발생", err);
 			} finally {
 				setIsLoading(false);
 			}
@@ -81,7 +85,7 @@ export default function DogTabsPanel() {
 		age: "나이 미상", // ❗추가 정보 없으므로 생략
 		imageUrl: dog.profileImage,
 		gender: "MALE", // ❗추정 불가 → 기본값
-		status: dog.status === FosterStatus.FOSTERING ? "APPROVED" : "PENDING",
+		status: dog.status === FosterStatus.APPLYING ? "APPLYING" : "FOSTERING",
 		startDate: dog.startDate.slice(0, 10),
 		endDate: undefined,
 	});

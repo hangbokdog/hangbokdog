@@ -18,7 +18,7 @@ export interface MyFosterDog {
 	status: Status;
 }
 
-export const fetchMyFosterDogsAPI = async (): Promise<MyFosterDog[]> => {
+export const fetchMyFosterDogsAPI = async () => {
 	const response = await localAxios.get("/fosters/my");
 	return response.data;
 };

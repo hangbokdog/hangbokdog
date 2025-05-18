@@ -149,3 +149,16 @@ export const fetchApprovedDogDetailsAPI = async (
 	const response = await localAxios.get(`/adoptions/adopted/${dogId}`);
 	return response.data;
 };
+
+export interface AdoptionRegisterResponse {
+	adoptionId: number;
+}
+
+export const registerAdoptionAPI = async (
+	dogId: number,
+): Promise<AdoptionRegisterResponse> => {
+	const response = await localAxios.post("/adoptions", null, {
+		params: { dogId },
+	});
+	return response.data;
+};

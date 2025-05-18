@@ -344,3 +344,38 @@ export const getSlotApplicantsAPI = async ({
 	);
 	return response.data;
 };
+
+// 내 봉사 신청 내역 조회 API
+export interface MyVolunteerApplication {
+	date: string;
+	applications: {
+		applicationId: number;
+		volunteer: {
+			id: number;
+			title: string;
+			content: string;
+			address: string;
+			addressName: string;
+			startDate: string;
+			endDate: string;
+			imageUrls: string[];
+		};
+		status: "PENDING" | "APPROVED" | "REJECTED";
+	}[];
+}
+
+export const getMyVolunteerApplicationsAPI = async ({
+	eventId,
+	date,
+}: {
+	eventId: number;
+	date?: string;
+}): Promise<MyVolunteerApplication[]> => {
+	const response = await localAxios.get<MyVolunteerApplication[]>(
+		`/volunteers/${eventId}/applications/my`,
+		{
+			params: date ? { date } : {},
+		},
+	);
+	return response.data;
+};
