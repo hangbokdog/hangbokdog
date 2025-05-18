@@ -10,19 +10,28 @@ import { EmergencyType, type EmergencyPost } from "@/types/emergencyRegister";
 
 interface EmergencyPanelProps {
 	centerId: number;
+	isHome?: boolean;
 }
 
 export default function ManagerEmergencyPanel({
 	centerId,
+	isHome,
 }: EmergencyPanelProps) {
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [open, setOpen] = useState(false);
 
 	const { data: volunteerPosts = [], isLoading: isLoadingVolunteer } =
 		useQuery({
-			queryKey: ["emergency-posts", centerId, EmergencyType.VOLUNTEER],
+			queryKey: [
+				"emergency-posts",
+				centerId,
+				EmergencyType.VOLUNTEER,
+				{ isHome },
+			],
 			queryFn: () =>
-				getEmergencyPostAPI(centerId, EmergencyType.VOLUNTEER),
+				getEmergencyPostAPI(centerId, EmergencyType.VOLUNTEER, {
+					isHome,
+				}),
 			enabled: !!centerId,
 			refetchOnMount: true,
 			staleTime: 0,
@@ -30,9 +39,16 @@ export default function ManagerEmergencyPanel({
 
 	const { data: transportPosts = [], isLoading: isLoadingTransport } =
 		useQuery({
-			queryKey: ["emergency-posts", centerId, EmergencyType.TRANSPORT],
+			queryKey: [
+				"emergency-posts",
+				centerId,
+				EmergencyType.TRANSPORT,
+				{ isHome },
+			],
 			queryFn: () =>
-				getEmergencyPostAPI(centerId, EmergencyType.TRANSPORT),
+				getEmergencyPostAPI(centerId, EmergencyType.TRANSPORT, {
+					isHome,
+				}),
 			enabled: !!centerId,
 			refetchOnMount: true,
 			staleTime: 0,
@@ -40,9 +56,16 @@ export default function ManagerEmergencyPanel({
 
 	const { data: donationPosts = [], isLoading: isLoadingDonation } = useQuery(
 		{
-			queryKey: ["emergency-posts", centerId, EmergencyType.DONATION],
+			queryKey: [
+				"emergency-posts",
+				centerId,
+				EmergencyType.DONATION,
+				{ isHome },
+			],
 			queryFn: () =>
-				getEmergencyPostAPI(centerId, EmergencyType.DONATION),
+				getEmergencyPostAPI(centerId, EmergencyType.DONATION, {
+					isHome,
+				}),
 			enabled: !!centerId,
 			refetchOnMount: true,
 			staleTime: 0,
