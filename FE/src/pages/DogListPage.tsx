@@ -6,6 +6,7 @@ import ScrollButton from "@/components/common/ScrollButton";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { type DogSearchRequest, fetchDogsAPI } from "@/api/dog";
 import useCenterStore from "@/lib/store/centerStore";
+import { useNavigationType } from "react-router-dom";
 
 export default function DogListPage() {
 	const topRef = useRef<HTMLDivElement>(null);
@@ -17,6 +18,10 @@ export default function DogListPage() {
 	const { selectedCenter } = useCenterStore();
 	const [showStar, setShowStar] = useState(false);
 	const [filters, setFilters] = useState<Partial<DogSearchRequest>>({});
+	const SESSION_KEY = "dogListState";
+	const navigationType = useNavigationType();
+	const isInitialMount = useRef(true);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -108,105 +113,181 @@ export default function DogListPage() {
 
 	const dogs = data?.pages.flatMap((page) => page.data) || [];
 
-	return (
-		<div className="scrollbar-hidden relative flex flex-col gap-3 mx-2.5 pt-2.5">
-			<div
-				className={`transition-all duration-300 ${
-					isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
-				}`}
-			>
-				{!showImageSearch ? (
-					<Search
-						onClickAISearch={toggleImageSearch}
-						placeholder="아이의 이름을 입력해주세요."
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						onSearch={handleSearch}
-						currentFilter={filters}
-						onFilterChange={handleFilterChange}
-					/>
-				) : (
-					<AISearchPanel
-						onClose={toggleImageSearch}
-						onFileSelect={handleFileSelect}
-						title="이미지로 강아지 검색"
-					/>
-				)}
-			</div>
-			<div className="flex items-center justify-between">
-				<span ref={topRef} className="font-bold text-grayText">
-					별이 된 아이들 표시
-				</span>
-				<button
-					type="button"
-					className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
-						showStar ? "bg-main" : "bg-gray-300"
-					}`}
-					onClick={() => setShowStar(!showStar)}
-				>
-					<div
-						className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-							showStar ? "translate-x-6" : "translate-x-0"
-						}`}
-					/>
-				</button>
-			</div>
+	const restoreState = useCallback(() => {
+		const savedState = sessionStorage.getItem(SESSION_KEY);
+		console.log("savedState", savedState);
+		if (!savedState) return;
 
-			{isLoading ? (
-				<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
-					{[...Array(6)].map((_, i) => (
-						<div
-							key={`skeleton-${
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								i
-							}`}
-							className="h-40 bg-gray-100 rounded-lg animate-pulse"
+		const { scrollY, searchState } = JSON.parse(savedState);
+		console.log("Restoring scroll position:", scrollY);
+
+		setSearchQuery(searchState.searchQuery);
+		setDebouncedSearchQuery(searchState.debouncedSearchQuery);
+		setShowStar(searchState.showStar);
+		setFilters(searchState.filters);
+
+		// 스크롤 복원은 데이터 로딩 후에 수행
+		if (!isLoading && dogs.length > 0) {
+			// 바로 스크롤 복원 시도
+			window.scrollTo(0, scrollY);
+
+			// 스크롤이 제대로 되지 않을 경우를 대비해 약간의 지연 후 다시 시도
+			setTimeout(() => {
+				if (scrollContainerRef.current) {
+					scrollContainerRef.current.scrollTop = scrollY;
+				}
+			}, 100);
+		} else {
+			// 데이터가 아직 로딩 중이면 데이터 로딩 완료 후 스크롤 복원
+			const checkElements = setInterval(() => {
+				if (dogs.length > 0) {
+					if (scrollContainerRef.current) {
+						scrollContainerRef.current.scrollTop = scrollY;
+					}
+
+					clearInterval(checkElements);
+				}
+			}, 50);
+		}
+	}, [isLoading, dogs.length]);
+
+	const saveState = useCallback(() => {
+		const scrollPosition = scrollContainerRef.current?.scrollTop ?? 0;
+
+		console.log("Saving scroll position:", scrollPosition);
+
+		const stateToSave = {
+			scrollY: scrollPosition,
+			searchState: {
+				searchQuery,
+				debouncedSearchQuery,
+				showStar,
+				filters,
+			},
+		};
+
+		sessionStorage.setItem(SESSION_KEY, JSON.stringify(stateToSave));
+	}, [searchQuery, debouncedSearchQuery, showStar, filters]);
+
+	useEffect(() => {
+		if (!isInitialMount.current) return;
+
+		if (navigationType === "POP") {
+			restoreState();
+		}
+		isInitialMount.current = false;
+	}, [navigationType, restoreState]);
+
+	return (
+		<div className="relative flex flex-col mx-2.5 pt-2.5">
+			<div className="flex flex-col gap-3 sticky top-0 bg-white z-10 pb-2">
+				<div
+					className={`transition-all duration-300 ${
+						isAnimating
+							? "opacity-0 scale-95"
+							: "opacity-100 scale-100"
+					}`}
+				>
+					{!showImageSearch ? (
+						<Search
+							onClickAISearch={toggleImageSearch}
+							placeholder="아이의 이름을 입력해주세요."
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							onSearch={handleSearch}
+							currentFilter={filters}
+							onFilterChange={handleFilterChange}
 						/>
-					))}
+					) : (
+						<AISearchPanel
+							onClose={toggleImageSearch}
+							onFileSelect={handleFileSelect}
+							title="이미지로 강아지 검색"
+						/>
+					)}
 				</div>
-			) : error ? (
-				<div className="flex flex-col items-center gap-2 py-4">
-					<p className="text-red-500">
-						에러: {(error as Error).message}
-					</p>
+				<div className="flex items-center justify-between">
+					<span ref={topRef} className="font-bold text-grayText">
+						별이 된 아이들 표시
+					</span>
 					<button
 						type="button"
-						onClick={() => window.location.reload()}
-						className="px-4 py-2 bg-main text-white rounded-lg"
+						className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors duration-300 ${
+							showStar ? "bg-main" : "bg-gray-300"
+						}`}
+						onClick={() => setShowStar(!showStar)}
 					>
-						다시 시도
+						<div
+							className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+								showStar ? "translate-x-6" : "translate-x-0"
+							}`}
+						/>
 					</button>
 				</div>
-			) : dogs.length === 0 ? (
-				<div className="flex justify-center py-8 text-gray-500">
-					결과가 없습니다.
-				</div>
-			) : (
-				<>
+			</div>
+			<div
+				ref={scrollContainerRef}
+				className="overflow-y-auto scrollbar-hidden h-[calc(100vh-14rem)] mt-2"
+			>
+				{isLoading ? (
 					<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
-						{dogs.map((dog) => (
-							<DogCard
-								key={`${dog.dogId}-${dog.name}`}
-								dogId={dog.dogId}
-								name={dog.name}
-								ageMonth={dog.ageMonth.toString()}
-								imageUrl={dog.imageUrl}
-								gender={dog.gender as "MALE" | "FEMALE"}
-								isFavorite={dog.isFavorite}
-								bgColor="bg-white"
+						{[...Array(6)].map((_, i) => (
+							<div
+								key={`skeleton-${
+									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+									i
+								}`}
+								className="h-40 bg-gray-100 rounded-lg animate-pulse"
 							/>
 						))}
 					</div>
-					{hasNextPage && (
-						<div
-							ref={observerRef}
-							className="h-5 flex items-center justify-center text-gray-500 text-sm"
+				) : error ? (
+					<div className="flex flex-col items-center gap-2 py-4">
+						<p className="text-red-500">
+							에러: {(error as Error).message}
+						</p>
+						<button
+							type="button"
+							onClick={() => window.location.reload()}
+							className="px-4 py-2 bg-main text-white rounded-lg"
 						>
-							{isFetchingNextPage ? "다음 페이지 로딩 중..." : ""}
+							다시 시도
+						</button>
+					</div>
+				) : dogs.length === 0 ? (
+					<div className="flex justify-center py-8 text-gray-500">
+						결과가 없습니다.
+					</div>
+				) : (
+					<>
+						<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
+							{dogs.map((dog) => (
+								<DogCard
+									key={`${dog.dogId}-${dog.name}`}
+									dogId={dog.dogId}
+									name={dog.name}
+									ageMonth={dog.ageMonth.toString()}
+									imageUrl={dog.imageUrl}
+									gender={dog.gender as "MALE" | "FEMALE"}
+									isFavorite={dog.isFavorite}
+									bgColor="bg-white"
+									savePrevState={saveState}
+								/>
+							))}
 						</div>
-					)}
-				</>
-			)}
+						{hasNextPage && (
+							<div
+								ref={observerRef}
+								className="h-5 flex items-center justify-center text-gray-500 text-sm"
+							>
+								{isFetchingNextPage
+									? "다음 페이지 로딩 중..."
+									: ""}
+							</div>
+						)}
+					</>
+				)}
+			</div>
 			<ScrollButton targetRef={topRef} />
 		</div>
 	);

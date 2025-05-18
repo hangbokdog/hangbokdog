@@ -481,7 +481,7 @@ export default function AddVolunteerSchedulePage() {
 			toast.error(
 				"잘못된 접근입니다. 봉사 일정 관리 페이지로 이동합니다.",
 			);
-			navigate("/manager/volunteer");
+			navigate(-1);
 			return;
 		}
 	}, [addressBookId, navigate]);
@@ -799,7 +799,7 @@ export default function AddVolunteerSchedulePage() {
 			});
 
 			toast.success("봉사 일정이 추가되었습니다.");
-			navigate("/manager/volunteer");
+			navigate(-1);
 		} catch (error) {
 			console.error("봉사 일정 추가 중 오류가 발생했습니다:", error);
 			toast.error("서버 오류가 발생했습니다. 다시 시도해주세요.");

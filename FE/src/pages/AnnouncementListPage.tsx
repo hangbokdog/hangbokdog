@@ -1,13 +1,18 @@
 import { useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { fetchAnnouncementsAPI } from "@/api/announcement";
 import useCenterStore from "@/lib/store/centerStore";
 import { Loader2 } from "lucide-react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import AnnouncementItem from "@/components/announcement/AnnouncementItem";
+
+// Key for announcement refresh in sessionStorage
+const ANNOUNCEMENT_REFRESH_KEY = "announcement_refresh_needed";
 
 export default function AnnouncementListPage() {
 	const navigate = useNavigate();
+	const location = useLocation();
+	const queryClient = useQueryClient();
 	const { selectedCenter } = useCenterStore();
 	const observerRef = useRef<HTMLDivElement | null>(null);
 
@@ -33,6 +38,27 @@ export default function AnnouncementListPage() {
 		initialPageParam: undefined as string | undefined,
 		enabled: !!selectedCenter?.centerId,
 	});
+
+	useEffect(() => {
+		const shouldRefresh = sessionStorage.getItem(ANNOUNCEMENT_REFRESH_KEY);
+		if (shouldRefresh) {
+			queryClient.invalidateQueries({
+				queryKey: ["announcements", selectedCenter?.centerId],
+			});
+			// Clear the flag
+			sessionStorage.removeItem(ANNOUNCEMENT_REFRESH_KEY);
+		}
+	}, [queryClient, selectedCenter?.centerId]);
+
+	useEffect(() => {
+		const shouldRefresh = location.state?.refresh;
+		if (shouldRefresh) {
+			queryClient.invalidateQueries({
+				queryKey: ["announcements", selectedCenter?.centerId],
+			});
+			navigate(location.pathname, { replace: true, state: {} });
+		}
+	}, [location, queryClient, navigate, selectedCenter?.centerId]);
 
 	useEffect(() => {
 		const observer = new IntersectionObserver(
@@ -66,7 +92,7 @@ export default function AnnouncementListPage() {
 
 	const allAnnouncements = data?.pages.flatMap((page) => page.data) || [];
 	return (
-		<div className="flex flex-col min-h-screen bg-gray-50 pb-16">
+		<div className="flex flex-col min-h-screenpb-16">
 			{/* 헤더 */}
 			<div className="bg-white shadow-sm p-4 sticky top-0 z-10">
 				<div className="max-w-lg mx-auto">
@@ -111,14 +137,14 @@ export default function AnnouncementListPage() {
 						</p>
 					</div>
 				) : (
-					<div className="bg-white rounded-lg shadow-sm overflow-hidden">
-						<div className="divide-y divide-gray-100">
+					<div className="bg-white overflow-hidden">
+						<div className="divide-y divide-gray-200">
 							{allAnnouncements.map((announcement) => (
 								<AnnouncementItem
 									key={announcement.id}
 									announcement={announcement}
 									onClick={handleAnnouncementClick}
-									className="border-b border-gray-100"
+									className="border-b border-gray-300"
 								/>
 							))}
 						</div>

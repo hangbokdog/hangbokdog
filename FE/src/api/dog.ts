@@ -151,6 +151,7 @@ export const createDogMedicalHistoryAPI = async (
 
 export interface MedicalHistoryResponse {
 	id: number;
+	memberId: number;
 	content: string;
 	medicalPeriod: number;
 	medicalType: MedicalType;
@@ -176,6 +177,44 @@ export const removeDogMedicalHistoryAPI = async (
 	const response = await localAxios.delete(`/dogs/${dogId}/medical-history`, {
 		params: { medicalHistoryId, centerId },
 	});
+
+	return response.data;
+};
+
+export interface UpdateMedicalHistoryRequest {
+	content: string;
+	medicalPeriod: number;
+	medicalType: MedicalType;
+	operatedDate: string;
+}
+
+export const updateMedicalHistoryAPI = async (
+	medicalHistoryId: number,
+	request: UpdateMedicalHistoryRequest,
+	image: File | null,
+	centerId: number,
+) => {
+	const formData = new FormData();
+	const jsonBlob = new Blob([JSON.stringify(request)], {
+		type: "application/json",
+	});
+
+	formData.append("request", jsonBlob);
+
+	if (image) {
+		formData.append("image", image);
+	}
+
+	const response = await localAxios.patch(
+		`/dogs/medicalHistory/${medicalHistoryId}`,
+		formData,
+		{
+			params: { centerId },
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		},
+	);
 
 	return response.data;
 };

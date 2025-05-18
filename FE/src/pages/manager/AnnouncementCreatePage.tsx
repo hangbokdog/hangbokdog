@@ -32,7 +32,9 @@ export default function AnnouncementCreatePage() {
 			),
 		onSuccess: () => {
 			toast.success("공지사항이 성공적으로 등록되었습니다.");
-			navigate("/announcements");
+			// Set flag in sessionStorage to trigger refresh
+			sessionStorage.setItem("announcement_refresh_needed", "true");
+			navigate(-1);
 		},
 		onError: (error) => {
 			console.error("공지사항 등록 실패:", error);

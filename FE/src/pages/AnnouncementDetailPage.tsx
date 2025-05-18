@@ -60,7 +60,8 @@ export default function AnnouncementDetailPage() {
 		try {
 			setIsDeleting(true);
 			await deleteAnnouncementAPI(Number(id));
-			navigate("/announcements", { replace: true });
+			sessionStorage.setItem("announcement_refresh_needed", "true");
+			navigate(-1);
 		} catch (err) {
 			console.error("Failed to delete announcement:", err);
 			alert("공지사항 삭제에 실패했습니다.");

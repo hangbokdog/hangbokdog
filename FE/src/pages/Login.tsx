@@ -13,7 +13,7 @@ export default function Login() {
 				<div className="flex items-center gap-2 mb-2">
 					<div className="rounded-full p-3">
 						<img
-							src="/src/assets/logo.png"
+							src="/public/logo.png"
 							alt="logo"
 							className="w-12 h-12"
 						/>

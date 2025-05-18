@@ -550,7 +550,7 @@ export default function CenterDecisionPage() {
 														selectCity(cityCode)
 													}
 													className="bg-male
-														text-white rounded-xl p-4 shadow-sm h-20 
+														text-white rounded-xl p-4 pb-2 shadow-sm h-20 
 														flex flex-col justify-between text-left"
 												>
 													<div className="flex items-center">
@@ -561,7 +561,7 @@ export default function CenterDecisionPage() {
 															)}
 														</span>
 													</div>
-													<div className="flex justify-between items-end">
+													<div className="flex justify-end gap-4 items-center">
 														<span className="text-xl font-bold">
 															{count}
 														</span>
