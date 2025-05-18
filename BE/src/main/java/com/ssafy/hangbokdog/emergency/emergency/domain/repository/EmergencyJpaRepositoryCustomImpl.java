@@ -25,28 +25,60 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 	@Override
 	public List<EmergencyResponse> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
 		return queryFactory
-			.select(Projections.constructor(
-				EmergencyResponse.class,
-				emergency.id,
-				emergency.centerId,
-				emergency.authorId,
-				member.nickName,
-				emergency.title,
-				emergency.content,
-				member.profileImage,
-				emergency.dueDate,
-				emergency.capacity,
-				emergency.targetAmount,
-				emergency.emergencyType
-			))
-			.from(emergency)
-			.leftJoin(member).on(emergency.authorId.eq(member.id))
-			.where(
-				emergency.centerId.eq(centerId),
-				emergency.dueDate.goe(now),
-				isEmergencyType(type)
-			)
-			.fetch();
+				.select(Projections.constructor(
+						EmergencyResponse.class,
+						emergency.id,
+						emergency.centerId,
+						emergency.authorId,
+						member.nickName,
+						emergency.title,
+						emergency.content,
+						member.profileImage,
+						emergency.dueDate,
+						emergency.capacity,
+						emergency.targetAmount,
+						emergency.emergencyType
+				))
+				.from(emergency)
+				.leftJoin(member).on(emergency.authorId.eq(member.id))
+				.where(
+						emergency.centerId.eq(centerId),
+						emergency.dueDate.goe(now),
+						isEmergencyType(type)
+				)
+				.fetch();
+	}
+
+	@Override
+	public List<EmergencyResponse> getLatestEmergenciesByCenterId(
+			Long centerId,
+			EmergencyType type,
+			LocalDateTime now
+	) {
+		return queryFactory.select(Projections.constructor(
+						EmergencyResponse.class,
+						emergency.id,
+						emergency.centerId,
+						emergency.authorId,
+						member.nickName,
+						emergency.title,
+						emergency.content,
+						member.profileImage,
+						emergency.dueDate,
+						emergency.capacity,
+						emergency.targetAmount,
+						emergency.emergencyType
+				))
+				.from(emergency)
+				.leftJoin(member).on(emergency.authorId.eq(member.id))
+				.where(
+						emergency.centerId.eq(centerId),
+						emergency.dueDate.goe(now),
+						isEmergencyType(type)
+				)
+				.orderBy(emergency.createdAt.desc())
+				.limit(5)
+				.fetch();
 	}
 
 	private BooleanExpression isEmergencyType(EmergencyType type) {

@@ -9,4 +9,10 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 public interface EmergencyJpaRepositoryCustom {
 
 	List<EmergencyResponse> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now);
+
+	List<EmergencyResponse> getLatestEmergenciesByCenterId(
+			Long centerId,
+			EmergencyType type,
+			LocalDateTime now
+	);
 }
