@@ -19,6 +19,6 @@ export interface MyFosterDog {
 }
 
 export const fetchMyFosterDogsAPI = async () => {
-	const response = await localAxios.get("/fosters/my");
+	const response = await localAxios.get("/fosters/applications/my");
 	return response.data;
 };
