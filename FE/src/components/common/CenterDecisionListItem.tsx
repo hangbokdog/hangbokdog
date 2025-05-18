@@ -58,6 +58,15 @@ export default function CenterDecisionListItem({
 			queryClient.invalidateQueries({
 				queryKey: ["centerSearch", query],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["myCenters"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["searchCenterCities"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["centerCities"],
+			});
 			toast.success("가입 신청이 완료되었습니다");
 		},
 		onError: () => {
@@ -73,6 +82,15 @@ export default function CenterDecisionListItem({
 			});
 			queryClient.invalidateQueries({
 				queryKey: ["centerSearch", query],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["myCenters"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["searchCenterCities"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["centerCities"],
 			});
 			toast.success("가입 신청이 취소되었습니다");
 		},

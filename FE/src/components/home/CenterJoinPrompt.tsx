@@ -61,7 +61,9 @@ export default function CenterJoinPrompt() {
 			navigate("/center");
 			return;
 		}
-
+		queryClient.invalidateQueries({
+			queryKey: ["centerJoinRequests"],
+		});
 		setIsProcessing(true);
 
 		if (isApplied) {
