@@ -37,4 +37,8 @@ public class EmergencyRepository {
 	public Optional<Emergency> getEmergencyById(Long id) {
 		return emergencyJpaRepository.findById(id);
 	}
+
+	public Integer countEmergenciesByType(EmergencyType type) {
+		return emergencyJpaRepository.countEmergenciesByEmergencyType(type);
+	}
 }

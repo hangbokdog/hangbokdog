@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +17,7 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationReq
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyLatestResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -67,7 +67,7 @@ public class EmergencyController {
 	}
 
 	@GetMapping("/latest")
-	public ResponseEntity<List<EmergencyResponse>> getLatestEmergenciesByCenterId(
+	public ResponseEntity<EmergencyLatestResponse> getLatestEmergenciesByCenterId(
 			@AuthMember Member member,
 			@RequestParam Long centerId,
 			@RequestParam(required = false) EmergencyType type

@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationReq
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyLatestResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -157,7 +158,14 @@ public class EmergencyService {
 		return emergencyRepository.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
 	}
 
-	public List<EmergencyResponse> getLatestEmergencyByCenter(Long centerId, EmergencyType type) {
-		return emergencyRepository.getLatestEmergenciesByCenterId(centerId, type, LocalDateTime.now());
+	public EmergencyLatestResponse getLatestEmergencyByCenter(Long centerId, EmergencyType type) {
+		Integer count = emergencyRepository.countEmergenciesByType(type);
+		List<EmergencyResponse> emergencies = emergencyRepository.getLatestEmergenciesByCenterId(
+				centerId,
+				type,
+				LocalDateTime.now()
+		);
+
+		return new EmergencyLatestResponse(count, emergencies);
 	}
 }
