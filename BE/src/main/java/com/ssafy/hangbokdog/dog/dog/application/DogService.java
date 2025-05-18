@@ -31,6 +31,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.FavoriteDogCount;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
+import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
@@ -60,8 +61,7 @@ public class DogService {
 		String imageUrl
 	) {
 
-		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, request.centerId())
-			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember centerMember = getCenterMember(memberId, request.centerId());
 
 		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -116,8 +116,7 @@ public class DogService {
 	@Transactional
 	public void dogToStar(Long dogId, Long memberId, Long centerId) {
 
-		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -137,8 +136,7 @@ public class DogService {
 		Long dogId
 	) {
 
-		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -169,9 +167,15 @@ public class DogService {
 		String imageUrl,
 		Long dogId
 	) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
 
 		MedicalHistory medicalHistory = MedicalHistory.builder()
 			.dogId(dogId)
+				.authorId(memberId)
 			.content(request.content())
 			.medicalPeriod(request.medicalPeriod())
 			.medicalType(request.medicalType())
@@ -189,17 +193,52 @@ public class DogService {
 		return dogRepository.findAllMedicalHistory(pageToken, dogId);
 	}
 
+	@Transactional
+	public void updateMedicalHistory(
+			Long memberId,
+			Long centerId,
+			Long medicalHistoryId,
+			String imageUrl,
+			MedicalHistoryUpdateRequest request
+	) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		MedicalHistory medicalHistory = dogRepository.findMedicalHistoryById(medicalHistoryId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.MEDICAL_HISTORY_NOT_FOUND));
+
+		if (!medicalHistory.isAuthor(memberId)) {
+			throw new BadRequestException(ErrorCode.NOT_AUTHOR);
+		}
+
+		medicalHistory.update(
+				request.content(),
+				imageUrl,
+				request.medicalPeriod(),
+				request.medicalType(),
+				request.operatedDate()
+		);
+	}
+
 	public void deleteMedicalHistory(
 		Long memberId,
 		Long centerId,
 		Long medicalHistoryId
 	) {
-
-		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
-			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		MedicalHistory medicalHistory = dogRepository.findMedicalHistoryById(medicalHistoryId)
+						.orElseThrow(() -> new BadRequestException(ErrorCode.MEDICAL_HISTORY_NOT_FOUND));
+
+		if (!medicalHistory.isAuthor(memberId)) {
+			throw new BadRequestException(ErrorCode.NOT_AUTHOR);
 		}
 
 		dogRepository.deleteMedicalHistory(medicalHistoryId);
@@ -312,5 +351,10 @@ public class DogService {
 	private Dog findDog(Long dogId) {
 		return dogRepository.getDog(dogId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));
+	}
+
+	private CenterMember getCenterMember(Long memberId, Long centerId) {
+		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 	}
 }
