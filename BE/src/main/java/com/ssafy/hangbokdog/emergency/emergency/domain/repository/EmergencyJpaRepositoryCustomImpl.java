@@ -81,6 +81,19 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				.fetch();
 	}
 
+	@Override
+	public Integer countEmergenciesByEmergencyType(EmergencyType emergencyType, Long centerId) {
+		return queryFactory
+				.select(emergency.id.count().intValue())
+				.from(emergency)
+				.where(
+						emergency.centerId.eq(centerId),
+						emergency.emergencyType.eq(emergencyType),
+						emergency.dueDate.goe(LocalDateTime.now())
+				)
+				.fetchOne();
+	}
+
 	private BooleanExpression isEmergencyType(EmergencyType type) {
 		return (type == null) ? null : emergency.emergencyType.eq(type);
 	}

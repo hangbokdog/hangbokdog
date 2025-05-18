@@ -6,5 +6,4 @@ import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 
 public interface EmergencyJpaRepository extends JpaRepository<Emergency, Long>, EmergencyJpaRepositoryCustom {
-	Integer countEmergenciesByEmergencyType(EmergencyType emergencyType);
 }

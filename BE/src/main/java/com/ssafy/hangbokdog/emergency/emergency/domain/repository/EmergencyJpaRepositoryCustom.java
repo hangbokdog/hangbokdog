@@ -15,4 +15,6 @@ public interface EmergencyJpaRepositoryCustom {
 			EmergencyType type,
 			LocalDateTime now
 	);
+
+	Integer countEmergenciesByEmergencyType(EmergencyType emergencyType, Long centerId);
 }

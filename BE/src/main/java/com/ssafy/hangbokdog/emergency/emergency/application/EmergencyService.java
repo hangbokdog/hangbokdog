@@ -159,7 +159,7 @@ public class EmergencyService {
 	}
 
 	public EmergencyLatestResponse getLatestEmergencyByCenter(Long centerId, EmergencyType type) {
-		Integer count = emergencyRepository.countEmergenciesByType(type);
+		Integer count = emergencyRepository.countEmergenciesByType(type, centerId);
 		List<EmergencyResponse> emergencies = emergencyRepository.getLatestEmergenciesByCenterId(
 				centerId,
 				type,
