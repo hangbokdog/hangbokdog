@@ -126,6 +126,15 @@ export interface VolunteerApplicantThumb {
 	volunteerId: number;
 	memberId: number;
 	status: "PENDING" | "APPROVED" | "REJECTED";
+	createdAt: string;
+	name: string;
+	nickname: string;
+	birth: string;
+	phone: string | null;
+	age: number;
+	grade: string;
+	email: string;
+	profileImage: string;
 }
 
 export interface SlotApplicant {
