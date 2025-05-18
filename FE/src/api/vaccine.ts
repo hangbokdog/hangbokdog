@@ -79,13 +79,12 @@ export interface VaccinationDoneResponse {
 
 export const fetchVaccinatedDogsAPI = async (
 	vaccinationId: number,
-	pageToken?: string,
 	keyword?: string,
-): Promise<PageInfo<VaccinationDoneResponse>> => {
+): Promise<VaccinationDoneResponse[]> => {
 	const response = await localAxios.get(
 		`/vaccinations/${vaccinationId}/done`,
 		{
-			params: { pageToken, keyword },
+			params: { keyword },
 		},
 	);
 	return response.data;
@@ -93,13 +92,12 @@ export const fetchVaccinatedDogsAPI = async (
 
 export const fetchNotYetVaccinatedDogsAPI = async (
 	vaccinationId: number,
-	pageToken?: string,
 	keyword?: string,
-): Promise<PageInfo<VaccinationDoneResponse>> => {
+): Promise<VaccinationDoneResponse[]> => {
 	const response = await localAxios.get(
 		`/vaccinations/${vaccinationId}/yet`,
 		{
-			params: { pageToken, keyword },
+			params: { keyword },
 		},
 	);
 	return response.data;
