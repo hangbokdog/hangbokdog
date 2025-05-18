@@ -359,7 +359,7 @@ export default function CenterDecisionPage() {
 						<BuildingIcon size={16} />
 						가입 센터
 						{joinedCount > 0 && (
-							<span className="absolute -top-2 -right-3 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+							<span className="absolute -top-2 -left-0 bg-blue-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
 								{joinedCount}
 							</span>
 						)}
@@ -385,7 +385,7 @@ export default function CenterDecisionPage() {
 						<Clock size={16} />
 						신청중
 						{pendingCount > 0 && (
-							<span className="absolute -top-2 -right-3 bg-amber-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+							<span className="absolute -top-2 -left-0 bg-amber-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
 								{pendingCount}
 							</span>
 						)}
@@ -491,10 +491,7 @@ export default function CenterDecisionPage() {
 														centerName={
 															center.centerName
 														}
-														status={
-															center.status ||
-															"NONE"
-														}
+														status={center.status}
 														centerJoinRequestId={
 															center.centerJoinRequestId ||
 															undefined
