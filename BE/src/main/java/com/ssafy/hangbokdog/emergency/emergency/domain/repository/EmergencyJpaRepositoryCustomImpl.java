@@ -46,6 +46,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 						emergency.dueDate.goe(now),
 						isEmergencyType(type)
 				)
+				.orderBy(emergency.dueDate.asc())
 				.fetch();
 	}
 
@@ -76,7 +77,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 						emergency.dueDate.goe(now),
 						isEmergencyType(type)
 				)
-				.orderBy(emergency.createdAt.desc())
+				.orderBy(emergency.dueDate.asc())
 				.limit(5)
 				.fetch();
 	}
