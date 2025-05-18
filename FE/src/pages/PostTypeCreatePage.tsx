@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	createPostTypeAPI,
 	fetchPostTypesAPI,
 	deletePostTypeAPI,
 	updatePostTypeAPI,
-	type PostTypeResponse,
 } from "@/api/post";
 import useCenterStore from "@/lib/store/centerStore";
-import { ArrowLeft, Check, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Check, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PostTypeCreatePage() {
-	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { selectedCenter } = useCenterStore();
 	const [newTypeName, setNewTypeName] = useState("");
