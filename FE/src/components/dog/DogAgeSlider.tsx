@@ -6,12 +6,14 @@ interface DogAgeSliderProps {
 	startDate?: string;
 	endDate?: string;
 	onDateChange?: (start: string, end: string) => void;
+	getAge?: (ageVariable: string) => void;
 }
 
 export default function DogAgeSlider({
 	value,
 	onValueChange,
 	onDateChange,
+	getAge,
 }: DogAgeSliderProps) {
 	const sliderValueToMonths = (value: number): number => {
 		if (value <= 10) {
@@ -47,6 +49,25 @@ export default function DogAgeSlider({
 			const end = subtractMonths(currentDate, minMonths);
 
 			onDateChange(formatDate(start), formatDate(end));
+		}
+
+		// Format the age range for display in filter tags
+		if (getAge) {
+			const [minSlider, maxSlider] = newValues;
+			const minAgeText = getLabel(minSlider);
+			const maxAgeText = getLabel(maxSlider);
+
+			// Format the age range text
+			let ageRangeText = "";
+			if (minSlider === 0 && maxSlider === 25) {
+				ageRangeText = "전체 나이";
+			} else if (minSlider === maxSlider) {
+				ageRangeText = `${minAgeText}`;
+			} else {
+				ageRangeText = `${minAgeText} 부터 ${maxAgeText}`;
+			}
+
+			getAge(ageRangeText);
 		}
 	};
 

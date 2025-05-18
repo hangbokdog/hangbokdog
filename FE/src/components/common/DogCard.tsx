@@ -18,6 +18,7 @@ interface DogCardProps {
 	bgColor?: string;
 	isManager?: boolean;
 	maxWidth?: number;
+	savePrevState?: () => void;
 }
 
 export default function DogCard({
@@ -29,6 +30,7 @@ export default function DogCard({
 	isFavorite,
 	bgColor,
 	maxWidth,
+	savePrevState = () => {},
 }: DogCardProps) {
 	const centerId = useCenterStore.getState().selectedCenter?.centerId;
 	const [isLiked, setIsLiked] = useState(isFavorite);
@@ -92,7 +94,7 @@ export default function DogCard({
 	};
 
 	return (
-		<Link to={`/dogs/${dogId}`}>
+		<Link to={`/dogs/${dogId}`} onClick={savePrevState}>
 			<div
 				className={clsx(
 					"rounded-lg shadow-sm border border-gray-100 overflow-hidden",

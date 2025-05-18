@@ -158,6 +158,7 @@ const router = createBrowserRouter([
 														<AdoptionNoticePage />
 													</CenterMemberProtectedRoute>
 												),
+												handle: { showHeader: false },
 											},
 										],
 									},
