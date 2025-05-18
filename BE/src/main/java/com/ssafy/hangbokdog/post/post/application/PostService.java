@@ -39,6 +39,7 @@ public class PostService {
 
         Post newPost = Post.builder()
                 .centerId(centerId)
+                .dogId(request.dogId())
                 .authorId(member.getId())
                 .boardTypeId(request.boardTypeId())
                 .title(request.title())
