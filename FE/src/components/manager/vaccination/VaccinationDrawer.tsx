@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
 	SearchIcon,
@@ -9,8 +9,7 @@ import {
 	SyringeIcon,
 	LockIcon,
 } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import {
 	fetchNotYetVaccinatedDogsAPI,
@@ -18,7 +17,6 @@ import {
 	saveVaccinationAPI,
 	type VaccinationDoneResponse,
 } from "@/api/vaccine";
-import type { PageInfo } from "@/api/http-commons";
 
 // Ripple effect function for button clicks
 const createRippleEffect = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -88,142 +86,65 @@ export default function VaccinationDrawer({
 	const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const queryClient = useQueryClient();
-	const observerRef = useRef<IntersectionObserver | null>(null);
-	const loadMoreRef = useRef<HTMLDivElement>(null);
 
 	// Clear selected dogs when changing tabs or closing drawer
 	useEffect(() => {
 		if (!drawerOpen) {
 			setSelectedDogs([]);
 			setSearchQuery("");
-		} else {
-			// Reset queries when drawer is opened to fetch fresh data
-			queryClient.resetQueries({
-				queryKey: ["pendingDogs", vaccinationId],
-			});
-			queryClient.resetQueries({
-				queryKey: ["completedDogs", vaccinationId],
-			});
 		}
-	}, [drawerOpen, queryClient, vaccinationId]);
+	}, [drawerOpen]);
 
-	// Set up infinite queries for both pending and completed dogs
+	// Fetch all pending dogs data
 	const {
-		data: pendingDogsData,
-		fetchNextPage: fetchNextPendingPage,
-		hasNextPage: hasNextPendingPage,
-		isFetchingNextPage: isFetchingNextPendingPage,
+		data: pendingDogs = [],
 		isLoading: isLoadingPending,
 		isError: isPendingError,
 		refetch: refetchPending,
-	} = useInfiniteQuery({
-		queryKey: ["pendingDogs", vaccinationId, searchQuery],
-		queryFn: async ({ pageParam }) => {
-			const response = await fetchNotYetVaccinatedDogsAPI(
-				vaccinationId,
-				pageParam as string | undefined,
-				searchQuery || undefined,
-			);
+	} = useQuery({
+		queryKey: ["pendingDogs", vaccinationId],
+		queryFn: async () => {
+			const response = await fetchNotYetVaccinatedDogsAPI(vaccinationId);
 			return response;
 		},
-		initialPageParam: undefined as string | undefined,
-		getNextPageParam: (lastPage: PageInfo<VaccinationDoneResponse>) =>
-			lastPage.pageToken || undefined,
 		enabled: !!vaccinationId && drawerOpen && activeTab === "pending",
 	});
 
+	// Fetch all completed dogs data
 	const {
-		data: completedDogsData,
-		fetchNextPage: fetchNextCompletedPage,
-		hasNextPage: hasNextCompletedPage,
-		isFetchingNextPage: isFetchingNextCompletedPage,
+		data: completedDogs = [],
 		isLoading: isLoadingCompleted,
 		isError: isCompletedError,
 		refetch: refetchCompleted,
-	} = useInfiniteQuery({
-		queryKey: ["completedDogs", vaccinationId, searchQuery],
-		queryFn: async ({ pageParam }) => {
-			const response = await fetchVaccinatedDogsAPI(
-				vaccinationId,
-				pageParam as string | undefined,
-				searchQuery || undefined,
-			);
+	} = useQuery({
+		queryKey: ["completedDogs", vaccinationId],
+		queryFn: async () => {
+			const response = await fetchVaccinatedDogsAPI(vaccinationId);
 			return response;
 		},
-		initialPageParam: undefined as string | undefined,
-		getNextPageParam: (lastPage: PageInfo<VaccinationDoneResponse>) =>
-			lastPage.pageToken || undefined,
 		enabled: !!vaccinationId && drawerOpen && activeTab === "completed",
 	});
 
-	// Set up infinite scroll using Intersection Observer
-	const handleObserver = useCallback(
-		(entries: IntersectionObserverEntry[]) => {
-			const [target] = entries;
-			if (target.isIntersecting) {
-				if (
-					activeTab === "pending" &&
-					hasNextPendingPage &&
-					!isFetchingNextPendingPage
-				) {
-					fetchNextPendingPage();
-				} else if (
-					activeTab === "completed" &&
-					hasNextCompletedPage &&
-					!isFetchingNextCompletedPage
-				) {
-					fetchNextCompletedPage();
-				}
-			}
-		},
-		[
-			activeTab,
-			fetchNextPendingPage,
-			fetchNextCompletedPage,
-			hasNextPendingPage,
-			hasNextCompletedPage,
-			isFetchingNextPendingPage,
-			isFetchingNextCompletedPage,
-		],
-	);
-
-	// Set up and clean up the Intersection Observer
-	useEffect(() => {
-		// Only set up observer when drawer is open
-		if (!drawerOpen) return;
-
-		const observer = new IntersectionObserver(handleObserver, {
-			root: null,
-			rootMargin: "0px",
-			threshold: 0.1,
-		});
-		observerRef.current = observer;
-
-		const currentTarget = loadMoreRef.current;
-		if (currentTarget) {
-			observer.observe(currentTarget);
-		}
-
-		return () => {
-			if (currentTarget) {
-				observer.unobserve(currentTarget);
-			}
-			observer.disconnect();
-		};
-	}, [handleObserver, drawerOpen]); // Add drawerOpen as dependency to reinitialize when drawer opens
-
-	// Filter dogs based on search query
+	// Filter dogs locally based on search query
 	const getFilteredDogs = useCallback(() => {
-		if (activeTab === "pending" && pendingDogsData) {
-			return pendingDogsData.pages.flatMap((page) => page.data || []);
+		let dogs: VaccinationDoneResponse[] = [];
+
+		if (activeTab === "pending") {
+			dogs = pendingDogs;
+		} else {
+			dogs = completedDogs;
 		}
 
-		if (activeTab === "completed" && completedDogsData) {
-			return completedDogsData.pages.flatMap((page) => page.data || []);
+		// If no search query, return all dogs
+		if (!searchQuery.trim()) {
+			return dogs;
 		}
 
-		return [];
-	}, [activeTab, pendingDogsData, completedDogsData]);
+		// Filter dogs by name (case insensitive)
+		return dogs.filter((dog) =>
+			dog.name.toLowerCase().includes(searchQuery.toLowerCase()),
+		);
+	}, [activeTab, pendingDogs, completedDogs, searchQuery]);
 
 	const filteredDogs = getFilteredDogs();
 
@@ -239,7 +160,7 @@ export default function VaccinationDrawer({
 		});
 	};
 
-	// Select all dogs
+	// Select all filtered dogs
 	const selectAllDogs = () => {
 		if (!isOngoing) return; // Prevent selection if not ongoing
 
@@ -303,17 +224,6 @@ export default function VaccinationDrawer({
 			setIsSubmitting(false);
 		}
 	};
-
-	// Ensure observer is connected to the target when dogs list changes or tabs change
-	useEffect(() => {
-		// If we have an observer reference and the load more element exists
-		if (observerRef.current && loadMoreRef.current && drawerOpen) {
-			// First disconnect from any previous element
-			observerRef.current.disconnect();
-			// Then observe the current target
-			observerRef.current.observe(loadMoreRef.current);
-		}
-	}, [drawerOpen]); // Only depend on drawerOpen state
 
 	return (
 		<>
@@ -389,49 +299,15 @@ export default function VaccinationDrawer({
 									type="text"
 									placeholder="이름 검색"
 									value={searchQuery}
-									onChange={(e) => {
-										setSearchQuery(e.target.value);
-										// Reset data when search changes to fetch new results
-										if (activeTab === "pending") {
-											queryClient.resetQueries({
-												queryKey: [
-													"pendingDogs",
-													vaccinationId,
-												],
-											});
-										} else {
-											queryClient.resetQueries({
-												queryKey: [
-													"completedDogs",
-													vaccinationId,
-												],
-											});
-										}
-									}}
+									onChange={(e) =>
+										setSearchQuery(e.target.value)
+									}
 									className="w-full pl-10 pr-4 py-2 border rounded-full bg-gray-50 focus:outline-none focus:ring-1 focus:ring-male"
 								/>
 								{searchQuery && (
 									<button
 										type="button"
-										onClick={() => {
-											setSearchQuery("");
-											// Reset queries when clearing search
-											if (activeTab === "pending") {
-												queryClient.resetQueries({
-													queryKey: [
-														"pendingDogs",
-														vaccinationId,
-													],
-												});
-											} else {
-												queryClient.resetQueries({
-													queryKey: [
-														"completedDogs",
-														vaccinationId,
-													],
-												});
-											}
-										}}
+										onClick={() => setSearchQuery("")}
 										className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
 									>
 										<XIcon size={16} />
@@ -484,6 +360,7 @@ export default function VaccinationDrawer({
 								onClick={() => {
 									setActiveTab("pending");
 									setSelectedDogs([]);
+									setSearchQuery("");
 								}}
 							>
 								미완료 ({pendingCount})
@@ -498,6 +375,7 @@ export default function VaccinationDrawer({
 								onClick={() => {
 									setActiveTab("completed");
 									setSelectedDogs([]);
+									setSearchQuery("");
 								}}
 							>
 								완료 ({completedCount})
@@ -739,22 +617,6 @@ export default function VaccinationDrawer({
 											</motion.li>
 										),
 									)}
-
-									{/* Load more trigger element */}
-									<div
-										ref={loadMoreRef}
-										className="h-10 flex items-center justify-center"
-									>
-										{(activeTab === "pending" &&
-											isFetchingNextPendingPage) ||
-										(activeTab === "completed" &&
-											isFetchingNextCompletedPage) ? (
-											<LoaderIcon
-												size={24}
-												className="text-gray-400 animate-spin"
-											/>
-										) : null}
-									</div>
 								</ul>
 							)}
 						</div>

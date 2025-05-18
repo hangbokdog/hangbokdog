@@ -71,11 +71,24 @@ export interface PostResponse {
 	createdAt: string;
 }
 
+export interface PostSummaryResponse {
+	memberId: number;
+	memberNickName: string;
+	memberImage: string;
+	postId: number;
+	title: string;
+	createdAt: string;
+	isLiked: boolean;
+	likeCount: number;
+}
+
 export const fetchPostsAPI = async (
+	centerId: number,
 	pageToken?: string,
-): Promise<PageInfo<PostResponse>> => {
+	postTypeId?: number,
+): Promise<PageInfo<PostSummaryResponse>> => {
 	const response = await localAxios.get("/posts", {
-		params: { pageToken },
+		params: { pageToken, centerId, postTypeId },
 	});
 
 	return response.data;
@@ -193,6 +206,94 @@ export const deletePostTypeAPI = async (
 ): Promise<void> => {
 	const response = await localAxios.delete(
 		`/post-types/${postTypeId}?centerId=${centerId}`,
+	);
+	return response.data;
+};
+
+export interface CommentCreateRequest {
+	parentId: number | null;
+	content: string;
+}
+
+export interface CommentUpdateRequest {
+	content: string;
+}
+
+export interface CommentResponse {
+	author: MemberInfo;
+	isAuthor: boolean;
+	id: number;
+	parentId: number | null;
+	content: string;
+	isDeleted: boolean;
+	createdAt: string;
+}
+
+export interface CommentWithRepliesResponse {
+	comment: CommentResponse;
+	replies: CommentWithRepliesResponse[];
+}
+
+export interface CommentLikeResponse {
+	isLiked: boolean;
+}
+
+export const createCommentAPI = async (
+	postId: number,
+	request: CommentCreateRequest,
+): Promise<void> => {
+	const response = await localAxios.post(
+		`/posts/${postId}/comments`,
+		request,
+	);
+	return response.data;
+};
+
+export const fetchCommentsAPI = async (
+	postId: number,
+): Promise<CommentWithRepliesResponse[]> => {
+	const response = await localAxios.get(`/api/v1/posts/${postId}/comments`);
+	return response.data;
+};
+
+export const fetchCommentDetailAPI = async (
+	postId: number,
+	commentId: number,
+): Promise<CommentResponse> => {
+	const response = await localAxios.get(
+		`/posts/${postId}/comments/${commentId}`,
+	);
+	return response.data;
+};
+
+export const updateCommentAPI = async (
+	postId: number,
+	commentId: number,
+	request: CommentUpdateRequest,
+): Promise<void> => {
+	const response = await localAxios.patch(
+		`/posts/${postId}/comments/${commentId}`,
+		request,
+	);
+	return response.data;
+};
+
+export const deleteCommentAPI = async (
+	postId: number,
+	commentId: number,
+): Promise<void> => {
+	const response = await localAxios.delete(
+		`/posts/${postId}/comments/${commentId}`,
+	);
+	return response.data;
+};
+
+export const toggleCommentLikeAPI = async (
+	postId: number,
+	commentId: number,
+): Promise<CommentLikeResponse> => {
+	const response = await localAxios.post(
+		`/posts/${postId}/comments/${commentId}/like`,
 	);
 	return response.data;
 };
