@@ -103,12 +103,7 @@ export const ApplicantsList = ({
 	});
 
 	// 슬롯별 신청자 목록 조회 - 선택된 슬롯이 있을 때만 활성화
-	const {
-		data: slotApplicants,
-		isLoading: isApplicantsLoading,
-		error: applicantsError,
-		refetch: refetchApplicants,
-	} = useQuery({
+	const { data: slotApplicants, isLoading: isApplicantsLoading } = useQuery({
 		queryKey: ["slotApplicants", selectedCenter?.centerId, selectedSlot],
 		queryFn: () =>
 			getSlotApplicantsAPI({
@@ -181,7 +176,6 @@ export const ApplicantsList = ({
 			if (!lastPage) return undefined;
 			return lastPage.hasNext ? lastPage.pageToken : undefined;
 		},
-		enabled: activeView === "approved", // 'approved' 탭이 활성화되었을 때만 쿼리 실행
 		refetchOnWindowFocus: "always",
 		refetchOnMount: "always",
 	});
@@ -367,6 +361,14 @@ export const ApplicantsList = ({
 			[applicantId]: true,
 		}));
 		approveApplication({ applicationId: applicantId });
+		queryClient.invalidateQueries({
+			queryKey: [
+				"approvedApplicants",
+				selectedCenter?.centerId,
+				eventId,
+				"approved",
+			],
+		});
 		refetchApproved();
 	};
 
