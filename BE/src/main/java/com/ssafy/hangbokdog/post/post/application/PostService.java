@@ -23,6 +23,7 @@ import com.ssafy.hangbokdog.post.post.dto.PostLikeCount;
 import com.ssafy.hangbokdog.post.post.dto.PostSummaryInfo;
 import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
 import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostDetailResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostSummaryResponse;
 
@@ -102,9 +103,8 @@ public class PostService {
         return new PageInfo<>(infos.pageToken(), responses, infos.hasNext());
     }
 
-
-    public PostResponse findByPostId(Long memberId, Long postId) {
-        PostResponse info =  postRepository.findByPostId(postId)
+    public PostDetailResponse findByPostId(Long memberId, Long postId) {
+        PostResponse info = postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.POST_NOT_FOUND));
 
         List<Long> postIds = new ArrayList<>();
@@ -123,7 +123,7 @@ public class PostService {
         Boolean liked = likedPostId.contains(postId);
         Integer likeCount = postLikeCounts.getOrDefault(postId, 0);
 
-		return new PostResponse(
+		return new PostDetailResponse(
 				info.author(),
 				info.postType(),
 				info.postId(),

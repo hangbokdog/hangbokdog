@@ -25,8 +25,8 @@ import com.ssafy.hangbokdog.post.post.application.PostLikeService;
 import com.ssafy.hangbokdog.post.post.application.PostService;
 import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
 import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostDetailResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostLikeResponse;
-import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostSummaryResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -71,11 +71,11 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> get(
+    public ResponseEntity<PostDetailResponse> get(
             @AuthMember Member member,
             @PathVariable Long postId
     ) {
-        PostResponse response = postService.findByPostId(member.getId(), postId);
+        PostDetailResponse response = postService.findByPostId(member.getId(), postId);
         return ResponseEntity.ok(response);
     }
 
