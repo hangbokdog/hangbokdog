@@ -99,7 +99,6 @@ export const requestFCMToken = async () => {
 				return null;
 			}
 
-			console.log("FCM 토큰:", token);
 			return token;
 		} catch (tokenError) {
 			console.error("FCM 토큰 생성 중 오류:", tokenError);
@@ -132,7 +131,6 @@ export const onForegroundMessage = (
 	}
 
 	return onMessage(messaging, (payload) => {
-		console.log("메시지 수신:", payload);
 		callback(payload);
 	});
 };

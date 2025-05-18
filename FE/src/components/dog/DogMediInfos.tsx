@@ -10,6 +10,7 @@ import {
 	FaChevronUp,
 	FaPlusCircle,
 	FaTrashAlt,
+	FaEdit,
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,6 +19,7 @@ import {
 	createDogMedicalHistoryAPI,
 	fetchDogMedicalHistory,
 	removeDogMedicalHistoryAPI,
+	updateMedicalHistoryAPI,
 } from "@/api/dog";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "../ui/drawer";
 import type { MedicalType } from "@/types/dog";
@@ -32,6 +34,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "../ui/alert-dialog";
+import useAuthStore from "@/lib/store/authStore";
 
 interface DogMediInfosProps {
 	dogId: number;
@@ -44,8 +47,12 @@ export default function DogMediInfos({
 	isManager,
 	centerId,
 }: DogMediInfosProps) {
+	const { user } = useAuthStore();
+	const currentMemberId = user.memberId;
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [isEditMode, setIsEditMode] = useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false); // New state for AlertDialog
 	const queryClient = useQueryClient();
 	const [selectedHistory, setSelectedHistory] = useState<{
 		id: number;
@@ -54,6 +61,7 @@ export default function DogMediInfos({
 		operatedDate: string;
 		medicalType: string;
 		medicalPeriod: number;
+		memberId?: number;
 	} | null>(null);
 
 	const {
@@ -105,10 +113,57 @@ export default function DogMediInfos({
 		content: "",
 		medicalPeriod: 1,
 		medicalType: "MEDICATION",
-		operatedDate: new Date().toISOString().split("T")[0], // 오늘 날짜
+		operatedDate: new Date().toISOString().split("T")[0],
 	});
 
 	const [imageFile, setImageFile] = useState<File | null>(null);
+
+	const handleEdit = (history: {
+		id: number;
+		content: string;
+		image?: string | null;
+		operatedDate: string;
+		medicalType: string;
+		medicalPeriod: number;
+		memberId: number;
+	}) => {
+		setIsEditMode(true);
+		setForm({
+			content: history.content,
+			medicalPeriod: history.medicalPeriod,
+			medicalType: history.medicalType as MedicalType,
+			operatedDate: formatDate(history.operatedDate),
+		});
+		setSelectedHistory({
+			id: history.id,
+			content: history.content,
+			image: history.image,
+			operatedDate: history.operatedDate,
+			medicalType: history.medicalType,
+			medicalPeriod: history.medicalPeriod,
+			memberId: history.memberId,
+		});
+		setOpen(true);
+	};
+
+	const handleOpenDrawer = () => {
+		setIsEditMode(false);
+		setForm({
+			content: "",
+			medicalPeriod: 1,
+			medicalType: "MEDICATION",
+			operatedDate: new Date().toISOString().split("T")[0],
+		});
+		setImageFile(null);
+		setOpen(true);
+	};
+
+	const closeDrawer = () => {
+		setOpen(false);
+		setIsEditMode(false);
+		setImageFile(null);
+		setSelectedHistory(null);
+	};
 
 	const mutation = useMutation({
 		mutationFn: async () => {
@@ -124,15 +179,8 @@ export default function DogMediInfos({
 			);
 		},
 		onSuccess: () => {
-			toast.success("의료 기룍이 등록되었습니다");
-			setOpen(false);
-			setForm({
-				content: "",
-				medicalPeriod: 1,
-				medicalType: "MEDICATION",
-				operatedDate: new Date().toISOString().split("T")[0],
-			});
-			setImageFile(null);
+			toast.success("의료 기록이 등록되었습니다");
+			closeDrawer();
 			queryClient.invalidateQueries({
 				queryKey: ["dogMedicalHistory", dogId],
 			});
@@ -142,12 +190,39 @@ export default function DogMediInfos({
 		},
 	});
 
+	const updateMutation = useMutation({
+		mutationFn: async () => {
+			if (!selectedHistory) return null;
+			const request = {
+				content: form.content,
+				medicalPeriod: form.medicalPeriod,
+				medicalType: form.medicalType,
+				operatedDate: toLocalDateTimeString(form.operatedDate),
+			};
+			return await updateMedicalHistoryAPI(
+				selectedHistory.id,
+				request,
+				imageFile,
+				centerId,
+			);
+		},
+		onSuccess: () => {
+			toast.success("의료 기록이 수정되었습니다");
+			closeDrawer();
+			queryClient.invalidateQueries({
+				queryKey: ["dogMedicalHistory", dogId],
+			});
+		},
+		onError: () => {
+			toast.error("수정 실패");
+		},
+	});
+
 	const deleteMedication = useMutation({
 		mutationFn: (id: number) =>
 			removeDogMedicalHistoryAPI(id, centerId, dogId),
 		onSuccess: (_, deletedId) => {
 			toast.success("의료 정보가 삭제되었습니다.");
-
 			queryClient.setQueryData(
 				["dogMedicalHistory", dogId],
 				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -179,7 +254,7 @@ export default function DogMediInfos({
 					<button
 						type="button"
 						className="flex justify-end px-4 items-center gap-2 bg-male text-white rounded-full hover:bg-blue"
-						onClick={() => setOpen(true)}
+						onClick={handleOpenDrawer}
 					>
 						추가하기 <FaPlusCircle />
 					</button>
@@ -274,28 +349,50 @@ export default function DogMediInfos({
 																history.operatedDate,
 															)}
 														</span>
-														<button
-															type="button"
-															className="text-blueGray text-sm px-2"
-															onClick={() =>
-																setSelectedHistory(
-																	{
-																		id: history.id,
-																		content:
-																			history.content,
-																		image: history.image,
-																		operatedDate:
-																			history.operatedDate,
-																		medicalType:
-																			history.medicalType,
-																		medicalPeriod:
-																			history.medicalPeriod,
-																	},
-																)
-															}
-														>
-															<FaTrashAlt />
-														</button>
+														{isManager &&
+															history.memberId ===
+																currentMemberId && (
+																<div className="flex gap-2">
+																	<button
+																		type="button"
+																		className="text-blue-500 text-sm px-2"
+																		onClick={() =>
+																			handleEdit(
+																				history,
+																			)
+																		}
+																	>
+																		<FaEdit />
+																	</button>
+																	<button
+																		type="button"
+																		className="text-red-500 text-sm px-2"
+																		onClick={() => {
+																			setSelectedHistory(
+																				{
+																					id: history.id,
+																					content:
+																						history.content,
+																					image: history.image,
+																					operatedDate:
+																						history.operatedDate,
+																					medicalType:
+																						history.medicalType,
+																					medicalPeriod:
+																						history.medicalPeriod,
+																					memberId:
+																						history.memberId,
+																				},
+																			);
+																			setIsDeleteDialogOpen(
+																				true,
+																			); // Open AlertDialog
+																		}}
+																	>
+																		<FaTrashAlt />
+																	</button>
+																</div>
+															)}
 													</span>
 												</div>
 											</div>
@@ -332,10 +429,13 @@ export default function DogMediInfos({
 					<DrawerContent>
 						<div className="mx-auto w-full max-w-sm">
 							<DrawerHeader>
-								<DrawerTitle>복약정보 추가</DrawerTitle>
+								<DrawerTitle>
+									{isEditMode
+										? "복약정보 수정"
+										: "복약정보 추가"}
+								</DrawerTitle>
 							</DrawerHeader>
 							<div className="p-4 space-y-4">
-								{/* 이미지 업로드 */}
 								<div className="flex flex-col gap-1">
 									<label
 										htmlFor="image"
@@ -355,8 +455,19 @@ export default function DogMediInfos({
 											}
 										}}
 									/>
+									{isEditMode && selectedHistory?.image && (
+										<div className="mt-2">
+											<p className="text-xs text-gray-500 mb-1">
+												현재 이미지:
+											</p>
+											<img
+												src={selectedHistory.image}
+												alt="현재 이미지"
+												className="w-24 h-24 object-cover border rounded"
+											/>
+										</div>
+									)}
 								</div>
-								{/* Content 입력 */}
 								<div className="flex flex-col gap-1">
 									<label
 										htmlFor="content"
@@ -377,8 +488,6 @@ export default function DogMediInfos({
 										}
 									/>
 								</div>
-
-								{/* Medical Period 입력 */}
 								<div className="flex flex-col gap-1">
 									<label
 										htmlFor="period"
@@ -401,8 +510,6 @@ export default function DogMediInfos({
 										}
 									/>
 								</div>
-
-								{/* Medical Type 선택 */}
 								<div className="flex flex-col gap-1">
 									<label
 										htmlFor="type"
@@ -426,8 +533,6 @@ export default function DogMediInfos({
 										<option value="MEDICATION">복약</option>
 									</select>
 								</div>
-
-								{/* Operated Date 선택 */}
 								<div className="flex flex-col gap-1">
 									<label
 										htmlFor="date"
@@ -448,15 +553,17 @@ export default function DogMediInfos({
 										}
 									/>
 								</div>
-
-								{/* 등록 버튼 */}
 								<div className="flex justify-end pt-2">
 									<button
 										type="button"
 										className="bg-male text-white px-4 py-2 rounded-md font-semibold"
-										onClick={() => mutation.mutate()}
+										onClick={() =>
+											isEditMode
+												? updateMutation.mutate()
+												: mutation.mutate()
+										}
 									>
-										등록
+										{isEditMode ? "수정" : "등록"}
 									</button>
 								</div>
 							</div>
@@ -465,8 +572,8 @@ export default function DogMediInfos({
 				</Drawer>
 			</div>
 			<AlertDialog
-				open={!!selectedHistory}
-				onOpenChange={() => setSelectedHistory(null)}
+				open={isDeleteDialogOpen}
+				onOpenChange={setIsDeleteDialogOpen}
 			>
 				<AlertDialogContent>
 					<AlertDialogHeader>
@@ -477,8 +584,6 @@ export default function DogMediInfos({
 							삭제된 의료 기록은 복구할 수 없습니다.
 						</AlertDialogDescription>
 					</AlertDialogHeader>
-
-					{/* 미리보기 */}
 					<div className="flex items-start gap-4 py-2">
 						{selectedHistory?.image ? (
 							<img
@@ -514,13 +619,13 @@ export default function DogMediInfos({
 							</div>
 						</div>
 					</div>
-
 					<AlertDialogFooter>
 						<AlertDialogCancel>취소</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={() => {
 								if (selectedHistory) {
 									deleteMedication.mutate(selectedHistory.id);
+									setIsDeleteDialogOpen(false);
 									setSelectedHistory(null);
 								}
 							}}

@@ -1,4 +1,5 @@
 import type { AnnouncementResponse } from "@/api/announcement";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface AnnouncementItemProps {
 	announcement: AnnouncementResponse;
@@ -35,9 +36,17 @@ export default function AnnouncementItem({
 				<div
 					className={`flex items-center ${compact ? "text-xs" : "text-sm"} text-gray-500`}
 				>
-					<div className="flex items-center">
+					<div className="flex items-center gap-2">
+						<Avatar className="w-6 h-6">
+							<AvatarImage src={announcement.authorImage} />
+							<AvatarFallback className="bg-superLightBlueGray">
+								{announcement.authorName}
+							</AvatarFallback>
+						</Avatar>
 						<span className="text-gray-700">
-							{announcement.authorName}
+							{announcement.authorName
+								? announcement.authorName
+								: "이름없음"}
 						</span>
 						<span
 							className={`${compact ? "mx-1" : "mx-2"} ${compact ? "" : "text-gray-300"}`}

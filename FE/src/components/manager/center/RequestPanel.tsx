@@ -57,6 +57,8 @@ export default function RequestPanel() {
 				return lastPage.pageToken;
 			},
 			enabled: !!selectedCenter?.centerId,
+			refetchOnWindowFocus: "always",
+			refetchOnMount: "always",
 		});
 
 	// 모든 요청 목록을 하나의 배열로 합치기

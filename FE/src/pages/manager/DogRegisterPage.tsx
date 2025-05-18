@@ -74,7 +74,7 @@ export default function DogRegisterPage() {
 		mutationFn: (formData: FormData) => createDogAPI(formData),
 		onSuccess: (dogId) => {
 			toast("강아지 정보 등록");
-			navigate(`/dogs/${dogId}`);
+			navigate(`/dogs/${dogId}`, { replace: true });
 		},
 		onError: (error) => {
 			const errorMessage =

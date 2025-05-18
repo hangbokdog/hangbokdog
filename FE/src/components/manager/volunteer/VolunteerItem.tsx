@@ -193,7 +193,7 @@ export const VolunteerItem = ({
 							{volunteer.content}
 						</p>
 						<div className="flex items-center gap-2">
-							{typeof volunteer.appliedCount === "number" &&
+							{/* {typeof volunteer.appliedCount === "number" &&
 								volunteer.appliedCount > 0 && (
 									<motion.div
 										initial={{ opacity: 0, scale: 0.8 }}
@@ -203,7 +203,7 @@ export const VolunteerItem = ({
 										<Users className="w-3 h-3 mr-1" />
 										신청자 {volunteer.appliedCount}명
 									</motion.div>
-								)}
+								)} */}
 							<Link to={`/volunteer/${volunteer.id}`}>
 								<Button
 									className="rounded-full bg-white hover:bg-gray-200 h-8 w-8"

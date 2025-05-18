@@ -1,9 +1,11 @@
 import DogAgeSlider from "../../dog/DogAgeSlider";
+import { useEffect, useState } from "react";
 
 interface AgeFilterProps {
 	startDate?: string;
 	endDate?: string;
 	onDateChange: (start?: string, end?: string) => void;
+	getAge: (ageVariable: string) => void;
 }
 
 // Helper functions (moved from Search component)
@@ -46,15 +48,33 @@ export default function AgeFilter({
 	startDate,
 	endDate,
 	onDateChange,
+	getAge,
 }: AgeFilterProps) {
+	const [sliderValues, setSliderValues] = useState<[number, number]>([0, 25]);
+
+	// Update slider values when props change
+	useEffect(() => {
+		setSliderValues(datesToSliderValues(startDate, endDate));
+
+		// If filter is reset, also update age text
+		if (!startDate && !endDate) {
+			getAge("전체 나이");
+		}
+	}, [startDate, endDate, getAge]);
+
+	const handleValueChange = (newValues: [number, number]) => {
+		setSliderValues(newValues);
+	};
+
 	return (
 		<div className="w-full">
 			<DogAgeSlider
-				value={datesToSliderValues(startDate, endDate)}
-				onValueChange={() => onDateChange(undefined, undefined)}
+				value={sliderValues}
+				onValueChange={handleValueChange}
 				startDate={startDate}
 				endDate={endDate}
 				onDateChange={onDateChange}
+				getAge={getAge}
 			/>
 		</div>
 	);
