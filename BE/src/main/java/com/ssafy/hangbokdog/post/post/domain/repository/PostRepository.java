@@ -10,6 +10,8 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.foster.dto.FosterDiaryCheckQuery;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.post.post.domain.Post;
+import com.ssafy.hangbokdog.post.post.dto.PostLikeCount;
+import com.ssafy.hangbokdog.post.post.dto.PostSummaryInfo;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -22,14 +24,15 @@ public class PostRepository {
 
     private final PostJpaRepository postJpaRepository;
     private final PostTypeJpaRepository postTypeJpaRepository;
+    private final PostLikeJpaRepository postLikeJpaRepository;
 
     public Post save(Post post) {
         return postJpaRepository.save(post);
     }
 
-    public PageInfo<PostResponse> findAll(Long postTypeId, Long centerId, String pageToken) {
+    public PageInfo<PostSummaryInfo> findAll(Long postTypeId, Long centerId, String pageToken) {
         var data = postJpaRepository.findAll(postTypeId, centerId, pageToken, DEFAULT_PAGE_SIZE);
-        return PageInfo.of(data, DEFAULT_PAGE_SIZE, PostResponse::postId);
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, PostSummaryInfo::postId);
     }
 
     public Optional<Post> findById(Long postId) {
@@ -58,5 +61,13 @@ public class PostRepository {
 
     public String findPostTypeNameByPostTypeId(Long postTypeId) {
         return postTypeJpaRepository.findNameById(postTypeId);
+    }
+
+    public List<PostLikeCount> findPostLikeCountIn(List<Long> postIds) {
+        return postLikeJpaRepository.findPostLikeCountIn(postIds);
+    }
+
+    public List<Long> findLikedPostIdsByMemberId(Long memberId) {
+        return postLikeJpaRepository.findLikedPostIdsByMemberId(memberId);
     }
 }

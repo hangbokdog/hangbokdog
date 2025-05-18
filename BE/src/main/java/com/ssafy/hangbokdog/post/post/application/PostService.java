@@ -1,6 +1,11 @@
 package com.ssafy.hangbokdog.post.post.application;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +19,12 @@ import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.post.domain.Post;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
+import com.ssafy.hangbokdog.post.post.dto.PostLikeCount;
+import com.ssafy.hangbokdog.post.post.dto.PostSummaryInfo;
 import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
 import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.dto.response.PostSummaryResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,13 +59,82 @@ public class PostService {
         return newPost.getId();
     }
 
-    public PageInfo<PostResponse> findAll(Long postTypeId, Long centerId, String pageToken) {
-        return postRepository.findAll(postTypeId, centerId, pageToken);
+    public PageInfo<PostSummaryResponse> findAll(
+            Long memberId,
+            Long postTypeId,
+            Long centerId,
+            String pageToken
+    ) {
+        PageInfo<PostSummaryInfo> infos = postRepository.findAll(postTypeId, centerId, pageToken);
+        var data = infos.data();
+
+        List<Long> postIds = data.stream()
+                .map(PostSummaryInfo::postId)
+                .collect(Collectors.toList());
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds).stream()
+                .collect(Collectors.toMap(
+                        PostLikeCount::postId,
+                        PostLikeCount::likeCount
+                ));
+
+        List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId);
+        Set<Long> likedPostIds = new HashSet<>(likedPosts);
+
+        List<PostSummaryResponse> responses = new ArrayList<>();
+        for (PostSummaryInfo info : data) {
+            Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
+            Boolean liked = likedPostIds.contains(info.postId());
+
+            PostSummaryResponse response = new PostSummaryResponse(
+                    info.memberId(),
+                    info.memberNickName(),
+                    info.memberImage(),
+                    info.postId(),
+                    info.title(),
+                    info.createdAt(),
+                    liked,
+                    likeCount
+            );
+            responses.add(response);
+        }
+
+        return new PageInfo<>(infos.pageToken(), responses, infos.hasNext());
     }
 
-    public PostResponse findByPostId(Long postId) {
-        return postRepository.findByPostId(postId)
+
+    public PostResponse findByPostId(Long memberId, Long postId) {
+        PostResponse info =  postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.POST_NOT_FOUND));
+
+        List<Long> postIds = new ArrayList<>();
+        postIds.add(postId);
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds).stream()
+                .collect(Collectors.toMap(
+                        PostLikeCount::postId,
+                        PostLikeCount::likeCount
+                ));
+
+
+        List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId);
+        Set<Long> likedPostId = new HashSet<>(likedPosts);
+
+        Boolean liked = likedPostId.contains(postId);
+        Integer likeCount = postLikeCounts.getOrDefault(postId, 0);
+
+		return new PostResponse(
+				info.author(),
+				info.postType(),
+				info.postId(),
+				info.dogId(),
+				info.title(),
+				info.content(),
+				info.images(),
+				info.createdAt(),
+				liked,
+				likeCount
+		);
     }
 
     @Transactional

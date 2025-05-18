@@ -27,6 +27,7 @@ import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
 import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
 import com.ssafy.hangbokdog.post.post.dto.response.PostLikeResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.dto.response.PostSummaryResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -59,19 +60,22 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<PageInfo<PostResponse>> getAll(
+    public ResponseEntity<PageInfo<PostSummaryResponse>> getAll(
             @AuthMember Member member,
             @RequestParam(required = false, name = "pageToken") String pageToken,
             @RequestParam Long centerId,
             @RequestParam Long postTypeId
     ) {
-        PageInfo<PostResponse> responses = postService.findAll(postTypeId, centerId, pageToken);
+        PageInfo<PostSummaryResponse> responses = postService.findAll(member.getId(), postTypeId, centerId, pageToken);
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> get(@PathVariable Long postId) {
-        PostResponse response = postService.findByPostId(postId);
+    public ResponseEntity<PostResponse> get(
+            @AuthMember Member member,
+            @PathVariable Long postId
+    ) {
+        PostResponse response = postService.findByPostId(member.getId(), postId);
         return ResponseEntity.ok(response);
     }
 
