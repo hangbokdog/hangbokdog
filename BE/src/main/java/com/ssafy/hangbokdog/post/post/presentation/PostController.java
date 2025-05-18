@@ -110,4 +110,12 @@ public class PostController {
         PostLikeResponse response = postLikeService.toggleLike(postId, member);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/latest")
+    public ResponseEntity<List<PostSummaryResponse>> getLatest(
+            @AuthMember Member member,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok().body(postService.getLatest(member.getId(), centerId));
+    }
 }

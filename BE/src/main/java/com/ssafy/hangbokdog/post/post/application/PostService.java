@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final CenterRepository centerRepository;
     private final CenterMemberRepository centerMemberRepository;
 
     public Long create(
@@ -169,5 +168,42 @@ public class PostService {
         }
 
         postRepository.delete(post);
+    }
+
+    public List<PostSummaryResponse> getLatest(Long memberId, Long centerId) {
+        List<PostSummaryInfo> infos = postRepository.getLatestPosts(centerId);
+
+        List<Long> postIds = infos.stream()
+                .map(PostSummaryInfo::postId)
+                .collect(Collectors.toList());
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds).stream()
+                .collect(Collectors.toMap(
+                        PostLikeCount::postId,
+                        PostLikeCount::likeCount
+                ));
+
+        List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId);
+        Set<Long> likedPostIds = new HashSet<>(likedPosts);
+
+        List<PostSummaryResponse> responses = new ArrayList<>();
+        for (PostSummaryInfo info : infos) {
+            Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
+            Boolean liked = likedPostIds.contains(info.postId());
+
+            PostSummaryResponse response = new PostSummaryResponse(
+                    info.memberId(),
+                    info.memberNickName(),
+                    info.memberImage(),
+                    info.postId(),
+                    info.title(),
+                    info.createdAt(),
+                    liked,
+                    likeCount
+            );
+            responses.add(response);
+        }
+
+        return responses;
     }
 }
