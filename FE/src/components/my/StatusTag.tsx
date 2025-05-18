@@ -6,7 +6,7 @@ interface StatusTagProps {
 export default function StatusTag({ status, className = "" }: StatusTagProps) {
 	const statusConfig = {
 		PENDING: { text: "신청중", bgColor: "bg-yellow-400" },
-		APPROVED: { text: "신청완료", bgColor: "bg-green-500" },
+		ACCEPTED: { text: "신청완료", bgColor: "bg-green-500" },
 		REJECTED: { text: "신청반려", bgColor: "bg-red-500" },
 		CANCELLED: { text: "신청취소", bgColor: "bg-gray-400" },
 	} as const;

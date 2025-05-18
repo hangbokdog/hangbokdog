@@ -1,7 +1,6 @@
 import MileageCard from "@/components/my/MileageCard";
 import Profile from "@/components/my/Profile";
 import Order from "@/components/my/Order";
-import ProtectDogPanel from "@/components/my/ProtectDogPanel";
 import { logoutAPI } from "@/api/auth";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
@@ -10,6 +9,7 @@ import { MdLogout } from "react-icons/md";
 import { BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import DogTabsPanel from "@/components/my/DogTabsPanel";
 
 function handleEdit() {
 	//프로필 수정 로직
@@ -84,7 +84,7 @@ export default function My() {
 				<Order />
 			</div>
 			<div>
-				<ProtectDogPanel />
+				<DogTabsPanel />
 			</div>
 			<button
 				type="button"

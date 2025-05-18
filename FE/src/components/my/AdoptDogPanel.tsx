@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PanelTitle from "../common/PanelTitle";
-import ProtectDogCard from "@/components/my/ProtectDogCard";
+import AdoptDogCard from "@/components/my/AdoptDogCard";
 import {
 	type AdoptedDogDetailsResponse,
 	fetchAdoptionApplicationsAPI,
@@ -41,7 +41,7 @@ export default function ProtectDogPanel() {
 
 				setDogDetailsList(fulfilled);
 			} catch (err) {
-				console.error("입양양 정보 불러오기 실패", err);
+				console.error("입양 정보 불러오기 실패", err);
 			} finally {
 				setIsLoading(false);
 			}
@@ -60,14 +60,14 @@ export default function ProtectDogPanel() {
 					const ageText = `${Math.floor(dog.age / 12)}세 ${dog.age % 12}개월`;
 
 					return (
-						<ProtectDogCard
+						<AdoptDogCard
 							key={dog.dogId}
 							id={dog.dogId}
 							name={dog.dogName}
 							age={ageText}
 							imageUrl={dog.profileImageUrl}
 							gender={dog.gender}
-							status={"APPROVED"} // 임보 완료 기준
+							status={"APPROVED"} // 입양 승인 기준
 							startDate={dog.rescuedDate.slice(0, 10)}
 							endDate={dog.adoptedDate?.slice(0, 10)}
 						/>
