@@ -28,6 +28,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.DogCenterInfo;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogCreateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.DogUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
+import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
@@ -156,6 +157,25 @@ public class DogController {
 
 		return ResponseEntity.created(URI.create("/api/v1/dogs/" + dogId + "/medical-history" + medicalHistoryId))
 			.build();
+	}
+
+	@PatchMapping(value = "/{medicalHistoryId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Void> updateMedicalHistory(
+			@AuthMember Member member,
+			@PathVariable(name = "medicalHistoryId") Long medicalHistoryId,
+			@RequestPart(value = "request") MedicalHistoryUpdateRequest request,
+			@RequestPart(value = "image", required = false) MultipartFile image,
+			@RequestParam Long centerId
+	) {
+		String newImageUrl = (image != null) ? uploadImageToS3(image) : null;
+		dogService.updateMedicalHistory(
+				member.getId(),
+				centerId,
+				medicalHistoryId,
+				newImageUrl,
+				request
+		);
+		return ResponseEntity.noContent().build();
 	}
 
 	@GetMapping("/{dogId}/medical-history")
