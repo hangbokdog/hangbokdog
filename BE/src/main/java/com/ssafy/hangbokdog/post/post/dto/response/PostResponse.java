@@ -13,6 +13,8 @@ public record PostResponse(
     String title,
     String content,
     List<String> images,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+	Boolean isLiked,
+	Integer likeCount
 ) {
 }

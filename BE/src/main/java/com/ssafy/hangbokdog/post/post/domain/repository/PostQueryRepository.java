@@ -6,10 +6,11 @@ import java.util.Optional;
 
 import com.ssafy.hangbokdog.foster.dto.FosterDiaryCheckQuery;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
+import com.ssafy.hangbokdog.post.post.dto.PostSummaryInfo;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 
 public interface PostQueryRepository {
-    List<PostResponse> findAll(Long postTypeId, Long centerId, String pageToken, int pageSize);
+    List<PostSummaryInfo> findAll(Long postTypeId, Long centerId, String pageToken, int pageSize);
 
     List<FosterDiaryCheckQuery> findFostersWithInsufficientDiaries(
         List<StartedFosterInfo> infos,
