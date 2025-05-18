@@ -68,12 +68,12 @@ export default function ManagerEmergencyPanel({
 				tabs={[
 					{
 						key: "volunteer",
-						label: "일손",
+						label: `일손 (${volunteerPosts.length})`,
 						data: volunteerPosts.map((p, idx) => ({
 							title: p.title,
 							name: p.name ?? "알 수 없음",
 							target: p.capacity ?? 0,
-							date: `D-${calculateDDay(p.dueDate)}`,
+							date: <DdayTag dday={calculateDDay(p.dueDate)} />,
 							index: idx,
 							emergencyId: p.emergencyId,
 							onClick: () => {
@@ -85,11 +85,11 @@ export default function ManagerEmergencyPanel({
 					},
 					{
 						key: "transport",
-						label: "이동",
+						label: `이동 (${transportPosts.length})`,
 						data: transportPosts.map((p, idx) => ({
 							title: p.title,
 							name: p.name ?? "알 수 없음",
-							date: `D-${calculateDDay(p.dueDate)}`,
+							date: <DdayTag dday={calculateDDay(p.dueDate)} />,
 							index: idx,
 							emergencyId: p.emergencyId,
 							onClick: () => {
@@ -101,12 +101,12 @@ export default function ManagerEmergencyPanel({
 					},
 					{
 						key: "donation",
-						label: "후원",
+						label: `후원 (${donationPosts.length})`,
 						data: donationPosts.map((p, idx) => ({
 							title: p.title,
 							name: p.name ?? "알 수 없음",
 							target: p.targetAmount ?? 0,
-							date: `D-${calculateDDay(p.dueDate)}`,
+							date: <DdayTag dday={calculateDDay(p.dueDate)} />,
 							index: idx,
 							emergencyId: p.emergencyId,
 							onClick: () => {
@@ -138,4 +138,25 @@ function calculateDDay(dueDate: string): number {
 	const due = new Date(dueDate);
 	const diff = due.getTime() - today.getTime();
 	return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+}
+
+function DdayTag({ dday }: { dday: number }) {
+	const label = `D-${dday}`;
+	let colorClass = "bg-gray-100 text-gray-600";
+
+	if (dday <= 1) {
+		colorClass = "bg-red-100 text-red-600 animate-pulse";
+	} else if (dday <= 3) {
+		colorClass = "bg-orange-100 text-orange-600";
+	} else if (dday <= 7) {
+		colorClass = "bg-yellow-100 text-yellow-600";
+	}
+
+	return (
+		<span
+			className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${colorClass}`}
+		>
+			{label}
+		</span>
+	);
 }
