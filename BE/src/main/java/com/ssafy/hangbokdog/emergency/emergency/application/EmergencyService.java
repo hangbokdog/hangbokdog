@@ -156,4 +156,8 @@ public class EmergencyService {
 	public List<EmergencyResponse> getEmergencyByCenter(Long centerId, EmergencyType type) {
 		return emergencyRepository.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
 	}
+
+	public List<EmergencyResponse> getLatestEmergencyByCenter(Long centerId, EmergencyType type) {
+		return emergencyRepository.getLatestEmergenciesByCenterId(centerId, type, LocalDateTime.now());
+	}
 }
