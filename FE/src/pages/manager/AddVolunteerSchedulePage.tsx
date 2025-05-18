@@ -834,7 +834,7 @@ export default function AddVolunteerSchedulePage() {
 					<label htmlFor="start-date" className="text-lg">
 						기간 *
 					</label>
-					<div className="flex gap-4 items-center">
+					<div className="flex max-[375px]:flex-col flex-row gap-4 items-center max-[375px]:items-start">
 						<input
 							id="start-date"
 							type="date"
@@ -1121,7 +1121,7 @@ export default function AddVolunteerSchedulePage() {
 						{/* 봉사 안내 에디터 */}
 						{activeTab === "info" && (
 							<div className="relative">
-								<div className="flex items-center justify-between mb-3">
+								<div className="flex max-[375px]:flex-col flex-row items-center max-[375px]:items-start justify-between mb-3 gap-2">
 									<h3 className="font-medium text-lg flex items-center gap-2">
 										<Info
 											size={18}
@@ -1185,7 +1185,7 @@ export default function AddVolunteerSchedulePage() {
 						{/* 주의 사항 에디터 */}
 						{activeTab === "precaution" && (
 							<div className="relative">
-								<div className="flex items-center justify-between mb-3">
+								<div className="flex max-[375px]:flex-col flex-row items-center max-[375px]:items-start justify-between mb-3 gap-2">
 									<h3 className="font-medium text-lg flex items-center gap-2">
 										<AlertTriangle
 											size={18}
@@ -1274,7 +1274,7 @@ export default function AddVolunteerSchedulePage() {
 			{/* 정보 템플릿 생성 모달 - 에디터 모듈 적용 */}
 			{showInfoTemplateModal && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-					<div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+					<div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-auto my-auto">
 						<div className="flex justify-between items-center mb-4">
 							<h3 className="text-xl font-semibold">
 								봉사 안내 템플릿 생성
@@ -1305,12 +1305,11 @@ export default function AddVolunteerSchedulePage() {
 										value={newInfoTemplate}
 										onChange={setNewInfoTemplate}
 										modules={infoTemplateModules}
-										className="h-64"
 									/>
 								</div>
 							</div>
 						</div>
-						<div className="flex justify-end gap-3 mt-6">
+						<div className="flex justify-end gap-3 mt-12">
 							<button
 								type="button"
 								onClick={() => setShowInfoTemplateModal(false)}
@@ -1334,7 +1333,7 @@ export default function AddVolunteerSchedulePage() {
 			{/* 주의사항 템플릿 생성 모달 - 에디터 모듈 적용 */}
 			{showPrecautionTemplateModal && (
 				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-					<div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+					<div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-auto my-auto">
 						<div className="flex justify-between items-center mb-4">
 							<h3 className="text-xl font-semibold">
 								봉사 주의사항 템플릿 생성
@@ -1367,7 +1366,6 @@ export default function AddVolunteerSchedulePage() {
 										value={newPrecautionTemplate}
 										onChange={setNewPrecautionTemplate}
 										modules={precautionTemplateModules}
-										className="h-64"
 									/>
 								</div>
 							</div>

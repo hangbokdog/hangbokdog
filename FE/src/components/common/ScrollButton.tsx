@@ -55,8 +55,6 @@ export default function ScrollButton({ targetRef }: ScrollButtonProps) {
                 rounded-full 
                 flex items-center justify-center
                 z-50
-                transition-all 
-                duration-300
                 cursor-pointer
                 hover:scale-110
                 active:scale-95

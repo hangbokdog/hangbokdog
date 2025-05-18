@@ -18,7 +18,7 @@ export default function EmergencyPanel() {
 					<h3 className="text-lg font-bold">긴급 요청</h3>
 				</div>
 			</div>
-			<ManagerEmergencyPanel centerId={centerId} />
+			<ManagerEmergencyPanel centerId={centerId} isHome />
 		</div>
 	);
 }
