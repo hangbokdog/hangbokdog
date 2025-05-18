@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FaPaw } from "react-icons/fa";
 
 interface DonationListItemProps {
 	img: string;
@@ -26,45 +25,38 @@ export default function DonationListItem(props: DonationListItemProps) {
 		onClick,
 	} = props;
 
-	// const progress = Math.min((current / target) * 100, 100);
+	const progress = Math.min((current / target) * 100, 100);
 
 	return (
 		<button
 			type="button"
 			onClick={() => onClick(emergencyId)}
-			className={`w-full text-left flex rounded-full ${index % 2 === 1 ? "bg-background" : ""} text-grayText text-base font-medium items-center px-5 py-1`}
+			className={`w-full text-left flex items-center justify-between rounded-full px-5 py-2 ${
+				index % 2 === 1 ? "bg-background" : ""
+			} text-grayText text-base font-medium`}
 		>
-			<div
-				className={`flex rounded-full ${index % 2 === 1 && "bg-background"} text-grayText text-base font-medium items-center px-5 py-1`}
-			>
-				<div className="flex-1 flex items-center gap-2 font-semibold">
-					<Avatar className="w-6 h-6 flex justify-center items-center">
-						<AvatarImage src={img} />
-						<AvatarFallback className="text-center bg-superLightGray text-grayText">
-							{typeof name === "string" && name.length > 0
-								? name[0]
-								: "?"}
-						</AvatarFallback>
-					</Avatar>
-					<span className="whitespace-nowrap truncate flex-shrink-0">
-						{name}
-					</span>
-					<FaPaw />
+			<div className="flex items-center gap-2 min-w-0 flex-1">
+				<Avatar className="w-6 h-6 flex justify-center items-center">
+					<AvatarImage src={img} />
+					<AvatarFallback className="bg-superLightGray text-grayText">
+						{typeof name === "string" && name.length > 0
+							? name[0]
+							: "?"}
+					</AvatarFallback>
+				</Avatar>
+				<span className="truncate">{name}</span>
+			</div>
+			<div className="flex-1 text-center truncate">{title}</div>
+			<div className="flex-1 pr-2">
+				<div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+					<div
+						className="absolute top-0 left-0 h-full bg-[#84A7FB]"
+						style={{ width: `${progress}%` }}
+					/>
 				</div>
-				<div className="flex-1 pl-8 text-[grayBlue] whitespace-nowrap truncate flex-shrink-0">
-					{title}
-				</div>
-				<div className="flex-1 flex items-center pr-4">
-					{/* <div className="relative w-full h-6 bg-gray-200 rounded-full overflow-hidden">
-						 <div
-							className="h-full bg-[#84A7FB]"
-							style={{ width: `${progress}%` }}
-						/> 
-					</div> */}
-				</div>
-				<div className="w-16 font-light text-[var(--color-blueGray)] text-start">
-					{date}
-				</div>
+			</div>
+			<div className="w-16 text-right font-light text-[var(--color-blueGray)]">
+				{date}
 			</div>
 		</button>
 	);
