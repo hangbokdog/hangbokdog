@@ -79,12 +79,12 @@ public class PostService {
                 ));
 
         List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId);
-        Set<Long> likedPostSet = new HashSet<>(likedPosts); // 빠른 contains용
+        Set<Long> likedPostIds = new HashSet<>(likedPosts);
 
         List<PostSummaryResponse> responses = new ArrayList<>();
         for (PostSummaryInfo info : data) {
             Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
-            Boolean liked = likedPostSet.contains(info.postId());
+            Boolean liked = likedPostIds.contains(info.postId());
 
             PostSummaryResponse response = new PostSummaryResponse(
                     info.memberId(),
@@ -103,9 +103,38 @@ public class PostService {
     }
 
 
-    public PostResponse findByPostId(Long postId) {
-        return postRepository.findByPostId(postId)
+    public PostResponse findByPostId(Long memberId, Long postId) {
+        PostResponse info =  postRepository.findByPostId(postId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.POST_NOT_FOUND));
+
+        List<Long> postIds = new ArrayList<>();
+        postIds.add(postId);
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds).stream()
+                .collect(Collectors.toMap(
+                        PostLikeCount::postId,
+                        PostLikeCount::likeCount
+                ));
+
+
+        List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId);
+        Set<Long> likedPostId = new HashSet<>(likedPosts);
+
+        Boolean liked = likedPostId.contains(postId);
+        Integer likeCount = postLikeCounts.getOrDefault(postId, 0);
+
+		return new PostResponse(
+				info.author(),
+				info.postType(),
+				info.postId(),
+				info.dogId(),
+				info.title(),
+				info.content(),
+				info.images(),
+				info.createdAt(),
+				liked,
+				likeCount
+		);
     }
 
     @Transactional

@@ -71,8 +71,11 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> get(@PathVariable Long postId) {
-        PostResponse response = postService.findByPostId(postId);
+    public ResponseEntity<PostResponse> get(
+            @AuthMember Member member,
+            @PathVariable Long postId
+    ) {
+        PostResponse response = postService.findByPostId(member.getId(), postId);
         return ResponseEntity.ok(response);
     }
 
