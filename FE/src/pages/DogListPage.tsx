@@ -179,8 +179,8 @@ export default function DogListPage() {
 	}, [navigationType, restoreState]);
 
 	return (
-		<div className="relative flex flex-col mx-2.5 pt-2.5">
-			<div className="flex flex-col gap-3 sticky top-0 bg-white z-10 pb-2">
+		<div className="relative flex flex-col">
+			<div className="flex flex-col px-2.5 pt-2.5 gap-3 sticky top-0 bg-white z-10 pb-2">
 				<div
 					className={`transition-all duration-300 ${
 						isAnimating
@@ -225,10 +225,7 @@ export default function DogListPage() {
 					</button>
 				</div>
 			</div>
-			<div
-				ref={scrollContainerRef}
-				className="overflow-y-auto scrollbar-hidden h-[calc(100vh-14rem)] mt-2"
-			>
+			<div ref={scrollContainerRef} className="mx-2.5">
 				{isLoading ? (
 					<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
 						{[...Array(6)].map((_, i) => (
@@ -288,7 +285,7 @@ export default function DogListPage() {
 					</>
 				)}
 			</div>
-			<ScrollButton targetRef={topRef} />
+			<ScrollButton />
 		</div>
 	);
 }
