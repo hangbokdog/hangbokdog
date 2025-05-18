@@ -26,7 +26,19 @@ public class EmergencyRepository {
 		return emergencyJpaRepository.getEmergenciesByCenterId(centerId, type, now);
 	}
 
+	public List<EmergencyResponse> getLatestEmergenciesByCenterId(
+			Long centerId,
+			EmergencyType type,
+			LocalDateTime now
+	) {
+		return emergencyJpaRepository.getLatestEmergenciesByCenterId(centerId, type, now);
+	}
+
 	public Optional<Emergency> getEmergencyById(Long id) {
 		return emergencyJpaRepository.findById(id);
+	}
+
+	public Integer countEmergenciesByType(EmergencyType type, Long centerId) {
+		return emergencyJpaRepository.countEmergenciesByEmergencyType(type, centerId);
 	}
 }

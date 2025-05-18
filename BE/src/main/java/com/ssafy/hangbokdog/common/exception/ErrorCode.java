@@ -105,7 +105,9 @@ public enum ErrorCode {
     EMERGENCY_APPLICATION_ALREADY_REJECTED(22001, "이미 거절된 응급 신청입니다."),
     EMERGENCY_APPLICATION_ALREADY_APPROVED(22002, "이미 승인된 응급 신청입니다."),
     EMERGENCY_APPLICATION_NOT_FOUND(22003, "존재하지 않는 응급 신청입니다."),
-    EMERGENCY_ALREADY_FULL(22004, "신청자가 꽉 찼습니다.");
+    EMERGENCY_ALREADY_FULL(22004, "신청자가 꽉 찼습니다."),
+
+    MEDICAL_HISTORY_NOT_FOUND(22005, "존재하지 않는 의료기록입니다."),;
 
     private final int code;
     private final String message;

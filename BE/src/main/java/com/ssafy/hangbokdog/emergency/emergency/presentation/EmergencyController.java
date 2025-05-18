@@ -17,6 +17,7 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationReq
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyLatestResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -63,5 +64,14 @@ public class EmergencyController {
 		@RequestParam(required = false) EmergencyType type
 	) {
 		return ResponseEntity.ok().body(emergencyService.getEmergencyByCenter(centerId, type));
+	}
+
+	@GetMapping("/latest")
+	public ResponseEntity<EmergencyLatestResponse> getLatestEmergenciesByCenterId(
+			@AuthMember Member member,
+			@RequestParam Long centerId,
+			@RequestParam(required = false) EmergencyType type
+	) {
+		return ResponseEntity.ok().body(emergencyService.getLatestEmergencyByCenter(centerId, type));
 	}
 }

@@ -168,4 +168,8 @@ public class DogRepository {
 		var data = dogJpaRepository.getHospitalDogs(centerId, pageToken, DOG_PAGE_SIZE);
 		return PageInfo.of(data, DOG_PAGE_SIZE, HospitalDogResponse::dogId);
 	}
+
+	public Optional<MedicalHistory> findMedicalHistoryById(Long id) {
+		return medicalHistoryJpaRepository.findById(id);
+	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,7 @@ import com.ssafy.hangbokdog.center.donationaccount.domain.repository.DonationAcc
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.fcm.dto.event.CenterMemberEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,7 @@ public class CenterService {
 	private final CenterMemberRepository centerMemberRepository;
 	private final CenterJoinRequestRepository centerJoinRequestRepository;
 	private final DonationAccountRepository donationAccountRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
 	public Long createCenter(Member member, CenterCreateRequest request) {
@@ -113,6 +116,14 @@ public class CenterService {
 		);
 
 		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
+
+		String centerName = centerRepository.findNameById(centerId);
+
+		eventPublisher.publishEvent(new CenterMemberEvent(
+				centerName,
+				centerJoinRequest.getMemberId(),
+				true
+		));
 	}
 
 	public void reject(Member member, Long centerJoinRequestId) {
@@ -127,6 +138,14 @@ public class CenterService {
 		}
 
 		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
+
+		String centerName = centerRepository.findNameById(centerId);
+
+		eventPublisher.publishEvent(new CenterMemberEvent(
+				centerName,
+				centerJoinRequest.getMemberId(),
+				false
+		));
 	}
 
 	public PageInfo<CenterJoinRequestResponse> findAll(Member member, Long centerId, String pageToken) {

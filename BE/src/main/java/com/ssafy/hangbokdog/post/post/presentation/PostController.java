@@ -25,8 +25,9 @@ import com.ssafy.hangbokdog.post.post.application.PostLikeService;
 import com.ssafy.hangbokdog.post.post.application.PostService;
 import com.ssafy.hangbokdog.post.post.dto.request.PostCreateRequest;
 import com.ssafy.hangbokdog.post.post.dto.request.PostUpdateRequest;
+import com.ssafy.hangbokdog.post.post.dto.response.PostDetailResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostLikeResponse;
-import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
+import com.ssafy.hangbokdog.post.post.dto.response.PostSummaryResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -59,17 +60,22 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<PageInfo<PostResponse>> getAll(
+    public ResponseEntity<PageInfo<PostSummaryResponse>> getAll(
             @AuthMember Member member,
-            @RequestParam(required = false, name = "pageToken") String pageToken
+            @RequestParam(required = false, name = "pageToken") String pageToken,
+            @RequestParam Long centerId,
+            @RequestParam Long postTypeId
     ) {
-        PageInfo<PostResponse> responses = postService.findAll(pageToken);
+        PageInfo<PostSummaryResponse> responses = postService.findAll(member.getId(), postTypeId, centerId, pageToken);
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse> get(@PathVariable Long postId) {
-        PostResponse response = postService.findByPostId(postId);
+    public ResponseEntity<PostDetailResponse> get(
+            @AuthMember Member member,
+            @PathVariable Long postId
+    ) {
+        PostDetailResponse response = postService.findByPostId(member.getId(), postId);
         return ResponseEntity.ok(response);
     }
 
@@ -103,5 +109,13 @@ public class PostController {
     ) {
         PostLikeResponse response = postLikeService.toggleLike(postId, member);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest")
+    public ResponseEntity<List<PostSummaryResponse>> getLatest(
+            @AuthMember Member member,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok().body(postService.getLatest(member.getId(), centerId));
     }
 }

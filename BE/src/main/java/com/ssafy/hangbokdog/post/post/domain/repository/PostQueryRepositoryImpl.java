@@ -19,6 +19,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.foster.dto.FosterDiaryCheckQuery;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
+import com.ssafy.hangbokdog.post.post.dto.PostSummaryInfo;
 import com.ssafy.hangbokdog.post.post.dto.response.PostResponse;
 import com.ssafy.hangbokdog.post.post.dto.response.PostTypeResponse;
 
@@ -31,33 +32,22 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<PostResponse> findAll(String pageToken, int pageSize) {
+    public List<PostSummaryInfo> findAll(Long postTypeId, Long centerId, String pageToken, int pageSize) {
         return queryFactory
                 .select(Projections.constructor(
-                        PostResponse.class,
-                        Projections.constructor(
-                                MemberInfo.class,
-                                member.id,
-                                member.nickName,
-                                member.grade.stringValue(),
-                                member.profileImage
-                        ),
-                        Projections.constructor(
-                                PostTypeResponse.class,
-                                postType.id,
-                                postType.name
-                        ),
+                        PostSummaryInfo.class,
+                        post.authorId,
+                        member.nickName,
+                        member.profileImage,
                         post.id,
-                        post.dogId,
                         post.title,
-                        post.content,
-                        post.imageUrls,
                         post.createdAt
                 ))
                 .from(post)
                 .leftJoin(member).on(member.id.eq(post.authorId))
-                .leftJoin(postType).on(postType.id.eq(post.postTypeId))
-                .where(isInRange(pageToken))
+                .where(isInRange(pageToken),
+                        post.centerId.eq(centerId),
+                        post.postTypeId.eq(postTypeId))
                 .orderBy(post.id.desc())
                 .limit(pageSize + 1)
                 .fetch();
@@ -94,6 +84,26 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 .fetchOne();
 
         return Optional.ofNullable(dto);
+    }
+
+    @Override
+    public List<PostSummaryInfo> getLatestPosts(Long centerId) {
+        return queryFactory
+                .select(Projections.constructor(
+                        PostSummaryInfo.class,
+                        member.id,
+                        member.nickName,
+                        member.profileImage,
+                        post.id,
+                        post.title,
+                        post.createdAt
+                ))
+                .from(post)
+                .leftJoin(member).on(member.id.eq(post.authorId))
+                .where(post.centerId.eq(centerId))
+                .orderBy(post.id.desc())
+                .limit(5)
+                .fetch();
     }
 
     @Override

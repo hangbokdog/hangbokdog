@@ -33,6 +33,9 @@ public class MedicalHistory extends BaseEntity {
 	@Column(nullable = false, name = "dog_id")
 	private Long dogId;
 
+	@Column(name = "author_id", nullable = false)
+	private Long authorId;
+
 	@Column(name = "content", length = 8192)
 	private String content;
 
@@ -49,9 +52,28 @@ public class MedicalHistory extends BaseEntity {
 	@Column(nullable = false, name = "operated_date")
 	private LocalDateTime operatedDate;
 
+	public boolean isAuthor(Long memberId) {
+		return authorId.equals(memberId);
+	}
+
+	public void update(
+			String content,
+			String medicalHistoryImage,
+			Integer medicalPeriod,
+			MedicalType medicalType,
+			LocalDateTime operatedDate
+	) {
+		this.content = content;
+		this.medicalHistoryImage = medicalHistoryImage;
+		this.medicalPeriod = medicalPeriod;
+		this.medicalType = medicalType;
+		this.operatedDate = operatedDate;
+	}
+
 	@Builder
 	public MedicalHistory(
 		Long dogId,
+		Long authorId,
 		String content,
 		Integer medicalPeriod,
 		MedicalType medicalType,
@@ -59,6 +81,7 @@ public class MedicalHistory extends BaseEntity {
 		String medicalHistoryImage
 	) {
 		this.dogId = dogId;
+		this.authorId = authorId;
 		this.content = content;
 		this.medicalPeriod = medicalPeriod;
 		this.medicalType = medicalType;

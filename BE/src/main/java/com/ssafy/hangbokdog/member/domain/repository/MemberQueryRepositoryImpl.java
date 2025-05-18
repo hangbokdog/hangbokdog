@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
@@ -20,64 +21,74 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 
-    private final JPAQueryFactory queryFactory;
+	private final JPAQueryFactory queryFactory;
 
-    @Override
-    public Optional<MemberSearchNicknameResponse> findByNickname(String nickname) {
-        return Optional.ofNullable(queryFactory
-                .select(Projections.constructor(
-                        MemberSearchNicknameResponse.class,
-                        member.id,
-                        member.nickName,
-                        member.name,
-                        member.phone,
-                        member.age,
-                        member.grade,
-                        member.profileImage
-                ))
-                .from(member)
-                .where(member.nickName.eq(nickname))
-                .fetchOne()
-        );
-    }
+	@Override
+	public Optional<MemberSearchNicknameResponse> findByNickname(String nickname) {
+		return Optional.ofNullable(queryFactory
+				.select(Projections.constructor(
+						MemberSearchNicknameResponse.class,
+						member.id,
+						member.nickName,
+						member.name,
+						member.phone,
+						Expressions.numberTemplate(
+								Integer.class,
+								"timestampdiff(year, {0}, now())",
+								member.birth
+						),
+						member.grade,
+						member.profileImage
+				))
+				.from(member)
+				.where(member.nickName.eq(nickname))
+				.fetchOne()
+		);
+	}
 
-    @Override
-    public List<String> findFcmTokensByCenterId(Long centerId) {
-        return queryFactory
-            .select(member.fcmToken)
-            .from(member)
-            .leftJoin(centerMember).on(member.id.eq(centerMember.memberId))
-            .where(
-                centerMember.centerId.eq(centerId)
-                    .and(member.fcmToken.isNotNull())
-                    .and(member.fcmToken.ne(""))
-            )
-            .fetch();
-    }
+	@Override
+	public List<String> findFcmTokensByCenterId(Long centerId) {
+		return queryFactory
+				.select(member.fcmToken)
+				.from(member)
+				.leftJoin(centerMember).on(member.id.eq(centerMember.memberId))
+				.where(
+						centerMember.centerId.eq(centerId)
+								.and(member.fcmToken.isNotNull())
+								.and(member.fcmToken.ne(""))
+				)
+				.fetch();
+	}
 
-    @Override
-    public MemberProfileResponse getMemberProfile(Long memberId) {
-        return queryFactory
-                .select(Projections.constructor(
-                        MemberProfileResponse.class,
-                        member.id,
-                        member.name,
-                        member.nickName,
-                        member.profileImage
-                ))
-                .from(member)
-                .where(member.id.eq(memberId))
-                .fetchOne();
-    }
+	@Override
+	public MemberProfileResponse getMemberProfile(Long memberId) {
+		return queryFactory
+				.select(Projections.constructor(
+						MemberProfileResponse.class,
+						member.id,
+						member.name,
+						member.nickName,
+						member.profileImage
+				))
+				.from(member)
+				.where(member.id.eq(memberId))
+				.fetchOne();
+	}
 
-    @Override
-    public List<MemberAgeInfo> findByIdWithAge(List<Long> allParticipantIds) {
-        return queryFactory.select(Projections.constructor(
-                MemberAgeInfo.class,
-                member.id,
-                member.age
-        )).from(member)
-                .where(member.id.in(allParticipantIds))
-                .fetch();
-    }
+	@Override
+	public List<MemberAgeInfo> findByIdWithAge(List<Long> allParticipantIds) {
+		return queryFactory
+				.select(Projections.constructor(
+						MemberAgeInfo.class,
+						member.id,
+						Expressions.numberTemplate(
+								Integer.class,
+								"timestampdiff(year, {0}, now())",
+								member.birth
+						)
+				))
+				.from(member)
+				.where(member.id.in(allParticipantIds))
+				.fetch();
+	}
 }
