@@ -31,7 +31,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<PostResponse> findAll(String pageToken, int pageSize) {
+    public List<PostResponse> findAll(Long centerId, String pageToken, int pageSize) {
         return queryFactory
                 .select(Projections.constructor(
                         PostResponse.class,
@@ -57,7 +57,8 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 .from(post)
                 .leftJoin(member).on(member.id.eq(post.authorId))
                 .leftJoin(postType).on(postType.id.eq(post.postTypeId))
-                .where(isInRange(pageToken))
+                .where(isInRange(pageToken),
+                        post.centerId.eq(centerId))
                 .orderBy(post.id.desc())
                 .limit(pageSize + 1)
                 .fetch();

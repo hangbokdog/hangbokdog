@@ -51,8 +51,8 @@ public class PostService {
         return newPost.getId();
     }
 
-    public PageInfo<PostResponse> findAll(String pageToken) {
-        return postRepository.findAll(pageToken);
+    public PageInfo<PostResponse> findAll(Long centerId, String pageToken) {
+        return postRepository.findAll(centerId, pageToken);
     }
 
     public PostResponse findByPostId(Long postId) {
