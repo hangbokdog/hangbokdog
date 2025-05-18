@@ -20,57 +20,62 @@ export default function ManagerEmergencyPanel({
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [open, setOpen] = useState(false);
 
-	const { data: volunteerPosts = [], isLoading: isLoadingVolunteer } =
-		useQuery({
-			queryKey: [
-				"emergency-posts",
-				centerId,
-				EmergencyType.VOLUNTEER,
-				{ isHome },
-			],
-			queryFn: () =>
-				getEmergencyPostAPI(centerId, EmergencyType.VOLUNTEER, {
-					isHome,
-				}),
-			enabled: !!centerId,
-			refetchOnMount: true,
-			staleTime: 0,
-		});
+	const {
+		data: volunteerData = { posts: [], count: 0 },
+		isLoading: isLoadingVolunteer,
+	} = useQuery({
+		queryKey: [
+			"emergency-posts",
+			centerId,
+			EmergencyType.VOLUNTEER,
+			{ isHome },
+		],
+		queryFn: () =>
+			getEmergencyPostAPI(centerId, EmergencyType.VOLUNTEER, { isHome }),
+		enabled: !!centerId,
+		refetchOnMount: true,
+		staleTime: 0,
+	});
+	const volunteerPosts = volunteerData.posts;
+	const volunteerCount = volunteerData.count;
 
-	const { data: transportPosts = [], isLoading: isLoadingTransport } =
-		useQuery({
-			queryKey: [
-				"emergency-posts",
-				centerId,
-				EmergencyType.TRANSPORT,
-				{ isHome },
-			],
-			queryFn: () =>
-				getEmergencyPostAPI(centerId, EmergencyType.TRANSPORT, {
-					isHome,
-				}),
-			enabled: !!centerId,
-			refetchOnMount: true,
-			staleTime: 0,
-		});
+	const {
+		data: transportData = { posts: [], count: 0 },
+		isLoading: isLoadingTransport,
+	} = useQuery({
+		queryKey: [
+			"emergency-posts",
+			centerId,
+			EmergencyType.TRANSPORT,
+			{ isHome },
+		],
+		queryFn: () =>
+			getEmergencyPostAPI(centerId, EmergencyType.TRANSPORT, { isHome }),
+		enabled: !!centerId,
+		refetchOnMount: true,
+		staleTime: 0,
+	});
+	const transportPosts = transportData.posts;
+	const transportCount = transportData.count;
 
-	const { data: donationPosts = [], isLoading: isLoadingDonation } = useQuery(
-		{
-			queryKey: [
-				"emergency-posts",
-				centerId,
-				EmergencyType.DONATION,
-				{ isHome },
-			],
-			queryFn: () =>
-				getEmergencyPostAPI(centerId, EmergencyType.DONATION, {
-					isHome,
-				}),
-			enabled: !!centerId,
-			refetchOnMount: true,
-			staleTime: 0,
-		},
-	);
+	const {
+		data: donationData = { posts: [], count: 0 },
+		isLoading: isLoadingDonation,
+	} = useQuery({
+		queryKey: [
+			"emergency-posts",
+			centerId,
+			EmergencyType.DONATION,
+			{ isHome },
+		],
+		queryFn: () =>
+			getEmergencyPostAPI(centerId, EmergencyType.DONATION, { isHome }),
+		enabled: !!centerId,
+		refetchOnMount: true,
+		staleTime: 0,
+	});
+	const donationPosts = donationData.posts;
+	const donationCount = donationData.count;
 
 	if (isLoadingVolunteer || isLoadingTransport || isLoadingDonation) {
 		return <div>불러오는 중...</div>;
@@ -91,7 +96,7 @@ export default function ManagerEmergencyPanel({
 				tabs={[
 					{
 						key: "volunteer",
-						label: `일손 (${volunteerPosts.length})`,
+						label: `일손 (${volunteerCount})`,
 						data: volunteerPosts.map((p, idx) => ({
 							title: p.title,
 							name: p.name ?? "알 수 없음",
@@ -108,7 +113,7 @@ export default function ManagerEmergencyPanel({
 					},
 					{
 						key: "transport",
-						label: `이동 (${transportPosts.length})`,
+						label: `이동 (${transportCount})`,
 						data: transportPosts.map((p, idx) => ({
 							title: p.title,
 							name: p.name ?? "알 수 없음",
@@ -124,7 +129,7 @@ export default function ManagerEmergencyPanel({
 					},
 					{
 						key: "donation",
-						label: `후원 (${donationPosts.length})`,
+						label: `후원 (${donationCount})`,
 						data: donationPosts.map((p, idx) => ({
 							title: p.title,
 							name: p.name ?? "알 수 없음",

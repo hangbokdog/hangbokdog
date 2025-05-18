@@ -76,9 +76,8 @@ export const getEmergencyPostAPI = async (
 	centerId: number,
 	type?: EmergencyType,
 	options?: { isHome?: boolean },
-): Promise<EmergencyPost[]> => {
+): Promise<{ posts: EmergencyPost[]; count: number }> => {
 	const { isHome } = options || {};
-
 	const url = isHome ? "/emergencies/latest" : "/emergencies";
 
 	const response = await localAxios.get(url, {
@@ -88,5 +87,10 @@ export const getEmergencyPostAPI = async (
 		},
 	});
 
-	return response.data;
+	if (isHome) {
+		const { emergencies, count } = response.data;
+		return { posts: emergencies, count };
+	}
+
+	return { posts: response.data, count: response.data.length };
 };
