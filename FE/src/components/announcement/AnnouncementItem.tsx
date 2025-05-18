@@ -26,13 +26,6 @@ export default function AnnouncementItem({
 			className={`w-full text-left hover:bg-gray-50 transition-colors ${compact ? "py-2 px-1" : "p-4"} ${className}`}
 		>
 			<div className="flex flex-col">
-				<div className="flex items-center mb-2">
-					<span
-						className={`${compact ? "text-sm" : "text-lg"} font-medium text-gray-800`}
-					>
-						{announcement.title}
-					</span>
-				</div>
 				<div
 					className={`flex items-center ${compact ? "text-xs" : "text-sm"} text-gray-500`}
 				>
@@ -43,7 +36,7 @@ export default function AnnouncementItem({
 								{announcement.authorName}
 							</AvatarFallback>
 						</Avatar>
-						<span className="text-gray-700">
+						<span className="text-grayText">
 							{announcement.authorName
 								? announcement.authorName
 								: "이름없음"}
@@ -55,6 +48,13 @@ export default function AnnouncementItem({
 						</span>
 						<span>{formatDate(announcement.createdAt)}</span>
 					</div>
+				</div>
+				<div className="flex items-center mb-2 pl-8">
+					<span
+						className={`${compact ? "text-sm" : "text-base"} font-medium text-gray-800 w-[80%] overflow-hidden text-ellipsis`}
+					>
+						{announcement.title}
+					</span>
 				</div>
 			</div>
 		</button>

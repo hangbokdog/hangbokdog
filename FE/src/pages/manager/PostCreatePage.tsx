@@ -1,23 +1,59 @@
 import { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Image as ImageIcon } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Image as ImageIcon, Search } from "lucide-react";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 import useCenterStore from "@/lib/store/centerStore";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createAnnouncementAPI } from "@/api/announcement";
+import { createPostAPI, fetchPostTypeDetailAPI } from "@/api/post";
+import {
+	fetchDogsAPI,
+	type DogSearchResponse,
+	type DogSearchRequest,
+} from "@/api/dog";
 import { toast } from "sonner";
 import { uploadImageAPI } from "@/api/common";
+import { useDebounce } from "@/hooks/useDebounce";
+import localAxios, { type PageInfo } from "@/api/http-commons";
 
-export default function AnnouncementCreatePage() {
+export default function PostCreatePage() {
 	const navigate = useNavigate();
 	const { selectedCenter } = useCenterStore();
+	const [searchParams] = useSearchParams();
+
+	const typeParam = searchParams.get("type");
+	const postTypeId = typeParam ? Number.parseInt(typeParam, 10) : null;
+	const isAnnouncement = !postTypeId || typeParam === "announcements";
+
+	const { data: postType } = useQuery({
+		queryKey: ["postType", postTypeId],
+		queryFn: () => {
+			if (!postTypeId) return null;
+			return fetchPostTypeDetailAPI(postTypeId);
+		},
+		enabled: !!postTypeId && !isAnnouncement,
+	});
 
 	// 상태 관리
 	const [title, setTitle] = useState("");
 	const [content, setContent] = useState("");
+	const [dogId, setDogId] = useState<number | null>(null); // Optional dog ID for posts
 	const [isLoading, setIsLoading] = useState(false);
 	const [imageUploading, setImageUploading] = useState(false);
+
+	// 강아지 검색 관련 상태
+	const [dogSearchTerm, setDogSearchTerm] = useState("");
+	const [dogSearchResults, setDogSearchResults] = useState<
+		DogSearchResponse[]
+	>([]);
+	const [isSearching, setIsSearching] = useState(false);
+	const [showResults, setShowResults] = useState(false);
+	const [selectedDog, setSelectedDog] = useState<DogSearchResponse | null>(
+		null,
+	);
+	const debouncedSearchTerm = useDebounce(dogSearchTerm, 300);
+	const searchResultsRef = useRef<HTMLDivElement>(null);
 
 	// ReactQuill 에디터 참조
 	const quillRef = useRef<ReactQuill>(null);
@@ -39,6 +75,33 @@ export default function AnnouncementCreatePage() {
 		onError: (error) => {
 			console.error("공지사항 등록 실패:", error);
 			toast.error("공지사항 등록에 실패했습니다. 다시 시도해주세요.");
+		},
+	});
+
+	// 일반 게시글 생성 API 뮤테이션
+	const { mutate: createPost } = useMutation({
+		mutationFn: () => {
+			if (!postTypeId) {
+				throw new Error("게시판 타입이 선택되지 않았습니다.");
+			}
+			return createPostAPI(
+				Number(selectedCenter?.centerId),
+				{
+					boardTypeId: postTypeId,
+					dogId: dogId || -1, // dogId는 optional, 없으면 0으로
+					title,
+					content,
+				},
+				[], // 이미지는 에디터에 이미 S3 URL로 삽입되었으므로 빈 배열 전달
+			);
+		},
+		onSuccess: () => {
+			toast.success("게시글이 성공적으로 등록되었습니다.");
+			navigate(-1);
+		},
+		onError: (error) => {
+			console.error("게시글 등록 실패:", error);
+			toast.error("게시글 등록에 실패했습니다. 다시 시도해주세요.");
 		},
 	});
 
@@ -199,9 +262,14 @@ export default function AnnouncementCreatePage() {
 
 		try {
 			setIsLoading(true);
-			createAnnouncement();
+			// 게시판 타입에 따라 다른 API 호출
+			if (isAnnouncement) {
+				createAnnouncement();
+			} else {
+				createPost();
+			}
 		} catch (error) {
-			console.error("공지사항 등록 중 오류가 발생했습니다:", error);
+			console.error("게시글 등록 중 오류가 발생했습니다:", error);
 			toast.error("서버 오류가 발생했습니다. 다시 시도해주세요.");
 		} finally {
 			setIsLoading(false);
@@ -293,16 +361,84 @@ export default function AnnouncementCreatePage() {
 						);
 					}
 				} catch (error) {
-					// 무시
+					console.log(error);
 				}
 			}
 		};
 	}, []);
 
+	// 강아지 검색 기능
+	useEffect(() => {
+		const searchDogs = async () => {
+			if (
+				!debouncedSearchTerm ||
+				debouncedSearchTerm.length < 1 ||
+				!selectedCenter?.centerId
+			)
+				return;
+
+			try {
+				setIsSearching(true);
+				// Directly call the API instead of using the React Query function
+				const searchParams = {
+					centerId: String(selectedCenter.centerId),
+					name: debouncedSearchTerm,
+				};
+
+				// Use localAxios directly like fetchDogsAPI does internally
+				const response = await localAxios.get("/dogs/search", {
+					params: searchParams,
+				});
+
+				const pageInfo = response.data as PageInfo<DogSearchResponse>;
+				setDogSearchResults(pageInfo.data);
+				setShowResults(true);
+			} catch (error) {
+				console.error("강아지 검색 실패:", error);
+				toast.error("강아지 검색에 실패했습니다.");
+			} finally {
+				setIsSearching(false);
+			}
+		};
+
+		searchDogs();
+	}, [debouncedSearchTerm, selectedCenter?.centerId]);
+
+	// 검색 결과 외부 클릭 감지
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				searchResultsRef.current &&
+				!searchResultsRef.current.contains(event.target as Node)
+			) {
+				setShowResults(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
+	// 강아지 선택 핸들러
+	const handleSelectDog = (dog: DogSearchResponse) => {
+		setDogId(dog.dogId);
+		setSelectedDog(dog);
+		setShowResults(false);
+		setDogSearchTerm("");
+	};
+
+	// 페이지 제목 가져오기
+	const getPageTitle = () => {
+		if (isAnnouncement) return "공지사항 작성";
+		return postType?.name ? `${postType.name} 작성` : "게시글 작성";
+	};
+
 	return (
 		<div className="flex flex-col min-h-screen bg-white text-grayText font-medium">
 			<div className="flex-1 p-4 flex flex-col gap-6 overflow-auto pb-24">
-				<div className="text-xl font-bold">공지사항 작성</div>
+				<div className="text-xl font-bold">{getPageTitle()}</div>
 
 				{/* 제목 */}
 				<div className="flex flex-col gap-3">
@@ -320,6 +456,114 @@ export default function AnnouncementCreatePage() {
 					/>
 				</div>
 
+				{/* 강아지 검색 필드 (일반 게시글용) */}
+				{!isAnnouncement && (
+					<div className="flex flex-col gap-3 relative">
+						<label htmlFor="dogSearch" className="text-lg">
+							강아지 검색 (선택사항)
+						</label>
+						<div className="relative">
+							<input
+								type="text"
+								id="dogSearch"
+								value={dogSearchTerm}
+								onChange={(e) =>
+									setDogSearchTerm(e.target.value)
+								}
+								className="border border-gray-300 rounded p-2 pl-9 w-full"
+								placeholder="강아지 이름으로 검색"
+							/>
+							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+						</div>
+
+						{selectedDog && (
+							<div className="mt-2 p-2 flex items-center gap-2 bg-primary/10 rounded-md">
+								<span className="text-sm font-medium">
+									선택된 강아지:
+								</span>
+								<div className="flex items-center gap-2">
+									{selectedDog.imageUrl && (
+										<img
+											src={selectedDog.imageUrl}
+											alt={selectedDog.name}
+											className="w-6 h-6 rounded-full object-cover"
+										/>
+									)}
+									<span className="text-sm">
+										{selectedDog.name}
+									</span>
+								</div>
+								<button
+									type="button"
+									onClick={() => {
+										setSelectedDog(null);
+										setDogId(null);
+									}}
+									className="ml-auto text-xs text-red-500 hover:text-red-700"
+								>
+									삭제
+								</button>
+							</div>
+						)}
+
+						{/* 강아지 검색 결과 (가로 스크롤) */}
+						{showResults && dogSearchResults.length > 0 && (
+							<div
+								ref={searchResultsRef}
+								className="mt-2 w-full overflow-x-auto py-2"
+							>
+								<div className="flex space-x-2 min-w-max">
+									{dogSearchResults.map((dog) => (
+										<button
+											key={dog.dogId}
+											onClick={() => handleSelectDog(dog)}
+											type="button"
+											className="flex flex-col items-center p-2 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer w-24"
+										>
+											{dog.imageUrl ? (
+												<img
+													src={dog.imageUrl}
+													alt={dog.name}
+													className="w-16 h-16 rounded-full object-cover mb-1"
+												/>
+											) : (
+												<div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mb-1">
+													<span className="text-gray-400">
+														No img
+													</span>
+												</div>
+											)}
+											<div className="text-center">
+												<div className="font-medium text-sm truncate w-full">
+													{dog.name}
+												</div>
+											</div>
+										</button>
+									))}
+								</div>
+							</div>
+						)}
+
+						{showResults &&
+							dogSearchResults.length === 0 &&
+							!isSearching &&
+							dogSearchTerm.length > 0 && (
+								<div
+									ref={searchResultsRef}
+									className="mt-2 w-full p-4 bg-white rounded-md border border-gray-200 text-center text-gray-500"
+								>
+									검색 결과가 없습니다
+								</div>
+							)}
+
+						{isSearching && (
+							<div className="mt-2 w-full p-4 bg-white rounded-md border border-gray-200 text-center">
+								<div className="w-5 h-5 border-2 border-t-primary border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin mx-auto" />
+							</div>
+						)}
+					</div>
+				)}
+
 				<MobileHelpBanner />
 
 				{/* 내용 - 에디터 모듈 적용 */}
@@ -327,7 +571,7 @@ export default function AnnouncementCreatePage() {
 					<label htmlFor="content" className="text-lg">
 						내용 *
 					</label>
-					<div className="relative">
+					<div className="relative min-h-[200px] mb-20">
 						{imageUploading && <LoadingIndicator />}
 						<ReactQuill
 							ref={quillRef}
@@ -335,8 +579,8 @@ export default function AnnouncementCreatePage() {
 							value={content}
 							onChange={setContent}
 							modules={editorModules}
-							placeholder="내용을 입력하세요."
-							className="min-h-[300px]"
+							placeholder="내용을 입력하세요..."
+							className="h-[400px] editor-container"
 						/>
 					</div>
 				</div>
