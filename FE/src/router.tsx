@@ -34,13 +34,15 @@ import VaccinationDetailPage from "./pages/manager/VaccinationDetailPage";
 import DogListPage from "./pages/DogListPage";
 import AdoptionManagerMainPage from "./pages/manager/AdoptionManagerMainPage";
 import FosterManagerMainPage from "./pages/manager/FosterManagerMainPage";
-import AnnouncementListPage from "./pages/AnnouncementListPage";
-import AnnouncementCreatePage from "./pages/manager/AnnouncementCreatePage";
+import PostListPage from "./pages/PostListPage";
+import PostCreatePage from "./pages/manager/PostCreatePage";
 import BazaarPage from "./pages/BazaarPage";
 import BazaarDetailPage from "./pages/BazaarDetailPage";
 import BazaarNewPage from "./pages/BazaarNewPage";
 import AnnouncementDetailPage from "./pages/AnnouncementDetailPage";
 import ProfileEdit from "./components/my/ProfileEdit";
+import PostTypeCreatePage from "./pages/PostTypeCreatePage";
+import PostEditPage from "./pages/PostEditPage";
 
 const router = createBrowserRouter([
 	{
@@ -105,21 +107,41 @@ const router = createBrowserRouter([
 						],
 					},
 					{
-						path: "announcements",
+						path: "posts",
 						children: [
 							{
 								index: true,
-								element: <AnnouncementListPage />,
+								element: <PostListPage />,
 								handle: { showHeader: false },
 							},
 							{
 								path: "create",
-								element: <AnnouncementCreatePage />,
+								element: <PostCreatePage />,
+								handle: { showHeader: false },
+							},
+							{
+								path: "edit/:id",
+								element: <PostEditPage />,
 								handle: { showHeader: false },
 							},
 							{
 								path: ":id",
 								element: <AnnouncementDetailPage />,
+								handle: { showHeader: false },
+							},
+						],
+					},
+					{
+						path: "post",
+						children: [
+							{
+								path: ":id",
+								element: <AnnouncementDetailPage />,
+								handle: { showHeader: false },
+							},
+							{
+								path: "type-create",
+								element: <PostTypeCreatePage />,
 								handle: { showHeader: false },
 							},
 						],
