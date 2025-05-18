@@ -75,13 +75,22 @@ export const createDonationPostAPI = async (
 export const getEmergencyPostAPI = async (
 	centerId: number,
 	type?: EmergencyType,
-): Promise<EmergencyPost[]> => {
-	const response = await localAxios.get("/emergencies", {
+	options?: { isHome?: boolean },
+): Promise<{ posts: EmergencyPost[]; count: number }> => {
+	const { isHome } = options || {};
+	const url = isHome ? "/emergencies/latest" : "/emergencies";
+
+	const response = await localAxios.get(url, {
 		params: {
 			centerId,
 			...(type && { type }),
 		},
 	});
 
-	return response.data;
+	if (isHome) {
+		const { emergencies, count } = response.data;
+		return { posts: emergencies, count };
+	}
+
+	return { posts: response.data, count: response.data.length };
 };
