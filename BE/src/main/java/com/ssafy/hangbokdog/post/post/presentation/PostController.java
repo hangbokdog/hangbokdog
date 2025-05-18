@@ -61,9 +61,11 @@ public class PostController {
     @GetMapping
     public ResponseEntity<PageInfo<PostResponse>> getAll(
             @AuthMember Member member,
-            @RequestParam(required = false, name = "pageToken") String pageToken
+            @RequestParam(required = false, name = "pageToken") String pageToken,
+            @RequestParam Long centerId,
+            @RequestParam Long postTypeId
     ) {
-        PageInfo<PostResponse> responses = postService.findAll(pageToken);
+        PageInfo<PostResponse> responses = postService.findAll(postTypeId, centerId, pageToken);
         return ResponseEntity.ok(responses);
     }
 

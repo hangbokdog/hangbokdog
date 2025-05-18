@@ -27,8 +27,8 @@ public class PostRepository {
         return postJpaRepository.save(post);
     }
 
-    public PageInfo<PostResponse> findAll(String pageToken) {
-        var data = postJpaRepository.findAll(pageToken, DEFAULT_PAGE_SIZE);
+    public PageInfo<PostResponse> findAll(Long postTypeId, Long centerId, String pageToken) {
+        var data = postJpaRepository.findAll(postTypeId, centerId, pageToken, DEFAULT_PAGE_SIZE);
         return PageInfo.of(data, DEFAULT_PAGE_SIZE, PostResponse::postId);
     }
 
