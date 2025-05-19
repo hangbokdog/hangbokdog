@@ -379,3 +379,32 @@ export const getMyVolunteerApplicationsAPI = async ({
 	);
 	return response.data;
 };
+
+// 내 전체 신청 리스트 조회
+export interface MyVolunteerListApplication {
+	volunteerEventId: number;
+	date: string;
+	title: string;
+	status: "PENDING" | "APPROVED" | "REJECTED" | "NONE" | "COMPLETED";
+}
+
+export interface MyVolunteerApplicationListResponse {
+	memberApplicationInfo: MyVolunteerListApplication[];
+	count: number;
+}
+
+export const getMyVolunteerApplicationsListAPI = async ({
+	status,
+}: {
+	status: MyVolunteerListApplication["status"];
+}): Promise<MyVolunteerApplicationListResponse> => {
+	const response = await localAxios.get<MyVolunteerApplicationListResponse>(
+		"/volunteers/myApplications",
+		{
+			params: {
+				status,
+			},
+		},
+	);
+	return response.data;
+};

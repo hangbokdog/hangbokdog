@@ -42,7 +42,7 @@ export default function AdoptDogCard({
 			<div className="flex-1">
 				<div className="relative flex gap-2 mb-2">
 					<GenderTag gender={gender} />
-					<StatusTag status={status} />
+					{/* <StatusTag status={status} /> */}
 				</div>
 				<div className="flex items-center mb-1">
 					<span className="bg-orange-100 text-orange-700 p-1 rounded-full mr-2">

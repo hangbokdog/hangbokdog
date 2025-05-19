@@ -15,8 +15,12 @@ import {
 import useCenterStore from "@/lib/store/centerStore";
 
 export default function DogTabsPanel() {
-	const { selectedCenter } = useCenterStore();
-	const centerId = Number(selectedCenter?.centerId);
+	// ✅ 상태 전체가 아니라 필요한 값만 selector로 구독
+	const centerIdRaw = useCenterStore((s) => s.selectedCenter?.centerId);
+	const centerId = centerIdRaw ? Number(centerIdRaw) : null;
+
+	// const centerId = useCenterStore((state) => state.selectedCenter?.centerId);
+
 	const [adoptedDogs, setAdoptedDogs] = useState<AdoptedDogDetailsResponse[]>(
 		[],
 	);
@@ -24,6 +28,8 @@ export default function DogTabsPanel() {
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
+		if (!centerId) return;
+
 		console.log("🐾 DogTabsPanel 렌더링됨");
 
 		const fetchAllData = async () => {
@@ -66,7 +72,7 @@ export default function DogTabsPanel() {
 
 	if (isLoading) return <div className="p-4">불러오는 중...</div>;
 
-	// ✅ 입양 정보 포맷 (AdoptedDogDetailsResponse → props)
+	// ✅ 입양 정보 포맷
 	const formatAdoptCardProps = (dog: AdoptedDogDetailsResponse) => ({
 		id: dog.dogId,
 		name: dog.dogName,
@@ -78,7 +84,7 @@ export default function DogTabsPanel() {
 		endDate: dog.adoptedDate?.slice(0, 10),
 	});
 
-	// ✅ 임보 정보 포맷 (MyFosterDog → props)
+	// ✅ 임보 정보 포맷
 	const formatFosterCardProps = (dog: MyFosterDog) => ({
 		id: dog.dogId,
 		name: dog.dogName,

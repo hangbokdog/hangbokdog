@@ -75,17 +75,6 @@ export default function My() {
 			<div>
 				<MyOngoingVolunteer />
 			</div>
-			{/* <div className="grid grid-cols-2 justify-center gap-3 mx-2.5">
-				<div className="h-[165px]">
-					<MileageCard />
-				</div>
-				<div className="h-[165px]">
-					<MileageCard />
-				</div>
-			</div>
-			<div>
-				<Order />
-			</div> */}
 			<div>
 				<DogTabsPanel />
 			</div>
