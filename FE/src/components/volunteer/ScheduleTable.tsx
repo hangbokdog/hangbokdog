@@ -16,6 +16,7 @@ interface ScheduleTableProps {
 	selectedDate?: string;
 	selectedPeriod?: "morning" | "afternoon";
 	timeInfo?: string;
+	status?: string;
 }
 
 export default function ScheduleTable({
@@ -25,6 +26,7 @@ export default function ScheduleTable({
 	selectedDate,
 	selectedPeriod,
 	timeInfo,
+	status,
 }: ScheduleTableProps) {
 	return (
 		<div className="flex flex-col gap-4">
@@ -93,7 +95,7 @@ export default function ScheduleTable({
 				</TableBody>
 			</Table>
 
-			{!isManager && (
+			{!isManager && status === "접수중" ? (
 				<div className="flex justify-center">
 					<Link to="apply">
 						<button
@@ -103,6 +105,10 @@ export default function ScheduleTable({
 							봉사신청
 						</button>
 					</Link>
+				</div>
+			) : (
+				<div className="flex justify-center">
+					<span className="text-red">봉사 신청 기간이 아닙니다.</span>
 				</div>
 			)}
 		</div>

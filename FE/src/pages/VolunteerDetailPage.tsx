@@ -44,8 +44,6 @@ export default function VolunteerDetailPage() {
 		enabled: !!id,
 	});
 
-	console.log(volunteerDetail);
-
 	// 로딩 중일 때 표시할 내용
 	if (isLoading) {
 		return (
@@ -190,6 +188,7 @@ export default function VolunteerDetailPage() {
 						<ScheduleTable
 							scheduleData={scheduleData}
 							timeInfo={timeInfo}
+							status={status}
 						/>
 					</TabsContent>
 					<TabsContent value="guide" className="mt-2.5">
