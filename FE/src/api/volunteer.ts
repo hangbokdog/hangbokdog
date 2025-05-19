@@ -81,24 +81,6 @@ export const createVolunteerAPI = async (
 	return response.data;
 };
 
-// 봉사활동 일정 수정
-export const updateVolunteerAPI = async ({
-	id,
-	volunteerData,
-}: {
-	id: number;
-	volunteerData: Partial<Volunteer>;
-}) => {
-	const response = await localAxios.put(`volunteers/${id}`, volunteerData);
-	return response.data;
-};
-
-// 봉사활동 일정 삭제
-export const deleteVolunteerAPI = async ({ id }: { id: number }) => {
-	const response = await localAxios.delete(`volunteers/${id}`);
-	return response.data;
-};
-
 // 봉사 신청 수락
 export const approveVolunteerApplicationAPI = async ({
 	volunteerId,
@@ -336,6 +318,51 @@ export const getSlotApplicantsAPI = async ({
 }): Promise<SlotApplicant[]> => {
 	const response = await localAxios.get<SlotApplicant[]>(
 		`volunteers/${slotId}/pendingApplications`,
+		{
+			params: {
+				centerId,
+			},
+		},
+	);
+	return response.data;
+};
+
+export const deleteVolunteerAPI = async ({
+	eventId,
+	centerId,
+}: {
+	eventId: string | number;
+	centerId: string | number;
+}) => {
+	const response = await localAxios.delete(`volunteers/${eventId}`, {
+		params: {
+			centerId,
+		},
+	});
+	return response.data;
+};
+
+// 봉사활동 내용 수정 (PATCH)
+export interface VolunteerUpdateData {
+	title: string;
+	content: string;
+	activityLog: string;
+	precaution: string;
+	info: string;
+}
+
+export const patchVolunteerAPI = async ({
+	eventId,
+	centerId,
+	updateData,
+}: {
+	eventId: string | number;
+	centerId: string | number;
+	updateData: VolunteerUpdateData;
+}) => {
+	const response = await localAxios.patch(
+		`volunteers/${eventId}`,
+		updateData,
 		{
 			params: {
 				centerId,

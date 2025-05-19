@@ -252,7 +252,7 @@ export const createCommentAPI = async (
 export const fetchCommentsAPI = async (
 	postId: number,
 ): Promise<CommentWithRepliesResponse[]> => {
-	const response = await localAxios.get(`/api/v1/posts/${postId}/comments`);
+	const response = await localAxios.get(`/posts/${postId}/comments`);
 	return response.data;
 };
 

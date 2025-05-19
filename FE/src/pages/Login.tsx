@@ -1,6 +1,5 @@
 import { SiNaver } from "react-icons/si";
 import { Link } from "react-router-dom";
-import { Dog, Heart, PawPrint, Users } from "lucide-react";
 
 export default function Login() {
 	const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID;
@@ -12,11 +11,7 @@ export default function Login() {
 			<div className="mt-12 mb-8 flex flex-col items-center">
 				<div className="flex items-center gap-2 mb-2">
 					<div className="rounded-full p-3">
-						<img
-							src="/public/logo.png"
-							alt="logo"
-							className="w-12 h-12"
-						/>
+						<img src="/logo.png" alt="logo" className="w-14 h-14" />
 					</div>
 					<h1 className="text-3xl font-extrabold text-gray-800">
 						행복하개
