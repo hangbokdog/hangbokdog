@@ -43,6 +43,8 @@ import AnnouncementDetailPage from "./pages/AnnouncementDetailPage";
 import ProfileEdit from "./components/my/ProfileEdit";
 import PostTypeCreatePage from "./pages/PostTypeCreatePage";
 import PostEditPage from "./pages/PostEditPage";
+import CenterManagerProtectedRoute from "./components/auth/CenterManagerProtectedRoute";
+import VolunteerEditPage from "./pages/VolunteerEditPage";
 
 const router = createBrowserRouter([
 	{
@@ -202,6 +204,7 @@ const router = createBrowserRouter([
 									{
 										index: true,
 										element: <VolunteerDetailPage />,
+										handle: { showHeader: false },
 									},
 									{
 										path: "apply",
@@ -209,6 +212,15 @@ const router = createBrowserRouter([
 											<CenterMemberProtectedRoute>
 												<VolunteerApplyPage />
 											</CenterMemberProtectedRoute>
+										),
+										handle: { showHeader: false },
+									},
+									{
+										path: "edit",
+										element: (
+											<CenterManagerProtectedRoute>
+												<VolunteerEditPage />
+											</CenterManagerProtectedRoute>
 										),
 										handle: { showHeader: false },
 									},
@@ -226,9 +238,11 @@ const router = createBrowserRouter([
 				path: "/manager",
 				errorElement: <NotFoundPage />,
 				element: (
-					<CenterProtectedRoute>
-						<ManagerMainLayout />
-					</CenterProtectedRoute>
+					<CenterManagerProtectedRoute>
+						<CenterProtectedRoute>
+							<ManagerMainLayout />
+						</CenterProtectedRoute>
+					</CenterManagerProtectedRoute>
 				),
 				children: [
 					{

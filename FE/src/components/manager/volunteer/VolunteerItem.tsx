@@ -1,4 +1,11 @@
-import { ArrowRight, Calendar, Info, Trash2, Users } from "lucide-react";
+import {
+	ArrowRight,
+	Calendar,
+	Info,
+	Trash2,
+	Users,
+	Pencil,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,
@@ -143,6 +150,16 @@ export const VolunteerItem = ({
 									</SheetFooter>
 								</SheetContent>
 							</Sheet>
+
+							<Link to={`/volunteers/${volunteer.id}/edit`}>
+								<Button
+									variant="ghost"
+									size="icon"
+									className="rounded-full hover:bg-gray-200 h-8 w-8"
+								>
+									<Pencil className="w-4 h-4 text-blue-500" />
+								</Button>
+							</Link>
 
 							<AlertDialog>
 								<AlertDialogTrigger asChild>

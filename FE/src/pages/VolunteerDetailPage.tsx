@@ -169,6 +169,7 @@ export default function VolunteerDetailPage() {
 					addressName={volunteerDetail.addressName}
 					time={timeInfo}
 					pets={volunteerDetail.content || ""}
+					id={volunteerDetail.id}
 				/>
 				<Tabs
 					defaultValue="activity"
