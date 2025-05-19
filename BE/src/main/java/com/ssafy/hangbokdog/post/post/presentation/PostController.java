@@ -118,4 +118,12 @@ public class PostController {
     ) {
         return ResponseEntity.ok().body(postService.getLatest(member.getId(), centerId));
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<PostSummaryResponse>> getMyPosts(
+        @AuthMember Member member,
+        @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok().body(postService.getMyPosts(member.getId(), centerId));
+    }
 }

@@ -15,7 +15,7 @@ public interface PostLikeJpaRepository extends JpaRepository<PostLike, Long>, Po
     @Query("""
             SELECT pl.postId
             FROM PostLike pl
-            WHERE pl.memberId = :memberId
+            WHERE pl.memberId = :memberId AND pl.postId IN :postIds
         """)
-    List<Long> findLikedPostIdsByMemberId(Long memberId);
+    List<Long> findLikedPostIdsByMemberId(Long memberId, List<Long> postIds);
 }

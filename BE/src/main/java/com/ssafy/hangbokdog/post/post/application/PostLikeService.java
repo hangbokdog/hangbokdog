@@ -1,7 +1,5 @@
 package com.ssafy.hangbokdog.post.post.application;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +11,6 @@ import com.ssafy.hangbokdog.post.post.domain.repository.PostLikeJpaRepository;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 import com.ssafy.hangbokdog.post.post.dto.response.PostLikeResponse;
 
-import com.ssafy.hangbokdog.post.post.dto.response.PostSummaryResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service

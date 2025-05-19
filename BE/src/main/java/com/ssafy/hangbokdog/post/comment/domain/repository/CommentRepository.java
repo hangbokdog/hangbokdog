@@ -45,6 +45,6 @@ public class CommentRepository {
     }
 
     public List<CommentCountInfo> findCommentCountIn(List<Long> postIds) {
-        return commentJpaRepository.
+        return commentJpaRepository.findCommentCountIn(postIds);
     }
 }

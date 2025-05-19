@@ -21,4 +21,6 @@ public interface PostQueryRepository {
     Optional<PostResponse> findByPostId(Long postId);
 
     List<PostSummaryInfo> getLatestPosts(Long centerId);
+
+    List<PostSummaryInfo> findMyPosts(Long centerId, Long memberId);
 }

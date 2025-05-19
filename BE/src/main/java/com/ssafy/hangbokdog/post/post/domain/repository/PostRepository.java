@@ -62,11 +62,15 @@ public class PostRepository {
         return postLikeJpaRepository.findPostLikeCountIn(postIds);
     }
 
-    public List<Long> findLikedPostIdsByMemberId(Long memberId) {
-        return postLikeJpaRepository.findLikedPostIdsByMemberId(memberId);
+    public List<Long> findLikedPostIdsByMemberId(Long memberId, List<Long> postIds) {
+        return postLikeJpaRepository.findLikedPostIdsByMemberId(memberId, postIds);
     }
 
     public List<PostSummaryInfo> getLatestPosts(Long centerId) {
         return postJpaRepository.getLatestPosts(centerId);
+    }
+
+    public List<PostSummaryInfo> findMyPosts(Long centerId, Long memberId) {
+        return postJpaRepository.findMyPosts(centerId, memberId);
     }
 }
