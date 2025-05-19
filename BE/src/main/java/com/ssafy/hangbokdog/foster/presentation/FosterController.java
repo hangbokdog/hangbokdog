@@ -111,7 +111,7 @@ public class FosterController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<FosterApplicationResponse>> getAdoptionApplications(
+	public ResponseEntity<List<FosterApplicationResponse>> getFosterApplications(
 		@AuthMember Member member,
 		@RequestParam Long centerId
 	) {
@@ -119,7 +119,7 @@ public class FosterController {
 	}
 
 	@GetMapping("/{dogId}/applications")
-	public ResponseEntity<List<FosterApplicationByDogResponse>> getAdoptionApplicationsByDog(
+	public ResponseEntity<List<FosterApplicationByDogResponse>> ggetFosterApplicationsByDog(
 		@AuthMember Member member,
 		@PathVariable Long dogId,
 		@RequestParam Long centerId,
