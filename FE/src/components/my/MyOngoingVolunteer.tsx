@@ -12,7 +12,7 @@ export default function MyOngoingVolunteer() {
 	const flatList = data.flatMap(({ data }) => data);
 
 	return (
-		<div className="space-y-8 mx-2.5">
+		<div className="space-y-4 mx-2.5 mb-4">
 			<h2 className="font-bold text-grayText">내 봉사 신청 목록</h2>
 			<ul className="space-y-2">
 				{flatList.map((item) => (
