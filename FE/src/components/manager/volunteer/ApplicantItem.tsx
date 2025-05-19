@@ -39,7 +39,7 @@ export const ApplicantItem = ({
 		mutationKey: ["approveVolunteerApplicantStatus", applicant.id, eventId],
 		mutationFn: () =>
 			updateVolunteerApplicantStatusAPI({
-				eventId: eventId as number,
+				centerId: centerId as string,
 				applicationId: applicant.id,
 				status: "APPROVED",
 			}),
