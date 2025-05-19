@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
+import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -62,5 +62,21 @@ public class CenterMemberJpaRepositoryCustomImpl implements CenterMemberJpaRepos
 				centerMember.main.isTrue())
 			.limit(1)
 			.fetchFirst() != null;
+	}
+
+	@Override
+	public MainCenterResponse getMainCenter(Long memberId) {
+		return queryFactory
+				.select(Projections.constructor(
+						MainCenterResponse.class,
+						center.id,
+						center.name,
+						centerMember.grade
+				))
+				.from(centerMember)
+				.leftJoin(center).on(centerMember.centerId.eq(center.id))
+				.where(centerMember.memberId.eq(memberId),
+						centerMember.main.isTrue())
+				.fetchOne();
 	}
 }

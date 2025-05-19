@@ -32,6 +32,7 @@ import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinRequestResponse
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.center.donationaccount.domain.DonationAccount;
 import com.ssafy.hangbokdog.center.donationaccount.domain.repository.DonationAccountRepository;
@@ -268,7 +269,7 @@ public class CenterService {
 			throw new BadRequestException(ErrorCode.CENTER_ALREADY_MAIN);
 		}
 
-		CenterMember mainCenter = centerMemberRepository.getMainCenter(memberId);
+		CenterMember mainCenter = centerMemberRepository.getMainCenterByMemberId(memberId);
 
 		if (mainCenter != null) {
 			mainCenter.cancelMain();
@@ -287,8 +288,8 @@ public class CenterService {
 		centerMember.cancelMain();
 	}
 
-	public Long getMainCenter(Long memberId) {
-		return centerMemberRepository.getMainCenter(memberId).getCenterId();
+	public MainCenterResponse getMainCenter(Long memberId) {
+		return centerMemberRepository.getMainCenter(memberId);
 	}
 
 	public CenterInformationResponse getCenterInformation(Long memberId, Long centerId) {
