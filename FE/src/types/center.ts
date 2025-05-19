@@ -169,3 +169,9 @@ export interface CenterStatsResponse {
 	protectedDog: number;
 	centerMileageAmount: number;
 }
+
+export interface MyCenter {
+	centerId: number;
+	centerName: string;
+	centerGrade: string;
+}

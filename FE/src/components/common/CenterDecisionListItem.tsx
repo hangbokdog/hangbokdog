@@ -1,4 +1,5 @@
 import {
+	addMainCenterIdAPI,
 	type AddressBook,
 	cancelJoinRequestAPI,
 	fetchAddressBooks,
@@ -47,6 +48,10 @@ export default function CenterDecisionListItem({
 		queryKey: ["addressBooks", centerId],
 		queryFn: () => fetchAddressBooks(centerId),
 		enabled: false,
+	});
+
+	const { mutate: addMainCenterId } = useMutation({
+		mutationFn: () => addMainCenterIdAPI(centerId),
 	});
 
 	const { mutate: registerCenter, isPending: isRegistering } = useMutation({
@@ -126,7 +131,7 @@ export default function CenterDecisionListItem({
 		} else {
 			setIsCenterMember(false);
 		}
-
+		addMainCenterId();
 		navigate("/");
 	};
 
