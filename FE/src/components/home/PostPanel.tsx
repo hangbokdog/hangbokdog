@@ -166,7 +166,7 @@ export default function PostPanel() {
 	}, [selectedCenter, activeTab]);
 
 	const handleAnnouncementClick = (id: number) => {
-		navigate(`/posts/${id}`);
+		navigate(`/posts/${id}?type=announcements`);
 	};
 
 	const handlePostClick = (id: number) => {

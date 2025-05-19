@@ -41,6 +41,7 @@ export default function VolunteerScheduleManager({
 			queryClient.invalidateQueries({
 				queryKey: ["volunteers", address.id],
 			});
+			refetchVolunteers();
 			toast.success("봉사활동 일정이 삭제되었습니다.");
 		},
 		onError: () => {
@@ -54,8 +55,11 @@ export default function VolunteerScheduleManager({
 	};
 
 	// 일정 삭제하기
-	const handleDeleteSchedule = (id: number) => {
-		deleteVolunteerMutation.mutate({ id });
+	const handleDeleteSchedule = (eventId: number) => {
+		deleteVolunteerMutation.mutate({
+			eventId: eventId,
+			centerId: address.id,
+		});
 	};
 
 	return (

@@ -1,13 +1,7 @@
 import AddressBookPanel from "@/components/manager/center/AddressBookPanel";
 import RequestPanel from "@/components/manager/center/RequestPanel";
 import StatsPanel from "@/components/manager/center/StatsPanel";
-import NoticePanel from "@/components/manager/center/NoticePanel";
-import {
-	IoStatsChart,
-	IoLocation,
-	IoNotifications,
-	IoPeople,
-} from "react-icons/io5";
+import { IoStatsChart, IoLocation, IoPeople } from "react-icons/io5";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -32,18 +26,13 @@ export default function CenterManagerMainPage() {
 			label: "가입 요청",
 			icon: <IoPeople className="size-5" />,
 		},
-		{
-			id: "notices",
-			label: "공지사항",
-			icon: <IoNotifications className="size-5" />,
-		},
 	];
 
 	return (
 		<div className="flex flex-col h-full bg-gray-50">
 			{/* 모바일 탭 바 */}
 			<div className="sticky top-0 px-1 py-1.5 z-10 bg-white shadow-sm">
-				<div className="grid grid-cols-4 gap-1 mx-auto max-w-lg">
+				<div className="grid grid-cols-3 gap-1 mx-auto max-w-lg">
 					{tabs.map((tab) => (
 						<button
 							type="button"
@@ -78,7 +67,6 @@ export default function CenterManagerMainPage() {
 						{activeTab === "stats" && <StatsPanel />}
 						{activeTab === "location" && <AddressBookPanel />}
 						{activeTab === "requests" && <RequestPanel />}
-						{activeTab === "notices" && <NoticePanel />}
 					</motion.div>
 				</AnimatePresence>
 			</div>
