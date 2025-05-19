@@ -110,7 +110,7 @@ public class FosterController {
 		return ResponseEntity.ok().body(response);
 	}
 
-	@GetMapping
+	@GetMapping("/fosters/applications")
 	public ResponseEntity<List<FosterApplicationResponse>> getFosterApplications(
 		@AuthMember Member member,
 		@RequestParam Long centerId
