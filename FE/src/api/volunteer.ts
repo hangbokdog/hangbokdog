@@ -3,6 +3,7 @@ import type {
 	Volunteer,
 	VolunteerApplicantsResponse,
 	SlotApplicant,
+	VolunteerApplicationStatus,
 } from "@/types/volunteer";
 import localAxios from "./http-commons";
 
@@ -372,66 +373,25 @@ export const patchVolunteerAPI = async ({
 	return response.data;
 };
 
-// 내 봉사 신청 내역 조회 API
-export interface MyVolunteerApplication {
-	date: string;
-	applications: {
-		applicationId: number;
-		volunteer: {
-			id: number;
-			title: string;
-			content: string;
-			address: string;
-			addressName: string;
-			startDate: string;
-			endDate: string;
-			imageUrls: string[];
-		};
-		status: "PENDING" | "APPROVED" | "REJECTED";
-	}[];
-}
-
-export const getMyVolunteerApplicationsAPI = async ({
-	eventId,
-	date,
-}: {
-	eventId: number;
-	date?: string;
-}): Promise<MyVolunteerApplication[]> => {
-	const response = await localAxios.get<MyVolunteerApplication[]>(
-		`/volunteers/${eventId}/applications/my`,
-		{
-			params: date ? { date } : {},
-		},
-	);
-	return response.data;
-};
-
-// 내 전체 신청 리스트 조회
-export interface MyVolunteerListApplication {
+export interface MemberApplicationInfo {
 	volunteerEventId: number;
 	date: string;
 	title: string;
-	status: "PENDING" | "APPROVED" | "REJECTED" | "NONE" | "COMPLETED";
+	status: VolunteerApplicationStatus;
 }
 
-export interface MyVolunteerApplicationListResponse {
-	memberApplicationInfo: MyVolunteerListApplication[];
+export interface VolunteerApplicationResponse {
+	memberApplicationInfo: MemberApplicationInfo[];
 	count: number;
 }
 
-export const getMyVolunteerApplicationsListAPI = async ({
-	status,
-}: {
-	status: MyVolunteerListApplication["status"];
-}): Promise<MyVolunteerApplicationListResponse> => {
-	const response = await localAxios.get<MyVolunteerApplicationListResponse>(
-		"/volunteers/myApplications",
-		{
-			params: {
-				status,
-			},
+export const fetchAllMyVoluteersAPI = async (
+	status: VolunteerApplicationStatus,
+): Promise<VolunteerApplicationResponse> => {
+	const response = await localAxios.get("/volunteers/myApplications", {
+		params: {
+			status,
 		},
-	);
+	});
 	return response.data;
 };
