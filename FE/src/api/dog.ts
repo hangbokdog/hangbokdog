@@ -421,3 +421,13 @@ export const fetchHospitalDogsAPI = async (
 	});
 	return response.data;
 };
+
+export const fetchMyFavoriteDogsAPI = async (
+	centerId: number,
+	pageToken?: string,
+): Promise<PageInfo<DogSearchResponse>> => {
+	const response = await localAxios.get("/dogs/favorite/my", {
+		params: { centerId, pageToken },
+	});
+	return response.data;
+};

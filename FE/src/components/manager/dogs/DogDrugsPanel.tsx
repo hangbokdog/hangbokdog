@@ -1,6 +1,6 @@
 import { useState } from "react";
-import ProtectDogCard from "@/components/my/AdoptDogCard";
-import type { AdoptDogCardProps } from "@/components/my/AdoptDogCard";
+import ProtectDogCard from "@/components/my/MyDogCard";
+import type { ProtectDogCardProps } from "@/components/my/MyDogCard";
 import dog1 from "@/assets/images/dog1.png";
 import dog2 from "@/assets/images/dog2.png";
 import dog3 from "@/assets/images/dog3.png";

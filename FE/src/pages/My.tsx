@@ -1,4 +1,5 @@
 import Profile from "@/components/my/Profile";
+import MyActivitiesPanel from "@/components/my/MyActivitiesPanel";
 import { logoutAPI } from "@/api/auth";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
@@ -7,8 +8,6 @@ import { MdLogout } from "react-icons/md";
 import { BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import DogTabsPanel from "@/components/my/DogTabsPanel";
-import MyOngoingVolunteer from "@/components/my/MyOngoingVolunteer";
 
 function handleEdit() {
 	//프로필 수정 로직
@@ -45,12 +44,12 @@ export default function My() {
 	};
 
 	return (
-		<div className="flex flex-col mt-2.5">
+		<div className="flex flex-col gap-4 mt-2.5">
 			<Profile onEdit={handleEdit} />
 
 			{selectedCenter && (
-				<div className="mx-2.5 mb-3">
-					<div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+				<div className="mx-2.5 mb-2 flex flex-col gap-4">
+					<div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-custom-xs">
 						<div className="flex items-center">
 							<BuildingIcon className="w-4 h-4 text-gray-500 mr-2" />
 							<div>
@@ -68,23 +67,20 @@ export default function My() {
 							변경하기
 						</button>
 					</div>
+					<button
+						type="button"
+						onClick={handleLogout}
+						className="flex w-full items-center justify-center gap-2 p-4 bg-superLightGray rounded-lg text-grayText hover:bg-red hover:text-white transition-all duration-300 "
+						title="로그아웃"
+					>
+						<MdLogout className="size-5" />
+						<span className="text-sm font-medium">로그아웃</span>
+					</button>
 				</div>
 			)}
 			<div>
-				<MyOngoingVolunteer />
+				<MyActivitiesPanel />
 			</div>
-			<div>
-				<DogTabsPanel />
-			</div>
-			<button
-				type="button"
-				onClick={handleLogout}
-				className="flex items-center justify-center gap-2 m-2.5 p-4 bg-superLightGray rounded-lg text-grayText hover:bg-red hover:text-white transition-all duration-300 "
-				title="로그아웃"
-			>
-				<MdLogout className="size-5" />
-				<span className="text-sm font-medium">로그아웃</span>
-			</button>
 		</div>
 	);
 }
