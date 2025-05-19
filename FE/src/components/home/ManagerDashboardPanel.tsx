@@ -24,7 +24,7 @@ export default function ManagerDashboardPanel() {
 			icon: <AlertTriangle className="w-5 h-5 text-red-600" />,
 			color: "bg-gradient-to-br from-red-100 to-red-200",
 			hover: "hover:bg-red-100",
-			path: "/manager/emergency",
+			path: "/emergency",
 		},
 		{
 			id: 2,

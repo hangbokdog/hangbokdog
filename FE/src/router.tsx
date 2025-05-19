@@ -10,7 +10,7 @@ import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
-import ManagerEmergencyPage from "./pages/manager/ManagerEmergencyPage";
+import EmergencyPage from "./pages/EmergencyPage";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 import DogRegisterPage from "./pages/manager/DogRegisterPage";
@@ -196,7 +196,16 @@ const router = createBrowserRouter([
 							},
 						],
 					},
-
+					{
+						path: "emergency",
+						children: [
+							{
+								index: true,
+								element: <EmergencyPage />,
+								handle: { showHeader: false },
+							},
+						],
+					},
 					{
 						path: "volunteer",
 						children: [
@@ -275,10 +284,6 @@ const router = createBrowserRouter([
 						path: "emergency",
 						handle: { showHeader: false },
 						children: [
-							{
-								index: true,
-								element: <ManagerEmergencyPage />,
-							},
 							{
 								path: "register",
 								element: (
