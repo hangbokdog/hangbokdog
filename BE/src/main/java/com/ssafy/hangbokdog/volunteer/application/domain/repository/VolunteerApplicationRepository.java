@@ -25,10 +25,6 @@ public class VolunteerApplicationRepository {
     private final VolunteerApplicationJpaRepository volunteerApplicationJpaRepository;
     private final VolunteerApplicationJdbcRepository volunteerApplicationJdbcRepository;
 
-    public boolean existsByVolunteerIdAndMemberId(Long volunteerId, Long memberId) {
-        return volunteerApplicationJpaRepository.existsByVolunteerIdAndMemberId(volunteerId, memberId);
-    }
-
     public List<VolunteerApplication> saveAll(List<VolunteerApplication> applications) {
         return volunteerApplicationJpaRepository.saveAll(applications);
     }
@@ -75,5 +71,9 @@ public class VolunteerApplicationRepository {
 
     public List<VolunteerSlotAppliedCount> findSlotsWithAppliedCountByIdIn(List<Long> volunteerSlotIds) {
         return volunteerApplicationJpaRepository.findSlotsWithAppliedCountByIdIn(volunteerSlotIds);
+    }
+
+    public void deleteByEventId(Long eventId) {
+        volunteerApplicationJpaRepository.deleteAllByEventId(eventId);
     }
 }

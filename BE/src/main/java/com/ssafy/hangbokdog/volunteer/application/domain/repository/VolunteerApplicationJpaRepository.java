@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.volunteer.application.domain.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
@@ -20,4 +21,8 @@ public interface VolunteerApplicationJpaRepository
     List<VolunteerApplication> findByEventIdAndMemberId(Long eventId, Long memberId);
 
     List<VolunteerApplication> findByVolunteerId(Long slotId);
+
+    @Modifying
+    @Query("DELETE FROM VolunteerApplication va WHERE va.volunteerEventId = :eventId")
+    void deleteAllByEventId(Long eventId);
 }

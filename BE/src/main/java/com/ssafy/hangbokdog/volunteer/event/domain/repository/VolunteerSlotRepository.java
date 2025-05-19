@@ -54,4 +54,8 @@ public class VolunteerSlotRepository {
     public List<VolunteerSlotResponse> findAllByEventIdWithPending(Long eventId) {
         return volunteerSlotJpaRepository.findAllByEventIdWithPendingState(eventId);
     }
+
+    public void deleteByEventId(Long eventId) {
+        volunteerSlotJpaRepository.deleteByEventId(eventId);
+    }
 }

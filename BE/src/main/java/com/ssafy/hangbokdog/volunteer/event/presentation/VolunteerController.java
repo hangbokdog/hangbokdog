@@ -4,7 +4,9 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +25,7 @@ import com.ssafy.hangbokdog.volunteer.event.application.VolunteerService;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerParticipantResponse;
@@ -182,5 +185,26 @@ public class VolunteerController {
             addressBookId,
             centerId)
         );
+    }
+
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<Void> delete(
+            @AuthMember Member member,
+            @PathVariable Long eventId,
+            @RequestParam Long centerId
+    ) {
+        volunteerService.delete(eventId, member, centerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{eventId}")
+    public ResponseEntity<Void> udpate(
+            @AuthMember Member member,
+            @PathVariable Long eventId,
+            @RequestBody VolunteerUpdateRequest request,
+            @RequestParam Long centerId
+    ) {
+        volunteerService.update(member, eventId, request, centerId);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.volunteer.event.application;
 
+import static com.ssafy.hangbokdog.common.exception.ErrorCode.VOLUNTEER_NOT_FOUND;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerCreateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplateInfoUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerTemplatePrecautionUpdateRequest;
+import com.ssafy.hangbokdog.volunteer.event.dto.request.VolunteerUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo.SlotCapacity;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerDetailResponse;
@@ -63,6 +66,7 @@ public class VolunteerService {
     private final VolunteerTemplateRepository volunteerTemplateRepository;
     private final VolunteerApplicationRepository volunteerApplicationRepository;
     private final VolunteerSlotRepository volunteerSlotRepository;
+    private final VolunteerEventRepository volunteerEventRepository;
 
     // TODO: 활동 일지 제외
     @Transactional
@@ -158,7 +162,7 @@ public class VolunteerService {
 
     public VolunteerDetailResponse findById(Member member, Long eventId) {
         VolunteerEvent event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
+                .orElseThrow(() -> new BadRequestException(VOLUNTEER_NOT_FOUND));
 
         var volunteerSlots = volunteerSlotRepository.findAllByEventId(eventId);
         List<Long> volunteerSlotIds = extractVolunteerSlotIds(volunteerSlots);
@@ -195,7 +199,7 @@ public class VolunteerService {
 
     public List<VolunteerSlotResponse> findAllSlotsByVolunteerEventId(Member member, Long eventId) {
         VolunteerEvent event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND));
+                .orElseThrow(() -> new BadRequestException(VOLUNTEER_NOT_FOUND));
         return volunteerSlotRepository.findAllByEventIdWithPending(eventId);
     }
 
@@ -363,6 +367,32 @@ public class VolunteerService {
         return dailyApplications;
     }
 
+    @Transactional
+    public void update(
+            Member member,
+            Long eventId,
+            VolunteerUpdateRequest request,
+            Long centerId
+    ) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        VolunteerEvent volunteerEvent = volunteerEventRepository.findById(eventId)
+                .orElseThrow(() -> new BadRequestException(VOLUNTEER_NOT_FOUND));
+
+        volunteerEvent.update(
+                request.activityLog(),
+                request.info(),
+                request.content(),
+                request.precaution(),
+                request.title()
+        );
+    }
+
     private DailyApplicationInfo generateDailyApplicationInfo(
             LocalDate date,
             VolunteerSlotResponseWithoutAppliedCount firstSlot,
@@ -431,5 +461,19 @@ public class VolunteerService {
                         VolunteerSlotAppliedCount::volunteerSlotId,
                         VolunteerSlotAppliedCount::count
                 ));
+    }
+
+    @Transactional
+    public void delete(Long eventId, Member member, Long centerId) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        volunteerSlotRepository.deleteByEventId(eventId);
+        volunteerApplicationRepository.deleteByEventId(eventId);
+        volunteerEventRepository.deleteById(eventId);
     }
 }

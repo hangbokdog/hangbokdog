@@ -101,4 +101,18 @@ public class VolunteerEvent extends BaseEntity {
         this.addressBookId = addressBookId;
         this.addressName = addressName;
     }
+
+    public void update(
+            String activityLog,
+            String info,
+            String content,
+            String precaution,
+            String title
+    ) {
+        this.activityLog = activityLog;
+        this.info = info;
+        this.content = content;
+        this.precaution = precaution;
+        this.title = title;
+    }
 }

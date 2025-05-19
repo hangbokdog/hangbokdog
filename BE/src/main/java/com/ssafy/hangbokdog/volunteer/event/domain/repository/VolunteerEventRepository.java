@@ -84,4 +84,8 @@ public class VolunteerEventRepository {
     public List<VolunteerIdInfo> findActiveEventIds(List<Long> addressBookIds) {
         return volunteerEventJpaRepository.findActiveEventIds(addressBookIds);
     }
+
+    public void deleteById(Long eventId) {
+        volunteerEventJpaRepository.deleteById(eventId);
+    }
 }
