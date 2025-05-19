@@ -117,7 +117,6 @@ public class Member {
 		String nickname,
 		String phone,
 		LocalDate birth,
-		int age,
 		boolean emergencyNotificationCheck
 	) {
 		this.name = name;

@@ -19,7 +19,7 @@ public class VolunteerEventJdbcRepository {
             return;
         }
 
-        String sql = "UPDATE volunteer_event SET volunteer_event.status = 'EXPIRED' "
+        String sql = "UPDATE volunteer_event SET volunteer_event.status = 'CLOSED' "
                 + "WHERE volunteer_event.volunteer_event_id IN (:volunteerEventIds)";
 
         MapSqlParameterSource params = new MapSqlParameterSource();

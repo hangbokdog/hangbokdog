@@ -118,7 +118,6 @@ public class LoginService {
 			signUpRequest.nickname(),
 			signUpRequest.phone(),
 			signUpRequest.birth(),
-			LocalDate.now().getYear() - signUpRequest.birth().getYear(),
 			signUpRequest.emergencyNotification()
 		);
 	}
