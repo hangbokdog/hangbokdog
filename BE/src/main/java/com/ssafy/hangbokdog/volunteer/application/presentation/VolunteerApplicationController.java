@@ -23,6 +23,7 @@ import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationSta
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.VolunteerApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -101,5 +102,16 @@ public class VolunteerApplicationController {
                 centerId
                 )
         );
+    }
+
+    @GetMapping("/myApplications")
+    public ResponseEntity<List<VolunteerApplicationResponse>> findAllMyApplications(
+            @AuthMember Member member,
+            @RequestParam VolunteerApplicationStatus status
+    ) {
+        return ResponseEntity.ok(volunteerApplicationService.findAllMyApplications(
+                member,
+                status
+        ));
     }
 }

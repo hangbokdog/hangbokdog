@@ -489,4 +489,8 @@ public class VolunteerService {
                 .map(VolunteerEvent::getId)
                 .toList();
     }
+
+    public void completeVolunteers() {
+        volunteerApplicationRepository.updatePassedApplicationToComplete();
+    }
 }

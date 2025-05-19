@@ -24,6 +24,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.VolunteerApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
@@ -201,6 +202,25 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                         .and(volunteerApplication.status.eq(VolunteerApplicationStatus.APPROVED))
                 ).groupBy(volunteerApplication.volunteerId)
                 .fetch();
+    }
+
+    @Override
+    public List<VolunteerApplicationResponse> findAllMyApplications(
+            Long memberId,
+            VolunteerApplicationStatus status
+    ) {
+        return queryFactory.select(Projections.constructor(
+                VolunteerApplicationResponse.class,
+                volunteerEvent.id,
+                volunteerSlot.volunteerDate,
+                volunteerEvent.title,
+                volunteerApplication.status
+        )).from(volunteerApplication)
+                .join(volunteerEvent).on(volunteerEvent.id.eq(volunteerApplication.volunteerEventId))
+                .join(volunteerSlot).on(volunteerSlot.id.eq(volunteerApplication.volunteerId))
+                .where(volunteerApplication.memberId.eq(memberId).and(
+                        volunteerApplication.status.eq(status)
+                )).fetch();
     }
 
     private BooleanExpression isInRange(String pageToken) {

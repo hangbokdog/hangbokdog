@@ -29,4 +29,14 @@ public interface VolunteerApplicationJpaRepository
     @Modifying
     @Query("DELETE FROM VolunteerApplication va WHERE va.status = 'PENDING' AND va.volunteerId in :volunteerEventIds")
     void deleteAllExpireApplication(List<Long> volunteerEventIds);
+
+    @Modifying
+    @Query(value = """
+        UPDATE volunteer_application va
+          JOIN volunteer_slot vs ON va.volunteer_slot_id = vs.volunteer_slot_id
+           SET va.status = 'COMPLETED'
+         WHERE va.status = 'PENDING'
+           AND vs.volunteer_date < CURRENT_DATE()
+        """, nativeQuery = true)
+    void updatePassedApplicationToComplete();
 }

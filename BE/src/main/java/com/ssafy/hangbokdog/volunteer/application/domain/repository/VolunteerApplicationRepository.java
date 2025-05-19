@@ -11,6 +11,7 @@ import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.VolunteerApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 
@@ -79,5 +80,13 @@ public class VolunteerApplicationRepository {
 
     public void deleteAllExpireApplication(List<Long> volunteerEventIds) {
         volunteerApplicationJpaRepository.deleteAllExpireApplication(volunteerEventIds);
+    }
+
+    public void updatePassedApplicationToComplete() {
+        volunteerApplicationJpaRepository.updatePassedApplicationToComplete();
+    }
+
+    public List<VolunteerApplicationResponse> findAllMyApplications(Long memberId, VolunteerApplicationStatus status) {
+        return volunteerApplicationJpaRepository.findAllMyApplications(memberId, status);
     }
 }

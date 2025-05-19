@@ -3,7 +3,6 @@ package com.ssafy.hangbokdog.volunteer.application.application;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.AGE_REQUIREMENT_NOT_MET;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.DUPLICATE_APPLICATION;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.VOLUNTEER_NOT_FOUND;
-import static com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus.APPROVED;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -33,6 +32,7 @@ import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicati
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationCreateRequest.ApplicationRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.VolunteerApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.event.VolunteerApplicationEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
@@ -282,5 +282,12 @@ public class VolunteerApplicationService {
                         VolunteerSlot::getId,
                         volunteerSlot -> volunteerSlot
                 ));
+    }
+
+    public List<VolunteerApplicationResponse> findAllMyApplications(
+            Member member,
+            VolunteerApplicationStatus status
+    ) {
+        return volunteerApplicationRepository.findAllMyApplications(member.getId(), status);
     }
 }

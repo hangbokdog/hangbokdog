@@ -20,4 +20,10 @@ public class VolunteerEventScheduler {
     public void volunteerEventExpireScheduler() {
         volunteerService.expireVolunteers();
     }
+
+    @Scheduled(cron = "* 1/3 * * * *")
+    @SchedulerLock(name = "volunteerEventCompleteScheduler", lockAtLeastFor = "170s", lockAtMostFor = "179s")
+    public void volunteerEventCompleteScheduler() {
+        volunteerService.completeVolunteers();
+    }
 }
