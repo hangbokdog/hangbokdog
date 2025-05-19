@@ -200,7 +200,6 @@ public class AdoptionService {
 		return adoptionRepository.getMyAdoptions(memberId, centerId);
 	}
 
-
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));

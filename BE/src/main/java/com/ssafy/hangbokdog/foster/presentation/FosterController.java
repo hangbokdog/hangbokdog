@@ -12,11 +12,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.auth.annotation.AdminMember;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.foster.application.FosterService;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -104,5 +108,29 @@ public class FosterController {
 	) {
 		List<DogFosterResponse> response = fosterService.getFostersByDogId(dogId);
 		return ResponseEntity.ok().body(response);
+	}
+
+	@GetMapping
+	public ResponseEntity<List<FosterApplicationResponse>> getAdoptionApplications(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(fosterService.getFosterApplicationsByCenterId(member.getId(), centerId));
+	}
+
+	@GetMapping("/{dogId}/applications")
+	public ResponseEntity<List<FosterApplicationByDogResponse>> getAdoptionApplicationsByDog(
+		@AuthMember Member member,
+		@PathVariable Long dogId,
+		@RequestParam Long centerId,
+		@RequestParam(required = false) String name
+
+	) {
+		return ResponseEntity.ok().body(fosterService.getFosterApplicationsByDogId(
+			member.getId(),
+			centerId,
+			dogId,
+			name
+		));
 	}
 }

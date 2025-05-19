@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.foster.domain.repository;
 
+import static com.ssafy.hangbokdog.adoption.domain.QAdoption.*;
 import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
 import static com.ssafy.hangbokdog.foster.domain.QFoster.*;
 import static com.ssafy.hangbokdog.member.domain.QMember.*;
@@ -9,10 +10,16 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.adoption.domain.enums.AdoptionStatus;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.foster.domain.enums.FosterStatus;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -114,5 +121,49 @@ public class FosterJpaRepositoryCustomImpl implements FosterJpaRepositoryCustom 
 			.where(foster.dogId.eq(dogId)
 				.and(foster.status.eq(FosterStatus.FOSTERING)))
 			.fetch();
+	}
+
+	@Override
+	public List<FosterApplicationResponse> getFosterApplicationsByCenterId(Long centerId) {
+		return queryFactory
+			.select(Projections.constructor(
+				FosterApplicationResponse.class,
+				foster.dogId,
+				dog.name,
+				dog.profileImage,
+				foster.dogId.count().intValue()
+			))
+			.from(foster)
+			.leftJoin(dog).on(foster.dogId.eq(dog.id))
+			.where(dog.centerId.eq(centerId),
+				foster.status.eq(FosterStatus.APPLYING))
+			.groupBy(foster.dogId, dog.name, dog.profileImage)
+			.orderBy(foster.dogId.count().desc())
+			.fetch();
+	}
+
+	@Override
+	public List<FosterApplicationByDogResponse> getFosterApplicationsByDogId(Long dogId, String name) {
+		return queryFactory
+			.select(Projections.constructor(
+				FosterApplicationByDogResponse.class,
+				foster.id,
+				member.id,
+				member.name,
+				member.profileImage,
+				member.phone,
+				foster.createdAt
+			))
+			.from(foster)
+			.leftJoin(member).on(foster.memberId.eq(member.id))
+			.leftJoin(dog).on(foster.dogId.eq(dog.id))
+			.where(foster.dogId.eq(dogId),
+				foster.status.eq(FosterStatus.APPLYING),
+				containsName(name))
+			.fetch();
+	}
+
+	private BooleanExpression containsName(String name) {
+		return name != null ? dog.name.contains(name) : null;
 	}
 }
