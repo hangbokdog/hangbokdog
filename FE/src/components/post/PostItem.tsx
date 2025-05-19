@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import type { PostSummaryResponse } from "@/api/post";
-import { Heart, MessageCircle } from "lucide-react";
+import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PostItemProps {
@@ -45,10 +45,10 @@ export default function PostItem({
 							{post.title}
 						</div>
 					</div>
-					<div className="flex itmes-center">
+					<div className="flex items-center">
 						{/* Author info and date */}
-						<div className="flex items-center justify-between">
-							<div className="flex items-center">
+						<div className="flex items-center gap-2 w-full">
+							<div className="flex items-center min-w-0">
 								<Avatar
 									className={
 										compact
@@ -61,19 +61,30 @@ export default function PostItem({
 										{post.memberNickName?.charAt(0) || "?"}
 									</AvatarFallback>
 								</Avatar>
-								<div className="ml-2">
+								<div className="ml-2 min-w-0">
 									<span
-										className={`text-grayText font-light ${compact ? "text-xs" : "text-sm"}`}
+										className={`block text-grayText font-light ${compact ? "text-xs" : "text-sm"} whitespace-nowrap`}
+										title={
+											post.memberNickName || "이름없음"
+										}
 									>
 										{post.memberNickName || "이름없음"}
 									</span>
 								</div>
 							</div>
-							<span
-								className={`text-gray-400 ${compact ? "text-[10px]" : "text-xs"}`}
-							>
-								{formatDate(post.createdAt)}
-							</span>
+							<div className="flex items-center gap-2 ml-auto min-w-0">
+								<span
+									className={`text-gray-400 ${compact ? "text-[10px]" : "text-xs"} overflow-hidden text-ellipsis whitespace-nowrap`}
+								>
+									{formatDate(post.createdAt)}
+								</span>
+								<span
+									className={`flex items-center gap-1 ${compact ? "text-xs" : "text-sm"} font-medium ${post.isLiked ? "text-red-500" : "text-gray-500"} overflow-hidden text-ellipsis whitespace-nowrap`}
+								>
+									<span className="text-xs">댓글</span>
+									{formatLikeCount(post.commentCount)}
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>

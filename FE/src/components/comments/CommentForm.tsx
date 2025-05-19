@@ -16,6 +16,12 @@ export default function CommentForm({
 }: CommentFormProps) {
 	const { user } = useAuthStore();
 
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Enter" && commentValue.trim()) {
+			handleCommentSubmit();
+		}
+	};
+
 	return (
 		<div
 			className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[440px] bg-white border-t flex gap-2 items-center px-3 py-2"
@@ -33,6 +39,7 @@ export default function CommentForm({
 				maxLength={200}
 				value={commentValue}
 				onChange={(e) => setCommentValue(e.target.value)}
+				onKeyDown={handleKeyDown}
 			/>
 			<button
 				type="button"
