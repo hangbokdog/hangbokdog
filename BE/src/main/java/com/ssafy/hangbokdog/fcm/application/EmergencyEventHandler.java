@@ -2,8 +2,8 @@ package com.ssafy.hangbokdog.fcm.application;
 
 import java.util.List;
 
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.ssafy.hangbokdog.common.util.JsonUtils;
 import com.ssafy.hangbokdog.fcm.domain.NotificationType;
@@ -12,7 +12,6 @@ import com.ssafy.hangbokdog.fcm.dto.response.EmergencyNotification;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
