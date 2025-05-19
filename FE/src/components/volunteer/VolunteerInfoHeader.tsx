@@ -32,9 +32,15 @@ export default function VolunteerInfoHeader({
 			<div className="flex justify-between items-center">
 				<div className="flex gap-2 items-center">
 					<span className="text-xl font-bold">{title}</span>
-					<span className="font-semibold text-white bg-green px-2.5 py-1 rounded-3xl">
-						{status}
-					</span>
+					{status === "마감" ? (
+						<span className="font-semibold text-white bg-red px-2.5 py-1 rounded-3xl">
+							{status}
+						</span>
+					) : (
+						<span className="font-semibold text-white bg-green px-2.5 py-1 rounded-3xl">
+							{status}
+						</span>
+					)}
 				</div>
 				{isManager && (
 					<button
