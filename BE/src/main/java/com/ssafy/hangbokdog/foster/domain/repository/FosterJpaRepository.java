@@ -18,7 +18,7 @@ public interface FosterJpaRepository extends JpaRepository<Foster, Long>, Foster
 	boolean isFosterApply(Long memberId, Long dogId);
 
 	@Query("""
-		SELECT COUNT(f.id) > 0
+		SELECT COUNT(f.id)
 		FROM Foster f
 		JOIN Dog d ON f.dogId = d.id
 		WHERE d.id = :centerId AND f.status != 'REJECTED'
