@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionDogCountResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionSearchResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.MyAdoptionResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -193,6 +194,10 @@ public class AdoptionService {
 			)).toList();
 
 		return new PageInfo<>(infos.pageToken(), responses, infos.hasNext());
+	}
+
+	public List<MyAdoptionResponse> getMyAdoptions(Long memberId, Long centerId) {
+		return adoptionRepository.getMyAdoptions(memberId, centerId);
 	}
 
 

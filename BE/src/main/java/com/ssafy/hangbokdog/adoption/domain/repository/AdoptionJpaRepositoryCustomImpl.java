@@ -19,6 +19,7 @@ import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.AdoptionSearchInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.MyAdoptionResponse;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 
@@ -164,6 +165,25 @@ public class AdoptionJpaRepositoryCustomImpl implements AdoptionJpaRepositoryCus
 			.fetchFirst() != null;
 	}
 
+	@Override
+	public List<MyAdoptionResponse> getMyAdoptions(Long memberId, Long centerId) {
+		return queryFactory
+			.select(Projections.constructor(
+				MyAdoptionResponse.class,
+				dog.id,
+				dog.name,
+				dog.profileImage,
+				adoption.createdAt,
+				adoption.status
+			))
+			.from(adoption)
+			.leftJoin(dog).on(adoption.dogId.eq(dog.id))
+			.where(dog.centerId.eq(centerId),
+				adoption.memberId.eq(memberId),
+				adoption.status.ne(AdoptionStatus.REJECTED))
+			.orderBy(adoption.id.desc())
+			.fetch();
+	}
 
 	private BooleanExpression containsName(String name) {
 		return name != null ? dog.name.contains(name) : null;
