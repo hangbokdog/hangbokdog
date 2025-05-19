@@ -13,15 +13,19 @@ import {
 	createCommentAPI,
 	type CommentWithRepliesResponse,
 	type CommentCreateRequest,
+	deleteCommentAPI,
+	updateCommentAPI,
+	toggleCommentLikeAPI,
+	toggleLikeAPI,
 } from "@/api/post";
+import { fetchDogDetail, type DogDetailResponse } from "@/api/dog";
 import {
 	Loader2,
 	Calendar,
-	User,
 	MoreVertical,
 	Edit,
 	Trash2,
-	MessageCircle,
+	Heart,
 } from "lucide-react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
@@ -33,7 +37,7 @@ import { toast } from "sonner";
 import useAuthStore from "@/lib/store/authStore";
 import CommentList from "@/components/comments/CommentList";
 import CommentForm from "@/components/comments/CommentForm";
-import type { DogCommentItem } from "@/types/dog";
+import { DogBreedLabel } from "@/types/dog";
 
 const formatDateWithDay = (dateString: string) => {
 	const date = new Date(dateString);
@@ -42,23 +46,6 @@ const formatDateWithDay = (dateString: string) => {
 
 // Create a union type for post content
 type PostContent = AnnouncementDetailResponse | PostResponse | null;
-
-// Create a type that adapts CommentWithRepliesResponse to match DogCommentItem structure
-// This helps avoid type errors with CommentList component
-interface AdaptedCommentItem {
-	dogComment: {
-		commentId: number;
-		author: {
-			nickName: string;
-			profileImage: string;
-		};
-		content: string;
-		createdAt: string;
-		isDeleted: boolean;
-		isAuthor: boolean;
-	};
-	replies: AdaptedCommentItem[];
-}
 
 export default function PostDetailPage() {
 	const { id } = useParams<{ id: string }>();
@@ -80,6 +67,11 @@ export default function PostDetailPage() {
 	const [replyLength, setReplyLength] = useState(0);
 	const [commentValue, setCommentValue] = useState("");
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [likeDisabled, setLikeDisabled] = useState(false);
+	const [isLiked, setIsLiked] = useState(false);
+	const [likeCount, setLikeCount] = useState(0);
+
+	const [dogInfo, setDogInfo] = useState<DogDetailResponse | null>(null);
 
 	useEffect(() => {
 		const fetchPostDetail = async () => {
@@ -98,6 +90,25 @@ export default function PostDetailPage() {
 					// Fetch regular post
 					const data = await fetchPostDetailAPI(Number(id));
 					setPost(data);
+					setIsLiked(data.isLiked);
+					setLikeCount(data.likeCount);
+
+					// Fetch dog info if dogId is valid
+					if (
+						data.dogId &&
+						data.dogId !== -1 &&
+						selectedCenter?.centerId
+					) {
+						try {
+							const dogData = await fetchDogDetail(
+								data.dogId,
+								selectedCenter.centerId,
+							);
+							setDogInfo(dogData);
+						} catch (err) {
+							console.error("Failed to fetch dog info:", err);
+						}
+					}
 				}
 				setError(null);
 			} catch (err) {
@@ -145,26 +156,65 @@ export default function PostDetailPage() {
 		},
 	});
 
-	// Convert comments to the format expected by CommentList
-	const adaptedComments = comments.map((comment) => {
-		const adaptComment = (
-			c: CommentWithRepliesResponse,
-		): AdaptedCommentItem => ({
-			dogComment: {
-				commentId: c.comment.id,
-				author: {
-					nickName: c.comment.author?.nickName || "알 수 없음",
-					profileImage: c.comment.author?.profileImage || "",
-				},
-				content: c.comment.content,
-				createdAt: c.comment.createdAt,
-				isDeleted: c.comment.isDeleted,
-				isAuthor: c.comment.isAuthor,
-			},
-			replies: c.replies.map(adaptComment),
-		});
-		return adaptComment(comment);
+	// Update comment mutation
+	const { mutate: updateComment } = useMutation({
+		mutationFn: ({
+			commentId,
+			content,
+		}: {
+			commentId: number;
+			content: string;
+		}) => updateCommentAPI(Number(id), commentId, { content }),
+		onSuccess: () => {
+			refreshComments();
+			toast.success("댓글이 수정되었습니다.");
+		},
+		onError: () => {
+			toast.error("댓글 수정에 실패했습니다.");
+		},
 	});
+
+	// Delete comment mutation
+	const { mutate: deleteComment } = useMutation({
+		mutationFn: (commentId: number) =>
+			deleteCommentAPI(Number(id), commentId),
+		onSuccess: () => {
+			refreshComments();
+			toast.success("댓글이 삭제되었습니다.");
+		},
+		onError: () => {
+			toast.error("댓글 삭제에 실패했습니다.");
+		},
+	});
+
+	// Toggle post like mutation
+	const { mutate: togglePostLike } = useMutation({
+		mutationFn: () => toggleLikeAPI(Number(id)),
+		onSuccess: (data) => {
+			setIsLiked(data.isLiked);
+			setLikeCount((prev) => (data.isLiked ? prev + 1 : prev - 1));
+			toast.success(
+				data.isLiked
+					? "게시글을 좋아요 했습니다."
+					: "좋아요를 취소했습니다.",
+			);
+		},
+		onError: () => {
+			toast.error("좋아요 처리에 실패했습니다.");
+		},
+	});
+
+	// Handle post like toggle
+	const handleTogglePostLike = () => {
+		if (likeDisabled || isAnnouncement) return;
+		setLikeDisabled(true);
+		togglePostLike();
+
+		// Prevent rapid clicking
+		setTimeout(() => {
+			setLikeDisabled(false);
+		}, 1000);
+	};
 
 	const handleGoBack = () => {
 		navigate(-1);
@@ -258,6 +308,14 @@ export default function PostDetailPage() {
 				`/posts/edit/${id}?type=${searchParams.get("type") || ""}`,
 			);
 		}
+	};
+
+	const handleUpdateComment = (commentId: number, content: string) => {
+		updateComment({ commentId, content });
+	};
+
+	const handleDeleteComment = (commentId: number) => {
+		deleteComment(commentId);
 	};
 
 	if (loading)
@@ -434,6 +492,58 @@ export default function PostDetailPage() {
 
 					{/* 본문 내용 */}
 					<div className="p-4 bg-white border-b border-gray-200 min-h-[200px]">
+						{/* Dog info panel */}
+						{!isAnnouncement && dogInfo && (
+							<div className="flex flex-col gap-3 mb-8">
+								<div className="flex items-center gap-2">
+									<span className="font-semibold text-sm text-white bg-male rounded-full px-3 py-1.5">
+										언급된 아이
+									</span>
+								</div>
+								<button
+									type="button"
+									className="w-full p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl cursor-pointer hover:from-gray-100 hover:to-gray-200 transition-all duration-200 text-left shadow-[0_0_10px_0_rgba(50,100,200,0.1)]"
+									onClick={() =>
+										navigate(`/dogs/${dogInfo.dogId}`)
+									}
+								>
+									<div className="flex items-center gap-4">
+										<div className="relative">
+											<img
+												src={dogInfo.profileImageUrl}
+												alt={dogInfo.dogName}
+												className="w-20 h-20 rounded-2xl object-cover ring-2 ring-offset-2 ring-male/20"
+											/>
+										</div>
+										<div className="flex-1">
+											<div className="flex items-center gap-2 mb-1">
+												<h3 className="text-lg font-bold text-gray-900 truncate">
+													{dogInfo.dogName}
+												</h3>
+											</div>
+											<div className="flex flex-wrap gap-x-2 gap-y-1 text-sm text-gray-600">
+												<span className="inline-flex items-center py-0.5 rounded-full bg-gray-100 text-gray-800">
+													{
+														DogBreedLabel[
+															dogInfo.breed
+														]
+													}
+												</span>
+												<span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-800">
+													{dogInfo.age}살
+												</span>
+												<span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-800">
+													{dogInfo.gender === "MALE"
+														? "남"
+														: "여"}
+												</span>
+											</div>
+										</div>
+									</div>
+								</button>
+							</div>
+						)}
+
 						<div className="prose max-w-none whitespace-pre-wrap mb-6">
 							<PostContentItem
 								content={getContent()}
@@ -463,8 +573,7 @@ export default function PostDetailPage() {
 					{/* Comments section - only for regular posts */}
 					{!isAnnouncement && (
 						<>
-							<div className="p-4 flex items-center gap-2 border-b border-gray-200">
-								<MessageCircle className="w-5 h-5 text-gray-500" />
+							<div className="p-4 flex items-center justify-between gap-2 border-b border-gray-200">
 								<div className="flex items-center gap-1">
 									<span className="text-base font-medium">
 										댓글
@@ -473,13 +582,26 @@ export default function PostDetailPage() {
 										{getTotalCommentCount()}
 									</span>
 								</div>
+								<button
+									type="button"
+									onClick={handleTogglePostLike}
+									disabled={likeDisabled}
+									className="flex items-center ml-4 text-grayText hover:text-red-500 transition-colors"
+								>
+									<Heart
+										className={`w-4 h-4 mr-1 ${
+											isLiked
+												? "fill-red-500 text-red-500"
+												: ""
+										}`}
+									/>
+									<span>{likeCount}</span>
+								</button>
 							</div>
 
 							<div className="bg-gray-50">
 								<CommentList
-									comments={
-										adaptedComments as unknown as DogCommentItem[]
-									}
+									comments={comments}
 									replyOpenId={replyOpenId}
 									setReplyOpenId={setReplyOpenId}
 									replyValue={replyValue}
@@ -487,6 +609,9 @@ export default function PostDetailPage() {
 									replyLength={replyLength}
 									setReplyLength={setReplyLength}
 									handleReplySubmit={handleReplySubmit}
+									toggleLike={handleTogglePostLike}
+									onUpdateComment={handleUpdateComment}
+									onDeleteComment={handleDeleteComment}
 								/>
 							</div>
 						</>

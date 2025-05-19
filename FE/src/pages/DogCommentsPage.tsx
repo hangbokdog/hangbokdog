@@ -7,8 +7,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cancelJoinRequestAPI, registerCenterAPI } from "@/api/center";
 import { toast } from "sonner";
-import { getDogCommentsAPI, createDogCommentAPI } from "@/api/dog";
-import type { DogCommentItem } from "@/types/dog";
+import {
+	getDogCommentsAPI,
+	createDogCommentAPI,
+	toggleDogCommentLikeAPI,
+	updateDogCommentAPI,
+	deleteDogCommentAPI,
+} from "@/api/dog";
+import type { CommentItemData } from "@/types/comment";
 
 export default function DogCommentsPage() {
 	const [replyOpenId, setReplyOpenId] = useState<number | null>(null);
@@ -21,6 +27,7 @@ export default function DogCommentsPage() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { id } = useParams();
+	const [likeDisabled, setLikeDisabled] = useState(false);
 
 	// 수동으로 댓글 데이터를 리프레시
 	const refreshComments = useCallback(() => {
@@ -31,7 +38,7 @@ export default function DogCommentsPage() {
 	}, [queryClient, id]);
 
 	// 댓글 데이터 조회 - 수동 리프레시 키를 추가하고 staleTime을 0으로 설정
-	const { data: comments = [] } = useQuery<DogCommentItem[]>({
+	const { data: comments = [] } = useQuery<CommentItemData[]>({
 		queryKey: ["dogComments", id],
 		queryFn: () => getDogCommentsAPI(Number(id)),
 		staleTime: 0, // 항상 최신 데이터를 가져오도록 설정
@@ -110,6 +117,33 @@ export default function DogCommentsPage() {
 		},
 	});
 
+	const { mutate: updateDogComment } = useMutation({
+		mutationFn: ({
+			commentId,
+			content,
+		}: { commentId: number; content: string }) =>
+			updateDogCommentAPI(Number(id), commentId, content),
+		onSuccess: () => {
+			refreshComments();
+			toast.success("댓글이 수정되었습니다.");
+		},
+		onError: () => {
+			toast.error("댓글 수정에 실패했습니다.");
+		},
+	});
+
+	const { mutate: deleteDogComment } = useMutation({
+		mutationFn: (commentId: number) =>
+			deleteDogCommentAPI(Number(id), commentId),
+		onSuccess: () => {
+			refreshComments();
+			toast.success("댓글이 삭제되었습니다.");
+		},
+		onError: () => {
+			toast.error("댓글 삭제에 실패했습니다.");
+		},
+	});
+
 	const handleReplySubmit = (commentId: number) => {
 		if (!replyValue.trim()) return;
 		if (!user.nickName) {
@@ -185,6 +219,45 @@ export default function DogCommentsPage() {
 		}
 	};
 
+	// Toggle like mutation
+	const { mutate: toggleLike } = useMutation({
+		mutationFn: (params: { commentId: number; isLiked: boolean }) =>
+			toggleDogCommentLikeAPI(Number(id), params.commentId),
+		onSuccess: (_, { isLiked }) => {
+			// Success message
+			if (!isLiked) {
+				toast.success("댓글을 좋아요 했습니다.");
+			} else {
+				toast.success("좋아요를 취소했습니다.");
+			}
+			// UI state is already updated in the CommentItem component
+		},
+		onError: () => {
+			toast.error("좋아요 처리에 실패했습니다.");
+			// UI state will be corrected on next data refresh
+		},
+	});
+
+	const handleToggleLike = (commentId: number, isLiked: boolean) => {
+		if (likeDisabled) return;
+
+		setLikeDisabled(true);
+		toggleLike({ commentId, isLiked });
+
+		// Prevent rapid clicking
+		setTimeout(() => {
+			setLikeDisabled(false);
+		}, 1000);
+	};
+
+	const handleUpdateComment = (commentId: number, content: string) => {
+		updateDogComment({ commentId, content });
+	};
+
+	const handleDeleteComment = (commentId: number) => {
+		deleteDogComment(commentId);
+	};
+
 	return (
 		<div className="flex flex-col h-full relative bg-white">
 			<div className="flex items-center gap-1 mx-2.5">
@@ -202,6 +275,9 @@ export default function DogCommentsPage() {
 				replyLength={replyLength}
 				setReplyLength={setReplyLength}
 				handleReplySubmit={handleReplySubmit}
+				toggleLike={handleToggleLike}
+				onUpdateComment={handleUpdateComment}
+				onDeleteComment={handleDeleteComment}
 			/>
 			{isCenterMember ? (
 				<CommentForm

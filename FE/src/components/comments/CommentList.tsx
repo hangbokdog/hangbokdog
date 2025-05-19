@@ -1,8 +1,8 @@
 import CommentItem from "./CommentItem";
-import type { DogCommentItem } from "@/types/dog";
+import type { CommentItemData } from "@/types/comment";
 
 interface CommentListProps {
-	comments: DogCommentItem[];
+	comments: CommentItemData[];
 	replyOpenId: number | null;
 	setReplyOpenId: (id: number | null) => void;
 	replyValue: string;
@@ -10,6 +10,9 @@ interface CommentListProps {
 	replyLength: number;
 	setReplyLength: (length: number) => void;
 	handleReplySubmit: (commentId: number) => void;
+	toggleLike?: (commentId: number, isLiked: boolean) => void;
+	onUpdateComment?: (commentId: number, content: string) => void;
+	onDeleteComment?: (commentId: number) => void;
 }
 
 export default function CommentList({
@@ -21,13 +24,16 @@ export default function CommentList({
 	replyLength,
 	setReplyLength,
 	handleReplySubmit,
+	toggleLike,
+	onUpdateComment,
+	onDeleteComment,
 }: CommentListProps) {
 	return (
-		<div className="flex-1 px-2.5 pt-2.5">
+		<div className="flex-1 px-2.5 pt-2.5 pb-8">
 			{comments.map((commentItem) => (
 				<CommentItem
-					key={commentItem.dogComment.id}
-					comment={commentItem}
+					key={commentItem.comment.id}
+					commentData={commentItem}
 					replyOpenId={replyOpenId}
 					setReplyOpenId={setReplyOpenId}
 					replyValue={replyValue}
@@ -35,6 +41,9 @@ export default function CommentList({
 					replyLength={replyLength}
 					setReplyLength={setReplyLength}
 					handleReplySubmit={handleReplySubmit}
+					toggleLike={toggleLike}
+					onUpdateComment={onUpdateComment}
+					onDeleteComment={onDeleteComment}
 				/>
 			))}
 		</div>

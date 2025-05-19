@@ -1,49 +1,32 @@
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import CommentDropdown from "../common/CommentDropdown";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toggleDogCommentLikeAPI } from "@/api/dog";
-import { toast } from "sonner";
-import { useParams } from "react-router-dom";
-import type { DogCommentItem } from "@/types/dog";
+import type { CommentItemData } from "@/types/comment";
 
 interface ReplyItemProps {
 	reply: {
-		dogComment: DogCommentItem["dogComment"];
-		replies: DogCommentItem[];
+		comment: CommentItemData["comment"];
+		replies: CommentItemData[];
 	};
+	toggleLike?: (commentId: number, isLiked: boolean) => void;
+	onUpdateComment?: (commentId: number, content: string) => void;
+	onDeleteComment?: (commentId: number) => void;
 }
 
-export default function ReplyItem({ reply }: ReplyItemProps) {
-	const { dogComment } = reply;
-	const { id: dogId } = useParams();
-	const queryClient = useQueryClient();
+export default function ReplyItem({
+	reply,
+	toggleLike,
+	onUpdateComment,
+	onDeleteComment,
+}: ReplyItemProps) {
+	const { comment } = reply;
 
-	const [isLiked, setIsLiked] = useState(dogComment.isLiked);
-	const [likeCount, setLikeCount] = useState(dogComment.likeCount);
+	const [isLiked, setIsLiked] = useState(comment.isLiked);
+	const [likeCount, setLikeCount] = useState(comment.likeCount);
 	const [isDisabled, setIsDisabled] = useState(false);
 
-	const toggleLikeMutation = useMutation({
-		mutationFn: () => toggleDogCommentLikeAPI(Number(dogId), dogComment.id),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["dogComments", dogId] });
-			if (isLiked) {
-				toast.success("답글을 좋아요 했습니다.");
-			} else {
-				toast.success("좋아요를 취소했습니다.");
-			}
-		},
-		onError: () => {
-			setIsLiked(!isLiked);
-			setLikeCount((prevCount) =>
-				isLiked ? prevCount + 1 : Math.max(0, prevCount - 1),
-			);
-			toast.error("좋아요 처리에 실패했습니다.");
-		},
-	});
-
 	const handleToggleLike = () => {
-		if (isDisabled) return;
+		if (isDisabled || !toggleLike) return;
 
 		setIsDisabled(true);
 
@@ -53,7 +36,7 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
 			newLikeState ? prevCount + 1 : Math.max(0, prevCount - 1),
 		);
 
-		toggleLikeMutation.mutate();
+		toggleLike(comment.id, isLiked);
 
 		setTimeout(() => {
 			setIsDisabled(false);
@@ -61,29 +44,41 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
 	};
 
 	return (
-		<div className="p-2 max-w-full break-words">
+		<div className="p-2 max-w-full break-words flex flex-col">
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
 					<img
-						src={dogComment.author.profileImage}
-						alt={dogComment.author.nickName}
+						src={comment.author.profileImage}
+						alt={comment.author.nickName}
 						className="w-6 h-6 rounded-full flex-shrink-0"
 					/>
 					<span className="font-bold text-xs">
-						{dogComment.author.nickName}
+						{comment.author.nickName}
 					</span>
-					<span className="text-xs text-lightGray">
-						{new Date(dogComment.createdAt).toLocaleDateString(
-							"ko-KR",
-							{
-								year: "numeric",
-								month: "2-digit",
-								day: "2-digit",
-								hour: "2-digit",
-								minute: "2-digit",
-							},
-						)}
-					</span>
+				</div>
+				{comment.isAuthor && !comment.isDeleted && (
+					<CommentDropdown
+						commentId={comment.id}
+						content={comment.content}
+						onUpdate={onUpdateComment || (() => {})}
+						onDelete={onDeleteComment || (() => {})}
+					/>
+				)}
+			</div>
+			<div className="text-sm mt-1 whitespace-normal break-words">
+				{comment.content}
+			</div>
+			<div className="flex gap-2">
+				<span className="text-xs text-lightGray">
+					{new Date(comment.createdAt).toLocaleDateString("ko-KR", {
+						year: "numeric",
+						month: "2-digit",
+						day: "2-digit",
+						hour: "2-digit",
+						minute: "2-digit",
+					})}
+				</span>
+				{toggleLike && (
 					<button
 						onClick={handleToggleLike}
 						type="button"
@@ -100,16 +95,7 @@ export default function ReplyItem({ reply }: ReplyItemProps) {
 							<span className="ml-1">{likeCount}</span>
 						)}
 					</button>
-				</div>
-				{dogComment.isAuthor && !dogComment.isDeleted && (
-					<CommentDropdown
-						commentId={dogComment.id}
-						content={dogComment.content}
-					/>
 				)}
-			</div>
-			<div className="text-sm mt-1 whitespace-normal break-words">
-				{dogComment.content}
 			</div>
 		</div>
 	);

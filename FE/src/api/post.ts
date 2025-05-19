@@ -23,6 +23,8 @@ export interface PostResponse {
 	content: string;
 	images: string[];
 	createdAt: string;
+	isLiked: boolean;
+	likeCount: number;
 }
 
 export interface PostTypeResponse {
@@ -60,17 +62,6 @@ export const createPostAPI = async (
 	return response.data;
 };
 
-export interface PostResponse {
-	author: MemberInfo;
-	postType: PostTypeResponse;
-	postId: number;
-	dogId: number;
-	title: string;
-	content: string;
-	images: string[];
-	createdAt: string;
-}
-
 export interface PostSummaryResponse {
 	memberId: number;
 	memberNickName: string;
@@ -80,6 +71,7 @@ export interface PostSummaryResponse {
 	createdAt: string;
 	isLiked: boolean;
 	likeCount: number;
+	commentCount: number;
 }
 
 export const fetchPostsAPI = async (
@@ -227,6 +219,8 @@ export interface CommentResponse {
 	content: string;
 	isDeleted: boolean;
 	createdAt: string;
+	isLiked: boolean;
+	likeCount: number;
 }
 
 export interface CommentWithRepliesResponse {

@@ -1,6 +1,5 @@
 import type {
 	DogBreed,
-	DogCommentItem,
 	DogLatestResponse,
 	DogStatus,
 	Gender,
@@ -8,6 +7,7 @@ import type {
 } from "@/types/dog";
 import localAxios, { type PageInfo } from "./http-commons";
 import type { QueryFunction } from "@tanstack/react-query";
+import type { commentData, CommentItemData } from "@/types/comment";
 
 export const createDogAPI = async (data: FormData) => {
 	const response = await localAxios.post("/dogs", data, {
@@ -219,13 +219,62 @@ export const updateMedicalHistoryAPI = async (
 	return response.data;
 };
 
+export interface DogCommentItem {
+	dogComment: {
+		id: number;
+		commentId: number;
+		parentId: number | null;
+		author: {
+			id: number;
+			nickName: string;
+			profileImage: string;
+			grade: string;
+		};
+		content: string;
+		createdAt: string;
+		isDeleted: boolean;
+		isAuthor: boolean;
+		isLiked: boolean;
+		likeCount: number;
+	};
+	replies: DogCommentItem[];
+}
+
 export const getDogCommentsAPI = async (
 	dogId: number,
-): Promise<DogCommentItem[]> => {
+): Promise<CommentItemData[]> => {
 	const response = await localAxios.get<DogCommentItem[]>(
 		`/${dogId}/comments`,
 	);
-	return response.data;
+
+	// Transform DogCommentItem to CommentItemData
+	const transformedData = response.data.map(dogCommentToCommentItem);
+	return transformedData;
+};
+
+// Helper function to transform DogCommentItem to CommentItemData
+const dogCommentToCommentItem = (
+	dogCommentItem: DogCommentItem,
+): CommentItemData => {
+	return {
+		comment: {
+			id: dogCommentItem.dogComment.id,
+			parentId: dogCommentItem.dogComment.parentId,
+			author: {
+				id: dogCommentItem.dogComment.author.id,
+				nickName: dogCommentItem.dogComment.author.nickName,
+				profileImage: dogCommentItem.dogComment.author.profileImage,
+				grade: dogCommentItem.dogComment.author.grade,
+			},
+			content: dogCommentItem.dogComment.content,
+			createdAt: dogCommentItem.dogComment.createdAt,
+			isDeleted: dogCommentItem.dogComment.isDeleted,
+			isAuthor: dogCommentItem.dogComment.isAuthor,
+			isLiked: dogCommentItem.dogComment.isLiked,
+			likeCount: dogCommentItem.dogComment.likeCount,
+		},
+		replies: dogCommentItem.replies.map(dogCommentToCommentItem),
+	};
 };
 
 export const createDogCommentAPI = async (
