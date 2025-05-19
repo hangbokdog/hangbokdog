@@ -31,7 +31,10 @@ export default function AnnouncementItem({
 				>
 					<div className="flex items-center gap-2">
 						<Avatar className="w-6 h-6">
-							<AvatarImage src={announcement.authorImage} />
+							<AvatarImage
+								src={announcement.authorImage}
+								className="object-cover"
+							/>
 							<AvatarFallback className="bg-superLightBlueGray">
 								{announcement.authorName}
 							</AvatarFallback>

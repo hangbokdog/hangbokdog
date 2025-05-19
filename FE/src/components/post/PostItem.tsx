@@ -56,7 +56,10 @@ export default function PostItem({
 											: "w-6 h-6 ring-2 ring-offset-1 ring-blue-50"
 									}
 								>
-									<AvatarImage src={post.memberImage} />
+									<AvatarImage
+										src={post.memberImage}
+										className="object-cover"
+									/>
 									<AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white">
 										{post.memberNickName?.charAt(0) || "?"}
 									</AvatarFallback>
