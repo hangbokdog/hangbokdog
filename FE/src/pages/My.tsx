@@ -1,6 +1,6 @@
 import MileageCard from "@/components/my/MileageCard";
+import MemberStatisticsCard from "@/components/my/MemberStatisticsCard";
 import Profile from "@/components/my/Profile";
-import Order from "@/components/my/Order";
 import ProtectDogPanel from "@/components/my/ProtectDogPanel";
 import { logoutAPI } from "@/api/auth";
 import useAuthStore from "@/lib/store/authStore";
@@ -10,7 +10,6 @@ import { MdLogout } from "react-icons/md";
 import { BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import AdoptionPanel from "@/components/my/AdoptionPanel";
 
 function handleEdit() {
 	//프로필 수정 로직
@@ -75,17 +74,17 @@ export default function My() {
 
 			<div className="grid grid-cols-2 justify-center gap-3 mx-2.5">
 				<div className="h-[165px]">
-					<MileageCard />
+					<MemberStatisticsCard />
 				</div>
 				<div className="h-[165px]">
 					<MileageCard />
 				</div>
 			</div>
-			<div>
+			{/* <div>
 				<Order />
-			</div>
+			</div> */}
 			<div>
-				<AdoptionPanel />
+				{/* <AdoptionPanel /> */}
 				<ProtectDogPanel />
 			</div>
 			<button
