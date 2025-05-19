@@ -1,82 +1,25 @@
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import MyDogCard from "@/components/my/MyDogCard";
-import dog1 from "@/assets/images/dog1.png";
-import dog2 from "@/assets/images/dog2.png";
-import dog3 from "@/assets/images/dog3.png";
-import dog4 from "@/assets/images/dog1.png"; // Reusing existing dog images
-import dog5 from "@/assets/images/dog2.png";
-import dog6 from "@/assets/images/dog3.png";
-
-// Dummy data for each category
-const protectedDogs = [
-	{
-		id: 1,
-		name: "모리",
-		age: "7개월",
-		imageUrl: dog1,
-		gender: "MALE",
-		status: "APPROVED",
-		startDate: "2025.02.01",
-	},
-	{
-		id: 2,
-		name: "찬희",
-		age: "6살",
-		imageUrl: dog2,
-		gender: "FEMALE",
-		status: "CANCELLED",
-		startDate: "2025.02.02",
-		endDate: "2025.02.28",
-	},
-	{
-		id: 3,
-		name: "백돌",
-		age: "2개월",
-		imageUrl: dog3,
-		gender: "FEMALE",
-		status: "PENDING",
-		startDate: "2025.02.02",
-	},
-];
-
-const likedDogs = [
-	{
-		id: 4,
-		name: "초코",
-		age: "3살",
-		imageUrl: dog4,
-		gender: "MALE",
-		status: "APPROVED",
-		startDate: "2025.03.01",
-	},
-	{
-		id: 5,
-		name: "까망이",
-		age: "2살",
-		imageUrl: dog5,
-		gender: "MALE",
-		status: "APPROVED",
-		startDate: "2025.03.05",
-	},
-];
-
-const adoptedDogs = [
-	{
-		id: 6,
-		name: "달리",
-		age: "1살",
-		imageUrl: dog6,
-		gender: "FEMALE",
-		status: "APPROVED",
-		startDate: "2024.01.15",
-	},
-];
+import {
+	useInfiniteQuery,
+	useQuery,
+	useQueryClient,
+} from "@tanstack/react-query";
+import { type DogSearchResponse, fetchMyFavoriteDogsAPI } from "@/api/dog";
+import useCenterStore from "@/lib/store/centerStore";
+import { Loader2 } from "lucide-react";
+import type { PageInfo } from "@/api/http-commons";
+import { calAge } from "@/utils/calAge";
+import { fetchMyFostersAPI } from "@/api/foster";
+import { fetchMyAdoptionsAPI } from "@/api/adoption";
 
 type DogTabType = "liked" | "protected" | "adopted";
 
 export default function DogsTabContent() {
-	const [activeTab, setActiveTab] = useState<DogTabType>("protected");
+	const [activeTab, setActiveTab] = useState<DogTabType>("liked");
+	const { selectedCenter } = useCenterStore();
+	const queryClient = useQueryClient();
 
 	const renderEmptyState = (type: DogTabType) => {
 		const messages = {
@@ -96,38 +39,131 @@ export default function DogsTabContent() {
 		);
 	};
 
+	const {
+		data: likedDogs,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+		isLoading,
+		error,
+	} = useInfiniteQuery<PageInfo<DogSearchResponse>>({
+		queryKey: ["liked-dogs", selectedCenter?.centerId],
+		queryFn: ({ pageParam }) =>
+			fetchMyFavoriteDogsAPI(
+				Number(selectedCenter?.centerId),
+				pageParam as string | undefined,
+			),
+		getNextPageParam: (lastPage) =>
+			lastPage.hasNext ? lastPage.pageToken : undefined,
+		initialPageParam: undefined,
+		enabled: activeTab === "liked" && !!selectedCenter?.centerId,
+	});
+
+	useEffect(() => {
+		return () => {
+			queryClient.invalidateQueries({
+				queryKey: ["liked-dogs", selectedCenter?.centerId],
+			});
+		};
+	}, [queryClient, selectedCenter?.centerId]);
+
+	// Flatten dogs data
+	const dogs = likedDogs?.pages.flatMap((page) => page.data) ?? [];
+
+	const { data: protectedDogs } = useQuery({
+		queryKey: ["protected-dogs", selectedCenter?.centerId],
+		queryFn: () => fetchMyFostersAPI(),
+		enabled: activeTab === "protected" && !!selectedCenter?.centerId,
+	});
+
+	const { data: adoptedDogs } = useQuery({
+		queryKey: ["adopted-dogs", selectedCenter?.centerId],
+		queryFn: () => fetchMyAdoptionsAPI(Number(selectedCenter?.centerId)),
+		enabled: activeTab === "adopted" && !!selectedCenter?.centerId,
+	});
+
+	// Handle scroll for infinite loading
+	const handleScroll = useCallback(
+		(e: React.UIEvent<HTMLDivElement>) => {
+			const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+			if (
+				scrollHeight - scrollTop <= clientHeight * 1.5 &&
+				!isFetchingNextPage &&
+				hasNextPage
+			) {
+				fetchNextPage();
+			}
+		},
+		[fetchNextPage, hasNextPage, isFetchingNextPage],
+	);
+
 	const renderDogsList = () => {
 		switch (activeTab) {
 			case "liked":
-				return likedDogs.length > 0 ? (
-					<div className="max-w-[400px] grid grid-rows-3 gap-2.5 pb-2.5">
-						{likedDogs.map((dog) => (
+				if (isLoading) {
+					return (
+						<div className="flex items-center justify-center h-40">
+							<Loader2 className="w-8 h-8 text-male animate-spin" />
+						</div>
+					);
+				}
+
+				if (error) {
+					return (
+						<div className="flex flex-col items-center justify-center h-40 text-gray-500">
+							<p>좋아요한 아이 목록을 불러오는데 실패했습니다.</p>
+							<button
+								type="button"
+								onClick={() => window.location.reload()}
+								className="mt-2 text-sm text-male hover:underline"
+							>
+								다시 시도
+							</button>
+						</div>
+					);
+				}
+
+				if (dogs.length === 0) {
+					return renderEmptyState("liked");
+				}
+
+				return (
+					<div
+						className="flex flex-col gap-3 p-4 max-h-[calc(100vh-200px)] overflow-y-auto"
+						onScroll={handleScroll}
+					>
+						{dogs.map((dog) => (
 							<MyDogCard
-								key={dog.id}
-								id={dog.id}
+								key={dog.dogId}
+								id={dog.dogId}
 								name={dog.name}
-								age={dog.age}
+								age={calAge(dog.ageMonth).toString()}
 								imageUrl={dog.imageUrl}
-								gender={dog.gender as "MALE" | "FEMALE"}
-								status={dog.status as "APPROVED"}
-								startDate={dog.startDate}
+								gender={dog.gender}
 							/>
 						))}
+						{isFetchingNextPage && (
+							<div className="col-span-2 flex justify-center py-4">
+								<Loader2 className="w-6 h-6 text-male animate-spin" />
+							</div>
+						)}
+						{!hasNextPage && dogs.length > 0 && (
+							<div className="col-span-2 text-center py-4 text-sm text-gray-500">
+								마지막 아이입니다
+							</div>
+						)}
 					</div>
-				) : (
-					renderEmptyState("liked")
 				);
+
 			case "protected":
-				return protectedDogs.length > 0 ? (
+				return (protectedDogs?.length ?? 0) > 0 ? (
 					<div className="max-w-[400px] grid grid-rows-3 gap-2.5 pb-2.5">
-						{protectedDogs.map((dog) => (
+						{protectedDogs?.map((dog) => (
 							<MyDogCard
-								key={dog.id}
-								id={dog.id}
-								name={dog.name}
-								age={dog.age}
-								imageUrl={dog.imageUrl}
-								gender={dog.gender as "MALE" | "FEMALE"}
+								key={dog.dogId}
+								id={dog.dogId}
+								name={dog.dogName}
+								imageUrl={dog.profileImage}
 								status={
 									dog.status as
 										| "PENDING"
@@ -136,25 +172,30 @@ export default function DogsTabContent() {
 										| "CANCELLED"
 								}
 								startDate={dog.startDate}
-								endDate={dog.endDate}
 							/>
 						))}
 					</div>
 				) : (
 					renderEmptyState("protected")
 				);
+
 			case "adopted":
-				return adoptedDogs.length > 0 ? (
+				return (adoptedDogs?.length ?? 0) > 0 ? (
 					<div className="max-w-[400px] grid grid-rows-3 gap-2.5 pb-2.5">
-						{adoptedDogs.map((dog) => (
+						{adoptedDogs?.map((dog) => (
 							<MyDogCard
-								key={dog.id}
-								id={dog.id}
-								name={dog.name}
-								age={dog.age}
-								imageUrl={dog.imageUrl}
-								gender={dog.gender as "MALE" | "FEMALE"}
-								status={dog.status as "APPROVED"}
+								key={dog.dogId}
+								id={dog.dogId}
+								name={dog.dogName}
+								imageUrl={dog.profileImage}
+								status={
+									dog.status as
+										| "APPLIED"
+										| "UNDER_REVIEW"
+										| "REJECTED"
+										| "ACCEPTED"
+										| "REJECTED"
+								}
 								startDate={dog.startDate}
 							/>
 						))}
@@ -162,6 +203,7 @@ export default function DogsTabContent() {
 				) : (
 					renderEmptyState("adopted")
 				);
+
 			default:
 				return null;
 		}
@@ -170,14 +212,14 @@ export default function DogsTabContent() {
 	return (
 		<div>
 			{/* Inner Dog Tabs */}
-			<div className="flex border-b mb-2.5">
+			<div className="flex gap-2 mb-4 px-2">
 				<button
 					type="button"
 					className={cn(
-						"flex-1 text-sm py-2 font-medium",
+						"flex-1 text-sm py-2.5 font-medium rounded-full transition-colors",
 						activeTab === "liked"
-							? "text-male border-b-2 border-male"
-							: "text-gray-500",
+							? "bg-male text-white shadow-sm"
+							: "bg-gray-100 text-gray-600 hover:bg-gray-200",
 					)}
 					onClick={() => setActiveTab("liked")}
 				>
@@ -186,10 +228,10 @@ export default function DogsTabContent() {
 				<button
 					type="button"
 					className={cn(
-						"flex-1 text-sm py-2 font-medium",
+						"flex-1 text-sm py-2.5 font-medium rounded-full transition-colors",
 						activeTab === "protected"
-							? "text-male border-b-2 border-male"
-							: "text-gray-500",
+							? "bg-male text-white shadow-sm"
+							: "bg-gray-100 text-gray-600 hover:bg-gray-200",
 					)}
 					onClick={() => setActiveTab("protected")}
 				>
@@ -198,10 +240,10 @@ export default function DogsTabContent() {
 				<button
 					type="button"
 					className={cn(
-						"flex-1 text-sm py-2 font-medium",
+						"flex-1 text-sm py-2.5 font-medium rounded-full transition-colors",
 						activeTab === "adopted"
-							? "text-male border-b-2 border-male"
-							: "text-gray-500",
+							? "bg-male text-white shadow-sm"
+							: "bg-gray-100 text-gray-600 hover:bg-gray-200",
 					)}
 					onClick={() => setActiveTab("adopted")}
 				>

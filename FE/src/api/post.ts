@@ -72,6 +72,8 @@ export interface PostSummaryResponse {
 	isLiked: boolean;
 	likeCount: number;
 	commentCount: number;
+	postTypeId: number;
+	postTypeName: string;
 }
 
 export const fetchPostsAPI = async (
@@ -289,5 +291,23 @@ export const toggleCommentLikeAPI = async (
 	const response = await localAxios.post(
 		`/posts/${postId}/comments/${commentId}/like`,
 	);
+	return response.data;
+};
+
+export const fetchMyPostsAPI = async (
+	centerId: number,
+): Promise<PostSummaryResponse[]> => {
+	const response = await localAxios.get("/posts/my", {
+		params: { centerId },
+	});
+	return response.data;
+};
+
+export const fetchMyLikedPostsAPI = async (
+	centerId: number,
+): Promise<PostSummaryResponse[]> => {
+	const response = await localAxios.get("/posts/my/liked", {
+		params: { centerId },
+	});
 	return response.data;
 };

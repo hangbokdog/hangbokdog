@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar, MessageCircle, Heart } from "lucide-react";
+import { fetchMyLikedPostsAPI, fetchMyPostsAPI } from "@/api/post";
+import useCenterStore from "@/lib/store/centerStore";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
 // Type for the different post categories
 type PostTabType = "written" | "commented" | "liked";
@@ -24,7 +28,10 @@ const PostItem = ({
 	likeCount,
 }: PostItemProps) => {
 	return (
-		<div className="flex flex-col p-3 border rounded-lg mb-2 hover:shadow-sm transition-shadow">
+		<Link
+			to={`/posts/${id}`}
+			className="flex flex-col p-3 border rounded-lg mb-2 hover:shadow-sm transition-shadow"
+		>
 			<div className="flex items-center justify-between mb-1">
 				<span className="text-xs text-blue-600">{boardName}</span>
 				<div className="flex items-center text-xs text-gray-500">
@@ -47,74 +54,13 @@ const PostItem = ({
 					</div>
 				)}
 			</div>
-		</div>
+		</Link>
 	);
 };
 
 export default function PostsTabContent() {
 	const [activeTab, setActiveTab] = useState<PostTabType>("written");
-
-	// Dummy data
-	const writtenPosts: PostItemProps[] = [
-		{
-			id: 1,
-			title: "강아지 산책시키기 좋은 장소 추천해주세요",
-			date: "2024.06.15",
-			boardName: "자유게시판",
-			commentCount: 5,
-			likeCount: 3,
-		},
-		{
-			id: 2,
-			title: "강아지 사료 추천 부탁드립니다",
-			date: "2024.05.20",
-			boardName: "질문게시판",
-			commentCount: 10,
-			likeCount: 2,
-		},
-	];
-
-	const commentedPosts: PostItemProps[] = [
-		{
-			id: 3,
-			title: "강아지 백신 접종 후기",
-			date: "2024.06.10",
-			boardName: "후기게시판",
-			commentCount: 8,
-		},
-		{
-			id: 4,
-			title: "강아지가 아파요ㅜㅜ",
-			date: "2024.06.05",
-			boardName: "질문게시판",
-			commentCount: 15,
-		},
-		{
-			id: 5,
-			title: "강아지 목욕 방법",
-			date: "2024.05.28",
-			boardName: "정보게시판",
-			commentCount: 3,
-		},
-	];
-
-	const likedPosts: PostItemProps[] = [
-		{
-			id: 6,
-			title: "강아지 훈련 방법 총정리",
-			date: "2024.06.18",
-			boardName: "정보게시판",
-			likeCount: 20,
-		},
-		{
-			id: 7,
-			title: "강아지 집 꾸미기",
-			date: "2024.05.25",
-			boardName: "자유게시판",
-			likeCount: 8,
-		},
-	];
-
+	const { selectedCenter } = useCenterStore();
 	const renderEmptyState = (type: PostTabType) => {
 		const messages = {
 			written:
@@ -133,33 +79,49 @@ export default function PostsTabContent() {
 		);
 	};
 
+	const { data: writtenPosts } = useQuery({
+		queryKey: ["writtenPosts"],
+		queryFn: () => fetchMyPostsAPI(Number(selectedCenter?.centerId)),
+	});
+
+	const { data: likedPosts } = useQuery({
+		queryKey: ["likedPosts"],
+		queryFn: () => fetchMyLikedPostsAPI(Number(selectedCenter?.centerId)),
+	});
+
 	const renderPostList = () => {
 		switch (activeTab) {
 			case "written":
-				return writtenPosts.length > 0 ? (
+				return (writtenPosts?.length ?? 0) > 0 ? (
 					<div className="space-y-2">
-						{writtenPosts.map((post) => (
-							<PostItem key={post.id} {...post} />
+						{writtenPosts?.map((post) => (
+							<PostItem
+								key={post.postId}
+								id={post.postId}
+								title={post.title}
+								date={post.createdAt}
+								boardName={post.postTypeName}
+								commentCount={post.commentCount}
+								likeCount={post.likeCount}
+							/>
 						))}
 					</div>
 				) : (
 					renderEmptyState("written")
 				);
-			case "commented":
-				return commentedPosts.length > 0 ? (
-					<div className="space-y-2">
-						{commentedPosts.map((post) => (
-							<PostItem key={post.id} {...post} />
-						))}
-					</div>
-				) : (
-					renderEmptyState("commented")
-				);
 			case "liked":
-				return likedPosts.length > 0 ? (
+				return (likedPosts?.length ?? 0) > 0 ? (
 					<div className="space-y-2">
-						{likedPosts.map((post) => (
-							<PostItem key={post.id} {...post} />
+						{likedPosts?.map((post) => (
+							<PostItem
+								key={post.postId}
+								id={post.postId}
+								title={post.title}
+								date={post.createdAt}
+								boardName={post.postTypeName}
+								commentCount={post.commentCount}
+								likeCount={post.likeCount}
+							/>
 						))}
 					</div>
 				) : (
@@ -173,14 +135,14 @@ export default function PostsTabContent() {
 	return (
 		<div>
 			{/* Post Tabs */}
-			<div className="flex border-b mb-2.5">
+			<div className="flex gap-2 mb-4 px-2">
 				<button
 					type="button"
 					className={cn(
-						"flex-1 text-sm py-2 font-medium",
+						"flex-1 text-sm py-2.5 font-medium rounded-full transition-colors",
 						activeTab === "written"
-							? "text-male border-b-2 border-male"
-							: "text-gray-500",
+							? "bg-male text-white shadow-sm"
+							: "bg-gray-100 text-gray-600 hover:bg-gray-200",
 					)}
 					onClick={() => setActiveTab("written")}
 				>
@@ -189,10 +151,10 @@ export default function PostsTabContent() {
 				<button
 					type="button"
 					className={cn(
-						"flex-1 text-sm py-2 font-medium",
+						"flex-1 text-sm py-2.5 font-medium rounded-full transition-colors",
 						activeTab === "liked"
-							? "text-male border-b-2 border-male"
-							: "text-gray-500",
+							? "bg-male text-white shadow-sm"
+							: "bg-gray-100 text-gray-600 hover:bg-gray-200",
 					)}
 					onClick={() => setActiveTab("liked")}
 				>

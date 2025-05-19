@@ -3,6 +3,7 @@ import type {
 	Volunteer,
 	VolunteerApplicantsResponse,
 	SlotApplicant,
+	VolunteerApplicationStatus,
 } from "@/types/volunteer";
 import localAxios from "./http-commons";
 
@@ -369,5 +370,28 @@ export const patchVolunteerAPI = async ({
 			},
 		},
 	);
+	return response.data;
+};
+
+export interface MemberApplicationInfo {
+	volunteerEventId: number;
+	date: string;
+	title: string;
+	status: VolunteerApplicationStatus;
+}
+
+export interface VolunteerApplicationResponse {
+	memberApplicationInfo: MemberApplicationInfo[];
+	count: number;
+}
+
+export const fetchAllMyVoluteersAPI = async (
+	status: VolunteerApplicationStatus,
+): Promise<VolunteerApplicationResponse> => {
+	const response = await localAxios.get("/volunteers/myApplications", {
+		params: {
+			status,
+		},
+	});
 	return response.data;
 };

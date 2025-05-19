@@ -152,3 +152,14 @@ export interface SlotApplicant {
 	email: string;
 	profileImage: string;
 }
+
+export const VolunteerApplicationStatus = {
+	PENDING: "PENDING",
+	APPROVED: "APPROVED",
+	REJECTED: "REJECTED",
+	NONE: "NONE",
+	COMPLETED: "COMPLETED",
+} as const;
+
+export type VolunteerApplicationStatus =
+	(typeof VolunteerApplicationStatus)[keyof typeof VolunteerApplicationStatus];

@@ -50,7 +50,7 @@ export default function My() {
 			<Profile onEdit={handleEdit} />
 
 			{selectedCenter && (
-				<div className="mx-2.5 mb-2">
+				<div className="mx-2.5 mb-2 flex flex-col gap-4">
 					<div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-custom-xs">
 						<div className="flex items-center">
 							<BuildingIcon className="w-4 h-4 text-gray-500 mr-2" />
@@ -69,20 +69,20 @@ export default function My() {
 							변경하기
 						</button>
 					</div>
+					<button
+						type="button"
+						onClick={handleLogout}
+						className="flex w-full items-center justify-center gap-2 p-4 bg-superLightGray rounded-lg text-grayText hover:bg-red hover:text-white transition-all duration-300 "
+						title="로그아웃"
+					>
+						<MdLogout className="size-5" />
+						<span className="text-sm font-medium">로그아웃</span>
+					</button>
 				</div>
 			)}
 			<div>
 				<MyActivitiesPanel />
 			</div>
-			<button
-				type="button"
-				onClick={handleLogout}
-				className="flex items-center justify-center gap-2 m-2.5 p-4 bg-superLightGray rounded-lg text-grayText hover:bg-red hover:text-white transition-all duration-300 "
-				title="로그아웃"
-			>
-				<MdLogout className="size-5" />
-				<span className="text-sm font-medium">로그아웃</span>
-			</button>
 		</div>
 	);
 }

@@ -142,3 +142,19 @@ export const adoptionSearchAPI = async (
 	});
 	return response.data;
 };
+
+export interface MyAdoptionResponse {
+	dogId: number;
+	dogName: string;
+	profileImage: string;
+	startDate: string;
+	status: AdoptionStatus;
+}
+export const fetchMyAdoptionsAPI = async (
+	centerId: number,
+): Promise<MyAdoptionResponse[]> => {
+	const response = await localAxios.get("/adoptions/my", {
+		params: { centerId },
+	});
+	return response.data;
+};
