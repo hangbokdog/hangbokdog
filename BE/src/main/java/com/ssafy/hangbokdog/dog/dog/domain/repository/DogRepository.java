@@ -178,4 +178,16 @@ public class DogRepository {
 		var data = dogJpaRepository.getFavoriteDogs(centerId, memberId, pageToken, FAVORITE_PAGE_SIZE);
 		return PageInfo.of(data, FAVORITE_PAGE_SIZE, DogSummaryInfo::dogId);
 	}
+
+	public int getLastMonthDogCount(Long centerId, LocalDateTime lastMonthEnd) {
+		return dogJpaRepository.getLastMonthDogCount(centerId, lastMonthEnd);
+	}
+
+	public int getHospitalDogCount(Long centerId) {
+		return dogJpaRepository.getHospitalDogCount(centerId);
+	}
+
+	public int getProtectedDogCount(Long centerId) {
+		return dogJpaRepository.getProtectedDogCount(centerId);
+	}
 }

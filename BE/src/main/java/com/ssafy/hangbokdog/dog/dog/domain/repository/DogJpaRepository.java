@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.dog.dog.domain.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,28 @@ public interface DogJpaRepository extends JpaRepository<Dog, Long>, DogJpaReposi
 			WHERE d.locationId IN :locationIds AND d.isStar = false AND d.status = 'PROTECTED'
 		""")
 	int countByLocationIdsIn(List<Long> locationIds);
+
+	@Query("""
+			SELECT COUNT(d.id)
+			FROM Dog d
+			WHERE d.centerId = :centerId
+					AND d.createdAt <= :lastMonthEnd
+					AND d.isStar = false
+					AND d.status = 'PROTECTED'
+		""")
+	int getLastMonthDogCount(Long centerId, LocalDateTime lastMonthEnd);
+
+	@Query("""
+			SELECT COUNT(d.id)
+			FROM Dog d
+			WHERE d.centerId = :centerId AND d.isStar = false AND d.status = 'HOSPITAL'
+		""")
+	int getHospitalDogCount(Long centerId);
+
+	@Query("""
+			SELECT COUNT(d.id)
+			FROM Dog d
+			WHERE d.centerId = :centerId AND d.isStar = false AND d.status = 'PROTECTED'
+		""")
+	int getProtectedDogCount(Long centerId);
 }

@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.center.center.presentation;
 import java.net.URI;
 import java.util.List;
 
+import org.geolatte.geom.M;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.center.application.CenterService;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
 import com.ssafy.hangbokdog.center.center.dto.request.CenterCreateRequest;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterInformationResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
@@ -121,5 +123,13 @@ public class CenterController {
 	@GetMapping("/main")
 	public ResponseEntity<Long> getMain(@AuthMember Member member) {
 		return ResponseEntity.ok().body(centerService.getMainCenter(member.getId()));
+	}
+
+	@GetMapping("/{centerId}")
+	public ResponseEntity<CenterInformationResponse> getCenterInformation(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(centerService.getCenterInformation(member.getId(), centerId));
 	}
 }
