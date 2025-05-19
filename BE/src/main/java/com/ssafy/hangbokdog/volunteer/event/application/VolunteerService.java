@@ -490,6 +490,7 @@ public class VolunteerService {
                 .toList();
     }
 
+    @Transactional
     public void completeVolunteers() {
         volunteerApplicationRepository.updatePassedApplicationToComplete();
     }
