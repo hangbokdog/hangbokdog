@@ -261,7 +261,7 @@ public class FosterService {
 		return fosterRepository.getFosterApplicationsByDogId(dogId, name);
 	}
 
-	private CenterMember checkCenterMember(Long centerId, Long memberId) {
+	private CenterMember checkCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 	}
