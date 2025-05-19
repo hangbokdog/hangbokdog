@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.post.comment.domain.repository;
 
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 import static com.ssafy.hangbokdog.post.comment.domain.QComment.comment;
+import static com.ssafy.hangbokdog.post.post.domain.QPost.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
+import com.ssafy.hangbokdog.post.comment.dto.CommentCountInfo;
 import com.ssafy.hangbokdog.post.comment.dto.CommentInfo;
 import com.ssafy.hangbokdog.post.comment.dto.CommentLikeInfo;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
@@ -72,5 +74,19 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                 .leftJoin(member).on(member.id.eq(comment.authorId))
                 .where(comment.id.eq(commentId))
                 .fetchOne();
+    }
+
+    @Override
+    public List<CommentCountInfo> findCommentCountIn(List<Long> postIds) {
+        return queryFactory
+            .select(Projections.constructor(
+                CommentCountInfo.class,
+                comment.postId,
+                comment.id.count().intValue()
+            ))
+            .from(comment)
+            .where(comment.postId.in(postIds))
+            .groupBy(comment.postId)
+            .fetch();
     }
 }

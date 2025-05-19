@@ -17,6 +17,8 @@ import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.post.comment.domain.repository.CommentRepository;
+import com.ssafy.hangbokdog.post.comment.dto.CommentCountInfo;
 import com.ssafy.hangbokdog.post.post.domain.Post;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 import com.ssafy.hangbokdog.post.post.dto.PostLikeCount;
@@ -35,6 +37,7 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final CenterMemberRepository centerMemberRepository;
+    private final CommentRepository commentRepository;
 
     public Long create(
             Member member,
@@ -73,7 +76,15 @@ public class PostService {
                 .map(PostSummaryInfo::postId)
                 .collect(Collectors.toList());
 
-        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds).stream()
+        Map<Long, Integer> postCommentCounts = commentRepository.findCommentCountIn(postIds)
+            .stream()
+            .collect(Collectors.toMap(
+                CommentCountInfo::postId,
+                CommentCountInfo::count
+            ));
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds)
+            .stream()
                 .collect(Collectors.toMap(
                         PostLikeCount::postId,
                         PostLikeCount::likeCount
@@ -86,6 +97,7 @@ public class PostService {
         for (PostSummaryInfo info : data) {
             Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
             Boolean liked = likedPostIds.contains(info.postId());
+            Integer commentCount = postCommentCounts.getOrDefault(info.postId(), 0);
 
             PostSummaryResponse response = new PostSummaryResponse(
                     info.memberId(),
@@ -95,7 +107,8 @@ public class PostService {
                     info.title(),
                     info.createdAt(),
                     liked,
-                    likeCount
+                    likeCount,
+                    commentCount
             );
             responses.add(response);
         }
@@ -184,6 +197,13 @@ public class PostService {
                         PostLikeCount::likeCount
                 ));
 
+        Map<Long, Integer> postCommentCounts = commentRepository.findCommentCountIn(postIds)
+            .stream()
+            .collect(Collectors.toMap(
+                CommentCountInfo::postId,
+                CommentCountInfo::count
+            ));
+
         List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId);
         Set<Long> likedPostIds = new HashSet<>(likedPosts);
 
@@ -191,6 +211,7 @@ public class PostService {
         for (PostSummaryInfo info : infos) {
             Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
             Boolean liked = likedPostIds.contains(info.postId());
+            Integer commentCount = postCommentCounts.getOrDefault(info.postId(), 0);
 
             PostSummaryResponse response = new PostSummaryResponse(
                     info.memberId(),
@@ -200,7 +221,8 @@ public class PostService {
                     info.title(),
                     info.createdAt(),
                     liked,
-                    likeCount
+                    likeCount,
+                    commentCount
             );
             responses.add(response);
         }
