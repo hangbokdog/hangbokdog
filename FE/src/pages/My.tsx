@@ -1,7 +1,7 @@
 import MileageCard from "@/components/my/MileageCard";
 import MemberStatisticsCard from "@/components/my/MemberStatisticsCard";
 import Profile from "@/components/my/Profile";
-import ProtectDogPanel from "@/components/my/ProtectDogPanel";
+import MyActivitiesPanel from "@/components/my/MyActivitiesPanel";
 import { logoutAPI } from "@/api/auth";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
@@ -46,12 +46,12 @@ export default function My() {
 	};
 
 	return (
-		<div className="flex flex-col mt-2.5">
+		<div className="flex flex-col gap-4 mt-2.5">
 			<Profile onEdit={handleEdit} />
 
 			{selectedCenter && (
-				<div className="mx-2.5 mb-3">
-					<div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+				<div className="mx-2.5 mb-2">
+					<div className="flex items-center justify-between p-3 bg-white rounded-lg shadow-custom-xs">
 						<div className="flex items-center">
 							<BuildingIcon className="w-4 h-4 text-gray-500 mr-2" />
 							<div>
@@ -71,21 +71,8 @@ export default function My() {
 					</div>
 				</div>
 			)}
-
-			<div className="grid grid-cols-2 justify-center gap-3 mx-2.5">
-				<div className="h-[165px]">
-					<MemberStatisticsCard />
-				</div>
-				<div className="h-[165px]">
-					<MileageCard />
-				</div>
-			</div>
-			{/* <div>
-				<Order />
-			</div> */}
 			<div>
-				{/* <AdoptionPanel /> */}
-				<ProtectDogPanel />
+				<MyActivitiesPanel />
 			</div>
 			<button
 				type="button"
