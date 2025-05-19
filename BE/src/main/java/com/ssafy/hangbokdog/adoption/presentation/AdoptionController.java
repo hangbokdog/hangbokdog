@@ -20,6 +20,7 @@ import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionCreateResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionDogCountResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionSearchResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.MyAdoptionResponse;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
@@ -126,6 +127,17 @@ public class AdoptionController {
 			isNeutered,
 			isStar,
 			pageToken
+		));
+	}
+
+	@GetMapping("/my")
+	public ResponseEntity<List<MyAdoptionResponse>> getMyAdoptions(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(adoptionService.getMyAdoptions(
+			member.getId(),
+			centerId
 		));
 	}
 }
