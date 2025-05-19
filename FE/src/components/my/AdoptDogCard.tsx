@@ -1,15 +1,13 @@
 import { FaChevronRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import StatusTag from "@/components/my/StatusTag";
-import GenderTag from "@/components/my/GenderTag";
+import MyAdoptionTag from "@/components/my/MyAdoptionTag";
 
 export interface AdoptDogCardProps {
 	id: number;
 	name: string;
 	age: string;
 	imageUrl: string;
-	gender: "MALE" | "FEMALE";
-	status: "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED";
+	status: "APPLIED" | "ACCEPTED" | "REJECTED" | "UNDER_REVIEW";
 	startDate: string;
 	endDate?: string;
 }
@@ -18,7 +16,6 @@ export default function AdoptDogCard({
 	id,
 	name,
 	age,
-	gender,
 	status,
 	imageUrl,
 	startDate,
@@ -41,8 +38,7 @@ export default function AdoptDogCard({
 			{/* 반려동물 정보 */}
 			<div className="flex-1">
 				<div className="relative flex gap-2 mb-2">
-					<GenderTag gender={gender} />
-					{/* <StatusTag status={status} /> */}
+					<MyAdoptionTag status={status} />
 				</div>
 				<div className="flex items-center mb-1">
 					<span className="bg-orange-100 text-orange-700 p-1 rounded-full mr-2">

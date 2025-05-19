@@ -20,7 +20,7 @@ export default function VolunteerTag({
 
 	return (
 		<span
-			className={`px-1.5 text-xs text-white rounded-full ${bgColor} ${className}`}
+			className={`px-1.5 text-xs text-white rounded-full whitespace-nowrap ${bgColor} ${className}`}
 		>
 			{text}
 		</span>

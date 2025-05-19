@@ -162,3 +162,27 @@ export const registerAdoptionAPI = async (
 	});
 	return response.data;
 };
+
+export enum MyAdoptionStatus {
+	APPLIED = "APPLIED",
+	ACCEPTED = "ACCEPTED",
+	REJECTED = "REJECTED",
+	UNDER_REVIEW = "UNDER_REVIEW",
+}
+
+export interface MyAdoptionResponse {
+	dogId: number;
+	dogName: string;
+	profileImage: string;
+	startDate: string;
+	status: MyAdoptionStatus;
+}
+
+export const fetchMyAdoptionsAPI = async (
+	centerId: number,
+): Promise<MyAdoptionResponse[]> => {
+	const response = await localAxios.get("/adoptions/my", {
+		params: { centerId },
+	});
+	return response.data;
+};

@@ -19,7 +19,7 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 	const activeTab = tabs.find((tab) => tab.key === activeTabKey);
 
 	return (
-		<div className="flex flex-col">
+		<div className="flex flex-col mx-2.5">
 			<div className="flex flex-1 flex-col items-center p-3 gap-3 rounded-xl bg-white shadow-[0_0_10px_0_rgba(50,100,200,0.1)] border border-gray-100">
 				<div className="relative flex w-full justify-around mb-3">
 					{tabs.map((tab) => (

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ProtectDogCard from "@/components/my/AdoptDogCard";
-import type { ProtectDogCardProps } from "@/components/my/AdoptDogCard";
+import type { AdoptDogCardProps } from "@/components/my/AdoptDogCard";
 import dog1 from "@/assets/images/dog1.png";
 import dog2 from "@/assets/images/dog2.png";
 import dog3 from "@/assets/images/dog3.png";
@@ -8,14 +8,13 @@ import MedicalInfo from "@/components/manager/dogs/MedicalInfo";
 import DrugsCalendar from "@/components/manager/dogs/DrugsCalendar";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-const dummyDogs: ProtectDogCardProps[] = [
+const dummyDogs: AdoptDogCardProps[] = [
 	{
 		id: 1,
 		name: "모리",
 		age: "7개월",
 		imageUrl: dog1,
-		gender: "MALE",
-		status: "APPROVED",
+		status: "APPLIED",
 		startDate: "2025.02.01",
 	},
 	{
@@ -23,8 +22,7 @@ const dummyDogs: ProtectDogCardProps[] = [
 		name: "찬희",
 		age: "6살",
 		imageUrl: dog2,
-		gender: "FEMALE",
-		status: "CANCELLED",
+		status: "APPLIED",
 		startDate: "2025.02.02",
 		endDate: "2025.02.28",
 	},
@@ -33,8 +31,7 @@ const dummyDogs: ProtectDogCardProps[] = [
 		name: "백돌",
 		age: "2개월",
 		imageUrl: dog3,
-		gender: "FEMALE",
-		status: "PENDING",
+		status: "APPLIED",
 		startDate: "2025.02.02",
 	},
 ];
