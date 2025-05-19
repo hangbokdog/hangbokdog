@@ -6,10 +6,14 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.foster.domain.Foster;
 import com.ssafy.hangbokdog.foster.domain.FosterHistory;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -67,5 +71,13 @@ public class FosterRepository {
 
 	public int getLastMonthFosterCount(Long centerId, LocalDateTime lastMonthEnd) {
 		return fosterJpaRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
+	}
+
+	public List<FosterApplicationResponse> getFosterApplicationsByCenterId(Long centerId) {
+		return fosterJpaRepository.getFosterApplicationsByCenterId(centerId);
+	}
+
+	public List<FosterApplicationByDogResponse> getFosterApplicationsByDogId(Long dogId, String name) {
+		return fosterJpaRepository.getFosterApplicationsByDogId(dogId, name);
 	}
 }

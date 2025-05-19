@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -25,6 +27,8 @@ import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.foster.dto.FosterDiaryCheckQuery;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
@@ -229,6 +233,32 @@ public class FosterService {
 		}
 
 		return fosterRepository.getFostersByDogId(dogId);
+	}
+
+	public List<FosterApplicationResponse> getFosterApplicationsByCenterId(Long memberId, Long centerId) {
+
+		CenterMember centerMember = checkCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return fosterRepository.getFosterApplicationsByCenterId(centerId);
+	}
+
+	public List<FosterApplicationByDogResponse> getFosterApplicationsByDogId(
+		Long memberId,
+		Long centerId,
+		Long dogId,
+		String name
+	) {
+		CenterMember centerMember = checkCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return fosterRepository.getFosterApplicationsByDogId(dogId, name);
 	}
 
 	private CenterMember checkCenterMember(Long centerId, Long memberId) {
