@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
+import com.ssafy.hangbokdog.post.comment.dto.CommentInfo;
+import com.ssafy.hangbokdog.post.comment.dto.CommentLikeInfo;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -22,11 +24,10 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<CommentResponse> findAllByPostId(Long postId, Long loginId) {
+    public List<CommentInfo> findAllByPostId(Long postId, Long loginId) {
         return queryFactory
                 .select(Projections.constructor(
-                        CommentResponse.class,
-                        // 1) author 정보
+                        CommentInfo.class,
                         Projections.constructor(
                                 MemberInfo.class,
                                 member.id,
@@ -34,9 +35,7 @@ public class CommentQueryRepositoryImpl implements CommentQueryRepository {
                                 member.grade.stringValue(),
                                 member.profileImage
                         ),
-                        // 2) isAuthor 계산
                         comment.authorId.eq(loginId),
-                        // 3) CommentResponse 나머지 필드 순서대로
                         comment.id,
                         comment.parentId,
                         comment.content,

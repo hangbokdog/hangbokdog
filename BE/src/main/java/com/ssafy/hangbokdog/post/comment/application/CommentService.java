@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.post.comment.application;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.post.comment.domain.Comment;
 import com.ssafy.hangbokdog.post.comment.domain.repository.CommentRepository;
+import com.ssafy.hangbokdog.post.comment.dto.CommentInfo;
+import com.ssafy.hangbokdog.post.comment.dto.CommentLikeInfo;
 import com.ssafy.hangbokdog.post.comment.dto.request.CommentCreateRequest;
 import com.ssafy.hangbokdog.post.comment.dto.request.CommentUpdateRequest;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
@@ -42,19 +45,44 @@ public class CommentService {
     }
 
     public List<CommentWithRepliesResponse> findAllByPostId(Long postId, Member member) {
-        // 1) 평탄화된 댓글 전체 조회
-        List<CommentResponse> flat = commentRepository.findAllByPostId(postId, member.getId());
+        List<CommentInfo> flat = commentRepository.findAllByPostId(postId, member.getId());
 
-        // 2) parentId != null 인 댓글만 그룹핑 (null key 처리 회피)
-        Map<Long, List<CommentResponse>> byParent = flat.stream()
-                .filter(cr -> cr.parentId() != null)
-                .collect(Collectors.groupingBy(CommentResponse::parentId));
+        Map<Long, Integer> commentLikes = commentRepository.findCommentLikeByPostId(postId).stream()
+            .collect(Collectors.toMap(
+                CommentLikeInfo::commentId,
+                CommentLikeInfo::count
+            ));
 
-        // 3) 최상위 댓글(root)만 뽑아서 재귀 빌드
-        return flat.stream()
-                .filter(cr -> cr.parentId() == null)
-                .map(root -> buildTree(root, byParent))
-                .collect(Collectors.toList());
+        List<Long> commentLikeIds = commentRepository.getCommentLikeIdsByMemberId(member.getId());
+
+        List<CommentResponse> newFlat = new ArrayList<>();
+
+        for (CommentInfo info : flat) {
+            boolean isLiked = commentLikeIds.contains(info.id());
+
+            CommentResponse response = new CommentResponse(
+                info.author(),
+                info.isAuthor(),
+                info.id(),
+                info.parentId(),
+                info.content(),
+                info.isDeleted(),
+                info.createdAt(),
+                isLiked,
+                commentLikes.getOrDefault(info.id(), 0)
+            );
+
+            newFlat.add(response);
+        }
+
+        Map<Long, List<CommentResponse>> byParent = newFlat.stream()
+            .filter(cr -> cr.parentId() != null)
+            .collect(Collectors.groupingBy(CommentResponse::parentId));
+
+        return newFlat.stream()
+            .filter(cr -> cr.parentId() == null)
+            .map(root -> buildTree(root, byParent))
+            .collect(Collectors.toList());
     }
 
     public CommentResponse findById(Long commentId, Member member) {
