@@ -126,4 +126,12 @@ public class PostController {
     ) {
         return ResponseEntity.ok().body(postService.getMyPosts(member.getId(), centerId));
     }
+
+    @GetMapping("/my/liked")
+    public ResponseEntity<List<PostSummaryResponse>> getMyLikedPosts(
+        @AuthMember Member member,
+        @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok().body(postService.getMyLikedPosts(member.getId(), centerId));
+    }
 }

@@ -23,4 +23,6 @@ public interface PostQueryRepository {
     List<PostSummaryInfo> getLatestPosts(Long centerId);
 
     List<PostSummaryInfo> findMyPosts(Long centerId, Long memberId);
+
+    List<PostSummaryInfo> findMyLikedPosts(Long memberId, Long centerId);
 }

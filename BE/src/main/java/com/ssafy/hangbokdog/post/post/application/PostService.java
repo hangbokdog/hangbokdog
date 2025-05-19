@@ -275,4 +275,47 @@ public class PostService {
 
         return responses;
     }
+
+    public List<PostSummaryResponse> getMyLikedPosts(Long memberId, Long centerId) {
+        List<PostSummaryInfo> infos = postRepository.findMyLikedPosts(centerId, memberId);
+
+        List<Long> postIds = infos.stream()
+            .map(PostSummaryInfo::postId)
+            .collect(Collectors.toList());
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds).stream()
+            .collect(Collectors.toMap(
+                PostLikeCount::postId,
+                PostLikeCount::likeCount
+            ));
+
+        Map<Long, Integer> postCommentCounts = commentRepository.findCommentCountIn(postIds)
+            .stream()
+            .collect(Collectors.toMap(
+                CommentCountInfo::postId,
+                CommentCountInfo::count
+            ));
+
+        List<PostSummaryResponse> responses = new ArrayList<>();
+        for (PostSummaryInfo info : infos) {
+            Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
+            Boolean liked = true;
+            Integer commentCount = postCommentCounts.getOrDefault(info.postId(), 0);
+
+            PostSummaryResponse response = new PostSummaryResponse(
+                info.memberId(),
+                info.memberNickName(),
+                info.memberImage(),
+                info.postId(),
+                info.title(),
+                info.createdAt(),
+                liked,
+                likeCount,
+                commentCount
+            );
+            responses.add(response);
+        }
+
+        return responses;
+    }
 }
