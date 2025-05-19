@@ -32,7 +32,7 @@ public class Announcement extends BaseEntity {
 	@Column(name = "title", nullable = false, length = 256)
 	private String title;
 
-	@Column(name = "content", nullable = false, length = 4096)
+	@Column(name = "content", nullable = false, length = 10000)
 	private String content;
 
 	@Column(name = "author_id", nullable = false)
