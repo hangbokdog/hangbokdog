@@ -277,7 +277,7 @@ public class PostService {
     }
 
     public List<PostSummaryResponse> getMyLikedPosts(Long memberId, Long centerId) {
-        List<PostSummaryInfo> infos = postRepository.findMyLikedPosts(centerId, memberId);
+        List<PostSummaryInfo> infos = postRepository.findMyLikedPosts(memberId, centerId);
 
         List<Long> postIds = infos.stream()
             .map(PostSummaryInfo::postId)
