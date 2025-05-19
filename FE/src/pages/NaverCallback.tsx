@@ -1,14 +1,21 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { NaverLoginAPI, getUserInfoAPI } from "@/api/auth";
+import {
+	NaverLoginAPI,
+	getMyMainCenterInfoAPI,
+	getUserInfoAPI,
+} from "@/api/auth";
 import type { OauthLoginResponse } from "@/types/auth";
 import useAuthStore from "@/lib/store/authStore";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
+import useCenterStore from "@/lib/store/centerStore";
+import type { MyCenter } from "@/types/center";
 
 export default function NaverCallback() {
 	const navigate = useNavigate();
 	const { setToken, setName, setTempToken, setUserInfo } = useAuthStore();
+	const { setSelectedCenter, setIsCenterMember } = useCenterStore();
 
 	useEffect(() => {
 		const handleNaverLogin = async () => {
@@ -55,6 +62,34 @@ export default function NaverCallback() {
 						);
 					}
 
+					try {
+						const myMainCenterInfo: MyCenter =
+							await getMyMainCenterInfoAPI();
+
+						const status = myMainCenterInfo.centerGrade;
+
+						setSelectedCenter({
+							centerId: myMainCenterInfo.centerId.toString(),
+							centerName: myMainCenterInfo.centerName,
+							status: status,
+						});
+
+						if (
+							status === "MANAGER" ||
+							status === "USER" ||
+							status === "MEMBER"
+						) {
+							setIsCenterMember(true);
+						} else {
+							setIsCenterMember(false);
+						}
+					} catch (error) {
+						console.error(
+							"내 센터 정보를 가져오는데 실패했습니다:",
+							error,
+						);
+					}
+
 					toast.success("네이버 로그인에 성공하셨습니다.");
 					navigate("/");
 				} else {
@@ -68,7 +103,15 @@ export default function NaverCallback() {
 		};
 
 		handleNaverLogin();
-	}, [navigate, setToken, setName, setTempToken, setUserInfo]);
+	}, [
+		navigate,
+		setToken,
+		setName,
+		setTempToken,
+		setUserInfo,
+		setSelectedCenter,
+		setIsCenterMember,
+	]);
 
 	return (
 		<div className="flex justify-center items-center flex-col mt-40 gap-5">

@@ -141,3 +141,8 @@ export const updateUserInfoAPI = async ({
 
 	return response.data;
 };
+
+export const getMyMainCenterInfoAPI = async () => {
+	const response = await localAxios.get("/centers/main");
+	return response.data;
+};

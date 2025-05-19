@@ -145,3 +145,8 @@ export const fetchCenterStatsAPI = async (
 	);
 	return response.data;
 };
+
+export const addMainCenterIdAPI = async (centerId: string) => {
+	const response = await localAxios.patch(`/centers/${centerId}/main`);
+	return response.data;
+};
