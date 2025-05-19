@@ -21,7 +21,7 @@ public interface FosterJpaRepository extends JpaRepository<Foster, Long>, Foster
 		SELECT COUNT(f.id) > 0
 		FROM Foster f
 		JOIN Dog d ON f.dogId = d.id
-		WHERE d.id = :centerId AND f.dogId = :dogId AND f.status != 'REJECTED'
+		WHERE d.id = :centerId AND f.status != 'REJECTED'
 		""")
 	int getFosterCount(Long centerId);
 
