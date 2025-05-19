@@ -134,4 +134,13 @@ public class PostController {
     ) {
         return ResponseEntity.ok().body(postService.getMyLikedPosts(member.getId(), centerId));
     }
+
+    @GetMapping("/dogs/{dogId}")
+    public ResponseEntity<PageInfo<PostSummaryResponse>> getDogPosts(
+        @AuthMember Member member,
+        @PathVariable Long dogId,
+        @RequestParam(required = false, name = "pageToken") String pageToken
+    ) {
+        return ResponseEntity.ok().body(postService.getDogPosts(member.getId(), dogId, pageToken));
+    }
 }

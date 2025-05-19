@@ -318,4 +318,52 @@ public class PostService {
 
         return responses;
     }
+
+    public PageInfo<PostSummaryResponse> getDogPosts(Long memberId, Long dogId, String pageToken) {
+        PageInfo<PostSummaryInfo> infos = postRepository.getDogPosts(dogId, pageToken);
+        var data = infos.data();
+
+        List<Long> postIds = data.stream()
+            .map(PostSummaryInfo::postId)
+            .collect(Collectors.toList());
+
+        Map<Long, Integer> postCommentCounts = commentRepository.findCommentCountIn(postIds)
+            .stream()
+            .collect(Collectors.toMap(
+                CommentCountInfo::postId,
+                CommentCountInfo::count
+            ));
+
+        Map<Long, Integer> postLikeCounts = postRepository.findPostLikeCountIn(postIds)
+            .stream()
+            .collect(Collectors.toMap(
+                PostLikeCount::postId,
+                PostLikeCount::likeCount
+            ));
+
+        List<Long> likedPosts = postRepository.findLikedPostIdsByMemberId(memberId, postIds);
+        Set<Long> likedPostIds = new HashSet<>(likedPosts);
+
+        List<PostSummaryResponse> responses = new ArrayList<>();
+        for (PostSummaryInfo info : data) {
+            Integer likeCount = postLikeCounts.getOrDefault(info.postId(), 0);
+            Boolean liked = likedPostIds.contains(info.postId());
+            Integer commentCount = postCommentCounts.getOrDefault(info.postId(), 0);
+
+            PostSummaryResponse response = new PostSummaryResponse(
+                info.memberId(),
+                info.memberNickName(),
+                info.memberImage(),
+                info.postId(),
+                info.title(),
+                info.createdAt(),
+                liked,
+                likeCount,
+                commentCount
+            );
+            responses.add(response);
+        }
+
+        return new PageInfo<>(infos.pageToken(), responses, infos.hasNext());
+    }
 }

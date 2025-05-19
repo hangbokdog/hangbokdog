@@ -17,6 +17,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.foster.dto.FosterDiaryCheckQuery;
 import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberInfo;
@@ -149,6 +150,26 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
             .fetch();
     }
 
+    @Override
+    public List<PostSummaryInfo> getDogPosts(Long dogId, String pageToken, int pageSize) {
+        return queryFactory
+            .select(Projections.constructor(
+                PostSummaryInfo.class,
+                post.authorId,
+                member.nickName,
+                member.profileImage,
+                post.id,
+                post.title,
+                post.createdAt
+            ))
+            .from(post)
+            .join(member).on(post.authorId.eq(member.id))
+            .where(post.dogId.eq(dogId),
+                isInRange(pageToken))
+            .orderBy(post.createdAt.desc())
+            .limit(pageSize + 1)
+            .fetch();
+    }
 
     @Override
     public List<FosterDiaryCheckQuery> findFostersWithInsufficientDiaries(

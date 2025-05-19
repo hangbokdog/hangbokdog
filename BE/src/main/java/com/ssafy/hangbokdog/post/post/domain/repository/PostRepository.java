@@ -77,4 +77,9 @@ public class PostRepository {
     public List<PostSummaryInfo> findMyLikedPosts(Long memberId, Long centerId) {
         return postJpaRepository.findMyLikedPosts(memberId, centerId);
     }
+
+    public PageInfo<PostSummaryInfo> getDogPosts(Long dogId, String pageToken) {
+        var data = postJpaRepository.getDogPosts(dogId, pageToken, DEFAULT_PAGE_SIZE);
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, PostSummaryInfo::postId);
+    }
 }
