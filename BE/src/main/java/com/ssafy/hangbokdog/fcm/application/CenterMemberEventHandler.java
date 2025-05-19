@@ -14,6 +14,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CenterMemberEventHandler {
 
+	private static final String APPROVE_COMMENT = "센터 가입 승인되었습니다.";
+	private static final String REFUSE_COMMENT = "센터 가입 거절되었습니다.";
+
+
 	private final FcmService fcmService;
 	private final MemberRepository memberRepository;
 	private final JsonUtils jsonUtils;
@@ -25,7 +29,10 @@ public class CenterMemberEventHandler {
 		fcmService.sendMessageTo(
 				targetToken,
 				event.centerName(),
-				jsonUtils.convertToJson(CenterNotification.from(event.isApproved())
+				jsonUtils.convertToJson(CenterNotification.of(
+						event.isApproved() ? APPROVE_COMMENT : REFUSE_COMMENT,
+						event.isApproved()
+						)
 		));
 	}
 }
