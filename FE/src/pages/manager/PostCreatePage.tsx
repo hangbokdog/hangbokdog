@@ -7,11 +7,7 @@ import useCenterStore from "@/lib/store/centerStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createAnnouncementAPI } from "@/api/announcement";
 import { createPostAPI, fetchPostTypeDetailAPI } from "@/api/post";
-import {
-	fetchDogsAPI,
-	type DogSearchResponse,
-	type DogSearchRequest,
-} from "@/api/dog";
+import type { DogSearchResponse } from "@/api/dog";
 import { toast } from "sonner";
 import { uploadImageAPI } from "@/api/common";
 import { useDebounce } from "@/hooks/useDebounce";

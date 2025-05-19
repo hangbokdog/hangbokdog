@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { format, parseISO } from "date-fns";
-import { ko } from "date-fns/locale";
 import {
 	Loader2,
 	ChevronDown,
@@ -187,18 +185,6 @@ export default function AdoptionApplicationsList({
 										<h3 className="font-medium text-gray-800">
 											{dog.dogName}
 										</h3>
-										<p className="text-xs text-gray-500 mt-0.5">
-											신청일:
-											{dog.createdAt
-												? format(
-														parseISO(dog.createdAt),
-														"MM월 dd일",
-														{
-															locale: ko,
-														},
-													)
-												: "-"}
-										</p>
 									</div>
 
 									<div className="flex items-center">

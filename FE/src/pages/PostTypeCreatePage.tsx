@@ -103,7 +103,7 @@ export default function PostTypeCreatePage() {
 
 	return (
 		<div className="flex flex-col min-h-[calc(100vh-3rem)]">
-			<div className="flex-1 p-4 max-w-lg mx-auto w-full">
+			<div className="flex-1 p-4 w-full">
 				{/* Create new post type form */}
 				<form onSubmit={handleSubmit} className="mb-8">
 					<h2 className="text-lg font-semibold mb-2">

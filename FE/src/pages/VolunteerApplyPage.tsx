@@ -82,30 +82,36 @@ export default function VolunteerApplyPage() {
 			(item) => item.date === date && item.time === time,
 		);
 
-		if (!isSelected) {
-			// 선택된 일정에 해당하는 원본 데이터 찾기
-			const scheduleItem = scheduleData.find(
-				(item) => item.date === date,
+		if (isSelected) {
+			// 이미 선택된 경우 취소
+			setSelectedSchedules(
+				selectedSchedules.filter(
+					(item) => !(item.date === date && item.time === time),
+				),
 			);
+			return;
+		}
 
-			if (scheduleItem) {
-				setSelectedSchedules([
-					...selectedSchedules,
-					{
-						date,
-						time,
-						capacity,
-						people: 1,
-						participants: [{ ...primaryUser }],
-						// 선택된 슬롯 ID 저장 (API 요청 시 필요)
-						slotId:
-							time === "morning"
-								? scheduleItem.morningSlotId
-								: scheduleItem.afternoonSlotId,
-						rawDate: scheduleItem.rawDate,
-					},
-				]);
-			}
+		// 선택된 일정에 해당하는 원본 데이터 찾기
+		const scheduleItem = scheduleData.find((item) => item.date === date);
+
+		if (scheduleItem) {
+			setSelectedSchedules([
+				...selectedSchedules,
+				{
+					date,
+					time,
+					capacity,
+					people: 1,
+					participants: [{ ...primaryUser }],
+					// 선택된 슬롯 ID 저장 (API 요청 시 필요)
+					slotId:
+						time === "morning"
+							? scheduleItem.morningSlotId
+							: scheduleItem.afternoonSlotId,
+					rawDate: scheduleItem.rawDate,
+				},
+			]);
 		}
 	};
 
@@ -267,7 +273,7 @@ export default function VolunteerApplyPage() {
 			queryClient.invalidateQueries({
 				queryKey: ["volunteerDetail", id],
 			});
-			navigate(`/volunteer/${id}`);
+			navigate(-1);
 		},
 		onError: (error: AxiosError) => {
 			// API 응답 에러 정보 파싱
@@ -315,14 +321,13 @@ export default function VolunteerApplyPage() {
 		if (!isFormComplete()) return;
 
 		// 신청 데이터 구성
-		const applications = selectedSchedules.map((schedule) => {
-			// 타입 안전하게 변환
-			return {
-				date: schedule.rawDate || "", // rawDate가 없으면 빈 문자열 사용
-				volunteerSlotId: schedule.slotId,
+		const applications = selectedSchedules
+			.filter((schedule) => schedule.slotId !== undefined)
+			.map((schedule) => ({
+				date: schedule.rawDate || "",
+				volunteerSlotId: schedule.slotId as number,
 				participantIds: schedule.participants.map((p) => p.id),
-			};
-		});
+			}));
 
 		// API 호출
 		applyMutation.mutate({ applications });
