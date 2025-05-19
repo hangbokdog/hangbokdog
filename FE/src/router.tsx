@@ -45,6 +45,7 @@ import PostTypeCreatePage from "./pages/PostTypeCreatePage";
 import PostEditPage from "./pages/PostEditPage";
 import CenterManagerProtectedRoute from "./components/auth/CenterManagerProtectedRoute";
 import VolunteerEditPage from "./pages/VolunteerEditPage";
+import FilteredPostListByDogId from "./components/dog/FilteredPostListByDogId";
 
 const router = createBrowserRouter([
 	{
@@ -185,6 +186,11 @@ const router = createBrowserRouter([
 												handle: { showHeader: false },
 											},
 										],
+									},
+									{
+										path: "posts",
+										element: <FilteredPostListByDogId />,
+										handle: { showHeader: false },
 									},
 								],
 							},

@@ -55,9 +55,9 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 				</div>
 
 				<Link to={link} className="mt-1 hover:underline">
-					<span className="text-male font-medium text-sm">
+					{/* <span className="text-male font-medium text-sm">
 						더보기
-					</span>
+					</span> */}
 				</Link>
 			</div>
 		</div>
