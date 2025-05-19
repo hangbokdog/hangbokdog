@@ -12,6 +12,7 @@ import com.ssafy.hangbokdog.fcm.dto.response.EmergencyNotification;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class EmergencyEventHandler {
 	private final MemberRepository memberRepository;
 	private final JsonUtils jsonUtils;
 
-	@EventListener
+	@TransactionalEventListener
 	public void handleEmergencyEvent(EmergencyEvent event) {
 		Long centerId = event.centerId();
 		List<String> targetTokens = memberRepository.findFcmTokensByCenterId(centerId);
