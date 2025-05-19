@@ -1,13 +1,12 @@
 import {
 	type AddressBookRequest,
 	createAddressBookAPI,
+	deleteAddressBookAPI,
 	fetchAddressBooks,
 } from "@/api/center";
 import useCenterStore from "@/lib/store/centerStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import AddressBookListItem from "./AddressBookListItem";
 import { useState } from "react";
-import { FaPlusCircle } from "react-icons/fa";
 import {
 	Drawer,
 	DrawerContent,
@@ -26,67 +25,64 @@ import {
 } from "@/components/ui/select";
 import { LocationLabel } from "@/types/center";
 import { toast } from "sonner";
-import { IoIosSearch } from "react-icons/io";
-import { FaLocationDot, FaHouse } from "react-icons/fa6";
-import { MdPets } from "react-icons/md";
+import { MdEditNote, MdLocationOn, MdDelete } from "react-icons/md";
+import { FaRegBuilding } from "react-icons/fa";
+import { IoMdAdd } from "react-icons/io";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import {
+	Dialog,
+	DialogContent,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
-// 지역 정보 타입 정의
-interface Location {
-	id: string;
-	name: string;
-	address: string;
-	type: "보호소" | "입양처" | "협력병원";
-	distance: number; // km 단위
-	dogCount?: number; // 보호소의 경우 강아지 수
-}
-
-// 더미 지역 데이터
-const dummyLocations: Location[] = [
-	{
-		id: "1",
-		name: "해피 보호소",
-		address: "서울특별시 강남구 테헤란로 123",
-		type: "보호소",
-		distance: 0.5,
-		dogCount: 12,
-	},
-	{
-		id: "2",
-		name: "김민준 님",
-		address: "서울특별시 서초구 서초대로 78길 42",
-		type: "입양처",
-		distance: 2.3,
-	},
-	{
-		id: "3",
-		name: "24시 동물병원",
-		address: "서울특별시 강남구 강남대로 456",
-		type: "협력병원",
-		distance: 1.1,
-	},
-	{
-		id: "4",
-		name: "이서연 님",
-		address: "서울특별시 송파구 올림픽로 123",
-		type: "입양처",
-		distance: 4.7,
-	},
-	{
-		id: "5",
-		name: "사랑 보호소",
-		address: "서울특별시 마포구 월드컵로 42길 15",
-		type: "보호소",
-		distance: 5.8,
-		dogCount: 8,
-	},
-	{
-		id: "6",
-		name: "동물메디컬센터",
-		address: "서울특별시 강남구 언주로 725",
-		type: "협력병원",
-		distance: 3.2,
-	},
-];
+// 지역 배지 색상 정의
+const getAddressColor = (address: string) => {
+	switch (address) {
+		case "SEOUL":
+			return "bg-blue-100 text-blue-600";
+		case "DAEJEON":
+			return "bg-green-100 text-green-600";
+		case "BUSAN":
+			return "bg-yellow-100 text-yellow-600";
+		case "INCHEON":
+			return "bg-purple-100 text-purple-600";
+		case "GWANGJU":
+			return "bg-indigo-100 text-indigo-600";
+		case "DAEGU":
+			return "bg-pink-100 text-pink-600";
+		case "ULSAN":
+			return "bg-orange-100 text-orange-600";
+		case "SEJONG":
+			return "bg-teal-100 text-teal-600";
+		case "JEJU":
+			return "bg-cyan-100 text-cyan-600";
+		case "GYEONGGI":
+			return "bg-red-100 text-red-600";
+		case "GANGWON":
+			return "bg-lime-100 text-lime-600";
+		case "CHUNGBUK":
+			return "bg-amber-100 text-amber-600";
+		case "CHUNGNAM":
+			return "bg-emerald-100 text-emerald-600";
+		case "JEONBUK":
+			return "bg-violet-100 text-violet-600";
+		case "JEONNAM":
+			return "bg-fuchsia-100 text-fuchsia-600";
+		case "GYEONGBUK":
+			return "bg-rose-100 text-rose-600";
+		case "GYEONGNAM":
+			return "bg-sky-100 text-sky-600";
+		case "GEOJE":
+			return "bg-blue-100 text-blue-600";
+		case "OSAN":
+			return "bg-purple-100 text-purple-600";
+		default:
+			return "bg-gray-100 text-gray-600";
+	}
+};
 
 export default function AddressBookPanel() {
 	const { selectedCenter } = useCenterStore();
@@ -95,12 +91,15 @@ export default function AddressBookPanel() {
 		addressName: "",
 	});
 	const [open, setOpen] = useState(false);
-	const [searchText, setSearchText] = useState("");
-	const [filter, setFilter] = useState<
-		"전체" | "보호소" | "입양처" | "협력병원"
-	>("전체");
+	const [editDialogOpen, setEditDialogOpen] = useState(false);
+	const [currentAddress, setCurrentAddress] = useState<{
+		id: number;
+		addressName: string;
+		address: string;
+	} | null>(null);
 
-	const { refetch, data } = useQuery({
+	// API로 주소록 데이터 가져오기
+	const { data, isLoading, refetch } = useQuery({
 		queryKey: ["addressBooks", selectedCenter?.centerId],
 		queryFn: () => fetchAddressBooks(selectedCenter?.centerId as string),
 	});
@@ -117,96 +116,207 @@ export default function AddressBookPanel() {
 		});
 	};
 
-	const { mutate: registerCenter } = useMutation({
+	const { mutate: registerCenter, isPending: isRegistering } = useMutation({
 		mutationFn: () =>
 			createAddressBookAPI(selectedCenter?.centerId || "", formData),
 		onSuccess: () => {
 			refetch();
-			setFormData((prev) => ({
-				...prev,
+			setFormData({
+				address: "",
 				addressName: "",
-			}));
+			});
 			setOpen(false);
+			toast.success("새 지역이 추가되었습니다");
 		},
 		onError: (e) => {
 			console.error(e);
-			toast.error("생성에 실패했습니다.");
+			toast.error("지역 추가에 실패했습니다");
+		},
+	});
+
+	const { mutate: deleteAddress, isPending: isDeleting } = useMutation({
+		mutationFn: (id: number) =>
+			deleteAddressBookAPI(selectedCenter?.centerId || "", id.toString()),
+		onSuccess: () => {
+			refetch();
+			setEditDialogOpen(false);
+			setCurrentAddress(null);
+			toast.success("지역이 삭제되었습니다");
+		},
+		onError: () => {
+			toast.error("지역 삭제에 실패했습니다");
 		},
 	});
 
 	const handleSubmit = () => {
 		if (formData.addressName === "" || formData.address === "") {
-			toast.error("주소와 지역명을 입력해주세요.");
+			toast.error("지역명과 주소를 모두 입력해주세요");
 			return;
 		}
 
 		registerCenter();
 	};
 
-	// 검색 및 필터링
-	const filteredLocations = dummyLocations
-		.filter(
-			(location) =>
-				(filter === "전체" || location.type === filter) &&
-				(location.name.includes(searchText) ||
-					location.address.includes(searchText)),
-		)
-		.sort((a, b) => a.distance - b.distance);
-
-	// 장소 유형별 아이콘과 색상
-	const getTypeIcon = (type: Location["type"]) => {
-		switch (type) {
-			case "보호소":
-				return <MdPets className="text-blue-600" />;
-			case "입양처":
-				return <FaHouse className="text-green-600" />;
-			case "협력병원":
-				return <FaLocationDot className="text-amber-600" />;
-		}
+	const handleEditClick = (address: {
+		id: number;
+		addressName: string;
+		address: string;
+	}) => {
+		setCurrentAddress(address);
+		setEditDialogOpen(true);
 	};
 
-	const getTypeColor = (type: Location["type"]) => {
-		switch (type) {
-			case "보호소":
-				return "bg-blue-50 text-blue-700";
-			case "입양처":
-				return "bg-green-50 text-green-700";
-			case "협력병원":
-				return "bg-amber-50 text-amber-700";
+	const handleDeleteAddress = () => {
+		if (currentAddress) {
+			deleteAddress(currentAddress.id);
 		}
 	};
 
 	return (
-		<div className="flex flex-col bg-white rounded-lg shadow-custom-sm p-4 text-grayText font-semibold gap-2">
-			<span className="text-lg font-bold">지역</span>
+		<div className="flex flex-col bg-white rounded-xl shadow-md p-4 text-gray-800">
+			{/* 헤더 영역 */}
+			<div className="flex items-center justify-between mb-5">
+				<div>
+					<h2 className="text-lg font-bold flex items-center">
+						<MdLocationOn className="text-primary mr-1" size={20} />
+						관리 지역
+					</h2>
+					<p className="text-xs text-gray-500 mt-0.5">
+						{data?.length || 0}개의 지역을 관리하고 있습니다
+					</p>
+				</div>
 
-			<div className="flex flex-col">
-				<button
-					type="button"
+				<Button
+					size="sm"
 					onClick={handleCreateButtonClick}
-					className="flex items-center justify-center rounded-full px-4 py-2.5 font-medium bg-superLightBlueGray hover:shadow-[inset_0_0_8px_rgba(194,209,252,1)] transition-shadow duration-300 cursor-pointer"
+					className="rounded-full bg-primary hover:bg-primary/90 text-white px-3"
 				>
-					<FaPlusCircle />
-				</button>
+					<IoMdAdd size={18} className="mr-1" />
+					지역 추가
+				</Button>
+			</div>
 
-				<Drawer open={open} onOpenChange={setOpen} autoFocus={open}>
-					<DrawerContent>
-						<div className="mx-auto w-full max-w-sm">
-							<DrawerHeader>
-								<DrawerTitle>새 주소 추가</DrawerTitle>
-							</DrawerHeader>
-							<div className="p-4 pb-0 space-y-4">
+			{/* 로딩 상태 */}
+			{isLoading && (
+				<div className="flex justify-center items-center py-10">
+					{/* biome-ignore lint/style/useSelfClosingElements: 스켈레톤 */}
+					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+				</div>
+			)}
+
+			{/* 데이터가 없을 때 */}
+			{!isLoading && (!data || data.length === 0) && (
+				<div className="py-10 flex flex-col items-center justify-center text-center">
+					<FaRegBuilding size={40} className="text-gray-300 mb-3" />
+					<p className="text-gray-500 mb-1">
+						아직 등록된 지역이 없습니다
+					</p>
+					<p className="text-xs text-gray-400">
+						우측 상단의 지역 추가 버튼을 눌러 새 지역을 추가해보세요
+					</p>
+				</div>
+			)}
+
+			{/* 주소 목록 */}
+			<AnimatePresence>
+				<div className="grid grid-cols-1 gap-3">
+					{data?.map((address) => (
+						<motion.div
+							key={address.id}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, scale: 0.95 }}
+							transition={{ duration: 0.2 }}
+							className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm relative hover:shadow-md transition-shadow"
+						>
+							<div className="flex justify-between items-start">
+								<div>
+									<h3 className="font-semibold text-lg">
+										{address.addressName}
+									</h3>
+									<div className="flex items-center mt-1">
+										<span
+											className={`text-xs px-2 py-0.5 rounded-full ${getAddressColor(address.address)}`}
+										>
+											{LocationLabel[
+												address.address as keyof typeof LocationLabel
+											] || address.address}
+										</span>
+										{/* 
+										{address.appliedCount &&
+											address.appliedCount > 0 && (
+												<span className="ml-2 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">
+													신청자{" "}
+													{address.appliedCount}명
+												</span>
+											)} */}
+									</div>
+								</div>
+
+								<button
+									type="button"
+									className="p-2 rounded-full hover:bg-gray-100 text-gray-500"
+									onClick={() => handleEditClick(address)}
+								>
+									<MdEditNote size={20} />
+								</button>
+							</div>
+
+							<div className="mt-3 flex justify-end">
+								<Link
+									to="/manager/volunteer"
+									className="text-xs font-medium text-primary flex items-center"
+								>
+									봉사 일정 관리하기
+								</Link>
+							</div>
+						</motion.div>
+					))}
+				</div>
+			</AnimatePresence>
+
+			{/* 추가 드로어 */}
+			<Drawer open={open} onOpenChange={setOpen}>
+				<DrawerContent className="max-h-[85vh]">
+					<div className="mx-auto w-full max-w-sm">
+						<DrawerHeader>
+							<DrawerTitle className="flex items-center text-lg">
+								<IoMdAdd
+									className="mr-1 text-primary"
+									size={20}
+								/>
+								새 지역 추가
+							</DrawerTitle>
+						</DrawerHeader>
+						<div className="p-4 pb-0 space-y-4">
+							<div>
+								<label
+									htmlFor="addressName"
+									className="text-xs font-medium text-gray-500 mb-1 block"
+								>
+									지역명
+								</label>
 								<Input
-									placeholder="지역명"
-									defaultValue={formData.addressName}
-									onBlur={(e) => {
+									id="addressName"
+									placeholder="예: 쉼터, 쉼뜰"
+									value={formData.addressName}
+									onChange={(e) =>
 										setFormData((prev) => ({
 											...prev,
 											addressName: e.target.value,
-										}));
-									}}
+										}))
+									}
+									className="border-gray-300 focus:border-primary"
 								/>
+							</div>
 
+							<div>
+								<label
+									htmlFor="address"
+									className="text-xs font-medium text-gray-500 mb-1 block"
+								>
+									주소
+								</label>
 								<Select
 									value={formData.address}
 									onValueChange={(value) =>
@@ -216,10 +326,13 @@ export default function AddressBookPanel() {
 										}))
 									}
 								>
-									<SelectTrigger className="w-full">
+									<SelectTrigger
+										id="address"
+										className="w-full border-gray-300 focus:border-primary"
+									>
 										<SelectValue placeholder="지역을 선택하세요" />
 									</SelectTrigger>
-									<SelectContent aria-modal={false}>
+									<SelectContent>
 										{Object.entries(LocationLabel).map(
 											([key, label]) => (
 												<SelectItem
@@ -233,136 +346,83 @@ export default function AddressBookPanel() {
 									</SelectContent>
 								</Select>
 							</div>
-							<DrawerFooter>
-								<Button onClick={handleSubmit}>추가</Button>
-								<Button
-									variant="outline"
-									onClick={handleInputCancel}
-								>
-									취소
-								</Button>
-							</DrawerFooter>
 						</div>
-					</DrawerContent>
-				</Drawer>
-
-				{data?.map((center, index) => (
-					<AddressBookListItem
-						key={center.id}
-						id={center.id}
-						centerId={selectedCenter?.centerId as string}
-						address={center.address}
-						addressName={center.addressName}
-						index={index + 1}
-						onUpdate={() => {
-							refetch();
-						}}
-					/>
-				))}
-			</div>
-
-			<div className="mt-4">
-				<h2 className="text-lg font-bold text-gray-800">
-					{selectedCenter?.centerName || "센터"} 지역 정보
-				</h2>
-				<p className="text-sm text-gray-500">
-					주변 보호소, 입양처, 협력 병원 정보를 확인하세요
-				</p>
-			</div>
-
-			{/* 검색 및 필터 영역 */}
-			<div className="mb-4">
-				<div className="relative mb-3">
-					<div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-						<IoIosSearch className="text-gray-400" size={18} />
-					</div>
-					<input
-						type="text"
-						className="bg-white w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-main"
-						placeholder="장소 이름 또는 주소 검색..."
-						value={searchText}
-						onChange={(e) => setSearchText(e.target.value)}
-					/>
-				</div>
-
-				{/* 필터 버튼 */}
-				<div className="flex gap-2 overflow-x-auto pb-1 flex-nowrap">
-					{(["전체", "보호소", "입양처", "협력병원"] as const).map(
-						(type) => (
-							<button
-								key={type}
-								type="button"
-								className={`px-3 py-1.5 rounded-full text-sm font-medium min-w-fit ${
-									filter === type
-										? "bg-main text-white"
-										: "bg-gray-100 text-gray-600 hover:bg-gray-200"
-								}`}
-								onClick={() => setFilter(type)}
+						<DrawerFooter className="mt-6">
+							<Button
+								onClick={handleSubmit}
+								className="bg-primary hover:bg-primary/90"
+								disabled={isRegistering}
 							>
-								{type}
-							</button>
-						),
-					)}
-				</div>
-			</div>
+								{isRegistering ? "추가 중..." : "추가하기"}
+							</Button>
+							<Button
+								variant="outline"
+								onClick={handleInputCancel}
+							>
+								취소
+							</Button>
+						</DrawerFooter>
+					</div>
+				</DrawerContent>
+			</Drawer>
 
-			{/* 위치 목록 */}
-			<div className="space-y-3">
-				{filteredLocations.length === 0 ? (
-					<p className="text-center py-4 text-gray-400 bg-white rounded-lg shadow-sm">
-						검색 결과가 없습니다.
-					</p>
-				) : (
-					filteredLocations.map((location) => (
-						<div
-							key={location.id}
-							className="bg-white p-4 rounded-lg shadow-sm border border-gray-100"
-						>
-							<div className="flex items-start justify-between">
-								<div>
-									<div className="flex items-center gap-2">
-										<h3 className="font-medium text-gray-800">
-											{location.name}
-										</h3>
-										<span
-											className={`text-xs px-2 py-0.5 rounded-full ${getTypeColor(location.type)}`}
-										>
-											{location.type}
-										</span>
-									</div>
+			{/* 수정/삭제 다이얼로그 */}
+			<Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+				<DialogContent className="sm:max-w-[400px]">
+					<DialogHeader>
+						<DialogTitle className="flex items-center">
+							<MdEditNote
+								className="mr-1 text-primary"
+								size={20}
+							/>
+							지역 정보 관리
+						</DialogTitle>
+					</DialogHeader>
 
-									<p className="text-sm text-gray-500 mt-1">
-										{location.address}
-									</p>
+					{currentAddress && (
+						<div className="py-4">
+							<h3 className="font-semibold text-lg">
+								{currentAddress.addressName}
+							</h3>
+							<p className="text-sm text-gray-600">
+								{LocationLabel[
+									currentAddress.address as keyof typeof LocationLabel
+								] || currentAddress.address}
+							</p>
 
-									{location.dogCount !== undefined && (
-										<p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-											<MdPets size={14} />
-											<span>
-												보호 중인 아이들:{" "}
-												{location.dogCount}마리
-											</span>
-										</p>
-									)}
-								</div>
+							<div className="mt-6 space-y-2">
+								<Link
+									to="/manager/volunteer"
+									className="flex items-center justify-center w-full py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90"
+								>
+									봉사 일정 관리
+								</Link>
 
-								<div className="flex flex-col items-end">
-									<span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-										{location.distance} km
-									</span>
-
-									<button
-										type="button"
-										className="mt-2 text-xs text-main font-medium"
-									>
-										지도 보기
-									</button>
-								</div>
+								<Button
+									variant="destructive"
+									className="w-full"
+									onClick={handleDeleteAddress}
+									disabled={isDeleting}
+								>
+									<MdDelete className="mr-1" size={16} />
+									{isDeleting
+										? "삭제 중..."
+										: "지역 삭제하기"}
+								</Button>
 							</div>
 						</div>
-					))
-				)}
-			</div>
+					)}
+
+					<DialogFooter>
+						<Button
+							variant="outline"
+							onClick={() => setEditDialogOpen(false)}
+						>
+							닫기
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
