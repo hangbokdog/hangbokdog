@@ -4,9 +4,11 @@ import FilteredContent from "@/components/manager/volunteer/FilteredContent";
 import useCenterStore from "@/lib/store/centerStore";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ManagerVolunteerPage() {
 	const { selectedCenter } = useCenterStore();
+	const navigate = useNavigate();
 	const [selectedAddressId, setSelectedAddressId] = useState<number | null>(
 		null,
 	);
@@ -42,6 +44,9 @@ export default function ManagerVolunteerPage() {
 						<button
 							type="button"
 							className="px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
+							onClick={() => {
+								navigate("/manager/center");
+							}}
 						>
 							새 센터 등록하기
 						</button>

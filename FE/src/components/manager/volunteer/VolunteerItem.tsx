@@ -46,7 +46,9 @@ export const VolunteerItem = ({
 			<div className="flex justify-between">
 				<div className="flex-1">
 					<div className="flex items-center justify-between">
-						<h4 className="font-medium">{volunteer.title}</h4>
+						<h4 className="font-medium line-clamp-2">
+							{volunteer.title}
+						</h4>
 						<div className="flex items-center gap-2">
 							<Sheet>
 								<SheetTrigger asChild>
@@ -151,7 +153,7 @@ export const VolunteerItem = ({
 								</SheetContent>
 							</Sheet>
 
-							<Link to={`/volunteers/${volunteer.id}/edit`}>
+							<Link to={`/volunteer/${volunteer.id}/edit`}>
 								<Button
 									variant="ghost"
 									size="icon"

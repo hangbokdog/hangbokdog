@@ -5,7 +5,7 @@ import SignUpForm from "@/components/signup/SignUpForm";
 import SignUpTerms from "@/components/signup/SignUpTerms";
 import SignUpButton from "@/components/signup/SignUpButton";
 import { useMutation } from "@tanstack/react-query";
-import { signUpAPI } from "@/api/auth";
+import { getUserInfoAPI, signUpAPI } from "@/api/auth";
 import { toast } from "sonner";
 import useAuthStore from "@/lib/store/authStore";
 import { useFormatDate } from "@/lib/hooks/useFormatDate";
@@ -14,7 +14,7 @@ import { requestFCMToken } from "@/config/firebase";
 
 export default function SignUp() {
 	const navigate = useNavigate();
-	const { user, setToken, setTempToken } = useAuthStore();
+	const { user, setToken, setTempToken, setUserInfo } = useAuthStore();
 	const [nickname, setNickname] = useState<string>("");
 	const [phoneNumber, setPhoneNumber] = useState<string>("");
 	const [birthDate, setBirthDate] = useState<string>("");
@@ -59,7 +59,7 @@ export default function SignUp() {
 
 	const signUpMutation = useMutation({
 		mutationFn: signUpAPI,
-		onSuccess: () => {
+		onSuccess: async () => {
 			if (user.tempToken) {
 				setToken(user.tempToken);
 				setTempToken("");
@@ -68,6 +68,13 @@ export default function SignUp() {
 			if (isEmergencyAlertChecked) {
 				handleFCMTokenSetup();
 			}
+
+			const userInfo = await getUserInfoAPI();
+			setUserInfo(
+				userInfo.memberId || 0,
+				userInfo.nickName || "",
+				userInfo.profileImage || "",
+			);
 
 			toast.success("회원가입에 성공했습니다!");
 			navigate("/center-decision");

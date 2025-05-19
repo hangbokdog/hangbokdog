@@ -55,7 +55,7 @@ export default function AddVolunteerSchedulePage() {
 
 	// 기본 상태 관리
 	const [title, setTitle] = useState("");
-	const [content, setContent] = useState("");
+	// const [content, setContent] = useState("");
 	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
@@ -782,7 +782,7 @@ export default function AddVolunteerSchedulePage() {
 			// API 요청 데이터
 			const data: VolunteerData = {
 				title,
-				content,
+				// content,
 				startDate,
 				endDate,
 				activityLog: activityLog || "",
@@ -1029,7 +1029,7 @@ export default function AddVolunteerSchedulePage() {
 				</div>
 
 				{/* 내용 */}
-				<div className="flex flex-col gap-3">
+				{/* <div className="flex flex-col gap-3">
 					<label htmlFor="content" className="text-lg">
 						내용
 					</label>
@@ -1041,7 +1041,7 @@ export default function AddVolunteerSchedulePage() {
 						className="border border-gray-300 rounded p-2 bg-white"
 						placeholder="내용을 입력하세요."
 					/>
-				</div>
+				</div> */}
 
 				<MobileHelpBanner />
 
@@ -1054,7 +1054,7 @@ export default function AddVolunteerSchedulePage() {
 							onClick={() => setActiveTab("activityLog")}
 						>
 							<span className="editor-tab-icon">📝</span>
-							활동 일지
+							내용
 						</button>
 						<button
 							type="button"
@@ -1094,12 +1094,12 @@ export default function AddVolunteerSchedulePage() {
 					</div>
 
 					<div className="p-4">
-						{/* 활동 일지 에디터 */}
+						{/* 내용 에디터 */}
 						{activeTab === "activityLog" && (
 							<div className="relative">
 								<div className="flex items-center justify-between mb-3">
 									<h3 className="font-medium text-lg">
-										활동 일지 작성
+										내용 작성
 									</h3>
 								</div>
 								{activityLogImageUploading && (
@@ -1112,7 +1112,7 @@ export default function AddVolunteerSchedulePage() {
 										value={activityLog}
 										onChange={setActivityLog}
 										modules={activityLogModules}
-										placeholder="활동 일지를 작성하세요."
+										placeholder="내용을 작성하세요."
 									/>
 								</div>
 							</div>

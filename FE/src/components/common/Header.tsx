@@ -15,7 +15,7 @@ import { ko } from "date-fns/locale";
 import NotificationPermissionGuide from "../notification/NotificationPermissionGuide";
 import NotificationRequestPrompt from "../notification/NotificationRequestPrompt";
 
-type CenterStatus = "NONE" | "APPLIED" | "USER" | "MANAGER";
+type CenterStatus = "NONE" | "APPLIED" | "USER" | "MANAGER" | "MEMBER";
 
 export default function Header() {
 	const { user } = useAuthStore();
@@ -27,16 +27,18 @@ export default function Header() {
 	const [showPermissionRequest, setShowPermissionRequest] = useState(false);
 	const navigate = useNavigate();
 
-	// 알림 관련 상태와 함수
+	// 알림 관련 상태와 함수 - FCM 초기화 로직은 MainLayout으로 이동
 	const {
-		unreadCount,
 		notifications,
+		unreadCount,
 		isNotificationOpen,
 		permissionStatus,
 		toggleNotificationPanel,
 		closeNotificationPanel,
 		handleNotificationClick,
 		clearAllNotifications,
+		removeNotification,
+		requestNotificationPermission,
 	} = useNotification();
 
 	const { mutate: registerCenter } = useMutation({
@@ -90,6 +92,8 @@ export default function Header() {
 				break;
 			case "MANAGER":
 				break;
+			case "MEMBER":
+				break;
 			default:
 				break;
 		}
@@ -115,7 +119,7 @@ export default function Header() {
 		toast.success("센터를 변경하였습니다.");
 	};
 
-	const toggleNotifications = () => {
+	const handleToggleNotifications = () => {
 		toggleNotificationPanel();
 
 		if (isDropdownOpen) {
@@ -137,6 +141,7 @@ export default function Header() {
 			APPLIED: "bg-red text-white",
 			USER: "bg-gray-100 text-gray-500",
 			MANAGER: "bg-gray-100 text-gray-500",
+			MEMBER: "bg-gray-100 text-gray-500",
 		};
 
 		const text: Record<CenterStatus, string> = {
@@ -144,6 +149,7 @@ export default function Header() {
 			APPLIED: "신청 취소",
 			USER: "회원",
 			MANAGER: "매니저",
+			MEMBER: "회원",
 		};
 
 		const status = selectedCenter.status as CenterStatus;
@@ -180,8 +186,15 @@ export default function Header() {
 		switch (type) {
 			case "VOLUNTEER_APPLICATION":
 				return "bg-blue-500";
-			case "SYSTEM":
+			case "EMERGENCY":
 				return "bg-red-500";
+			case "VOLUNTEER":
+				return "bg-amber-500";
+			case "CENTER":
+			case "CENTER_JOIN_REQUEST":
+				return "bg-green-500";
+			case "SYSTEM":
+				return "bg-purple-500";
 			default:
 				return "bg-gray-500";
 		}
@@ -278,6 +291,16 @@ export default function Header() {
 		localStorage.setItem("notification_permission_requested", "true");
 	};
 
+	// 알림 개별 삭제 처리 함수
+	const handleDeleteNotification = (
+		e: React.MouseEvent,
+		notificationId: string,
+	) => {
+		e.stopPropagation();
+		removeNotification(notificationId);
+		toast.success("알림이 삭제되었습니다.");
+	};
+
 	return (
 		<>
 			<header className="w-full bg-white/95 backdrop-blur-sm shadow-sm z-30 safe-top">
@@ -362,10 +385,10 @@ export default function Header() {
 								type="button"
 								className="notification-button flex items-center justify-center text-gray-600 hover:text-main p-1.5 rounded-full hover:bg-gray-50 touch-manipulation relative"
 								aria-label="알림"
-								onClick={toggleNotifications}
+								onClick={handleToggleNotifications}
 								onKeyDown={(e) => {
 									if (e.key === "Enter" || e.key === " ") {
-										toggleNotifications();
+										handleToggleNotifications();
 									}
 								}}
 							>
@@ -412,46 +435,86 @@ export default function Header() {
 												<p>알림이 없습니다</p>
 											</div>
 										) : (
-											<div className="divide-y divide-gray-100">
+											<div className="divide-y divide-gray-100 overflow-y-auto max-h-[320px]">
 												{notifications.map(
 													(notification) => (
-														<button
+														<div
 															key={
 																notification.id
 															}
-															type="button"
-															className={`w-full p-3 text-left hover:bg-gray-50 transition-colors flex items-start gap-3 ${
+															className={`w-full text-left transition-colors flex items-start gap-3 relative ${
 																notification.isRead
 																	? "bg-white"
 																	: "bg-blue-50/30"
 															}`}
-															onClick={() =>
-																handleNotificationClick(
-																	notification,
-																)
-															}
 														>
-															<div
-																className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(notification.type)}`}
-															/>
-															<div className="flex-1 min-w-0">
-																<h4 className="font-medium text-gray-900 text-sm">
-																	{
-																		notification.title
-																	}
-																</h4>
-																<p className="text-gray-600 text-xs mt-1 line-clamp-2">
-																	{
-																		notification.body
-																	}
-																</p>
-																<span className="text-xs text-gray-400 mt-1 block">
-																	{formatNotificationTime(
-																		notification.createdAt,
+															<button
+																type="button"
+																className="w-full p-3 text-left hover:bg-gray-50 transition-colors flex items-start gap-3"
+																onClick={() =>
+																	handleNotificationClick(
+																		notification,
+																	)
+																}
+															>
+																<div
+																	className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(notification.type)}`}
+																/>
+																<div className="flex-1 min-w-0">
+																	<h4 className="font-medium text-gray-900 text-sm">
+																		{
+																			notification.title
+																		}
+																	</h4>
+																	<p className="text-gray-600 text-xs mt-1 line-clamp-2">
+																		{
+																			notification.body
+																		}
+																	</p>
+																	<span className="text-xs text-gray-400 mt-1 block">
+																		{formatNotificationTime(
+																			notification.createdAt,
+																		)}
+																	</span>
+																	{(notification.type ===
+																		"VOLUNTEER" ||
+																		notification.type ===
+																			"EMERGENCY") && (
+																		<div className="mt-1.5">
+																			<span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+																				{notification.type ===
+																				"VOLUNTEER"
+																					? "봉사활동"
+																					: "응급 상황"}
+																			</span>
+																			{notification.type ===
+																				"VOLUNTEER" &&
+																				notification
+																					.data
+																					?.volunteerEventId && (
+																					<span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1">
+																						상세보기
+																					</span>
+																				)}
+																		</div>
 																	)}
-																</span>
-															</div>
-														</button>
+																</div>
+															</button>
+															<button
+																type="button"
+																className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full transition-colors"
+																onClick={(e) =>
+																	handleDeleteNotification(
+																		e,
+																		notification.id,
+																	)
+																}
+															>
+																<Trash2
+																	size={14}
+																/>
+															</button>
+														</div>
 													),
 												)}
 											</div>
