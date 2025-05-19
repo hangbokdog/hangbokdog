@@ -28,6 +28,7 @@ import {
 import DogStatus from "@/components/dog/DogStatus";
 import DogMediInfos from "@/components/dog/DogMediInfos";
 import { fetchAddressBooks, type AddressBook } from "@/api/center";
+import DogPostButton from "@/components/dog/DogPostButton";
 
 interface DogDetail {
 	dogId: number;
@@ -367,6 +368,7 @@ export default function DogDetailPage() {
 							gender={data.gender as Gender}
 						/>
 					)}
+					<DogPostButton />
 					{selectedCenter?.status === "MANAGER" &&
 						(isEditing ? (
 							<button
