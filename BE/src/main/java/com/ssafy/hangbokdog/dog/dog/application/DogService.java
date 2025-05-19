@@ -348,6 +348,36 @@ public class DogService {
 		return dogRepository.getHospitalDogs(centerId, pageToken);
 	}
 
+	public PageInfo<DogSearchResponse> getFavoriteDogs(Long centerId, Long memberId, String pageToken) {
+		PageInfo<DogSummaryInfo> dogSummaryInfos = dogRepository.getFavoriteDogs(centerId, memberId, pageToken);
+		List<Long> dogIds = dogSummaryInfos.data().stream()
+			.map(DogSummaryInfo::dogId)
+			.toList();
+
+		List<FavoriteDogCount> favoriteDogCounts = favoriteDogRepository.getFavoriteCountByDogIds(dogIds);
+
+		Map<Long, Integer> favoriteCountMap = favoriteDogCounts.stream()
+			.collect(Collectors.toMap(
+				FavoriteDogCount::dogId,
+				FavoriteDogCount::count
+			));
+
+		List<DogSearchResponse> responses = dogSummaryInfos.data().stream()
+			.map(dog -> new DogSearchResponse(
+				dog.dogId(),
+				dog.name(),
+				dog.imageUrl(),
+				dog.ageMonth(),
+				dog.gender(),
+				true,
+				favoriteCountMap.getOrDefault(dog.dogId(), 0),
+				dog.isStar()
+			))
+			.toList();
+
+		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
+	}
+
 	private Dog findDog(Long dogId) {
 		return dogRepository.getDog(dogId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.DOG_NOT_FOUND));
