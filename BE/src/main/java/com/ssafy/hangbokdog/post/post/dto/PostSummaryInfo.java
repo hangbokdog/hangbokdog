@@ -8,6 +8,8 @@ public record PostSummaryInfo(
 		String memberImage,
 		Long postId,
 		String title,
-		LocalDateTime createdAt
+		LocalDateTime createdAt,
+		Long postTypeId,
+		String postTypeName
 ) {
 }
