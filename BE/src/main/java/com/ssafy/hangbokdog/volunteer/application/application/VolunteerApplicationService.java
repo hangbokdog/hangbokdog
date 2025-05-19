@@ -171,7 +171,7 @@ public class VolunteerApplicationService {
                 new VolunteerApplicationEvent(
                         application.getMemberId(),
                         volunteerEvent.getTitle(),
-                        request.status().equals(APPROVED)
+                        request.status()
                         )
         );
 
