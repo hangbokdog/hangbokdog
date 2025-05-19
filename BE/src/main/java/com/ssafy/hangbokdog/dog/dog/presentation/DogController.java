@@ -266,6 +266,15 @@ public class DogController {
 		return ResponseEntity.ok().body(dogService.getHospitalDogs(centerId, pageToken));
 	}
 
+	@GetMapping("/favorite/my")
+	public ResponseEntity<PageInfo<DogSearchResponse>> getMyFavoriteDogs(
+		@AuthMember Member member,
+		@RequestParam Long centerId,
+		@RequestParam(required = false) String pageToken
+	) {
+		return ResponseEntity.ok().body(dogService.getFavoriteDogs(centerId, member.getId(), pageToken));
+	}
+
 	private String uploadImageToS3(MultipartFile image) {
 		return s3Service.uploadFile(image);
 	}

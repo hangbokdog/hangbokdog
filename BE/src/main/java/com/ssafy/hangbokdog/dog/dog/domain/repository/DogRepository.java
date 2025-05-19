@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class DogRepository {
 
 	private static final int MEDICAL_PAGE_SIZE = 10;
+	private static final int FAVORITE_PAGE_SIZE = 10;
 	private static final int DOG_PAGE_SIZE = 30;
 
 	private final DogJpaRepository dogJpaRepository;
@@ -171,5 +172,10 @@ public class DogRepository {
 
 	public Optional<MedicalHistory> findMedicalHistoryById(Long id) {
 		return medicalHistoryJpaRepository.findById(id);
+	}
+
+	public PageInfo<DogSummaryInfo> getFavoriteDogs(Long centerId, Long memberId, String pageToken) {
+		var data = dogJpaRepository.getFavoriteDogs(centerId, memberId, pageToken, FAVORITE_PAGE_SIZE);
+		return PageInfo.of(data, FAVORITE_PAGE_SIZE, DogSummaryInfo::dogId);
 	}
 }

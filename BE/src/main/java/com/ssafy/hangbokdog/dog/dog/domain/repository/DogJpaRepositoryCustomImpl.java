@@ -4,6 +4,7 @@ import static com.ssafy.hangbokdog.adoption.domain.QAdoption.*;
 import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.dog.dog.domain.QDog.*;
+import static com.ssafy.hangbokdog.dog.dog.domain.QFavoriteDog.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -256,6 +257,38 @@ public class DogJpaRepositoryCustomImpl implements DogJpaRepositoryCustom {
 				dog.isStar.eq(false),
 				isInRange(pageToken))
 			.orderBy(dog.id.desc())
+			.limit(pageSize + 1)
+			.fetch();
+	}
+
+	@Override
+	public List<DogSummaryInfo> getFavoriteDogs(
+		Long centerId,
+		Long memberId,
+		String pageToken,
+		int pageSize
+	) {
+		return queryFactory
+			.select(Projections.constructor(
+				DogSummaryInfo.class,
+				dog.id,
+				dog.name,
+				dog.profileImage,
+				Expressions.numberTemplate(
+					Integer.class,
+					"timestampdiff(month, {0}, now())",
+					dog.birth
+				),
+				dog.gender,
+				dog.isStar
+			))
+			.from(dog)
+			.join(favoriteDog).on(favoriteDog.dogId.eq(dog.id))
+			.where(favoriteDog.memberId.eq(memberId),
+				dog.centerId.eq(centerId),
+				isInRange(pageToken))
+			.orderBy(dog.id.desc())
+			.limit(pageSize + 1)
 			.fetch();
 	}
 
