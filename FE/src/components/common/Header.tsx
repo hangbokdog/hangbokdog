@@ -89,7 +89,6 @@ export default function Header() {
 			case "USER":
 				break;
 			case "MANAGER":
-				navigate("/manager");
 				break;
 			default:
 				break;
