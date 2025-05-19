@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.post.post.domain.repository;
 
 import static com.ssafy.hangbokdog.member.domain.QMember.member;
 import static com.ssafy.hangbokdog.post.post.domain.QPost.post;
+import static com.ssafy.hangbokdog.post.post.domain.QPostLike.*;
 import static com.ssafy.hangbokdog.post.post.domain.QPostType.*;
 
 import java.time.LocalDateTime;
@@ -105,6 +106,49 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 .limit(5)
                 .fetch();
     }
+
+    @Override
+    public List<PostSummaryInfo> findMyPosts(Long centerId, Long memberId) {
+        return queryFactory
+            .select(Projections.constructor(
+                PostSummaryInfo.class,
+                post.authorId,
+                member.nickName,
+                member.profileImage,
+                post.id,
+                post.title,
+                post.createdAt
+            ))
+            .from(post)
+            .where(post.centerId.eq(centerId),
+                post.authorId.eq(memberId))
+            .orderBy(post.createdAt.desc())
+            .fetch();
+    }
+
+    @Override
+    public List<PostSummaryInfo> findMyLikedPosts(Long memberId, Long centerId) {
+        return queryFactory
+            .select(Projections.constructor(
+                PostSummaryInfo.class,
+                post.authorId,
+                member.nickName,
+                member.profileImage,
+                post.id,
+                post.title,
+                post.createdAt
+            ))
+            .from(post)
+            .join(member).on(post.authorId.eq(member.id))
+            .join(postLike).on(postLike.postId.eq(post.id))
+            .where(
+                post.centerId.eq(centerId),
+                postLike.memberId.eq(memberId)
+            )
+            .orderBy(post.createdAt.desc())
+            .fetch();
+    }
+
 
     @Override
     public List<FosterDiaryCheckQuery> findFostersWithInsufficientDiaries(

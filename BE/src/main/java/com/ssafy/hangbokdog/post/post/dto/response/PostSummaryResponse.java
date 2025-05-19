@@ -10,6 +10,7 @@ public record PostSummaryResponse(
 		String title,
 		LocalDateTime createdAt,
 		Boolean isLiked,
-		Integer likeCount
+		Integer likeCount,
+		Integer commentCount
 ) {
 }

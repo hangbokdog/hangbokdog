@@ -41,5 +41,4 @@ public class PostLikeService {
 
         return new PostLikeResponse(true);
     }
-
 }

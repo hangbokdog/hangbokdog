@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.post.comment.domain.Comment;
+import com.ssafy.hangbokdog.post.comment.dto.CommentCountInfo;
 import com.ssafy.hangbokdog.post.comment.dto.CommentInfo;
 import com.ssafy.hangbokdog.post.comment.dto.CommentLikeInfo;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
@@ -41,5 +42,9 @@ public class CommentRepository {
 
     public List<Long> getCommentLikeIdsByMemberId(Long memberId) {
         return commentLikeJpaRepository.findByMemberId(memberId);
+    }
+
+    public List<CommentCountInfo> findCommentCountIn(List<Long> postIds) {
+        return commentJpaRepository.findCommentCountIn(postIds);
     }
 }
