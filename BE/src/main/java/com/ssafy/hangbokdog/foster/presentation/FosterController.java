@@ -105,5 +105,4 @@ public class FosterController {
 		List<DogFosterResponse> response = fosterService.getFostersByDogId(dogId);
 		return ResponseEntity.ok().body(response);
 	}
-
 }

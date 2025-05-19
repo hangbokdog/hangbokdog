@@ -7,6 +7,7 @@ import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.AdoptionSearchInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.MyAdoptionResponse;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
 
@@ -31,4 +32,6 @@ public interface AdoptionJpaRepositoryCustom {
 	);
 
 	Boolean checkExist(Long memberId, Long dogId);
+
+	List<MyAdoptionResponse> getMyAdoptions(Long memberId, Long centerId);
 }

@@ -11,6 +11,7 @@ import com.ssafy.hangbokdog.adoption.dto.AdoptedDogDetailInfo;
 import com.ssafy.hangbokdog.adoption.dto.AdoptionSearchInfo;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
 import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
+import com.ssafy.hangbokdog.adoption.dto.response.MyAdoptionResponse;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.DogBreed;
 import com.ssafy.hangbokdog.dog.dog.domain.enums.Gender;
@@ -85,5 +86,9 @@ public class AdoptionRepository {
 
 	public void deleteByDogId(Long dogId) {
 		adoptionJpaRepository.deleteByDogId(dogId);
+	}
+
+	public List<MyAdoptionResponse> getMyAdoptions(Long memberId, Long centerId) {
+		return adoptionJpaRepository.getMyAdoptions(memberId, centerId);
 	}
 }

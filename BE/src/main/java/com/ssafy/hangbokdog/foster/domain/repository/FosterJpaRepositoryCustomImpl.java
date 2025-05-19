@@ -58,7 +58,7 @@ public class FosterJpaRepositoryCustomImpl implements FosterJpaRepositoryCustom 
 			.on(dog.id.eq(foster.dogId))
 			.where(foster.memberId.eq(memberId)
 				.and(foster.status.eq(FosterStatus.APPLYING))
-				.or(foster.status.eq(FosterStatus.REJECTED)))
+				.or(foster.status.eq(FosterStatus.ACCEPTED)))
 			.fetch();
 	}
 
