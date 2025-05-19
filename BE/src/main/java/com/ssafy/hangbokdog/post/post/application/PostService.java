@@ -108,7 +108,9 @@ public class PostService {
                     info.createdAt(),
                     liked,
                     likeCount,
-                    commentCount
+                    commentCount,
+                    info.postTypeId(),
+                    info.postTypeName()
             );
             responses.add(response);
         }
@@ -222,7 +224,9 @@ public class PostService {
                     info.createdAt(),
                     liked,
                     likeCount,
-                    commentCount
+                    commentCount,
+                    info.postTypeId(),
+                    info.postTypeName()
             );
             responses.add(response);
         }
@@ -268,7 +272,9 @@ public class PostService {
                 info.createdAt(),
                 liked,
                 likeCount,
-                commentCount
+                commentCount,
+                info.postTypeId(),
+                info.postTypeName()
             );
             responses.add(response);
         }
@@ -311,7 +317,9 @@ public class PostService {
                 info.createdAt(),
                 liked,
                 likeCount,
-                commentCount
+                commentCount,
+                info.postTypeId(),
+                info.postTypeName()
             );
             responses.add(response);
         }
@@ -359,7 +367,9 @@ public class PostService {
                 info.createdAt(),
                 liked,
                 likeCount,
-                commentCount
+                commentCount,
+                info.postTypeId(),
+                info.postTypeName()
             );
             responses.add(response);
         }

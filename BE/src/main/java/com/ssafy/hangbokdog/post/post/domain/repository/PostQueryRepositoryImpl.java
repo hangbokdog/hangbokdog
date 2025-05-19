@@ -43,7 +43,9 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                         member.profileImage,
                         post.id,
                         post.title,
-                        post.createdAt
+                        post.createdAt,
+                        post.postTypeId,
+                        postType.name
                 ))
                 .from(post)
                 .leftJoin(member).on(member.id.eq(post.authorId))
@@ -98,7 +100,9 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                         member.profileImage,
                         post.id,
                         post.title,
-                        post.createdAt
+                        post.createdAt,
+                        post.postTypeId,
+                        postType.name
                 ))
                 .from(post)
                 .leftJoin(member).on(member.id.eq(post.authorId))
@@ -118,7 +122,9 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 member.profileImage,
                 post.id,
                 post.title,
-                post.createdAt
+                post.createdAt,
+                post.postTypeId,
+                postType.name
             ))
             .from(post)
             .join(member).on(post.authorId.eq(member.id))
@@ -138,7 +144,9 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 member.profileImage,
                 post.id,
                 post.title,
-                post.createdAt
+                post.createdAt,
+                post.postTypeId,
+                postType.name
             ))
             .from(post)
             .join(member).on(post.authorId.eq(member.id))
@@ -161,7 +169,9 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 member.profileImage,
                 post.id,
                 post.title,
-                post.createdAt
+                post.createdAt,
+                post.postTypeId,
+                postType.name
             ))
             .from(post)
             .join(member).on(post.authorId.eq(member.id))

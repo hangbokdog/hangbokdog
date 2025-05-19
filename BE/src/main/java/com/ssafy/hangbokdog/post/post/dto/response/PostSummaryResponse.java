@@ -11,6 +11,8 @@ public record PostSummaryResponse(
 		LocalDateTime createdAt,
 		Boolean isLiked,
 		Integer likeCount,
-		Integer commentCount
+		Integer commentCount,
+		Long postTypeId,
+		String postTypeName
 ) {
 }
