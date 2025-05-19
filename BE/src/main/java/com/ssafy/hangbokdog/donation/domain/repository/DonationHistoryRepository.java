@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.donation.domain.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -35,5 +36,17 @@ public class DonationHistoryRepository {
 
     public DonationAmountResponse getDonationAmountByCenterIdAndMemberId(Long centerId, Long memberId) {
         return donationHistoryJpaRepository.getDonationAmountByCenterIdAndMemberId(centerId, memberId);
+    }
+
+    public Long getMonthlyDonationAmountByCenterId(
+        Long centerId,
+        LocalDateTime monthStart,
+        LocalDateTime monthEnd
+    ) {
+        return donationHistoryJpaRepository.getMonthlyDonationAmountByCenterId(
+            centerId,
+            monthStart,
+            monthEnd
+        );
     }
 }

@@ -91,4 +91,8 @@ public class AdoptionRepository {
 	public List<MyAdoptionResponse> getMyAdoptions(Long memberId, Long centerId) {
 		return adoptionJpaRepository.getMyAdoptions(memberId, centerId);
 	}
+
+	public int getAdoptionCount(Long centerId) {
+		return adoptionJpaRepository.countAdoptedDogs(centerId);
+	}
 }

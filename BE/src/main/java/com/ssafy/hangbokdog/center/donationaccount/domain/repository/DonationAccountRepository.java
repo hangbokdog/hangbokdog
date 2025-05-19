@@ -26,6 +26,10 @@ public class DonationAccountRepository {
 		return donationAccountJpaRepository.findById(centerId);
 	}
 
+	public Long getDonationAccountBalance(Long centerId) {
+		return donationAccountJpaRepository.getDonationAccountBalance(centerId);
+	}
+
 	public List<CenterKeyInfo> getCenterKeyInfos() {
 		return donationAccountJpaRepository.getCenterKeyInfos();
 	}
