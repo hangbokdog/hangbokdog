@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.post.comment.domain.Comment;
+import com.ssafy.hangbokdog.post.comment.dto.CommentInfo;
+import com.ssafy.hangbokdog.post.comment.dto.CommentLikeInfo;
 import com.ssafy.hangbokdog.post.comment.dto.response.CommentResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class CommentRepository {
 
     private final CommentJpaRepository commentJpaRepository;
+    private final CommentLikeJpaRepository commentLikeJpaRepository;
 
     public Comment save(Comment comment) {
         return commentJpaRepository.save(comment);
@@ -28,7 +31,15 @@ public class CommentRepository {
         return commentJpaRepository.findByCommentId(commentId, loginId);
     }
 
-    public List<CommentResponse> findAllByPostId(Long postId, Long loginId) {
+    public List<CommentInfo> findAllByPostId(Long postId, Long loginId) {
         return commentJpaRepository.findAllByPostId(postId, loginId);
+    }
+
+    public List<CommentLikeInfo> findCommentLikeByPostId(Long postId) {
+        return commentLikeJpaRepository.findCommentLikeByPostId(postId);
+    }
+
+    public List<Long> getCommentLikeIdsByMemberId(Long memberId) {
+        return commentLikeJpaRepository.findByMemberId(memberId);
     }
 }
