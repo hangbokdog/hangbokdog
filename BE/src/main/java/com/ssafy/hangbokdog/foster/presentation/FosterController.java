@@ -118,8 +118,8 @@ public class FosterController {
 		return ResponseEntity.ok().body(fosterService.getFosterApplicationsByCenterId(member.getId(), centerId));
 	}
 
-	@GetMapping("/{dogId}/applications")
-	public ResponseEntity<List<FosterApplicationByDogResponse>> ggetFosterApplicationsByDog(
+	@GetMapping("/fosters/{dogId}/applications")
+	public ResponseEntity<List<FosterApplicationByDogResponse>> getFosterApplicationsByDog(
 		@AuthMember Member member,
 		@PathVariable Long dogId,
 		@RequestParam Long centerId,
