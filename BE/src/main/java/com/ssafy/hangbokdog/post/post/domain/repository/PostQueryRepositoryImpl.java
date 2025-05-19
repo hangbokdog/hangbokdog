@@ -49,6 +49,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 ))
                 .from(post)
                 .leftJoin(member).on(member.id.eq(post.authorId))
+                .leftJoin(postType).on(post.postTypeId.eq(postType.id))
                 .where(isInRange(pageToken),
                         post.centerId.eq(centerId),
                         post.postTypeId.eq(postTypeId))
@@ -106,6 +107,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 ))
                 .from(post)
                 .leftJoin(member).on(member.id.eq(post.authorId))
+                .leftJoin(postType).on(post.postTypeId.eq(postType.id))
                 .where(post.centerId.eq(centerId))
                 .orderBy(post.id.desc())
                 .limit(5)
@@ -128,6 +130,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
             ))
             .from(post)
             .join(member).on(post.authorId.eq(member.id))
+            .join(postType).on(post.postTypeId.eq(postType.id))
             .where(post.centerId.eq(centerId),
                 post.authorId.eq(memberId))
             .orderBy(post.createdAt.desc())
@@ -150,6 +153,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
             ))
             .from(post)
             .join(member).on(post.authorId.eq(member.id))
+            .join(postType).on(post.postTypeId.eq(postType.id))
             .join(postLike).on(postLike.postId.eq(post.id))
             .where(
                 post.centerId.eq(centerId),
@@ -175,6 +179,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
             ))
             .from(post)
             .join(member).on(post.authorId.eq(member.id))
+            .join(postType).on(post.postTypeId.eq(postType.id))
             .where(post.dogId.eq(dogId),
                 isInRange(pageToken))
             .orderBy(post.createdAt.desc())
