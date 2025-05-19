@@ -89,7 +89,6 @@ public class VolunteerService {
         VolunteerEvent event = VolunteerEvent.builder()
                 .centerId(centerId)
                 .title(request.title())
-                .content(request.content())
                 .imageUrls(imageUrls.isEmpty() ? List.of(DEFAULT_VOLUNTEER_IMAGE) : imageUrls)
                 .address(addressBook.getAddress())
                 .startDate(request.startDate())
@@ -490,6 +489,7 @@ public class VolunteerService {
                 .toList();
     }
 
+    @Transactional
     public void completeVolunteers() {
         volunteerApplicationRepository.updatePassedApplicationToComplete();
     }
