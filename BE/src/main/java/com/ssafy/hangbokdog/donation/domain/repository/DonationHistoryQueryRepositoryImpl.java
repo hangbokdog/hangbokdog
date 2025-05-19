@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.donation.domain.repository;
 import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.donation.domain.QDonationHistory.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -56,6 +57,24 @@ public class DonationHistoryQueryRepositoryImpl implements DonationHistoryQueryR
 				.where(donationHistory.centerId.eq(centerId).and(donationHistory.donorId.eq(memberId)))
 				.fetchOne();
 	}
+
+	@Override
+	public Long getMonthlyDonationAmountByCenterId(
+		Long centerId,
+		LocalDateTime monthStart,
+		LocalDateTime monthEnd
+	) {
+
+		return queryFactory
+			.select(donationHistory.amount.sum().longValue())
+			.from(donationHistory)
+			.where(
+				donationHistory.centerId.eq(centerId),
+				donationHistory.createdAt.between(monthStart, monthEnd)
+			)
+			.fetchOne();
+	}
+
 
 	private BooleanExpression centerIdEq(Long centerId) {
 		return centerId != null ? donationHistory.centerId.eq(centerId) : null;

@@ -1,5 +1,7 @@
 package com.ssafy.hangbokdog.center.center.application;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.adoption.domain.repository.AdoptionRepository;
 import com.ssafy.hangbokdog.center.center.domain.Center;
 import com.ssafy.hangbokdog.center.center.domain.CenterJoinRequest;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
@@ -21,6 +24,7 @@ import com.ssafy.hangbokdog.center.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.center.dto.response.AppliedCenterResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterInformationResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
@@ -31,7 +35,10 @@ import com.ssafy.hangbokdog.center.donationaccount.domain.repository.DonationAcc
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
+import com.ssafy.hangbokdog.donation.domain.repository.DonationHistoryRepository;
 import com.ssafy.hangbokdog.fcm.dto.event.CenterMemberEvent;
+import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +52,10 @@ public class CenterService {
 	private final CenterJoinRequestRepository centerJoinRequestRepository;
 	private final DonationAccountRepository donationAccountRepository;
 	private final ApplicationEventPublisher eventPublisher;
+	private final DogRepository dogRepository;
+	private final FosterRepository fosterRepository;
+	private final AdoptionRepository adoptionRepository;
+	private final DonationHistoryRepository donationHistoryRepository;
 
 	@Transactional
 	public Long createCenter(Member member, CenterCreateRequest request) {
@@ -271,6 +282,49 @@ public class CenterService {
 
 	public Long getMainCenter(Long memberId) {
 		return centerMemberRepository.getMainCenter(memberId).getCenterId();
+	}
+
+	public CenterInformationResponse getCenterInformation(Long memberId, Long centerId) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		LocalDateTime lastMonthEnd = LocalDate.now()
+			.minusMonths(1)
+			.withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth())
+			.atTime(23, 59, 59);
+
+		LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+		LocalDateTime monthEnd = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23, 59, 59);
+
+		//TODO: 캐싱 필요
+		Integer totalDogCount = dogRepository.getDogCount(centerId);
+		Integer lastMonthDogCount = dogRepository.getLastMonthDogCount(centerId, lastMonthEnd);
+		Integer fosterCount = fosterRepository.getFosterCount(centerId);
+		Integer lastMonthFosterCount = fosterRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
+		Integer adoptionCount = adoptionRepository.getAdoptionCount(centerId);
+		Long monthlyDonationAmount = donationHistoryRepository.getMonthlyDonationAmountByCenterId(
+			centerId,
+			monthStart,
+			monthEnd
+		);
+		Integer hospitalCount = dogRepository.getHospitalDogCount(centerId);
+		Integer protectedCount = dogRepository.getProtectedDogCount(centerId);
+		Long centerMileageAmount = donationAccountRepository.getDonationAccountBalance(centerId);
+
+		return new CenterInformationResponse(
+			totalDogCount,
+			lastMonthDogCount,
+			fosterCount,
+			lastMonthFosterCount,
+			adoptionCount,
+			monthlyDonationAmount,
+			hospitalCount,
+			protectedCount,
+			centerMileageAmount
+		);
 	}
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {

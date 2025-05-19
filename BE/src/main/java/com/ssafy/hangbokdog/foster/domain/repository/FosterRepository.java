@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.foster.domain.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,5 +59,13 @@ public class FosterRepository {
 
 	public Boolean isFosterApplying(Long memberId, Long dogId) {
 		return fosterJpaRepository.isFosterApply(memberId, dogId);
+	}
+
+	public int getFosterCount(Long centerId) {
+		return fosterJpaRepository.getFosterCount(centerId);
+	}
+
+	public int getLastMonthFosterCount(Long centerId, LocalDateTime lastMonthEnd) {
+		return fosterJpaRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
 	}
 }
