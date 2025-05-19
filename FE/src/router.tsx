@@ -43,7 +43,6 @@ import AnnouncementDetailPage from "./pages/AnnouncementDetailPage";
 import ProfileEdit from "./components/my/ProfileEdit";
 import PostTypeCreatePage from "./pages/PostTypeCreatePage";
 import PostEditPage from "./pages/PostEditPage";
-import MyOngoingVolunteer from "./components/my/MyOngoingVolunteer";
 
 const router = createBrowserRouter([
 	{
