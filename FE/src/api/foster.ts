@@ -83,3 +83,39 @@ export const fetchFostersByDogIdAPI = async (
 	const response = await localAxios.get(`/dogs/fosters/${dogId}`);
 	return response.data;
 };
+
+export interface FosterApplicationResponse {
+	dogId: number;
+	dogName: string;
+	dogImage: string;
+	count: number;
+}
+
+export const fetchFosterApplicationsAPI = async (
+	centerId: number,
+): Promise<FosterApplicationResponse[]> => {
+	const response = await localAxios.get("/fosters/applications", {
+		params: { centerId },
+	});
+	return response.data;
+};
+
+export interface FosterApplicationByDogResponse {
+	adoptionId: number;
+	memberId: number;
+	name: string;
+	profileImage: string;
+	phoneNumber: string;
+	createdAt: string;
+}
+
+export const fetchFosterApplicationsByDogAPI = async (
+	dogId: number,
+	centerId: number,
+	name?: string,
+): Promise<FosterApplicationByDogResponse[]> => {
+	const response = await localAxios.get(`/fosters/${dogId}/applications`, {
+		params: { centerId, name },
+	});
+	return response.data;
+};

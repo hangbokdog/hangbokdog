@@ -16,23 +16,7 @@ interface VolunteerRecordProps {
 	status: VolunteerApplicationStatus;
 }
 
-const VolunteerRecord = ({ id, date, title, status }: VolunteerRecordProps) => {
-	const statusColors = {
-		PENDING: "bg-yellow-100 text-yellow-800",
-		APPROVED: "bg-blue-100 text-blue-800",
-		COMPLETED: "bg-green-100 text-green-800",
-		REJECTED: "bg-red-100 text-red-800",
-		NONE: "bg-gray-100 text-gray-800",
-	};
-
-	const statusText = {
-		PENDING: "대기중",
-		APPROVED: "승인",
-		COMPLETED: "완료",
-		REJECTED: "거절",
-		NONE: "없음",
-	};
-
+const VolunteerRecord = ({ id, date, title }: VolunteerRecordProps) => {
 	return (
 		<Link
 			to={`/volunteer/${id}`}
@@ -45,11 +29,6 @@ const VolunteerRecord = ({ id, date, title, status }: VolunteerRecordProps) => {
 				</div>
 				<div className="font-medium">{title}</div>
 			</div>
-			<div
-				className={`px-2 py-1 rounded-full text-xs ${statusColors[status]}`}
-			>
-				{statusText[status]}
-			</div>
 		</Link>
 	);
 };
@@ -57,6 +36,32 @@ const VolunteerRecord = ({ id, date, title, status }: VolunteerRecordProps) => {
 export default function VolunteerTabContent() {
 	const [activeTab, setActiveTab] = useState<VolunteerTabType>("PENDING");
 	const queryClient = useQueryClient();
+
+	// 각 탭별로 독립적인 쿼리 사용
+	const {
+		data: volunteerData,
+		isLoading,
+		isPlaceholderData,
+	} = useQuery({
+		queryKey: ["volunteers", activeTab],
+		queryFn: () => fetchAllMyVoluteersAPI(activeTab),
+		staleTime: 5 * 60 * 1000, // 5분 동안 신선한 데이터로 간주
+		gcTime: 10 * 60 * 1000, // 10분 동안 캐시 유지
+	});
+
+	// 다음 탭 데이터 미리 가져오기 (사용자 경험 향상)
+	useEffect(() => {
+		const tabs: VolunteerTabType[] = ["PENDING", "APPROVED", "COMPLETED"];
+		const otherTabs = tabs.filter((tab) => tab !== activeTab);
+
+		for (const tab of otherTabs) {
+			queryClient.prefetchQuery({
+				queryKey: ["volunteers", tab],
+				queryFn: () => fetchAllMyVoluteersAPI(tab),
+				staleTime: 5 * 60 * 1000,
+			});
+		}
+	}, [activeTab, queryClient]);
 
 	const renderEmptyState = (type: VolunteerTabType) => {
 		const messages = {
@@ -75,20 +80,8 @@ export default function VolunteerTabContent() {
 		);
 	};
 
-	const { data: volunteerData, isLoading } = useQuery({
-		queryKey: ["volunteers", activeTab],
-		queryFn: () => fetchAllMyVoluteersAPI(activeTab),
-	});
-
-	useEffect(() => {
-		return () => {
-			queryClient.invalidateQueries({
-				queryKey: ["volunteers", activeTab],
-			});
-		};
-	}, [queryClient, activeTab]);
-
-	if (isLoading) {
+	// 전체 로딩 상태 (초기 로딩 시에만 표시)
+	if (isLoading && !isPlaceholderData) {
 		return (
 			<div className="flex items-center justify-center h-40">
 				<Loader2 className="w-8 h-8 text-male animate-spin" />
@@ -139,11 +132,12 @@ export default function VolunteerTabContent() {
 			</div>
 
 			<div className="p-2">
-				{volunteerData?.memberApplicationInfo.length === 0 ? (
+				{/* 탭 전환 시 깜빡임 방지를 위해 isFetching 상태는 별도로 처리하지 않음 */}
+				{volunteerData?.memberApplicationInfo?.length === 0 ? (
 					renderEmptyState(activeTab)
 				) : (
 					<div className="space-y-2">
-						{volunteerData?.memberApplicationInfo.map(
+						{volunteerData?.memberApplicationInfo?.map(
 							(volunteer) => (
 								<VolunteerRecord
 									key={volunteer.volunteerEventId}

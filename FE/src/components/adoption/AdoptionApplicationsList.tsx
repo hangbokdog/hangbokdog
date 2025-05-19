@@ -34,11 +34,7 @@ export default function AdoptionApplicationsList({
 		isError: isApplicationsError,
 		error: applicationsError,
 	} = useQuery({
-		queryKey: [
-			"adoptionApplications",
-			selectedCenter?.centerId,
-			searchQuery,
-		],
+		queryKey: ["adoptionApplications", selectedCenter?.centerId],
 		queryFn: () =>
 			fetchAdoptionApplicationsAPI(Number(selectedCenter?.centerId)),
 		enabled: !!selectedCenter?.centerId,
@@ -50,14 +46,30 @@ export default function AdoptionApplicationsList({
 		isError: isApplicantsError,
 		refetch: refetchApplicantListByDog,
 	} = useQuery({
-		queryKey: ["adoptionApplicantsByDog", expandedDogId, searchQuery],
+		queryKey: ["adoptionApplicantsByDog", expandedDogId],
 		queryFn: () =>
 			fetchAdoptionApplicationsByDogAPI(
 				expandedDogId || -1,
 				Number(selectedCenter?.centerId),
-				searchQuery,
 			),
 		enabled: !!selectedCenter?.centerId && !!expandedDogId,
+	});
+
+	// 검색어로 강아지 목록 필터링
+	const filteredAdoptionApplications = adoptionApplications?.filter((dog) => {
+		if (!searchQuery) return true;
+		const query = searchQuery.toLowerCase();
+		return dog.dogName.toLowerCase().includes(query);
+	});
+
+	// 검색어로 신청자 목록 필터링
+	const filteredApplicantList = applicantListByDog?.filter((applicant) => {
+		if (!searchQuery) return true;
+		const query = searchQuery.toLowerCase();
+		return (
+			applicant.name.toLowerCase().includes(query) ||
+			applicant.phoneNumber.includes(query)
+		);
 	});
 
 	const { mutate: manageAdoption, isPending: isManagingAdoption } =
@@ -147,17 +159,22 @@ export default function AdoptionApplicationsList({
 		);
 	}
 
-	if (!adoptionApplications || adoptionApplications.length === 0) {
+	if (
+		!filteredAdoptionApplications ||
+		filteredAdoptionApplications.length === 0
+	) {
 		return (
 			<p className="text-center py-8 bg-white rounded-lg shadow-sm text-gray-400">
-				입양 신청 내역이 없습니다
+				{searchQuery
+					? "검색 결과가 없습니다"
+					: "입양 신청 내역이 없습니다"}
 			</p>
 		);
 	}
 
 	return (
 		<div className="space-y-3">
-			{adoptionApplications.map((dog) => (
+			{filteredAdoptionApplications.map((dog) => (
 				<div
 					key={dog.dogId}
 					className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden"
@@ -230,97 +247,103 @@ export default function AdoptionApplicationsList({
 											다시 시도
 										</button>
 									</div>
-								) : !applicantListByDog ||
-									applicantListByDog.length === 0 ? (
+								) : !filteredApplicantList ||
+									filteredApplicantList.length === 0 ? (
 									<p className="text-center py-4 text-gray-400 text-sm">
-										신청자가 없습니다
+										{searchQuery
+											? "검색 결과가 없습니다"
+											: "신청자가 없습니다"}
 									</p>
 								) : (
-									applicantListByDog.map((applicant, i) => (
-										<div
-											key={`${applicant.memberId}-${i}`}
-											className="bg-gray-50 rounded-lg p-3"
-										>
-											<div className="flex flex-col w-full">
-												<div className="flex items-center justify-between">
-													<div className="flex items-center">
-														<img
-															src={
-																applicant.profileImage
-															}
-															alt={applicant.name}
-															className="w-8 h-8 rounded-full mr-2"
-														/>
-														<div>
-															<div className="flex items-center gap-2">
-																<div>
-																	<p className="font-medium text-sm">
-																		{
-																			applicant.name
-																		}
-																	</p>
+									filteredApplicantList.map(
+										(applicant, i) => (
+											<div
+												key={`${applicant.memberId}-${i}`}
+												className="bg-gray-50 rounded-lg p-3"
+											>
+												<div className="flex flex-col w-full">
+													<div className="flex items-center justify-between">
+														<div className="flex items-center">
+															<img
+																src={
+																	applicant.profileImage
+																}
+																alt={
+																	applicant.name
+																}
+																className="w-8 h-8 rounded-full mr-2"
+															/>
+															<div>
+																<div className="flex items-center gap-2">
+																	<div>
+																		<p className="font-medium text-sm">
+																			{
+																				applicant.name
+																			}
+																		</p>
+																		<p className="text-xs text-gray-500">
+																			{
+																				applicant.createdAt.split(
+																					"T",
+																				)[0]
+																			}
+																		</p>
+																	</div>
 																	<p className="text-xs text-gray-500">
 																		{
-																			applicant.createdAt.split(
-																				"T",
-																			)[0]
+																			applicant.phoneNumber
 																		}
 																	</p>
 																</div>
-																<p className="text-xs text-gray-500">
-																	{
-																		applicant.phoneNumber
-																	}
-																</p>
 															</div>
 														</div>
-													</div>
-													<div className="flex gap-2">
-														<button
-															type="button"
-															className="flex items-center bg-green-100 hover:bg-green-200 text-green-700 rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-															onClick={() =>
-																handleAdoptionAction(
-																	applicant.adoptionId,
-																	"ACCEPTED",
-																)
-															}
-															title="입양 신청 수락"
-															disabled={
-																isManagingAdoption
-															}
-														>
-															{isManagingAdoption ? (
-																<Loader2 className="w-4 h-4 animate-spin" />
-															) : (
-																<Check className="w-4 h-4" />
-															)}
-														</button>
-														<button
-															type="button"
-															className="flex items-center bg-red-100 hover:bg-red-200 text-red-700 rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-															onClick={() =>
-																handleAdoptionAction(
-																	applicant.adoptionId,
-																	"REJECTED",
-																)
-															}
-															title="입양 신청 거절"
-															disabled={
-																isManagingAdoption
-															}
-														>
-															{isManagingAdoption ? (
-																<Loader2 className="w-4 h-4 animate-spin" />
-															) : (
-																<X className="w-4 h-4" />
-															)}
-														</button>
+														<div className="flex gap-2">
+															<button
+																type="button"
+																className="flex items-center bg-green-100 hover:bg-green-200 text-green-700 rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+																onClick={() =>
+																	handleAdoptionAction(
+																		applicant.adoptionId,
+																		"ACCEPTED",
+																	)
+																}
+																title="입양 신청 수락"
+																disabled={
+																	isManagingAdoption
+																}
+															>
+																{isManagingAdoption ? (
+																	<Loader2 className="w-4 h-4 animate-spin" />
+																) : (
+																	<Check className="w-4 h-4" />
+																)}
+															</button>
+															<button
+																type="button"
+																className="flex items-center bg-red-100 hover:bg-red-200 text-red-700 rounded-full p-1.5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+																onClick={() =>
+																	handleAdoptionAction(
+																		applicant.adoptionId,
+																		"REJECTED",
+																	)
+																}
+																title="입양 신청 거절"
+																disabled={
+																	isManagingAdoption
+																}
+															>
+																{isManagingAdoption ? (
+																	<Loader2 className="w-4 h-4 animate-spin" />
+																) : (
+																	<X className="w-4 h-4" />
+																)}
+															</button>
+														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-									))
+										),
+									)
 								)}
 							</div>
 						</div>

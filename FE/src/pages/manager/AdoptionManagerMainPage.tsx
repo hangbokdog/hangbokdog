@@ -33,7 +33,6 @@ export default function AdoptionManagerMainPage() {
 			enabled: !!selectedCenter?.centerId,
 		});
 
-	// count 속성에 안전하게 접근
 	const appliesCount = appliesCountData?.count || 0;
 	const adoptedCount = adoptedCountData?.count || 0;
 
@@ -64,7 +63,10 @@ export default function AdoptionManagerMainPage() {
 									? "text-blue-600 border-b-2 border-blue-600"
 									: "text-gray-500"
 							}`}
-							onClick={() => setTab("pending")}
+							onClick={() => {
+								setTab("pending");
+								setSearchQuery("");
+							}}
 						>
 							대기 중
 							{!isLoadingAppliesCount && (
@@ -80,7 +82,10 @@ export default function AdoptionManagerMainPage() {
 									? "text-blue-600 border-b-2 border-blue-600"
 									: "text-gray-500"
 							}`}
-							onClick={() => setTab("adopted")}
+							onClick={() => {
+								setTab("adopted");
+								setSearchQuery("");
+							}}
 						>
 							입양 중
 							{!isLoadingAdoptedCount && (
