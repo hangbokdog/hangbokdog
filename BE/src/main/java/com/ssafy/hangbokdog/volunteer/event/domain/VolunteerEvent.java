@@ -87,6 +87,7 @@ public class VolunteerEvent extends BaseEntity {
             Long addressBookId,
             String addressName
     ) {
+        this.content = "";
         this.centerId = centerId;
         this.title = title;
         this.content = content;
