@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.center.center.application;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -8,9 +9,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hangbokdog.adoption.domain.repository.AdoptionRepository;
 import com.ssafy.hangbokdog.center.center.domain.Center;
 import com.ssafy.hangbokdog.center.center.domain.CenterJoinRequest;
@@ -46,6 +49,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CenterService {
+
+	private static final String CENTER_REDIS_KEY_PREFIX = "center:";
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final ObjectMapper objectMapper;
 
 	private final CenterRepository centerRepository;
 	private final CenterMemberRepository centerMemberRepository;
@@ -291,6 +298,14 @@ public class CenterService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
+		String key = CENTER_REDIS_KEY_PREFIX + centerId + ":information";
+
+		CenterInformationResponse cached = (CenterInformationResponse) redisTemplate.opsForValue().get(key);
+
+		if (cached != null) {
+			return cached;
+		}
+
 		LocalDateTime lastMonthEnd = LocalDate.now()
 			.minusMonths(1)
 			.withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth())
@@ -299,7 +314,6 @@ public class CenterService {
 		LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
 		LocalDateTime monthEnd = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23, 59, 59);
 
-		//TODO: 캐싱 필요
 		Integer totalDogCount = dogRepository.getDogCount(centerId);
 		Integer lastMonthDogCount = dogRepository.getLastMonthDogCount(centerId, lastMonthEnd);
 		Integer fosterCount = fosterRepository.getFosterCount(centerId);
@@ -314,7 +328,7 @@ public class CenterService {
 		Integer protectedCount = dogRepository.getProtectedDogCount(centerId);
 		Long centerMileageAmount = donationAccountRepository.getDonationAccountBalance(centerId);
 
-		return new CenterInformationResponse(
+		CenterInformationResponse response = new CenterInformationResponse(
 			totalDogCount,
 			lastMonthDogCount,
 			fosterCount,
@@ -325,7 +339,12 @@ public class CenterService {
 			protectedCount,
 			centerMileageAmount
 		);
+
+		redisTemplate.opsForValue().set(key, response, Duration.ofHours(24));
+
+		return response;
 	}
+
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
