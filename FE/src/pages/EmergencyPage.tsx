@@ -1,7 +1,7 @@
 import EmergencyPanel from "@/components/manager/emergency/EmergencyPanel";
 import FlightVolunteer from "@/components/manager/emergency/FlightVolunteer";
 
-export default function ManagerEmergencyPage() {
+export default function EmergencyPage() {
 	return (
 		<div>
 			<FlightVolunteer />

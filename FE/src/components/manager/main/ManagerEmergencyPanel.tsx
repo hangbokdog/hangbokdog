@@ -92,7 +92,7 @@ export default function ManagerEmergencyPanel({
 	return (
 		<div className="flex flex-col">
 			<ListPanel
-				link="/manager/emergency"
+				link="/emergency"
 				tabs={[
 					{
 						key: "volunteer",

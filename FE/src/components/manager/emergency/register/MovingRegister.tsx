@@ -41,7 +41,7 @@ export default function MovingRegister() {
 				targetGrade: formData.targetGrade,
 			});
 			toast("이동 게시글이 등록되었습니다!");
-			navigate("/manager/emergency");
+			navigate("/emergency");
 
 			// 입력값 초기화
 			setFormData({
