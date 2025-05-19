@@ -8,7 +8,6 @@ import com.ssafy.hangbokdog.volunteer.event.dto.SlotDto;
 // TODO: 필요 시, 활동 일지 API 분리
 public record VolunteerCreateRequest(
         String title,
-        String content,
         LocalDate startDate,
         LocalDate endDate,
         String activityLog,
