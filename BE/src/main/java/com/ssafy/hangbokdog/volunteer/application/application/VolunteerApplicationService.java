@@ -284,10 +284,12 @@ public class VolunteerApplicationService {
                 ));
     }
 
-    public List<VolunteerApplicationResponse> findAllMyApplications(
+    public VolunteerApplicationResponse findAllMyApplications(
             Member member,
             VolunteerApplicationStatus status
     ) {
-        return volunteerApplicationRepository.findAllMyApplications(member.getId(), status);
+        var volunteerApplicationInfo = volunteerApplicationRepository.findAllMyApplications(member.getId(), status);
+        return VolunteerApplicationResponse.from(volunteerApplicationInfo);
+
     }
 }

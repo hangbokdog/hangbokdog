@@ -1,13 +1,15 @@
 package com.ssafy.hangbokdog.volunteer.application.dto.response;
 
-import java.time.LocalDate;
-
-import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
+import java.util.List;
 
 public record VolunteerApplicationResponse(
-        Long volunteerEventId,
-        LocalDate date,
-        String title,
-        VolunteerApplicationStatus status
+        List<MemberApplicationInfo> memberApplicationInfo,
+        int count
 ) {
+    public static VolunteerApplicationResponse from(List<MemberApplicationInfo> memberApplicationInfos) {
+        return new VolunteerApplicationResponse(
+                memberApplicationInfos,
+                memberApplicationInfos.size()
+        );
+    }
 }

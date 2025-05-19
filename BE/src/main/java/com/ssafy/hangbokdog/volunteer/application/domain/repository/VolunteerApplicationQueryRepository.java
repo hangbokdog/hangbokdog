@@ -6,7 +6,7 @@ import java.util.List;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.dto.VolunteerApplicationStatusInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
-import com.ssafy.hangbokdog.volunteer.application.dto.response.VolunteerApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.application.dto.response.MemberApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerSlotAppliedCount;
 
@@ -31,5 +31,5 @@ public interface VolunteerApplicationQueryRepository {
 
     List<VolunteerSlotAppliedCount> findSlotsWithAppliedCountByIdIn(List<Long> volunteerSlotIds);
 
-    List<VolunteerApplicationResponse> findAllMyApplications(Long memberId, VolunteerApplicationStatus status);
+    List<MemberApplicationInfo> findAllMyApplications(Long memberId, VolunteerApplicationStatus status);
 }

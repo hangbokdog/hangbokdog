@@ -105,7 +105,7 @@ public class VolunteerApplicationController {
     }
 
     @GetMapping("/myApplications")
-    public ResponseEntity<List<VolunteerApplicationResponse>> findAllMyApplications(
+    public ResponseEntity<VolunteerApplicationResponse> findAllMyApplications(
             @AuthMember Member member,
             @RequestParam VolunteerApplicationStatus status
     ) {
