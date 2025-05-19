@@ -25,4 +25,8 @@ public interface VolunteerApplicationJpaRepository
     @Modifying
     @Query("DELETE FROM VolunteerApplication va WHERE va.volunteerEventId = :eventId")
     void deleteAllByEventId(Long eventId);
+
+    @Modifying
+    @Query("DELETE FROM VolunteerApplication va WHERE va.status = 'PENDING' AND va.volunteerId in :volunteerEventIds")
+    void deleteAllExpireApplication(List<Long> volunteerEventIds);
 }

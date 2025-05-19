@@ -68,7 +68,6 @@ public class VolunteerService {
     private final VolunteerSlotRepository volunteerSlotRepository;
     private final VolunteerEventRepository volunteerEventRepository;
 
-    // TODO: 활동 일지 제외
     @Transactional
     public Long create(Long memberId, Long centerId, VolunteerCreateRequest request) {
 
@@ -475,5 +474,19 @@ public class VolunteerService {
         volunteerSlotRepository.deleteByEventId(eventId);
         volunteerApplicationRepository.deleteByEventId(eventId);
         volunteerEventRepository.deleteById(eventId);
+    }
+
+    @Transactional
+    public void expireVolunteers() {
+        List<VolunteerEvent> volunteerEvents = volunteerEventRepository.findAllOpenAndPassedEvent();
+        List<Long> volunteerEventIds = extractVolunteerEventIdsFromEvent(volunteerEvents);
+        volunteerEventRepository.updateToExpiredStatus(volunteerEventIds);
+        volunteerApplicationRepository.deleteAllExpireApplication(volunteerEventIds);
+    }
+
+    private List<Long> extractVolunteerEventIdsFromEvent(List<VolunteerEvent> volunteerEvents) {
+        return volunteerEvents.stream()
+                .map(VolunteerEvent::getId)
+                .toList();
     }
 }

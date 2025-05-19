@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.dto.VolunteerIdInfo;
-import com.ssafy.hangbokdog.volunteer.event.dto.response.DailyApplicationInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerInfo;
 import com.ssafy.hangbokdog.volunteer.event.dto.response.VolunteerResponse;
 
@@ -21,6 +20,7 @@ public class VolunteerEventRepository {
     private static final int DEFAULT_PAGE_SIZE = 10;
 
     private final VolunteerEventJpaRepository volunteerEventJpaRepository;
+    private final VolunteerEventJdbcRepository volunteerEventJdbcRepository;
 
     public VolunteerEvent save(VolunteerEvent event) {
         return volunteerEventJpaRepository.save(event);
@@ -87,5 +87,13 @@ public class VolunteerEventRepository {
 
     public void deleteById(Long eventId) {
         volunteerEventJpaRepository.deleteById(eventId);
+    }
+
+    public List<VolunteerEvent> findAllOpenAndPassedEvent() {
+        return volunteerEventJpaRepository.findAllOpenAndPassedEvent();
+    }
+
+    public void updateToExpiredStatus(List<Long> volunteerEventIds) {
+        volunteerEventJdbcRepository.updateExpiredStatusInIds(volunteerEventIds);
     }
 }

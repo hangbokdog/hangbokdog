@@ -76,4 +76,8 @@ public class VolunteerApplicationRepository {
     public void deleteByEventId(Long eventId) {
         volunteerApplicationJpaRepository.deleteAllByEventId(eventId);
     }
+
+    public void deleteAllExpireApplication(List<Long> volunteerEventIds) {
+        volunteerApplicationJpaRepository.deleteAllExpireApplication(volunteerEventIds);
+    }
 }
