@@ -24,6 +24,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCenterStatsAPI } from "@/api/center";
+import type { CenterStatsResponse } from "@/types/center";
 
 // Chart.js 컴포넌트 등록
 ChartJS.register(
@@ -69,30 +70,18 @@ export default function StatsPanel() {
 	];
 	const currentMonth = new Date().getMonth(); // 0-11, 0은 1월
 
-	const { data } = useQuery({
-		queryKey: ["statsData"],
+	const { data } = useQuery<CenterStatsResponse>({
+		queryKey: ["statsData", selectedCenter?.centerId],
 		queryFn: () => fetchCenterStatsAPI(selectedCenter?.centerId || ""),
 		enabled: !!selectedCenter?.centerId,
 	});
 
-	// 실제로는 API로 데이터를 가져오겠지만, 여기서는 더미 데이터 사용
-	const statsData = {
-		totalDogs: 42,
-		adopted: 15,
-		sponsored: 23,
-		underTreatment: 8,
-		totalDonation: "1,850,000원",
-		monthlyDonations: [
-			125000, 140000, 130000, 185000, 210000, 175000, 145000, 160000,
-			190000, 205000, 175000, 210000,
-		],
-		monthlySponsors: [8, 10, 9, 12, 15, 13, 10, 11, 14, 16, 13, 15],
-		dogStatus: {
-			available: 19,
-			adopted: 15,
-			underTreatment: 8,
-		},
-	};
+	// 월간 후원 현황을 위한 더미 데이터
+	const monthlyDonationsDummy = [
+		125000, 140000, 130000, 185000, 210000, 175000, 145000, 160000, 190000,
+		205000, 175000, 210000,
+	];
+	const monthlySponsorsDummy = [8, 10, 9, 12, 15, 13, 10, 11, 14, 16, 13, 15];
 
 	// 컴포넌트 마운트 시 로딩 애니메이션 추가
 	useEffect(() => {
@@ -104,23 +93,23 @@ export default function StatsPanel() {
 	const getSelectedMonthData = () => {
 		if (selectedMonth === null) return null;
 		return {
-			donationAmount: statsData.monthlyDonations[selectedMonth],
-			sponsorCount: statsData.monthlySponsors[selectedMonth],
+			donationAmount: monthlyDonationsDummy[selectedMonth],
+			sponsorCount: monthlySponsorsDummy[selectedMonth],
 			month: months[selectedMonth],
 		};
 	};
 
 	const selectedMonthData = getSelectedMonthData();
 
-	// 도넛 차트 데이터
+	// 개 상태 차트 데이터
 	const dogStatusData = {
-		labels: ["입양 가능", "입양 완료", "치료 중"],
+		labels: ["보호 중", "입양 완료", "치료 중"],
 		datasets: [
 			{
 				data: [
-					statsData.dogStatus.available,
-					statsData.dogStatus.adopted,
-					statsData.dogStatus.underTreatment,
+					data?.protectedDog || 0,
+					data?.adoptionCount || 0,
+					data?.hospitalCount || 0,
 				],
 				backgroundColor: ["#4dabf7", "#51cf66", "#ff8787"],
 				borderColor: ["#ffffff", "#ffffff", "#ffffff"],
@@ -131,13 +120,13 @@ export default function StatsPanel() {
 		],
 	};
 
-	// 월간 후원 차트 데이터
+	// 월간 후원 차트 데이터 (더미 데이터 사용)
 	const monthlyDonationData = {
 		labels: months,
 		datasets: [
 			{
 				label: "후원금",
-				data: statsData.monthlyDonations,
+				data: monthlyDonationsDummy,
 				borderColor: "#4dabf7",
 				backgroundColor: "rgba(77, 171, 247, 0.1)",
 				borderWidth: 2,
@@ -250,6 +239,25 @@ export default function StatsPanel() {
 		</div>
 	);
 
+	// 추세 계산 함수
+	const calculateTrend = (
+		current: number,
+		previous: number,
+	): "up" | "down" | "neutral" => {
+		if (current > previous) return "up";
+		if (current < previous) return "down";
+		return "neutral";
+	};
+
+	// 추세 텍스트 계산 함수
+	const calculateTrendText = (current: number, previous: number): string => {
+		if (previous === 0) return "N/A";
+		const percent = Math.round(((current - previous) / previous) * 100);
+		if (percent > 0) return `+${percent}%`;
+		if (percent < 0) return `${percent}%`;
+		return "유지";
+	};
+
 	return (
 		<div
 			className={`transition-opacity duration-300 ${isLoaded ? "opacity-100" : "opacity-0"}`}
@@ -267,17 +275,29 @@ export default function StatsPanel() {
 			<div className="grid grid-cols-2 gap-3 mb-5">
 				<StatCard
 					title="전체 아이들"
-					value={statsData.totalDogs}
-					trend="up"
-					trendValue="+15%"
+					value={data?.totalDogCount || 0}
+					trend={calculateTrend(
+						data?.totalDogCount || 0,
+						data?.lastMonthDogCount || 0,
+					)}
+					trendValue={calculateTrendText(
+						data?.totalDogCount || 0,
+						data?.lastMonthDogCount || 0,
+					)}
 					icon={<MdOutlinePets className="size-5 text-blue-600" />}
 					color="bg-blue-50"
 				/>
 				<StatCard
 					title="결연 중"
-					value={statsData.sponsored}
-					trend="up"
-					trendValue="+8%"
+					value={data?.fosterCount || 0}
+					trend={calculateTrend(
+						data?.fosterCount || 0,
+						data?.lastMonthFosterCount || 0,
+					)}
+					trendValue={calculateTrendText(
+						data?.fosterCount || 0,
+						data?.lastMonthFosterCount || 0,
+					)}
 					icon={
 						<MdVolunteerActivism className="size-5 text-green-600" />
 					}
@@ -285,7 +305,7 @@ export default function StatsPanel() {
 				/>
 				<StatCard
 					title="입양 완료"
-					value={statsData.adopted}
+					value={data?.adoptionCount || 0}
 					trend="neutral"
 					trendValue="유지"
 					icon={<MdFavorite className="size-5 text-amber-600" />}
@@ -293,9 +313,9 @@ export default function StatsPanel() {
 				/>
 				<StatCard
 					title="이번 달 총 후원"
-					value={statsData.totalDonation}
+					value={`${(data?.monthlyDonationAmount || 0).toLocaleString()}원`}
 					trend="up"
-					trendValue="+12%"
+					trendValue="+12%" // 더미 데이터
 					icon={<FaMoneyBillWave className="size-5 text-teal-600" />}
 					color="bg-teal-50"
 				/>

@@ -158,7 +158,7 @@ export const LocationLabel: Record<keyof typeof locations, string> = {
 	SEOGWIPO: "서귀포",
 };
 
-export interface CenterStatsReponse {
+export interface CenterStatsResponse {
 	totalDogCount: number;
 	lastMonthDogCount: number;
 	fosterCount: number;
