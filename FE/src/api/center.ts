@@ -1,4 +1,4 @@
-import type { Location } from "@/types/center";
+import type { CenterStatsReponse, Location } from "@/types/center";
 import localAxios, { type PageInfo } from "./http-commons";
 
 export interface centerCreateRequest {
@@ -134,5 +134,14 @@ export const rejectCenterJoinRequestAPI = async (
 
 export const fetchExistingCenterCities = async () => {
 	const response = await localAxios.get("/centers/existing-cities");
+	return response.data;
+};
+
+export const fetchCenterStatsAPI = async (
+	centerId: string,
+): Promise<CenterStatsReponse> => {
+	const response = await localAxios.get<CenterStatsReponse>(
+		`/centers/${centerId}`,
+	);
 	return response.data;
 };

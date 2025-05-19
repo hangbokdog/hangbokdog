@@ -22,6 +22,8 @@ import { FaMoneyBillWave } from "react-icons/fa";
 import useCenterStore from "@/lib/store/centerStore";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { fetchCenterStatsAPI } from "@/api/center";
 
 // Chart.js 컴포넌트 등록
 ChartJS.register(
@@ -66,6 +68,12 @@ export default function StatsPanel() {
 		"12월",
 	];
 	const currentMonth = new Date().getMonth(); // 0-11, 0은 1월
+
+	const { data } = useQuery({
+		queryKey: ["statsData"],
+		queryFn: () => fetchCenterStatsAPI(selectedCenter?.centerId || ""),
+		enabled: !!selectedCenter?.centerId,
+	});
 
 	// 실제로는 API로 데이터를 가져오겠지만, 여기서는 더미 데이터 사용
 	const statsData = {

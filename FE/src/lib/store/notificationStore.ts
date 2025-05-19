@@ -8,7 +8,14 @@ export interface Notification {
 	data?: Record<string, string | number | boolean | null | undefined>;
 	isRead: boolean;
 	createdAt: string;
-	type: "VOLUNTEER_APPLICATION" | "SYSTEM" | "INFO" | "CENTER_JOIN_REQUEST";
+	type:
+		| "VOLUNTEER_APPLICATION"
+		| "SYSTEM"
+		| "INFO"
+		| "CENTER_JOIN_REQUEST"
+		| "CENTER"
+		| "EMERGENCY"
+		| "VOLUNTEER";
 }
 
 interface NotificationState {

@@ -157,3 +157,15 @@ export const LocationLabel: Record<keyof typeof locations, string> = {
 	JEJU: "제주",
 	SEOGWIPO: "서귀포",
 };
+
+export interface CenterStatsReponse {
+	totalDogCount: number;
+	lastMonthDogCount: number;
+	fosterCount: number;
+	lastMonthFosterCount: number;
+	adoptionCount: number;
+	monthlyDonationAmount: number;
+	hospitalCount: number;
+	protectedDog: number;
+	centerMileageAmount: number;
+}

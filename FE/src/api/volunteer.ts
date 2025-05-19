@@ -150,7 +150,7 @@ export const getVolunteerPrecautionTemplateAPI = async ({
 // VolunteerData 타입 정의
 export interface VolunteerData {
 	title: string;
-	content: string;
+	content?: string;
 	startDate: string;
 	endDate: string;
 	activityLog: string;

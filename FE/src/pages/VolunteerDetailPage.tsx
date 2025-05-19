@@ -174,7 +174,7 @@ export default function VolunteerDetailPage() {
 					className="w-full bg-white shadow-custom-sm p-2.5 rounded-[8px]"
 				>
 					<TabsList className="w-full p-0 bg-transparent">
-						<TabsHeader value="activity" title="활동 일지" />
+						<TabsHeader value="activity" title="내용" />
 						<TabsHeader value="apply" title="봉사 신청" />
 						<TabsHeader value="guide" title="봉사 안내" />
 						<TabsHeader value="caution" title="주의 사항" />

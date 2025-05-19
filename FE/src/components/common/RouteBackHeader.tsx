@@ -1,5 +1,6 @@
 import { MdArrowBackIos } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import FloatingNotificationIcon from "../notification/FloatingNotificationIcon";
 
 interface RouteBackHeaderProps {
 	title?: string;
@@ -31,6 +32,9 @@ export default function RouteBackHeader({
 			{sub && (
 				<span className="text-sm font-medium text-blueGray">{sub}</span>
 			)}
+			<div className="absolute right-2.5">
+				<FloatingNotificationIcon isHeader={true} />
+			</div>
 		</header>
 	);
 }

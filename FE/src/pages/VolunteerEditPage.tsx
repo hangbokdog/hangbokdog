@@ -28,7 +28,6 @@ export default function VolunteerEditPage() {
 
 	// 상태 관리
 	const [title, setTitle] = useState("");
-	const [content, setContent] = useState("");
 	const [activityLog, setActivityLog] = useState("");
 	const [info, setInfo] = useState("");
 	const [precaution, setPrecaution] = useState("");
@@ -59,7 +58,6 @@ export default function VolunteerEditPage() {
 	useEffect(() => {
 		if (volunteerDetail) {
 			setTitle(volunteerDetail.title || "");
-			setContent(volunteerDetail.content || "");
 			setActivityLog(volunteerDetail.activityLog || "");
 			setInfo(volunteerDetail.info || "");
 			setPrecaution(volunteerDetail.precaution || "");
@@ -226,7 +224,6 @@ export default function VolunteerEditPage() {
 			// 요청 데이터
 			const updateData: VolunteerUpdateData = {
 				title,
-				content,
 				activityLog,
 				precaution,
 				info,
@@ -305,21 +302,6 @@ export default function VolunteerEditPage() {
 					/>
 				</div>
 
-				{/* 내용 */}
-				<div className="flex flex-col gap-3">
-					<label htmlFor="content" className="text-lg">
-						내용
-					</label>
-					<input
-						type="text"
-						id="content"
-						value={content}
-						onChange={(e) => setContent(e.target.value)}
-						className="border border-gray-300 rounded p-2 bg-white"
-						placeholder="내용을 입력하세요."
-					/>
-				</div>
-
 				<MobileHelpBanner />
 
 				{/* 에디터 탭 섹션 */}
@@ -331,7 +313,7 @@ export default function VolunteerEditPage() {
 							onClick={() => setActiveTab("activityLog")}
 						>
 							<span className="flex items-center justify-center">
-								📝 활동 일지
+								📝 내용
 							</span>
 						</button>
 						<button
@@ -359,12 +341,12 @@ export default function VolunteerEditPage() {
 					</div>
 
 					<div className="p-4">
-						{/* 활동 일지 에디터 */}
+						{/* 내용 에디터 */}
 						{activeTab === "activityLog" && (
 							<div className="relative">
 								<div className="flex items-center justify-between mb-3">
 									<h3 className="font-medium text-lg">
-										활동 일지 작성
+										내용 작성
 									</h3>
 								</div>
 								{activityLogImageUploading && (
@@ -379,7 +361,7 @@ export default function VolunteerEditPage() {
 										modules={createEditorModules(
 											"activityLog",
 										)}
-										placeholder="활동 일지를 작성하세요."
+										placeholder="내용을 작성하세요."
 									/>
 								</div>
 							</div>

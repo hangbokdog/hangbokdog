@@ -1,4 +1,5 @@
 import useCenterStore from "@/lib/store/centerStore";
+import { LocationLabel } from "@/types/center";
 import { MdEditNote } from "react-icons/md";
 import { VscLocation } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
@@ -30,18 +31,18 @@ export default function VolunteerInfoHeader({
 	return (
 		<div className="flex flex-col p-2.5 gap-2.5 bg-white rounded-[8px] shadow-custom-sm">
 			<div className="flex justify-between items-center">
-				<div className="flex gap-2 items-center">
-					<span className="text-xl font-bold">{title}</span>
-					{status === "마감" ? (
-						<span className="font-semibold text-white bg-red px-2.5 py-1 rounded-3xl">
-							{status}
-						</span>
-					) : (
-						<span className="font-semibold text-white bg-green px-2.5 py-1 rounded-3xl">
-							{status}
-						</span>
-					)}
-				</div>
+				<span className="text-xl font-bold">{title}</span>
+			</div>
+			<div className="flex gap-2">
+				{status === "마감" ? (
+					<span className="font-semibold text-white bg-red px-2.5 py-1 rounded-3xl">
+						{status}
+					</span>
+				) : (
+					<span className="font-semibold text-white bg-green px-2.5 py-1 rounded-3xl">
+						{status}
+					</span>
+				)}
 				{isManager && (
 					<button
 						type="button"
@@ -58,8 +59,9 @@ export default function VolunteerInfoHeader({
 			<span className="text-grayText font-medium">{date}</span>
 			<span className="inline-flex gap-1 items-center">
 				<VscLocation className="size-5 text-blueGray" />
-				<span className="text-blueGray font-medium">{location}</span>
-				<span className="text-blueGray font-medium">{addressName}</span>
+				<span className="text-blueGray font-medium">
+					{LocationLabel[location as keyof typeof LocationLabel]}
+				</span>
 			</span>
 			<span className="text-grayText font-medium">{time}</span>
 			<span className="text-grayText font-medium">{pets}</span>
