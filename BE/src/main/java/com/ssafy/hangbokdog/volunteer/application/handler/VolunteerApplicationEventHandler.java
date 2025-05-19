@@ -5,7 +5,9 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.common.util.JsonUtils;
 import com.ssafy.hangbokdog.fcm.application.FcmService;
+import com.ssafy.hangbokdog.fcm.dto.response.VolunteerNotification;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
@@ -22,6 +24,7 @@ public class VolunteerApplicationEventHandler {
 
     private final FcmService fcmService;
     private final MemberRepository memberRepository;
+    private final JsonUtils jsonUtils;
 
     @TransactionalEventListener
     public void handleVolunteerApproveEvent(VolunteerApplicationEvent volunteerApplicationEvent) {
@@ -31,8 +34,10 @@ public class VolunteerApplicationEventHandler {
         fcmService.sendMessageTo(
                 member.getFcmToken(),
                 volunteerApplicationEvent.title(),
-                volunteerApplicationEvent.state().equals(VolunteerApplicationStatus.APPROVED)
-                        ? APPROVE_COMMENT : REFUSE_COMMENT
-        );
+                jsonUtils.convertToJson(VolunteerNotification.of(
+                        volunteerApplicationEvent.volunteerEventId(),
+                        volunteerApplicationEvent.state().equals(VolunteerApplicationStatus.APPROVED)
+                                ? APPROVE_COMMENT : REFUSE_COMMENT
+                )));
     }
 }

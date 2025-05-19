@@ -66,7 +66,6 @@ public class FcmService {
 						.notification(FcmMessage.Notification.builder()
 								.title(title)
 								.body(body)
-								.image(null)
 								.build()
 						).build()).validateOnly(false).build();
 

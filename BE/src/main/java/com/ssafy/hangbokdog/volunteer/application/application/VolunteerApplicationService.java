@@ -169,6 +169,7 @@ public class VolunteerApplicationService {
 
         publisher.publishEvent(
                 new VolunteerApplicationEvent(
+                        application.getVolunteerEventId(),
                         application.getMemberId(),
                         volunteerEvent.getTitle(),
                         request.status()
