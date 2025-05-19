@@ -62,7 +62,7 @@ export const signUpAPI = async ({
 		{
 			name,
 			nickname,
-			phoneNumber,
+			phone: phoneNumber,
 			birth: birthDate,
 			emergencyNotification,
 		},
