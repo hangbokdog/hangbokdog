@@ -121,6 +121,7 @@ public class PostQueryRepositoryImpl implements PostQueryRepository {
                 post.createdAt
             ))
             .from(post)
+            .join(member).on(post.authorId.eq(member.id))
             .where(post.centerId.eq(centerId),
                 post.authorId.eq(memberId))
             .orderBy(post.createdAt.desc())

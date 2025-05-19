@@ -128,7 +128,7 @@ public class CenterController {
 	@GetMapping("/{centerId}")
 	public ResponseEntity<CenterInformationResponse> getCenterInformation(
 		@AuthMember Member member,
-		@RequestParam Long centerId
+		@PathVariable Long centerId
 	) {
 		return ResponseEntity.ok().body(centerService.getCenterInformation(member.getId(), centerId));
 	}
