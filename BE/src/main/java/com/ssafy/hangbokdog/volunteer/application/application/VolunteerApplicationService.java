@@ -2,6 +2,8 @@ package com.ssafy.hangbokdog.volunteer.application.application;
 
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.AGE_REQUIREMENT_NOT_MET;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.DUPLICATE_APPLICATION;
+import static com.ssafy.hangbokdog.common.exception.ErrorCode.VOLUNTEER_NOT_FOUND;
+import static com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus.APPROVED;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,8 @@ import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicati
 import com.ssafy.hangbokdog.volunteer.application.dto.request.VolunteerApplicationStatusUpdateRequest;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.ApplicationResponse;
 import com.ssafy.hangbokdog.volunteer.application.dto.response.WeeklyApplicationResponse;
+import com.ssafy.hangbokdog.volunteer.application.event.VolunteerApplicationEvent;
+import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerEvent;
 import com.ssafy.hangbokdog.volunteer.event.domain.VolunteerSlot;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
 import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerSlotRepository;
@@ -49,10 +54,12 @@ public class VolunteerApplicationService {
     private final VolunteerSlotRepository volunteerSlotRepository;
     private final MemberRepository memberRepository;
     private final CenterMemberRepository centerMemberRepository;
+    private final ApplicationEventPublisher publisher;
+
 
     public void apply(Long eventId, VolunteerApplicationCreateRequest request) {
         if (!volunteerEventRepository.existsById(eventId)) {
-            throw new BadRequestException(ErrorCode.VOLUNTEER_NOT_FOUND);
+            throw new BadRequestException(VOLUNTEER_NOT_FOUND);
         }
 
         List<Long> volunteerSlotIds = extractSlotIds(request);
@@ -150,12 +157,23 @@ public class VolunteerApplicationService {
         VolunteerSlot slot = volunteerSlotRepository.findById(application.getVolunteerId())
                 .orElseThrow(() -> new BadRequestException(ErrorCode.SLOT_NOT_FOUND));
 
+        VolunteerEvent volunteerEvent = volunteerEventRepository.findById(application.getVolunteerEventId())
+                .orElseThrow(() -> new BadRequestException(VOLUNTEER_NOT_FOUND));
+
         // 신청(이벤트) 날짜가 지났으면 수정 불가
         LocalDate today = LocalDate.now();
         LocalDate eventDate = slot.getVolunteerDate();
         if (eventDate.isBefore(today)) {
             throw new BadRequestException(ErrorCode.VOLUNTEER_APPLICATION_PROCESSING_FAILED);
         }
+
+        publisher.publishEvent(
+                new VolunteerApplicationEvent(
+                        application.getMemberId(),
+                        volunteerEvent.getTitle(),
+                        request.status().equals(APPROVED)
+                        )
+        );
 
         slot.decreaseAppliedCount();
         if (request.status().equals(VolunteerApplicationStatus.REJECTED)) {
@@ -164,6 +182,7 @@ public class VolunteerApplicationService {
         }
 
         application.updateStatus(request.status());
+
     }
 
     @Transactional
