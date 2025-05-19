@@ -300,16 +300,15 @@ public class CenterService {
 
 		String key = CENTER_REDIS_KEY_PREFIX + centerId + ":information";
 
-		CenterInformationResponse cached = (CenterInformationResponse) redisTemplate.opsForValue().get(key);
-
+		Object cached = redisTemplate.opsForValue().get(key);
 		if (cached != null) {
-			return cached;
+			return objectMapper.convertValue(cached, CenterInformationResponse.class);
 		}
 
 		LocalDateTime lastMonthEnd = LocalDate.now()
-			.minusMonths(1)
-			.withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth())
-			.atTime(23, 59, 59);
+				.minusMonths(1)
+				.withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth())
+				.atTime(23, 59, 59);
 
 		LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
 		LocalDateTime monthEnd = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23, 59, 59);
@@ -320,30 +319,31 @@ public class CenterService {
 		Integer lastMonthFosterCount = fosterRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
 		Integer adoptionCount = adoptionRepository.getAdoptionCount(centerId);
 		Long monthlyDonationAmount = donationHistoryRepository.getMonthlyDonationAmountByCenterId(
-			centerId,
-			monthStart,
-			monthEnd
+				centerId,
+				monthStart,
+				monthEnd
 		);
 		Integer hospitalCount = dogRepository.getHospitalDogCount(centerId);
 		Integer protectedCount = dogRepository.getProtectedDogCount(centerId);
 		Long centerMileageAmount = donationAccountRepository.getDonationAccountBalance(centerId);
 
 		CenterInformationResponse response = new CenterInformationResponse(
-			totalDogCount,
-			lastMonthDogCount,
-			fosterCount,
-			lastMonthFosterCount,
-			adoptionCount,
-			monthlyDonationAmount,
-			hospitalCount,
-			protectedCount,
-			centerMileageAmount
+				totalDogCount,
+				lastMonthDogCount,
+				fosterCount,
+				lastMonthFosterCount,
+				adoptionCount,
+				monthlyDonationAmount,
+				hospitalCount,
+				protectedCount,
+				centerMileageAmount
 		);
 
 		redisTemplate.opsForValue().set(key, response, Duration.ofHours(24));
 
 		return response;
 	}
+
 
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
