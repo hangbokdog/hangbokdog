@@ -6,11 +6,7 @@ import {
 	useSearchParams,
 } from "react-router-dom";
 import { fetchAnnouncementsAPI } from "@/api/announcement";
-import {
-	fetchPostsAPI,
-	fetchPostTypesAPI,
-	type PostTypeResponse,
-} from "@/api/post";
+import { fetchPostsAPI, fetchPostTypesAPI } from "@/api/post";
 import useCenterStore from "@/lib/store/centerStore";
 import { ChevronDown, Loader2, PlusCircle } from "lucide-react";
 import {
@@ -39,7 +35,7 @@ export default function PostListPage() {
 	const observerRef = useRef<HTMLDivElement | null>(null);
 	const [searchParams, setSearchParams] = useSearchParams();
 	const tabsContainerRef = useRef<HTMLDivElement>(null);
-	const [visibleCount, setVisibleCount] = useState(4);
+	const [visibleCount, setVisibleCount] = useState(2);
 
 	// Get the type from URL params or default to "announcements"
 	const currentType = searchParams.get("type") || "announcements";
@@ -62,43 +58,8 @@ export default function PostListPage() {
 		if (!postTypes.length) return;
 
 		const calculateVisibleTabs = () => {
-			const container = tabsContainerRef.current;
-			if (!container) return;
-
-			// Reset to measure properly
-			container.style.overflow = "visible";
-
-			// Always show announcements tab
-			const announcementTab = container.children[0] as HTMLElement;
-			const announcementWidth = announcementTab?.offsetWidth || 0;
-
-			// Available width minus announcements tab
-			const containerWidth =
-				container.offsetWidth - announcementWidth - 10; // 10px buffer
-
-			// Measure each additional tab
-			let availableWidth = containerWidth;
-			let count = 0;
-
-			// Start from index 1 (after announcements tab)
-			for (let i = 1; i < container.children.length - 1; i++) {
-				const tab = container.children[i] as HTMLElement;
-				if (tab) {
-					const tabWidth = tab.offsetWidth + 8; // Add gap
-					if (availableWidth - tabWidth >= 80) {
-						// keep 80px for dropdown
-						availableWidth -= tabWidth;
-						count++;
-					} else {
-						break;
-					}
-				}
-			}
-
-			// Set overflow back to auto
-			container.style.overflow = "auto";
-
-			setVisibleCount(count);
+			// 항상 3개만 보이도록 고정
+			setVisibleCount(2);
 		};
 
 		// Calculate on initial render
@@ -188,6 +149,14 @@ export default function PostListPage() {
 		currentType === "announcements"
 			? isFetchingNextAnnouncementsPage
 			: isFetchingNextPostsPage;
+
+	useEffect(() => {
+		if (currentType === "announcements") {
+			refetchAnnouncements();
+		} else {
+			refetchPosts();
+		}
+	}, [currentType, refetchAnnouncements, refetchPosts]);
 
 	useEffect(() => {
 		const shouldRefresh = sessionStorage.getItem(ANNOUNCEMENT_REFRESH_KEY);

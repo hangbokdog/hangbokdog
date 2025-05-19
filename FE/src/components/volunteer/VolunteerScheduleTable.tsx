@@ -7,7 +7,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import type { ScheduleItem, SelectedSchedule } from "@/types/volunteer";
-import { parseISO, format, isBefore, startOfDay } from "date-fns";
+import { isBefore, startOfDay } from "date-fns";
 
 interface VolunteerScheduleTableProps {
 	scheduleData: ScheduleItem[];
@@ -134,11 +134,11 @@ export default function VolunteerScheduleTable({
 											item.morning,
 										)
 									}
-									className={`w-1/3 text-center py-4 text-base border border-white
+									className={`w-1/3 text-center py-4 text-base border border-white relative
 										${!isMorningDisabled ? "cursor-pointer hover:bg-blue-50" : "cursor-not-allowed"}
 										${isMorningDisabled ? "text-gray-400 bg-gray-50 line-through" : ""}
 										${item.morning === "6/6" && !isPast ? "text-red-500" : ""}
-										${isMorningSelected ? "bg-blue-50" : ""}
+										${isMorningSelected ? "bg-green-100 border-2 border-green-500 font-medium" : ""}
 									`}
 								>
 									{getCellContent(item.date, item.morning)}
@@ -151,11 +151,11 @@ export default function VolunteerScheduleTable({
 											item.afternoon,
 										)
 									}
-									className={`w-1/3 text-center py-4 text-base border border-white
+									className={`w-1/3 text-center py-4 text-base border border-white relative
 										${!isAfternoonDisabled ? "cursor-pointer hover:bg-blue-50" : "cursor-not-allowed"}
 										${isAfternoonDisabled ? "text-gray-400 bg-gray-50 line-through" : ""}
 										${item.afternoon === "6/6" && !isPast ? "text-red-500" : ""}
-										${isAfternoonSelected ? "bg-blue-50" : ""}
+										${isAfternoonSelected ? "bg-green-100 border-2 border-green-500 font-medium" : ""}
 									`}
 								>
 									{getCellContent(item.date, item.afternoon)}
