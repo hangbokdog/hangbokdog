@@ -3,7 +3,9 @@ package com.ssafy.hangbokdog.emergency.emergency.presentation;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,5 +75,15 @@ public class EmergencyController {
 			@RequestParam(required = false) EmergencyType type
 	) {
 		return ResponseEntity.ok().body(emergencyService.getLatestEmergencyByCenter(centerId, type));
+	}
+
+	@DeleteMapping("/{emergencyId}")
+	private ResponseEntity<Void> deleteEmergency(
+		@AuthMember Member member,
+		@PathVariable Long emergencyId,
+		@RequestParam Long centerId
+	) {
+		emergencyService.deleteEmergency(emergencyId, centerId, member.getId());
+		return ResponseEntity.noContent().build();
 	}
 }

@@ -168,4 +168,15 @@ public class EmergencyService {
 
 		return new EmergencyLatestResponse(count, emergencies);
 	}
+
+	public void deleteEmergency(Long emergencyId, Long centerId, Long memberId) {
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		emergencyRepository.deleteEmergencyById(emergencyId);
+	}
 }
