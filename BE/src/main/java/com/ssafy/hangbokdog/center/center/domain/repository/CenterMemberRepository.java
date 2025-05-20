@@ -6,15 +6,21 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterMemberResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
 public class CenterMemberRepository {
+
+    private static final int CENTER_MEMBER_PAGE_SIZE = 20;
 
     private final CenterMemberJpaRepository centerMemberJpaRepository;
 
@@ -57,5 +63,21 @@ public class CenterMemberRepository {
 
     public MainCenterResponse getMainCenter(Long memberId) {
         return centerMemberJpaRepository.getMainCenter(memberId);
+    }
+
+    public PageInfo<CenterMemberResponse> getCenterMembers(
+        Long centerId,
+        String keyword,
+        CenterGrade grade,
+        String pageToken
+    ) {
+        var data = centerMemberJpaRepository.getCenterMembers(
+            centerId,
+            keyword,
+            grade,
+            pageToken,
+            CENTER_MEMBER_PAGE_SIZE
+        );
+        return PageInfo.of(data, CENTER_MEMBER_PAGE_SIZE, CenterMemberResponse::centerMemberId);
     }
 }

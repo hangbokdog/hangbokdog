@@ -17,15 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.center.center.application.CenterService;
 import com.ssafy.hangbokdog.center.center.domain.enums.CenterCity;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterInformationResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
 import com.ssafy.hangbokdog.center.donationaccount.application.DonationAccountService;
 import com.ssafy.hangbokdog.center.donationaccount.dto.response.DonationAccountBalanceResponse;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -131,5 +134,22 @@ public class CenterController {
 		@PathVariable Long centerId
 	) {
 		return ResponseEntity.ok().body(centerService.getCenterInformation(member.getId(), centerId));
+	}
+
+	@GetMapping("/members")
+	public ResponseEntity<PageInfo<CenterMemberResponse>> getMembers(
+		@AuthMember Member member,
+		@RequestParam Long centerId,
+		@RequestParam(required = false) String keyword,
+		@RequestParam(required = false) String pageToken,
+		@RequestParam(required = false) CenterGrade grade
+	) {
+		return ResponseEntity.ok().body(centerService.getCenterMembers(
+			member.getId(),
+			centerId,
+			grade,
+			keyword,
+			pageToken
+		));
 	}
 }

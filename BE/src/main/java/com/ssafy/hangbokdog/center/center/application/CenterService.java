@@ -30,6 +30,7 @@ import com.ssafy.hangbokdog.center.center.dto.response.AppliedCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterInformationResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
@@ -345,7 +346,21 @@ public class CenterService {
 		return response;
 	}
 
+	public PageInfo<CenterMemberResponse> getCenterMembers(
+		Long memberId,
+		Long centerId,
+		CenterGrade grade,
+		String keyword,
+		String pageToken
+	) {
+		CenterMember centerMember = getCenterMember(memberId, centerId);
 
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return centerMemberRepository.getCenterMembers(memberId, keyword, grade, pageToken);
+	}
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
