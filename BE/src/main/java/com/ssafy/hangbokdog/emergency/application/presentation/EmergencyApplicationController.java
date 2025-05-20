@@ -82,11 +82,7 @@ public class EmergencyApplicationController {
 		@PathVariable Long emergencyId,
 		@RequestParam Long centerId
 	) {
-		return ResponseEntity.ok().body(emergencyApplicationService.getMyEmergencyApplications(
-			member.getId(),
-			centerId,
-			emergencyId
-		));
+		return ResponseEntity.ok().body(emergencyApplicationService.getMyEmergencyApplications(member.getId(), centerId));
 	}
 
 	@GetMapping("/applications")

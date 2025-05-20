@@ -126,14 +126,10 @@ public class EmergencyApplicationService {
 		return emergencyApplicationRepository.getEmergencyApplicationsByEmergencyId(emergencyId);
 	}
 
-	public List<EmergencyApplicationResponse> getMyEmergencyApplications(
-		Long memberId,
-		Long centerId,
-		Long emergencyId
-	) {
+	public List<EmergencyApplicationResponse> getMyEmergencyApplications(Long memberId, Long centerId) {
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
-		return emergencyApplicationRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(memberId, emergencyId);
+		return emergencyApplicationRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(memberId);
 	}
 
 	public List<AllEmergencyApplicationResponse> getAllEmergencyApplications(Long memberId, Long centerId) {

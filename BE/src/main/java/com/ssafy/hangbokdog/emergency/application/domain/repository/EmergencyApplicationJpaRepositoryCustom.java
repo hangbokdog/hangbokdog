@@ -9,10 +9,7 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
 public interface EmergencyApplicationJpaRepositoryCustom {
 	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyId(Long emergencyId);
 
-	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(
-		Long memberId,
-		Long emergencyId
-	);
+	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(Long memberId);
 
 	List<AppliedEmergencies> getEmergencyApplicationsByMemberId(Long memberId);
 

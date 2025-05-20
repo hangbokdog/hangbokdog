@@ -49,14 +49,8 @@ public class EmergencyApplicationRepository {
 		return emergencyApplicationJpaRepository.getEmergencyApplicationsByEmergencyId(emergencyId);
 	}
 
-	public List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(
-		Long memberId,
-		Long emergencyId
-	) {
-		return emergencyApplicationJpaRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(
-			memberId,
-			emergencyId
-		);
+	public List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(Long memberId) {
+		return emergencyApplicationJpaRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(memberId);
 	}
 
 	public List<AppliedEmergencies> getEmergencyApplicationsByMemberId(Long memberId) {

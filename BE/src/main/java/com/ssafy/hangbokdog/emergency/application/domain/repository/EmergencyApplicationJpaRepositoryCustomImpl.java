@@ -45,10 +45,7 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 	}
 
 	@Override
-	public List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(
-		Long memberId,
-		Long emergencyId
-	) {
+	public List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyIdAndMemberId(Long memberId) {
 		return queryFactory
 			.select(Projections.constructor(
 				EmergencyApplicationResponse.class,
@@ -62,8 +59,7 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 			))
 			.from(emergencyApplication)
 			.leftJoin(member).on(emergencyApplication.applicantId.eq(member.id))
-			.where(emergencyApplication.emergencyId.eq(emergencyId),
-				emergencyApplication.applicantId.eq(memberId))
+			.where(emergencyApplication.applicantId.eq(memberId))
 			.fetch();
 	}
 
