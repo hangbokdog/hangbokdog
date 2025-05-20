@@ -41,14 +41,14 @@ public class Post extends BaseEntity {
     @Column(name = "dog_id")
     private Long dogId;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 512)
     private String title;
 
     @Type(JsonType.class)
     @Column(columnDefinition = "json")
     private List<String> imageUrls;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10000)
     private String content;
 
     @Builder
