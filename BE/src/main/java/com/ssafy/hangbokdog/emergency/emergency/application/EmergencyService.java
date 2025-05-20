@@ -1,7 +1,11 @@
 package com.ssafy.hangbokdog.emergency.emergency.application;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -12,9 +16,13 @@ import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberReposito
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
+import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
+import com.ssafy.hangbokdog.emergency.application.domain.repository.EmergencyApplicationRepository;
 import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.emergency.domain.repository.EmergencyRepository;
+import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRequest;
@@ -34,6 +42,7 @@ public class EmergencyService {
 	private final CenterMemberRepository centerMemberRepository;
 	private final ApplicationEventPublisher eventPublisher;
 	private final CenterRepository centerRepository;
+	private final EmergencyApplicationRepository emergencyApplicationRepository;
 
 	@Transactional
 	public EmergencyCreateResponse createTransPortEmergency(
@@ -154,8 +163,41 @@ public class EmergencyService {
 		return new EmergencyCreateResponse(emergencyRepository.save(emergency).getId());
 	}
 
-	public List<EmergencyResponse> getEmergencyByCenter(Long centerId, EmergencyType type) {
-		return emergencyRepository.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
+	public List<EmergencyResponse> getEmergencyByCenter(Long centerId, EmergencyType type, Long memberId) {
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		Map<Long, EmergencyApplicationStatus> appliedEmergencies = emergencyApplicationRepository
+			.getEmergencyApplicationsByMemberId(memberId)
+			.stream()
+			.collect(Collectors.toMap(
+				AppliedEmergencies::emergencyId,
+				AppliedEmergencies::status
+			));
+
+		List<EmergencyInfo> emergencyInfos = emergencyRepository
+			.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
+
+		List<EmergencyResponse> responses = new ArrayList<>();
+
+		for (EmergencyInfo emergencyInfo : emergencyInfos) {
+			EmergencyResponse response = new EmergencyResponse(
+				emergencyInfo.emergencyId(),
+				emergencyInfo.centerId(),
+				emergencyInfo.authorId(),
+				emergencyInfo.name(),
+				emergencyInfo.title(),
+				emergencyInfo.content(),
+				emergencyInfo.memberImage(),
+				emergencyInfo.dueDate(),
+				emergencyInfo.capacity(),
+				emergencyInfo.targetAmount(),
+				emergencyInfo.type(),
+				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null)
+			);
+		}
+
+		return responses;
 	}
 
 	public EmergencyLatestResponse getLatestEmergencyByCenter(Long centerId, EmergencyType type) {

@@ -12,6 +12,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -23,10 +24,10 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 	private final JPQLQueryFactory queryFactory;
 
 	@Override
-	public List<EmergencyResponse> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
+	public List<EmergencyInfo> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
 		return queryFactory
 				.select(Projections.constructor(
-						EmergencyResponse.class,
+						EmergencyInfo.class,
 						emergency.id,
 						emergency.centerId,
 						emergency.authorId,

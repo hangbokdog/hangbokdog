@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.emergency.application.application.EmergencyApplicationService;
 import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
+import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationCreateResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -85,6 +86,17 @@ public class EmergencyApplicationController {
 			member.getId(),
 			centerId,
 			emergencyId
+		));
+	}
+
+	@GetMapping("/applications")
+	public ResponseEntity<List<AllEmergencyApplicationResponse>> getApplications(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(emergencyApplicationService.getAllEmergencyApplications(
+			member.getId(),
+			centerId
 		));
 	}
 }

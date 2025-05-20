@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.emergency.application.domain.EmergencyApplication;
 import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
+import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
 
 import lombok.RequiredArgsConstructor;
 
@@ -55,5 +57,13 @@ public class EmergencyApplicationRepository {
 			memberId,
 			emergencyId
 		);
+	}
+
+	public List<AppliedEmergencies> getEmergencyApplicationsByMemberId(Long memberId) {
+		return emergencyApplicationJpaRepository.getEmergencyApplicationsByMemberId(memberId);
+	}
+
+	public List<AllEmergencyApplicationResponse> getEmergencyApplicationsByCenterId(Long centerId) {
+		return emergencyApplicationJpaRepository.getEmergencyApplicationsByCenterId(centerId);
 	}
 }

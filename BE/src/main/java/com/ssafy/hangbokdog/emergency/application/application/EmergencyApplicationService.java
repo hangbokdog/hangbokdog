@@ -13,6 +13,7 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.emergency.application.domain.EmergencyApplication;
 import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
 import com.ssafy.hangbokdog.emergency.application.domain.repository.EmergencyApplicationRepository;
+import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationCreateResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
@@ -113,7 +114,7 @@ public class EmergencyApplicationService {
 		return emergencyApplicationRepository.getEmergencyApplicationsByEmergencyId(emergencyId);
 	}
 
-	public  List<EmergencyApplicationResponse> getMyEmergencyApplications(
+	public List<EmergencyApplicationResponse> getMyEmergencyApplications(
 		Long memberId,
 		Long centerId,
 		Long emergencyId
@@ -121,6 +122,17 @@ public class EmergencyApplicationService {
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
 		return emergencyApplicationRepository.getEmergencyApplicationsByEmergencyIdAndMemberId(memberId, emergencyId);
+	}
+
+	public List<AllEmergencyApplicationResponse> getAllEmergencyApplications(Long memberId, Long centerId) {
+
+		CenterMember centerMember = getCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return emergencyApplicationRepository.getEmergencyApplicationsByCenterId(centerId);
 	}
 
 	private EmergencyApplication getEmergencyApplication(Long emergencyApplicationId) {
