@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { MoreVertical } from "lucide-react";
 
 interface VolunteerListItemProps {
 	img: string;
@@ -9,11 +10,21 @@ interface VolunteerListItemProps {
 	index: number;
 	emergencyId: number;
 	onClick: (emergencyId: number) => void;
+	isManagement?: boolean;
 }
 
 export default function VolunteerListItem(props: VolunteerListItemProps) {
-	const { img, name, title, target, date, index, emergencyId, onClick } =
-		props;
+	const {
+		img,
+		name,
+		title,
+		target,
+		date,
+		index,
+		emergencyId,
+		onClick,
+		isManagement,
+	} = props;
 
 	return (
 		<button
@@ -23,21 +34,15 @@ export default function VolunteerListItem(props: VolunteerListItemProps) {
 				index % 2 === 1 ? "bg-background" : ""
 			} text-grayText text-base font-medium`}
 		>
-			<div className="flex items-center gap-2 min-w-0 flex-1">
-				<Avatar className="w-6 h-6 flex justify-center items-center">
-					<AvatarImage src={img} />
-					<AvatarFallback className="bg-superLightGray text-grayText">
-						{typeof name === "string" && name.length > 0
-							? name[0]
-							: "?"}
-					</AvatarFallback>
-				</Avatar>
-				<span className="truncate">{name}</span>
-			</div>
-			<div className="flex-1 text-center truncate">{title}</div>
+			<div className="flex-1 text-start truncate">{title}</div>
 			<div className="flex-1 text-center">{target} 명</div>
-			<div className="w-16 text-right font-light text-[var(--color-blueGray)]">
-				{date}
+			<div className="flex items-center gap-2">
+				<div className="w-16 text-right font-light text-[var(--color-blueGray)]">
+					{date}
+				</div>
+				{isManagement && (
+					<MoreVertical className="w-4 h-4 text-blueGray" />
+				)}
 			</div>
 		</button>
 	);

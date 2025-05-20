@@ -1,24 +1,25 @@
 import { useState } from "react";
 import ListPanel from "@/components/common/ListPanel";
-import MovingListItem from "@/components/common/emergency/movingListItem";
-import DonationListItem from "@/components/common/emergency/donationListItem";
-import VolunteerListItem from "@/components/common/emergency/volunteerListItem";
+import EmergencyListItem from "@/components/common/emergency/EmergencyListItem";
 import EmergencyDetailModal from "@/components/common/emergency/EmergencyDetailModal";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getEmergencyPostAPI } from "@/api/emergencyRegister";
 import { EmergencyType, type EmergencyPost } from "@/types/emergencyRegister";
+import { toast } from "sonner";
+import useCenterStore from "@/lib/store/centerStore";
+import { deleteEmergencyAPI } from "@/api/emergency";
 
-interface EmergencyPanelProps {
-	centerId: number;
-	isHome?: boolean;
+interface EmergencyListProps {
+	onSelectEmergency: (emergencyId: number) => void;
 }
 
-export default function ManagerEmergencyPanel({
-	centerId,
-	isHome,
-}: EmergencyPanelProps) {
+export default function EmergencyList({
+	onSelectEmergency,
+}: EmergencyListProps) {
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [open, setOpen] = useState(false);
+	const queryClient = useQueryClient();
+	const { selectedCenter } = useCenterStore();
 
 	const {
 		data: volunteerData = { posts: [], count: 0 },
@@ -26,18 +27,19 @@ export default function ManagerEmergencyPanel({
 	} = useQuery({
 		queryKey: [
 			"emergency-posts",
-			centerId,
+			selectedCenter?.centerId,
 			EmergencyType.VOLUNTEER,
-			{ isHome },
 		],
 		queryFn: () =>
-			getEmergencyPostAPI(centerId, EmergencyType.VOLUNTEER, { isHome }),
-		enabled: !!centerId,
+			getEmergencyPostAPI(
+				Number(selectedCenter?.centerId),
+				EmergencyType.VOLUNTEER,
+				{ isHome: false },
+			),
+		enabled: !!selectedCenter?.centerId,
 		refetchOnMount: true,
 		staleTime: 0,
 	});
-	const volunteerPosts = volunteerData.posts;
-	const volunteerCount = volunteerData.count;
 
 	const {
 		data: transportData = { posts: [], count: 0 },
@@ -45,18 +47,19 @@ export default function ManagerEmergencyPanel({
 	} = useQuery({
 		queryKey: [
 			"emergency-posts",
-			centerId,
+			selectedCenter?.centerId,
 			EmergencyType.TRANSPORT,
-			{ isHome },
 		],
 		queryFn: () =>
-			getEmergencyPostAPI(centerId, EmergencyType.TRANSPORT, { isHome }),
-		enabled: !!centerId,
+			getEmergencyPostAPI(
+				Number(selectedCenter?.centerId),
+				EmergencyType.TRANSPORT,
+				{ isHome: false },
+			),
+		enabled: !!selectedCenter?.centerId,
 		refetchOnMount: true,
 		staleTime: 0,
 	});
-	const transportPosts = transportData.posts;
-	const transportCount = transportData.count;
 
 	const {
 		data: donationData = { posts: [], count: 0 },
@@ -64,30 +67,53 @@ export default function ManagerEmergencyPanel({
 	} = useQuery({
 		queryKey: [
 			"emergency-posts",
-			centerId,
+			selectedCenter?.centerId,
 			EmergencyType.DONATION,
-			{ isHome },
 		],
 		queryFn: () =>
-			getEmergencyPostAPI(centerId, EmergencyType.DONATION, { isHome }),
-		enabled: !!centerId,
+			getEmergencyPostAPI(
+				Number(selectedCenter?.centerId),
+				EmergencyType.DONATION,
+				{ isHome: false },
+			),
+		enabled: !!selectedCenter?.centerId,
 		refetchOnMount: true,
 		staleTime: 0,
 	});
-	const donationPosts = donationData.posts;
-	const donationCount = donationData.count;
+
+	const { mutate: deletePost } = useMutation({
+		mutationFn: (emergencyId: number) =>
+			deleteEmergencyAPI(emergencyId, Number(selectedCenter?.centerId)),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["emergency-posts"] });
+			toast.success("긴급 요청이 삭제되었습니다.");
+		},
+		onError: () => {
+			toast.error("긴급 요청 삭제 중 오류가 발생했습니다.");
+		},
+	});
+
+	const handleDelete = (emergencyId: number) => {
+		deletePost(emergencyId);
+	};
 
 	if (isLoadingVolunteer || isLoadingTransport || isLoadingDonation) {
 		return <div>불러오는 중...</div>;
 	}
 
 	const allPosts: EmergencyPost[] = [
-		...volunteerPosts,
-		...transportPosts,
-		...donationPosts,
+		...volunteerData.posts,
+		...transportData.posts,
+		...donationData.posts,
 	];
 	const selectedPost =
 		allPosts.find((p) => p.emergencyId === selectedId) ?? null;
+
+	const handleItemClick = (emergencyId: number) => {
+		setSelectedId(emergencyId);
+		setOpen(true);
+		onSelectEmergency(emergencyId);
+	};
 
 	return (
 		<div className="flex flex-col">
@@ -95,53 +121,50 @@ export default function ManagerEmergencyPanel({
 				tabs={[
 					{
 						key: "volunteer",
-						label: `일손 (${volunteerCount})`,
-						data: volunteerPosts.map((p, idx) => ({
+						label: `일손 (${volunteerData.count})`,
+						data: volunteerData.posts.map((p, idx) => ({
+							emergencyId: p.emergencyId,
 							title: p.title,
 							name: p.name ?? "알 수 없음",
+							type: EmergencyType.VOLUNTEER,
 							target: p.capacity ?? 0,
 							date: <DdayTag dday={calculateDDay(p.dueDate)} />,
 							index: idx,
-							emergencyId: p.emergencyId,
-							onClick: () => {
-								setSelectedId(p.emergencyId);
-								setOpen(true);
-							},
+							content: p.content ?? "",
+							onClick: handleItemClick,
 						})),
-						component: VolunteerListItem,
+						component: EmergencyListItem,
 					},
 					{
 						key: "transport",
-						label: `이동 (${transportCount})`,
-						data: transportPosts.map((p, idx) => ({
+						label: `이동 (${transportData.count})`,
+						data: transportData.posts.map((p, idx) => ({
+							emergencyId: p.emergencyId,
 							title: p.title,
 							name: p.name ?? "알 수 없음",
+							type: EmergencyType.TRANSPORT,
 							date: <DdayTag dday={calculateDDay(p.dueDate)} />,
 							index: idx,
-							emergencyId: p.emergencyId,
-							onClick: () => {
-								setSelectedId(p.emergencyId);
-								setOpen(true);
-							},
+							content: p.content ?? "",
+							onClick: handleItemClick,
 						})),
-						component: MovingListItem,
+						component: EmergencyListItem,
 					},
 					{
 						key: "donation",
-						label: `기타 (${donationCount})`,
-						data: donationPosts.map((p, idx) => ({
+						label: `기타 (${donationData.count})`,
+						data: donationData.posts.map((p, idx) => ({
+							emergencyId: p.emergencyId,
 							title: p.title,
 							name: p.name ?? "알 수 없음",
+							type: EmergencyType.DONATION,
 							target: p.targetAmount ?? 0,
 							date: <DdayTag dday={calculateDDay(p.dueDate)} />,
 							index: idx,
-							emergencyId: p.emergencyId,
-							onClick: () => {
-								setSelectedId(p.emergencyId);
-								setOpen(true);
-							},
+							content: p.content ?? "",
+							onClick: handleItemClick,
 						})),
-						component: DonationListItem,
+						component: EmergencyListItem,
 					},
 				]}
 			/>
@@ -154,6 +177,7 @@ export default function ManagerEmergencyPanel({
 						setOpen(false);
 						setSelectedId(null);
 					}}
+					onDelete={handleDelete}
 				/>
 			)}
 		</div>
