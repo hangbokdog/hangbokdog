@@ -48,7 +48,7 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "json")
     private List<String> imageUrls;
 
-    @Column(nullable = false, length = 10000)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Builder
