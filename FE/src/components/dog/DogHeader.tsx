@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addDogFavoriteAPI, removeDogFavoriteAPI } from "@/api/dog";
 import { toast } from "sonner";
 import useCenterStore from "@/lib/store/centerStore";
+import DogPostButton from "./DogPostButton";
 
 interface DogHeaderProps {
 	name: string;
@@ -99,6 +100,7 @@ export default function DogHeader({
 				</div>
 				<span className="font-medium text-blueGray">{age}</span>
 			</div>
+			<DogPostButton dogId={Number(id)} />
 			<div className="flex gap-2 items-center">
 				<button
 					type="button"
