@@ -41,24 +41,6 @@ public class NotificationJdbcRepository {
 				return notifications.size();
 			}
 		});
-
-		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps, int idx) throws SQLException {
-				Notification notification = notifications.get(idx);
-				ps.setString(1, notification.getTitle());
-				ps.setString(2, notification.getContent());
-				ps.setLong(3, notification.getReceiverId());
-				ps.setBoolean(4, notification.getIsRead());
-				ps.setString(5, notification.getType().toString());
-			}
-
-			@Override
-			public int getBatchSize() {
-				return notifications.size();
-			}
-		});
 	}
 
 	public void bulkUpdateIn(List<Long> notificationIds) {
