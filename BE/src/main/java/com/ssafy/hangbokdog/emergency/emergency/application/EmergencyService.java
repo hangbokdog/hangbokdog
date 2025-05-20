@@ -2,7 +2,6 @@ package com.ssafy.hangbokdog.emergency.emergency.application;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -20,6 +20,7 @@ import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicat
 import com.ssafy.hangbokdog.emergency.application.domain.repository.EmergencyApplicationRepository;
 import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.TargetGrade;
 import com.ssafy.hangbokdog.emergency.emergency.domain.repository.EmergencyRepository;
 import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
@@ -29,8 +30,11 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRe
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyLatestResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
+import com.ssafy.hangbokdog.fcm.domain.NotificationType;
 import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.notification.domain.Notification;
+import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,6 +47,7 @@ public class EmergencyService {
 	private final ApplicationEventPublisher eventPublisher;
 	private final CenterRepository centerRepository;
 	private final EmergencyApplicationRepository emergencyApplicationRepository;
+	private final NotificationRepository notificationRepository;
 
 	@Transactional
 	public EmergencyCreateResponse createTransPortEmergency(
@@ -148,6 +153,31 @@ public class EmergencyService {
 			.targetGrade(request.targetGrade())
 			.emergencyType(EmergencyType.DONATION)
 			.build();
+
+		//TODO: CenterGrade, TargetGrade 수정하고 이벤트에 타겟 이미 조회하니 같이 넘겨주기
+		List<Long> targetIds = new ArrayList<>();
+		if (request.targetGrade().equals(TargetGrade.ALL)) {
+			targetIds = centerMemberRepository.getTargetAllIds(centerId);
+		} else if (request.targetGrade().equals(TargetGrade.MANAGER)) {
+			targetIds = centerMemberRepository.getTargetIds(centerId, CenterGrade.MANAGER);
+		} else if (request.targetGrade().equals(TargetGrade.USER)) {
+			targetIds = centerMemberRepository.getTargetIds(centerId, CenterGrade.USER);
+		}
+
+		List<Notification> notifications = new ArrayList<>();
+
+		for (Long targetId : targetIds) {
+			Notification notification = Notification.builder()
+					.content(request.content())
+					.receiverId(targetId)
+					.targetId(emergency.getId())
+					.title(request.title())
+					.type(NotificationType.EMERGENCY)
+					.build();
+			notifications.add(notification);
+		}
+
+		notificationRepository.bulkInsert(notifications);
 
 		eventPublisher.publishEvent(
 			new EmergencyEvent(

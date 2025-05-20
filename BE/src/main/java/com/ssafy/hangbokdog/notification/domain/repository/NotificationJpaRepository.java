@@ -1,0 +1,9 @@
+package com.ssafy.hangbokdog.notification.domain.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ssafy.hangbokdog.notification.domain.Notification;
+
+public interface NotificationJpaRepository extends JpaRepository<Notification, Long>, NotificationJpaRepositoryCustom {
+
+}
