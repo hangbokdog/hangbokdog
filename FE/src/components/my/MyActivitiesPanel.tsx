@@ -24,7 +24,7 @@ export default function MyActivitiesPanel() {
 	};
 
 	return (
-		<div className="flex flex-col p-2.5 mx-2.5 rounded-xl bg-white">
+		<div className="flex flex-col mx-2.5 rounded-xl bg-white">
 			<PanelTitle title="나의 활동" link="/my/activities" />
 
 			{/* Tabs */}

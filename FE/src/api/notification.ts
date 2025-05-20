@@ -14,6 +14,17 @@ export const registerFCMToken = async (token: string, centerId?: string) => {
 	}
 };
 
+// FCM 토큰을 삭제하는 API
+export const deleteFCMToken = async () => {
+	try {
+		const response = await localAxios.delete("/members/fcm-token");
+		return response.data;
+	} catch (error) {
+		console.error("FCM 토큰 삭제 실패:", error);
+		throw error;
+	}
+};
+
 // 봉사 신청 알림을 매니저에게 보내는 API
 export const sendVolunteerApplicationNotification = async (
 	volunteerId: string,

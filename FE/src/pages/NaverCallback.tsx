@@ -5,7 +5,7 @@ import {
 	getMyMainCenterInfoAPI,
 	getUserInfoAPI,
 } from "@/api/auth";
-import type { OauthLoginResponse } from "@/types/auth";
+import type { OauthLoginResponse, UserInfoResponse } from "@/types/auth";
 import useAuthStore from "@/lib/store/authStore";
 import { toast } from "sonner";
 import Spinner from "@/components/ui/spinner";
@@ -50,11 +50,13 @@ export default function NaverCallback() {
 
 					// 유저 정보 가져오기
 					try {
-						const userInfo = await getUserInfoAPI();
+						const userInfo: UserInfoResponse =
+							await getUserInfoAPI();
 						setUserInfo(
 							userInfo.memberId,
 							userInfo.nickName,
 							userInfo.profileImage,
+							userInfo.notification,
 						);
 					} catch (error) {
 						console.error(

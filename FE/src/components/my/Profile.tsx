@@ -1,28 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { getUserInfoAPI } from "@/api/auth";
 import { LuPencil } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import type { UserInfoResponse } from "@/types/auth";
 
 interface ProfileProps {
-	onEdit?: () => void;
+	data: UserInfoResponse;
 }
 
-export default function Profile({ onEdit }: ProfileProps) {
+export default function Profile({ data }: ProfileProps) {
 	const navigate = useNavigate();
 
 	const handleEditClick = () => {
-		if (onEdit) onEdit();
 		navigate("/my/edit");
 	};
-
-	const { data, isLoading, error } = useQuery({
-		queryKey: ["userInfo"],
-		queryFn: getUserInfoAPI,
-	});
-
-	if (isLoading) return <div className="p-4">불러오는 중...</div>;
-	if (error || !data)
-		return <div className="p-4">사용자 정보를 불러올 수 없습니다.</div>;
 
 	return (
 		<div className="flex flex-col items-center p-6 bg-background">

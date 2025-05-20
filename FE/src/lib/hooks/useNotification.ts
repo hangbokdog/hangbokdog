@@ -73,6 +73,14 @@ export const useNotification = () => {
 		// 로그인 상태와 센터 선택 확인
 		if (!selectedCenter?.centerId || !user.accessToken) return;
 
+		// notification이 false인 경우 FCM 토큰 등록 건너뛰기
+		if (user.notification === false) {
+			console.log(
+				"알림이 비활성화되어 있어 FCM 토큰을 등록하지 않습니다.",
+			);
+			return;
+		}
+
 		try {
 			setIsLoading(true);
 
@@ -126,6 +134,7 @@ export const useNotification = () => {
 		selectedCenter?.centerId,
 		checkNotificationPermission,
 		user.accessToken,
+		user.notification,
 	]);
 
 	// 알림 권한 요청 함수
@@ -213,109 +222,18 @@ export const useNotification = () => {
 		},
 	});
 
-	// 알림 클릭 핸들러
-	const handleNotificationClick = useCallback(
-		(notification: Notification) => {
-			// 알림 읽음 처리
-			markAsRead(notification.id);
-
-			// 알림 패널 닫기
-			closeNotificationPanel();
-
-			// 알림 타입에 따른 처리
-			switch (notification.type) {
-				case "VOLUNTEER_APPLICATION":
-					if (notification.data?.volunteerId) {
-						navigate(
-							`/manager/volunteer/applications?id=${notification.data.volunteerId}`,
-						);
-					}
-					break;
-
-				case "CENTER_JOIN_REQUEST":
-				case "CENTER": {
-					// 센터 가입 요청 알림일 경우
-					const isApproved =
-						notification.data?.isApproved === true ||
-						notification.data?.isApproved === "true";
-
-					if (isApproved) {
-						// 승인된 경우
-						setIsCenterMember(true);
-
-						setSelectedCenter({
-							centerId: selectedCenter?.centerId || "",
-							centerName: selectedCenter?.centerName || "",
-							status: "USER",
-						});
-
-						// 쿼리 무효화
-						queryClient.invalidateQueries({
-							queryKey: ["myCenters"],
-						});
-						queryClient.invalidateQueries({
-							queryKey: ["myJoinRequestCenters"],
-						});
-
-						// 홈으로 이동
-						navigate("/");
-					} else {
-						// 거절된 경우 - 쿼리 무효화
-						setIsCenterMember(false);
-						setSelectedCenter({
-							centerId: selectedCenter?.centerId || "",
-							centerName: selectedCenter?.centerName || "",
-							status: "NONE",
-						});
-
-						queryClient.invalidateQueries({
-							queryKey: ["myCenters"],
-						});
-						queryClient.invalidateQueries({
-							queryKey: ["myJoinRequestCenters"],
-						});
-					}
-					break;
-				}
-
-				case "EMERGENCY": {
-					// 응급 알림 - 현재는 특별한 처리 없음i
-					break;
-				}
-
-				case "VOLUNTEER": {
-					// 봉사활동 신청 알림
-					if (notification.data?.volunteerEventId) {
-						// 봉사활동 상세 페이지로 이동
-						navigate(
-							`/volunteer/${notification.data.volunteerEventId}`,
-						);
-					}
-					break;
-				}
-			}
-		},
-		[
-			markAsRead,
-			navigate,
-			closeNotificationPanel,
-			queryClient,
-			setSelectedCenter,
-			setIsCenterMember,
-			selectedCenter,
-		],
-	);
-
 	// FCM 포그라운드 알림 리스너 설정
 	useEffect(() => {
 		// 로그인 상태와 센터 선택 확인
 		if (!selectedCenter?.centerId || !user.accessToken) return;
 
-		// FCM 설정
-		setupFCM().catch((err) => {
-			console.error("FCM 설정 중 오류 발생:", err);
-			// 오류가 발생해도 앱은 계속 작동
-		});
+		// 알림 설정이 비활성화되어 있으면 FCM 메시지 리스너도 설정하지 않음
+		if (user.notification === false) {
+			console.log(
+				"알림이 비활성화되어 있어 FCM 메시지 리스너를 설정하지 않습니다.",
+			);
+			return;
+		}
 
 		// 포그라운드 메시지 리스너
 		let unsubscribe = () => {};
@@ -600,12 +518,12 @@ export const useNotification = () => {
 	}, [
 		selectedCenter?.centerId,
 		selectedCenter?.centerName,
-		setupFCM,
 		addNotification,
 		queryClient,
 		setIsCenterMember,
 		setSelectedCenter,
-		user.accessToken, // 로그인 상태 변화 감지
+		user.accessToken,
+		user.notification,
 	]);
 
 	// 앱 초기화 시 권한 상태 확인 및 자동 설정
@@ -636,7 +554,6 @@ export const useNotification = () => {
 		permissionStatus,
 		toggleNotificationPanel,
 		closeNotificationPanel,
-		handleNotificationClick,
 		clearAllNotifications,
 		checkNotificationPermission,
 		requestNotificationPermission,
