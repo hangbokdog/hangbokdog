@@ -64,8 +64,13 @@ public class MemberRepository {
         return memberJpaRepository.getFcmTokenById(memberId);
     }
 
-    public CenterMemberPageResponseWithCount findMembersInCenter(Long centerId, String pageToken, CenterGrade grade) {
-        var data = memberJpaRepository.findMembersInCenter(centerId, pageToken, DEFAULT_PAGE_SIZE, grade);
+    public CenterMemberPageResponseWithCount findMembersInCenter(
+            Long centerId,
+            String pageToken,
+            CenterGrade grade,
+            String searchWord
+    ) {
+        var data = memberJpaRepository.findMembersInCenter(centerId, pageToken, DEFAULT_PAGE_SIZE, grade, searchWord);
         //TODO Cache + Batch
         int count = memberJpaRepository.countMembersInCenter(centerId, grade);
         var pageData = PageInfo.of(data, DEFAULT_PAGE_SIZE, MemberResponse::centerMemberId);

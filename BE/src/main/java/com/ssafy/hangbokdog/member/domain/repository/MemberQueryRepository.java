@@ -20,7 +20,8 @@ public interface MemberQueryRepository {
 
     List<MemberAgeInfo> findByIdWithAge(List<Long> allParticipantIds);
 
-    List<MemberResponse> findMembersInCenter(Long centerId, String pageToken, int pageSize, CenterGrade grade);
+    List<MemberResponse> findMembersInCenter(
+            Long centerId, String pageToken, int pageSize, CenterGrade grade, String searchWord);
 
     Optional<CenterMemberResponse> findByIdWithCenterInfo(Long memberId, Long centerId);
 

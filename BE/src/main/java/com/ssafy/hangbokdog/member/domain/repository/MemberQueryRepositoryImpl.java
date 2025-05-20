@@ -102,7 +102,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 			Long centerId,
 			String pageToken,
 			int pageSize,
-			CenterGrade grade
+			CenterGrade grade,
+			String searchWord
 	) {
 		return queryFactory.select(Projections.constructor(
 				MemberResponse.class,
@@ -114,9 +115,21 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				centerMember.id
 		)).from(member)
 				.leftJoin(centerMember).on(centerMember.memberId.eq(member.id))
-				.where(centerMember.centerId.eq(centerId), isInRange(pageToken), isGrade(grade))
+				.where(centerMember.centerId.eq(centerId),
+						isInRange(pageToken),
+						isGrade(grade),
+						isContains(searchWord)
+						)
 				.limit(pageSize + 1)
 				.fetch();
+	}
+
+	private BooleanExpression isContains(String searchWord) {
+		if (searchWord == null) {
+			return null;
+		}
+
+		return member.name.contains(searchWord).or(member.nickName.contains(searchWord));
 	}
 
 	@Override

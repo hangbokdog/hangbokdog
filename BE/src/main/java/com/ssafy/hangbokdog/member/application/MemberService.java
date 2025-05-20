@@ -76,7 +76,8 @@ public class MemberService {
             Long centerId,
             Member member,
             String pageToken,
-            CenterGrade grade
+            CenterGrade grade,
+            String searchWord
     ) {
         var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
@@ -85,7 +86,7 @@ public class MemberService {
             throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
         }
 
-        return memberRepository.findMembersInCenter(centerId, pageToken, grade);
+        return memberRepository.findMembersInCenter(centerId, pageToken, grade, searchWord);
     }
 
     public CenterMemberResponse findCenterMember(Long memberId, Member member, Long centerId) {

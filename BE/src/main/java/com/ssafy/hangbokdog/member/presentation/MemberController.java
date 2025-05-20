@@ -52,9 +52,10 @@ public class MemberController {
             @RequestParam Long centerId,
             @AuthMember Member member,
             @RequestParam(required = false) String pageToken,
-            @RequestParam(required = false) CenterGrade grade
+            @RequestParam(required = false) CenterGrade grade,
+            @RequestParam(required = false) String searchWord
     ) {
-        return ResponseEntity.ok(memberService.findMembersInCenter(centerId, member, pageToken, grade));
+        return ResponseEntity.ok(memberService.findMembersInCenter(centerId, member, pageToken, grade, searchWord));
     }
 
     @GetMapping("/{memberId}")
