@@ -19,9 +19,29 @@ public class NotificationJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	public void batchInsert(List<Notification> notifications) {
-		String sql = "INSERT INTO notification (title, content, receiver_id, is_read, type,"
-				+ "created_at, modified_at) "
-				+ "VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
+		String sql = "INSERT INTO notification "
+				+ "(title, content, receiver_id, is_read, type, target_id, created_at, modified_at) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())";
+
+		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int idx) throws SQLException {
+				Notification notification = notifications.get(idx);
+				ps.setString(1, notification.getTitle());
+				ps.setString(2, notification.getContent());
+				ps.setLong(3, notification.getReceiverId());
+				ps.setBoolean(4, notification.getIsRead());
+				ps.setString(5, notification.getType().toString());
+				ps.setLong(6, notification.getTargetId());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return notifications.size();
+			}
+		});
+
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
 			@Override
