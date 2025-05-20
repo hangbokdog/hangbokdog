@@ -213,6 +213,8 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                 MemberApplicationInfo.class,
                 volunteerEvent.id,
                 volunteerSlot.volunteerDate,
+                volunteerSlot.startTime,
+                volunteerSlot.endTime,
                 volunteerEvent.title,
                 volunteerApplication.status
         )).from(volunteerApplication)
