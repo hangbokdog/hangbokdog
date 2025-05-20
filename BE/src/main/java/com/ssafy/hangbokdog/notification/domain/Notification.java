@@ -26,10 +26,10 @@ public class Notification extends BaseEntity {
 	@Column(name = "notification_id", nullable = false)
 	private Long id;
 
-	@Column(name = "title", nullable = false, length = 100)
+	@Column(name = "title", nullable = false, length = 1024)
 	private String title;
 
-	@Column(name = "content", nullable = false, length = 512)
+	@Column(name = "content", nullable = false, length = 1024)
 	private String content;
 
 	@Column(name = "receiver_id", nullable = false)
@@ -45,7 +45,6 @@ public class Notification extends BaseEntity {
 	@Column(name = "type", nullable = false)
 	private NotificationType type;
 
-	//TODO:읽음처리 추가로직필요
 	public void isRead() {
 		this.isRead = true;
 	}
