@@ -30,6 +30,7 @@ import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosteredDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.post.post.domain.repository.PostRepository;
 
@@ -259,6 +260,16 @@ public class FosterService {
 		}
 
 		return fosterRepository.getFosterApplicationsByDogId(dogId, name);
+	}
+
+	public List<FosteredDogResponse> getFosteredDogs(Long memberId, Long centerId) {
+		CenterMember centerMember = checkCenterMember(memberId, centerId);
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		return fosterRepository.getFosteredDogsByCenterId(centerId);
 	}
 
 	private CenterMember checkCenterMember(Long memberId, Long centerId) {

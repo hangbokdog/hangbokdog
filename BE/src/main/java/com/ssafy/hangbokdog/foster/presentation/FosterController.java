@@ -22,6 +22,7 @@ import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterDiaryCheckResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosteredDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
@@ -132,5 +133,13 @@ public class FosterController {
 			dogId,
 			name
 		));
+	}
+
+	@GetMapping("/fosters/fostered")
+	public ResponseEntity<List<FosteredDogResponse>> getFosteredDogs(
+		@AuthMember Member member,
+		@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(fosterService.getFosteredDogs(member.getId(), centerId));
 	}
 }

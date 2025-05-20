@@ -7,6 +7,7 @@ import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosteredDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 public interface FosterJpaRepositoryCustom {
@@ -24,4 +25,6 @@ public interface FosterJpaRepositoryCustom {
 	List<FosterApplicationResponse> getFosterApplicationsByCenterId(Long centerId);
 
 	List<FosterApplicationByDogResponse> getFosterApplicationsByDogId(Long dogId, String name);
+
+	List<FosteredDogResponse> getFosteredDogsByCenterId(Long centerId);
 }

@@ -14,6 +14,7 @@ import com.ssafy.hangbokdog.foster.dto.StartedFosterInfo;
 import com.ssafy.hangbokdog.foster.dto.response.DogFosterResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationByDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.FosterApplicationResponse;
+import com.ssafy.hangbokdog.foster.dto.response.FosteredDogResponse;
 import com.ssafy.hangbokdog.foster.dto.response.MyFosterResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -79,5 +80,9 @@ public class FosterRepository {
 
 	public List<FosterApplicationByDogResponse> getFosterApplicationsByDogId(Long dogId, String name) {
 		return fosterJpaRepository.getFosterApplicationsByDogId(dogId, name);
+	}
+
+	public List<FosteredDogResponse> getFosteredDogsByCenterId(Long centerId) {
+		return fosterJpaRepository.getFosteredDogsByCenterId(centerId);
 	}
 }
