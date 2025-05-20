@@ -183,6 +183,10 @@ public class DogRepository {
 		return dogJpaRepository.getLastMonthDogCount(centerId, lastMonthEnd);
 	}
 
+	public List<String> getDogNames(Long centerId) {
+		return dogJpaRepository.getDogNames(centerId);
+	}
+
 	public int getHospitalDogCount(Long centerId) {
 		return dogJpaRepository.getHospitalDogCount(centerId);
 	}

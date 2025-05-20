@@ -34,6 +34,7 @@ import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.request.MedicalHistoryUpdateRequest;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogCreateResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogDetailResponse;
+import com.ssafy.hangbokdog.dog.dog.dto.response.DogNamesResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.DogSearchResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.HospitalDogResponse;
 import com.ssafy.hangbokdog.dog.dog.dto.response.LocationDogCountResponse;
@@ -376,6 +377,10 @@ public class DogService {
 			.toList();
 
 		return new PageInfo<>(dogSummaryInfos.pageToken(), responses, dogSummaryInfos.hasNext());
+	}
+
+	public DogNamesResponse getDogNames(Long centerId) {
+		return new DogNamesResponse(dogRepository.getDogNames(centerId));
 	}
 
 	private Dog findDog(Long dogId) {
