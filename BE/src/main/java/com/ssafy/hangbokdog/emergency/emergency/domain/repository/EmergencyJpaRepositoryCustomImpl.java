@@ -73,7 +73,6 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 						member.profileImage,
 						emergency.dueDate,
 						emergency.capacity,
-						emergency.targetAmount,
 						emergency.emergencyType,
 				emergency.status
 				))
