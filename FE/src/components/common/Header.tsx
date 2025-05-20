@@ -14,6 +14,7 @@ import { format, formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import NotificationPermissionGuide from "../notification/NotificationPermissionGuide";
 import NotificationRequestPrompt from "../notification/NotificationRequestPrompt";
+import type { NotificationItem } from "@/api/notification";
 
 type CenterStatus = "NONE" | "APPLIED" | "USER" | "MANAGER" | "MEMBER";
 
@@ -39,6 +40,9 @@ export default function Header() {
 		clearAllNotifications,
 		removeNotification,
 		requestNotificationPermission,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
 	} = useNotification();
 
 	const { mutate: registerCenter } = useMutation({
@@ -232,6 +236,29 @@ export default function Header() {
 		toast.success("모든 알림이 삭제되었습니다.");
 	};
 
+	// 알림 개별 삭제 처리 함수
+	const handleDeleteNotification = (
+		e: React.MouseEvent,
+		notificationId: string,
+	) => {
+		e.stopPropagation();
+		removeNotification(notificationId);
+		toast.success("알림이 삭제되었습니다.");
+	};
+
+	// 무한 스크롤 처리 함수
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+		// 스크롤이 90% 이상 내려갔을 때 다음 페이지 로드
+		if (
+			scrollTop + clientHeight >= scrollHeight * 0.9 &&
+			hasNextPage &&
+			!isFetchingNextPage
+		) {
+			fetchNextPage();
+		}
+	};
+
 	// 알림 권한 상태 체크 및 UI 표시 설정
 	useEffect(() => {
 		// 이미 로그인 관련 UI가 표시되었는지 확인 (중복 표시 방지)
@@ -289,16 +316,6 @@ export default function Header() {
 		setShowPermissionRequest(false);
 		// 요청을 건너뛰었다는 표시
 		localStorage.setItem("notification_permission_requested", "true");
-	};
-
-	// 알림 개별 삭제 처리 함수
-	const handleDeleteNotification = (
-		e: React.MouseEvent,
-		notificationId: string,
-	) => {
-		e.stopPropagation();
-		removeNotification(notificationId);
-		toast.success("알림이 삭제되었습니다.");
 	};
 
 	return (
@@ -429,18 +446,23 @@ export default function Header() {
 										</div>
 									</div>
 
-									<div className="overflow-y-auto max-h-[320px]">
+									<div
+										className="overflow-y-auto max-h-[320px]"
+										onScroll={handleScroll}
+									>
 										{notifications.length === 0 ? (
 											<div className="py-8 text-center text-gray-500">
 												<p>알림이 없습니다</p>
 											</div>
 										) : (
-											<div className="divide-y divide-gray-100 overflow-y-auto max-h-[320px]">
+											<div className="divide-y divide-gray-100">
 												{notifications.map(
-													(notification) => (
+													(
+														notification: NotificationItem,
+													) => (
 														<div
 															key={
-																notification.id
+																notification.notificationId
 															}
 															className={`w-full text-left transition-colors flex items-start gap-3 relative ${
 																notification.isRead
@@ -468,7 +490,7 @@ export default function Header() {
 																	</h4>
 																	<p className="text-gray-600 text-xs mt-1 line-clamp-2">
 																		{
-																			notification.body
+																			notification.content
 																		}
 																	</p>
 																	<span className="text-xs text-gray-400 mt-1 block">
@@ -489,9 +511,7 @@ export default function Header() {
 																			</span>
 																			{notification.type ===
 																				"VOLUNTEER" &&
-																				notification
-																					.data
-																					?.volunteerEventId && (
+																				notification.targetId && (
 																					<span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1">
 																						상세보기
 																					</span>
@@ -506,7 +526,7 @@ export default function Header() {
 																onClick={(e) =>
 																	handleDeleteNotification(
 																		e,
-																		notification.id,
+																		notification.notificationId.toString(),
 																	)
 																}
 															>
@@ -516,6 +536,11 @@ export default function Header() {
 															</button>
 														</div>
 													),
+												)}
+												{isFetchingNextPage && (
+													<div className="p-3 text-center text-sm text-gray-500">
+														알림을 더 불러오는 중...
+													</div>
 												)}
 											</div>
 										)}

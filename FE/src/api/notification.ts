@@ -51,8 +51,71 @@ export const sendVolunteerApplicationNotification = async (
 	}
 };
 
-// 알림 목록을 가져오는 API
-export const fetchNotifications = async (
+// 알림 목록을 가져오는 API (새로운 API 엔드포인트 형식)
+export interface NotificationResponse {
+	pageToken: string | null;
+	data: NotificationItem[];
+	hasNext: boolean;
+}
+
+export interface NotificationItem {
+	notificationId: number;
+	targetId: number;
+	type: string;
+	title: string;
+	content: string;
+	createdAt: string;
+	isRead: boolean;
+}
+
+// 새로운 API 엔드포인트로 알림 목록을 가져오는 함수
+export const fetchNotifications = async (pageToken?: string | null) => {
+	try {
+		const params = new URLSearchParams();
+		if (pageToken) params.append("pageToken", pageToken);
+
+		const response = await localAxios.get<NotificationResponse>(
+			`/notifications${params.toString() ? `?${params.toString()}` : ""}`,
+		);
+		return response.data;
+	} catch (error) {
+		console.error("알림 목록 조회 실패:", error);
+		throw error;
+	}
+};
+
+// 알림을 읽음 처리하는 API (새로운 버전)
+export const markNotificationsAsRead = async (notificationIds: number[]) => {
+	try {
+		if (notificationIds.length === 0) return { success: true };
+
+		const response = await localAxios.patch("/notifications", {
+			notificationIds,
+		});
+		return response.data;
+	} catch (error) {
+		console.error("알림 읽음 처리 실패:", error);
+		throw error;
+	}
+};
+
+// 알림을 삭제하는 API (새로운 버전)
+export const deleteNotification = async (notificationId: number) => {
+	try {
+		const response = await localAxios.delete(
+			`/notifications/${notificationId}`,
+		);
+		return response.data;
+	} catch (error) {
+		console.error("알림 삭제 실패:", error);
+		throw error;
+	}
+};
+
+// 이전 API 함수들 (추후 삭제 예정)
+
+// 이전 알림 목록을 가져오는 API
+export const fetchOldNotifications = async (
 	centerId?: string,
 	page = 1,
 	size = 10,

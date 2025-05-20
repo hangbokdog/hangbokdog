@@ -22,8 +22,6 @@ const messaging = firebase.messaging();
 
 // 백그라운드 메시지 핸들링
 messaging.onBackgroundMessage((payload) => {
-	console.log("백그라운드 메시지 수신:", payload);
-
 	const notificationTitle = payload.notification.title;
 	const notificationOptions = {
 		body: payload.notification.body,
@@ -38,8 +36,6 @@ messaging.onBackgroundMessage((payload) => {
 
 // 알림 클릭 처리
 self.addEventListener("notificationclick", (event) => {
-	console.log("알림 클릭:", event);
-
 	// 알림 닫기
 	event.notification.close();
 
@@ -73,4 +69,36 @@ self.addEventListener("notificationclick", (event) => {
 				}
 			}),
 	);
+});
+
+self.addEventListener("push", (event) => {
+	try {
+		const payload = event.data.json();
+
+		if (payload.notification?.body) {
+			try {
+				// body가 JSON 문자열인지 확인하고 파싱
+				const parsedBody = JSON.parse(payload.notification.body);
+
+				// content 필드만 추출하여 알림 내용으로 사용
+				if (parsedBody.content) {
+					payload.notification.body = parsedBody.content;
+				}
+			} catch (e) {
+				// 파싱 실패 시 원본 메시지 유지 (이미 문자열인 경우)
+				console.log("JSON 파싱 실패, 원본 메시지 사용");
+			}
+		}
+
+		// 수정된 알림 표시
+		const title = payload.notification.title;
+		const options = {
+			body: payload.notification.body,
+			icon: payload.notification.icon || "/logo.png",
+		};
+
+		event.waitUntil(self.registration.showNotification(title, options));
+	} catch (error) {
+		console.error("Push 이벤트 처리 중 오류 발생:", error);
+	}
 });
