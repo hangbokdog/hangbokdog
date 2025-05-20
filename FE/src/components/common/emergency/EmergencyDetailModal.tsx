@@ -60,13 +60,16 @@ export default function EmergencyDetailModal({
 				<div className="flex flex-col gap-4 text-grayText">
 					<div className="flex items-center gap-3">
 						<Avatar className="w-8 h-8">
-							<AvatarImage src={data.memberImage} />
+							<AvatarImage
+								src={data.memberImage}
+								className="object-cover"
+							/>
 							<AvatarFallback>
 								{data.name?.[0] ?? "?"}
 							</AvatarFallback>
 						</Avatar>
 						<div className="font-bold text-lg flex items-center gap-1">
-							{data.name} <FaPaw className="text-blue-500" />
+							{data.name}
 						</div>
 					</div>
 

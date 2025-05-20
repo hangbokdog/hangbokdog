@@ -257,7 +257,7 @@ export default function DogListPage() {
 					</div>
 				) : (
 					<>
-						<div className="max-w-[420px] grid grid-cols-2 gap-2.5">
+						<div className="max-w-[420px] grid grid-cols-2 gap-2.5 mb-8">
 							{dogs.map((dog) => (
 								<DogCard
 									key={`${dog.dogId}-${dog.name}`}

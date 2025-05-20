@@ -25,7 +25,7 @@ export default function ImboButton({ isChecked }: ImboButtonProps) {
 				"_blank",
 				"noopener,noreferrer",
 			);
-			navigate(`/dogs/${dogId}`);
+			navigate(-1);
 		},
 		onError: () => {
 			toast.error("임시 보호 신청에 실패했습니다.");

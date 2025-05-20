@@ -308,10 +308,9 @@ export default function VaccinationDetailPage() {
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
-				className="absolute top-4 left-4"
 			>
 				<div
-					className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
+					className={`flex w-24 justify-center items-center gap-1.5 px-3 py-1.5 rounded-full ${
 						isOngoing
 							? "bg-amber-100 text-amber-700"
 							: "bg-green-100 text-green-700"
@@ -334,7 +333,7 @@ export default function VaccinationDetailPage() {
 			<motion.div
 				initial={{ y: -20 }}
 				animate={{ y: 0 }}
-				className="text-3xl font-bold text-center pt-4 text-primary"
+				className="text-3xl font-bold text-center text-primary"
 			>
 				{vaccinationDetail?.title || ""}
 			</motion.div>

@@ -15,7 +15,6 @@ import {
 	type CommentCreateRequest,
 	deleteCommentAPI,
 	updateCommentAPI,
-	toggleCommentLikeAPI,
 	toggleLikeAPI,
 } from "@/api/post";
 import { fetchDogDetail, type DogDetailResponse } from "@/api/dog";

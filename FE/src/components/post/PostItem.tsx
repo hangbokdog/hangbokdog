@@ -34,8 +34,8 @@ export default function PostItem({
 			onClick={() => onClick(post.postId)}
 			className={`w-full text-left hover:bg-gray-50 active:bg-gray-100 transition-colors ${className}`}
 		>
-			<div className="flex pt-2">
-				<div className="flex flex-col flex-3/4">
+			<div className="flex">
+				<div className="flex flex-col flex-1">
 					{/* Post title */}
 					<div className="mb-2">
 						<div
@@ -81,28 +81,46 @@ export default function PostItem({
 								>
 									{formatDate(post.createdAt)}
 								</span>
-								<span
-									className={`flex items-center gap-1 ${compact ? "text-xs" : "text-sm"} font-medium ${post.isLiked ? "text-red-500" : "text-gray-500"} overflow-hidden text-ellipsis whitespace-nowrap`}
-								>
-									<span className="text-xs">댓글</span>
-									{formatLikeCount(post.commentCount)}
-								</span>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-1/4 items-center justify-center pl-8">
-					<div className="flex bg-superLightBlueGray rounded-sm h-full w-full flex-col justify-center items-center">
+				<div className="flex flex-col justify-center pl-4 items-center gap-1.5">
+					<div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-blue-50">
+						{/* biome-ignore lint/a11y/noSvgWithoutTitle: <explanation> */}
+						<svg
+							className="w-3 h-3 text-blue-500"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+						>
+							<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+						</svg>
+						<span
+							className={`${compact ? "text-[10px]" : "text-xs"} font-medium text-blue-600`}
+						>
+							{formatLikeCount(post.commentCount)}
+						</span>
+					</div>
+					<div
+						className={cn(
+							"flex items-center gap-1 px-2 py-0.5 rounded-full transition-colors",
+							post.isLiked ? "bg-red-50" : "bg-gray-50",
+						)}
+					>
 						<Heart
 							className={cn(
-								compact ? "w-3.5 h-3.5" : "w-4.5 h-4.5",
+								"w-3 h-3",
 								post.isLiked
 									? "fill-red-500 text-red-500"
-									: "text-gray-400 hover:text-gray-500",
+									: "text-gray-400",
 							)}
 						/>
 						<span
-							className={`${compact ? "text-xs" : "text-sm"} font-medium ${post.isLiked ? "text-red-500" : "text-gray-500"}`}
+							className={`${compact ? "text-[10px]" : "text-xs"} font-medium ${post.isLiked ? "text-red-600" : "text-gray-600"}`}
 						>
 							{formatLikeCount(post.likeCount)}
 						</span>

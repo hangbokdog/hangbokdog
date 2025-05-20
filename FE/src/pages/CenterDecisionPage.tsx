@@ -214,14 +214,14 @@ export default function CenterDecisionPage() {
 			staleTime: 0,
 		});
 
-	const { mutate: createCenterMutate, isPending: isCreating } = useMutation({
+	const { mutate: createCenterMutate } = useMutation({
 		mutationKey: ["createCenter"],
 		mutationFn: createCenter,
-		onSuccess: (data) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["myCenters"] });
 			toast.success("테스트 센터가 생성되었습니다");
 		},
-		onError: (error) => {
+		onError: () => {
 			toast.error("센터 생성에 실패했습니다");
 		},
 	});

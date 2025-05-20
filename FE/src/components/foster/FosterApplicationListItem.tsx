@@ -44,6 +44,8 @@ export default function FosterApplicationListItem({
 				Number(selectedCenter?.centerId),
 			),
 		enabled: !!selectedCenter?.centerId && !!expandedDogId,
+		refetchOnMount: true,
+		staleTime: 0,
 	});
 
 	const { mutate: decideFoster, isPending: isDecidingFoster } = useMutation({
@@ -57,6 +59,13 @@ export default function FosterApplicationListItem({
 			queryClient.invalidateQueries({
 				queryKey: ["fosterApplicantsByDog", expandedDogId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["fosterApplications"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["fosteredDogs"],
+			});
+			refetchApplicantListByDog();
 		},
 	});
 
@@ -66,6 +75,13 @@ export default function FosterApplicationListItem({
 			queryClient.invalidateQueries({
 				queryKey: ["fosterApplicantsByDog", expandedDogId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["fosterApplications"],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["fosteredDogs"],
+			});
+			refetchApplicantListByDog();
 		},
 	});
 

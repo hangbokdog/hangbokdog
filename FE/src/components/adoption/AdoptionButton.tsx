@@ -23,7 +23,7 @@ export default function AdoptionButton({ isChecked }: AdoptionButtonProps) {
 				"_blank",
 				"noopener,noreferrer",
 			);
-			navigate(`/dogs/${dogId}`);
+			navigate(-1);
 		},
 		onError: () => {
 			toast.error("입양 신청에 실패했습니다.");

@@ -6,3 +6,12 @@ export const EmergencyApplicationsStatus = {
 
 export type EmergencyApplicationsStatus =
 	(typeof EmergencyApplicationsStatus)[keyof typeof EmergencyApplicationsStatus];
+
+export const EmergencyStatus = {
+	RECRUITING: "RECRUITING",
+	RECRUITED: "RECRUITED",
+	COMPLETED: "COMPLETED",
+};
+
+export type EmergencyStatus =
+	(typeof EmergencyStatus)[keyof typeof EmergencyStatus];
