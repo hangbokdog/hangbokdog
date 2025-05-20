@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
 	DogStatus,
 	Gender,
@@ -21,14 +21,20 @@ import useCenterStore from "@/lib/store/centerStore";
 import axios from "axios";
 import { createDogAPI } from "@/api/dog";
 import { toast } from "sonner";
-import useManagerStore from "@/lib/store/managerStore";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { type AddressBook, fetchAddressBooks } from "@/api/center";
 
 export default function DogRegisterPage() {
 	const [profilePreview, setProfilePreview] = useState<string | null>(null);
 	const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
-	const { addressBook } = useManagerStore();
+	const centerId = useCenterStore().selectedCenter?.centerId;
+
+	const { data: addressBook } = useQuery<AddressBook[], Error>({
+		queryKey: ["addressBooks", centerId],
+		queryFn: () => fetchAddressBooks(centerId as string),
+		enabled: !!centerId,
+	});
 	const navigate = useNavigate();
 
 	const { selectedCenter } = useCenterStore();
@@ -559,7 +565,7 @@ export default function DogRegisterPage() {
 										<SelectValue placeholder="소속 위치를 선택하세요" />
 									</SelectTrigger>
 									<SelectContent className="text-base">
-										{addressBook.map(
+										{addressBook?.map(
 											({ id, addressName }) => (
 												<SelectItem
 													key={id}

@@ -21,6 +21,9 @@ import NeuteredFilter from "./NeuteredFilter";
 import LocationFilter from "./LocationFilter";
 import { X } from "lucide-react";
 import { DogBreedLabel } from "@/types/dog";
+import { type AddressBook, fetchAddressBooks } from "@/api/center";
+import useCenterStore from "@/lib/store/centerStore";
+import { useQuery } from "@tanstack/react-query";
 
 interface SearchProps {
 	onClickAISearch?: () => void;
@@ -51,7 +54,14 @@ export default function Search({
 	onFilterChange,
 }: SearchProps) {
 	const [selectedTab, setSelectedTab] = useState<FilterTab>("breed");
-	const { addressBook } = useManagerStore();
+	const centerId = useCenterStore().selectedCenter?.centerId;
+
+	const { data: addressBook } = useQuery<AddressBook[], Error>({
+		queryKey: ["addressBooks", centerId],
+		queryFn: () => fetchAddressBooks(centerId as string),
+		enabled: !!centerId,
+	});
+
 	const [tempFilter, setTempFilter] =
 		useState<Partial<DogSearchRequest>>(currentFilter);
 	const [filterLabels, setFilterLabels] = useState<
@@ -118,7 +128,7 @@ export default function Search({
 		}
 
 		// Handle location filter
-		if (currentFilter.locationId?.length) {
+		if (currentFilter.locationId?.length && addressBook) {
 			const locationNames = currentFilter.locationId.map((id) => {
 				const location = addressBook.find(
 					(addr) => addr.id === Number(id),
@@ -380,20 +390,22 @@ export default function Search({
 												}
 											/>
 										)}
-										{selectedTab === "locationId" && (
-											<LocationFilter
-												selectedLocations={
-													tempFilter.locationId || []
-												}
-												addressBook={addressBook}
-												onSelect={(location) =>
-													handleOptionSelect(
-														"locationId",
-														location,
-													)
-												}
-											/>
-										)}
+										{selectedTab === "locationId" &&
+											addressBook && (
+												<LocationFilter
+													selectedLocations={
+														tempFilter.locationId ||
+														[]
+													}
+													addressBook={addressBook}
+													onSelect={(location) =>
+														handleOptionSelect(
+															"locationId",
+															location,
+														)
+													}
+												/>
+											)}
 									</div>
 									<DrawerFooter className="flex-row justify-end gap-2">
 										<DrawerClose>
