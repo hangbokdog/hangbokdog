@@ -8,7 +8,7 @@ os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 app = FastAPI()
 
-origins = ["http://localhost:3000", "http://localhost:5173"]
+origins = ["http://localhost:3000", "http://localhost:5173", "https://hangbokdog.co.kr"]
 
 app.add_middleware(
     CORSMiddleware,
