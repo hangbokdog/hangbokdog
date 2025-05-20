@@ -40,6 +40,23 @@ export default function FosterManagerMainPage() {
 	const fosterApplicationsCount = fosterApplicationsData?.length || 0;
 	const fosteredDogsCount = fosteredDogsData?.length || 0;
 
+	// 검색어로 필터링된 데이터
+	const filteredFosterApplications = fosterApplicationsData?.filter(
+		(application) =>
+			application.dogName
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase()),
+	);
+
+	const filteredFosteredDogs = fosteredDogsData?.filter((dog) =>
+		dog.dogName.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
+
+	const handleTabChange = (newTab: "pending" | "fostered") => {
+		setTab(newTab);
+		setSearchQuery(""); // 탭 변경 시 검색어 초기화
+	};
+
 	return (
 		<div className="flex flex-col h-full bg-gray-50 pb-16">
 			{/* 헤더 */}
@@ -67,7 +84,7 @@ export default function FosterManagerMainPage() {
 									? "text-orange-600 border-b-2 border-orange-600"
 									: "text-gray-500"
 							}`}
-							onClick={() => setTab("pending")}
+							onClick={() => handleTabChange("pending")}
 						>
 							대기 중
 							{!isLoadingFosterApplications && (
@@ -83,7 +100,7 @@ export default function FosterManagerMainPage() {
 									? "text-orange-600 border-b-2 border-orange-600"
 									: "text-gray-500"
 							}`}
-							onClick={() => setTab("fostered")}
+							onClick={() => handleTabChange("fostered")}
 						>
 							임시보호 중
 							{!isLoadingFosteredDogs && (
@@ -118,24 +135,38 @@ export default function FosterManagerMainPage() {
 					{/* 대기 중 탭 */}
 					{tab === "pending" && (
 						<div className="space-y-3">
-							{fosterApplicationsData?.map((application) => (
+							{filteredFosterApplications?.map((application) => (
 								<FosterApplicationListItem
 									key={application.dogId}
 									data={application}
 								/>
 							))}
+							{filteredFosterApplications?.length === 0 && (
+								<p className="text-center text-gray-500 py-4">
+									{searchQuery
+										? "검색 결과가 없습니다"
+										: "임시보호 신청이 없습니다"}
+								</p>
+							)}
 						</div>
 					)}
 
 					{/* 임시보호 중 탭 */}
 					{tab === "fostered" && (
 						<div className="space-y-3">
-							{fosteredDogsData?.map((data) => (
+							{filteredFosteredDogs?.map((data) => (
 								<FosteredListItem
 									key={data.dogId}
 									data={data}
 								/>
 							))}
+							{filteredFosteredDogs?.length === 0 && (
+								<p className="text-center text-gray-500 py-4">
+									{searchQuery
+										? "검색 결과가 없습니다"
+										: "임시보호 중인 강아지가 없습니다"}
+								</p>
+							)}
 						</div>
 					)}
 				</div>

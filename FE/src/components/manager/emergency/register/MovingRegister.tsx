@@ -40,7 +40,7 @@ export default function MovingRegister() {
 				dueDate: `${formData.dueDate}T00:00:00`,
 				targetGrade: formData.targetGrade,
 			});
-			toast("이동 게시글이 등록되었습니다!");
+			toast("이동 긴급이 등록되었습니다!");
 			navigate(-1);
 
 			// 입력값 초기화

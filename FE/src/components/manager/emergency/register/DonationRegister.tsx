@@ -67,7 +67,7 @@ export default function DonationRegister() {
 				...formData,
 				dueDate: `${formData.dueDate}T00:00:00`,
 			});
-			toast("후원 게시글이 등록되었습니다!");
+			toast("후원 긴급이 등록되었습니다!");
 			navigate(-1);
 			// 초기화
 			setFormData({

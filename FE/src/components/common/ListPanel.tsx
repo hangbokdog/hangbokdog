@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 interface ListPanelProps {
-	link: string;
 	tabs: {
 		key: string;
 		label: string;
@@ -13,7 +11,7 @@ interface ListPanelProps {
 	}[];
 }
 
-export default function ListPanel({ link, tabs }: ListPanelProps) {
+export default function ListPanel({ tabs }: ListPanelProps) {
 	const [activeTabKey, setActiveTabKey] = useState(tabs[0].key);
 	const activeIndex = tabs.findIndex((tab) => tab.key === activeTabKey);
 	const activeTab = tabs.find((tab) => tab.key === activeTabKey);
@@ -53,12 +51,6 @@ export default function ListPanel({ link, tabs }: ListPanelProps) {
 						return <Component key={index} {...item} />;
 					})}
 				</div>
-
-				<Link to={link} className="mt-1 hover:underline">
-					{/* <span className="text-male font-medium text-sm">
-						더보기
-					</span> */}
-				</Link>
 			</div>
 		</div>
 	);

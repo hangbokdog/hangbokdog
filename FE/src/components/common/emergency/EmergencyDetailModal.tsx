@@ -8,18 +8,48 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import type { EmergencyPost } from "@/types/emergencyRegister";
+import useCenterStore from "@/lib/store/centerStore";
+import { applyEmergencyAPI } from "@/api/emergency";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface EmergencyDetailModalProps {
 	data: EmergencyPost;
 	open: boolean;
 	onClose: () => void;
+	onDelete?: (emergencyId: number) => void;
 }
 
 export default function EmergencyDetailModal({
 	data,
 	open,
 	onClose,
+	onDelete,
 }: EmergencyDetailModalProps) {
+	const { selectedCenter } = useCenterStore();
+
+	const { mutate: applyEmergency } = useMutation({
+		mutationFn: () =>
+			applyEmergencyAPI(
+				data.emergencyId,
+				Number(selectedCenter?.centerId) || -1,
+			),
+		onSuccess: () => {
+			toast.success("긴급 요청 신청이 완료되었습니다.");
+			onClose();
+		},
+		onError: () => {
+			toast.error("긴급 요청 신청에 실패했습니다.");
+		},
+	});
+
+	const handleDelete = () => {
+		if (onDelete) {
+			onDelete(data.emergencyId);
+			onClose();
+		}
+	};
+
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent>
@@ -71,9 +101,16 @@ export default function EmergencyDetailModal({
 					</div>
 					<button
 						type="button"
-						className="w-full bg-blue-500 rounded-lg text-white py-2 mb-2.5"
+						className={`w-full rounded-lg text-white py-2 mb-2.5 ${
+							onDelete
+								? "bg-red-500 hover:bg-red-600"
+								: "bg-blue-500 hover:bg-blue-600"
+						}`}
+						onClick={
+							onDelete ? handleDelete : () => applyEmergency()
+						}
 					>
-						신청하기
+						{onDelete ? "삭제하기" : "신청하기"}
 					</button>
 				</div>
 				<DialogClose />

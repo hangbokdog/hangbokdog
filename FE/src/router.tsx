@@ -10,7 +10,7 @@ import DogDetailPage from "./pages/DogDetailPage";
 import My from "./pages/My";
 import SignUp from "./pages/SignUp";
 import NaverCallback from "./pages/NaverCallback";
-import EmergencyPage from "./pages/EmergencyPage";
+import EmergencyPage from "./pages/manager/EmergencyPage";
 import DogCommentsPage from "./pages/DogCommentsPage";
 import AdoptionNoticePage from "./pages/AdoptionNoticePage";
 import DogRegisterPage from "./pages/manager/DogRegisterPage";
