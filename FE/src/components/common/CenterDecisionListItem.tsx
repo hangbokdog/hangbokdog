@@ -37,7 +37,8 @@ export default function CenterDecisionListItem({
 	query,
 	centerJoinRequestId,
 }: CenterDecisionListItemProps) {
-	const { setSelectedCenter, setIsCenterMember } = useCenterStore();
+	const { setSelectedCenter, setIsCenterMember, myMainCenterId } =
+		useCenterStore();
 	const { setAddressBook } = useManagerStore();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
@@ -131,7 +132,10 @@ export default function CenterDecisionListItem({
 		} else {
 			setIsCenterMember(false);
 		}
-		addMainCenterId();
+
+		if (centerId !== myMainCenterId) {
+			addMainCenterId();
+		}
 		navigate("/");
 	};
 

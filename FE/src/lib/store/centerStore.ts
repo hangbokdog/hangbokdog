@@ -5,14 +5,17 @@ interface Center {
 	centerName: string;
 	status: string;
 	centerJoinRequestId?: string;
+	myMainCenterId?: string;
 }
 
 interface CenterState {
 	selectedCenter: Center | null;
 	isCenterMember: boolean;
+	myMainCenterId: string;
 	setSelectedCenter: (center: Center) => void;
 	setIsCenterMember: (isMember: boolean) => void;
 	clearSelectedCenter: () => void;
+	setMyMainCenterId: (myMainCenterId: string) => void;
 }
 
 const getStoredCenter = (): Center | null => {
@@ -25,9 +28,15 @@ const getStoredCenterMember = (): boolean => {
 	return stored === "true";
 };
 
+const getStoredMyMainCenterId = (): string | null => {
+	const stored = sessionStorage.getItem("myMainCenterId");
+	return stored ? JSON.parse(stored) : null;
+};
+
 const useCenterStore = create<CenterState>()((set) => ({
 	selectedCenter: getStoredCenter(),
 	isCenterMember: getStoredCenterMember(),
+	myMainCenterId: getStoredMyMainCenterId() || "",
 	setSelectedCenter: (center: Center) => {
 		sessionStorage.setItem("selectedCenter", JSON.stringify(center));
 		set({ selectedCenter: center });
@@ -39,7 +48,19 @@ const useCenterStore = create<CenterState>()((set) => ({
 	clearSelectedCenter: () => {
 		sessionStorage.removeItem("selectedCenter");
 		sessionStorage.removeItem("isCenterMember");
-		set({ selectedCenter: null, isCenterMember: false });
+		sessionStorage.removeItem("myMainCenterId");
+		set({
+			selectedCenter: null,
+			isCenterMember: false,
+			myMainCenterId: "",
+		});
+	},
+	setMyMainCenterId: (myMainCenterId: string) => {
+		sessionStorage.setItem(
+			"myMainCenterId",
+			JSON.stringify(myMainCenterId),
+		);
+		set({ myMainCenterId });
 	},
 }));
 
