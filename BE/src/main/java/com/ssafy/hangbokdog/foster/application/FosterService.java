@@ -50,7 +50,7 @@ public class FosterService {
 		Long memberId,
 		Long dogId
 	) {
-		CenterMember centerMember = checkCenterMember(centerId, memberId);
+		CenterMember centerMember = checkCenterMember(memberId, centerId);
 
 		if (fosterRepository.checkFosterExistByMemberIdAndDogId(memberId, dogId)) {
 			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_EXISTS);
