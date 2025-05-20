@@ -1,13 +1,13 @@
 import { IoNotificationsOutline } from "react-icons/io5";
 import { useNotification } from "@/lib/hooks/useNotification";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import useNotificationStore from "@/lib/store/notificationStore";
+import { AnimatePresence } from "framer-motion";
 import { X, Trash2 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useMatches, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import type { NotificationItem } from "@/api/notification";
 
 interface FloatingNotificationIconProps {
 	isHeader?: boolean;
@@ -25,6 +25,9 @@ export default function FloatingNotificationIcon({
 		handleNotificationClick,
 		removeNotification,
 		clearAllNotifications,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
 	} = useNotification();
 	const [showFloatingIcon, setShowFloatingIcon] = useState(false);
 	const matches = useMatches();
@@ -96,6 +99,19 @@ export default function FloatingNotificationIcon({
 		toast.success("모든 알림이 삭제되었습니다.");
 	};
 
+	// 무한 스크롤 처리 함수
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+		// 스크롤이 90% 이상 내려갔을 때 다음 페이지 로드
+		if (
+			scrollTop + clientHeight >= scrollHeight * 0.9 &&
+			hasNextPage &&
+			!isFetchingNextPage
+		) {
+			fetchNextPage();
+		}
+	};
+
 	if (!showFloatingIcon) return null;
 
 	// 헤더에 있는 알림 아이콘인지 플로팅 알림 아이콘인지에 따라 다른 스타일 적용
@@ -157,86 +173,96 @@ export default function FloatingNotificationIcon({
 							</div>
 						</div>
 
-						<div className="overflow-y-auto max-h-[320px]">
+						<div
+							className="overflow-y-auto max-h-[320px]"
+							onScroll={handleScroll}
+						>
 							{notifications.length === 0 ? (
 								<div className="py-8 text-center text-gray-500">
 									<p>알림이 없습니다</p>
 								</div>
 							) : (
-								<div className="divide-y divide-gray-100 overflow-y-auto max-h-[320px]">
-									{notifications.map((notification) => (
-										<div
-											key={notification.id}
-											className={`w-full text-left transition-colors flex items-start gap-3 relative ${
-												notification.isRead
-													? "bg-white"
-													: "bg-blue-50/30"
-											}`}
-										>
-											<button
-												type="button"
-												className="w-full p-3 text-left hover:bg-gray-50 transition-colors flex items-start gap-3"
-												onClick={() =>
-													handleNotificationClick(
-														notification,
-													)
+								<div className="divide-y divide-gray-100">
+									{notifications.map(
+										(notification: NotificationItem) => (
+											<div
+												key={
+													notification.notificationId
 												}
+												className={`w-full text-left transition-colors flex items-start gap-3 relative ${
+													notification.isRead
+														? "bg-white"
+														: "bg-blue-50/30"
+												}`}
 											>
-												<div
-													className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(
-														notification.type,
-													)}`}
-												/>
-												<div className="flex-1 min-w-0">
-													<h4 className="font-medium text-gray-900 text-sm">
-														{notification.title}
-													</h4>
-													<p className="text-gray-600 text-xs mt-1 line-clamp-2">
-														{notification.body}
-													</p>
-													<span className="text-xs text-gray-400 mt-1 block">
-														{formatNotificationTime(
-															notification.createdAt,
-														)}
-													</span>
-													{(notification.type ===
-														"VOLUNTEER" ||
-														notification.type ===
-															"EMERGENCY") && (
-														<div className="mt-1.5">
-															<span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+												<button
+													type="button"
+													className="w-full p-3 text-left hover:bg-gray-50 transition-colors flex items-start gap-3"
+													onClick={() =>
+														handleNotificationClick(
+															notification,
+														)
+													}
+												>
+													<div
+														className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(notification.type)}`}
+													/>
+													<div className="flex-1 min-w-0">
+														<h4 className="font-medium text-gray-900 text-sm">
+															{notification.title}
+														</h4>
+														<p className="text-gray-600 text-xs mt-1 line-clamp-2">
+															{
+																notification.content
+															}
+														</p>
+														<span className="text-xs text-gray-400 mt-1 block">
+															{formatNotificationTime(
+																notification.createdAt,
+															)}
+														</span>
+														{(notification.type ===
+															"VOLUNTEER" ||
+															notification.type ===
+																"EMERGENCY") && (
+															<div className="mt-1.5">
+																<span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+																	{notification.type ===
+																	"VOLUNTEER"
+																		? "봉사활동"
+																		: "응급 상황"}
+																</span>
 																{notification.type ===
-																"VOLUNTEER"
-																	? "봉사활동"
-																	: "응급 상황"}
-															</span>
-															{notification.type ===
-																"VOLUNTEER" &&
-																notification
-																	.data
-																	?.volunteerEventId && (
-																	<span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1">
-																		상세보기
-																	</span>
-																)}
-														</div>
-													)}
-												</div>
-											</button>
-											<button
-												type="button"
-												className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
-												onClick={(e) =>
-													handleDeleteNotification(
-														e,
-														notification.id,
-													)
-												}
-											>
-												<Trash2 size={14} />
-											</button>
+																	"VOLUNTEER" &&
+																	notification.targetId && (
+																		<span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full ml-1">
+																			상세보기
+																		</span>
+																	)}
+															</div>
+														)}
+													</div>
+												</button>
+												<button
+													type="button"
+													className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
+													onClick={(e) =>
+														handleDeleteNotification(
+															e,
+															notification.notificationId.toString(),
+														)
+													}
+												>
+													<Trash2 size={14} />
+												</button>
+											</div>
+										),
+									)}
+									{isFetchingNextPage && (
+										<div className="p-3 text-center text-sm text-gray-500">
+											알림을 더 불러오는 중...
 										</div>
-									))}
+									)}
 								</div>
 							)}
 						</div>

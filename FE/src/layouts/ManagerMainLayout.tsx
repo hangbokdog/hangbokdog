@@ -16,7 +16,7 @@ export default function ManagerMainLayout() {
 		<>
 			{showHeader ? <Header /> : <RouteBackHeader />}
 			<main
-				className={`flex-1 overflow-y-auto ${showHeader && "pt-2.5 mb-14"} scrollbar-hidden`}
+				className={`flex-1 overflow-y-auto ${showHeader && "pt-2.5 mb-16"} scrollbar-hidden`}
 			>
 				<Outlet />
 			</main>

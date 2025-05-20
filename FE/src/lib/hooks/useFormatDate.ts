@@ -18,10 +18,16 @@ export function useFormatDate() {
 // 날짜 포맷팅 함수
 export const formatDate = (dateString: string) => {
 	const date = new Date(dateString);
-	return date.toLocaleDateString("ko-KR", {
+
+	const formattedDate = date.toLocaleDateString("ko-KR", {
 		year: "numeric",
 		month: "long",
 		day: "numeric",
+	});
+
+	const weekday = date.toLocaleDateString("ko-KR", {
 		weekday: "short",
 	});
+
+	return `${formattedDate}(${weekday})`;
 };
