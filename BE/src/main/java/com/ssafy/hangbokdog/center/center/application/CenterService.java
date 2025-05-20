@@ -350,7 +350,7 @@ public class CenterService {
 
 		Integer totalDogCount = dogRepository.getDogCount(centerId);
 		Integer lastMonthDogCount = dogRepository.getLastMonthDogCount(centerId, lastMonthEnd);
-		Integer fosterCount = fosterRepository.getFosterCount(centerId);
+		Integer fosterCount = dogRepository.getFosteredDogCount(centerId);
 		Integer lastMonthFosterCount = fosterRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
 		Integer adoptionCount = adoptionRepository.getAdoptionCount(centerId);
 		Long monthlyDonationAmount = donationHistoryRepository.getMonthlyDonationAmountByCenterId(

@@ -194,4 +194,8 @@ public class DogRepository {
 	public int getProtectedDogCount(Long centerId) {
 		return dogJpaRepository.getProtectedDogCount(centerId);
 	}
+
+	public Integer getFosteredDogCount(Long centerId) {
+		return dogJpaRepository.getFosteredDogCount(centerId);
+	}
 }

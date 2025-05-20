@@ -57,4 +57,11 @@ public interface DogJpaRepository extends JpaRepository<Dog, Long>, DogJpaReposi
 			WHERE d.centerId = :centerId
 		""")
 	List<String> getDogNames(Long centerId);
+
+	@Query("""
+			SELECT COUNT(d.id)
+			FROM Dog d
+			WHERE d.centerId = :centerId AND d.status = 'FOSTERED'
+		""")
+	Integer getFosteredDogCount(Long centerId);
 }
