@@ -10,12 +10,12 @@ import {
 import { MdArrowForwardIos, MdLocalHospital } from "react-icons/md";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import useManagerStore from "@/lib/store/managerStore";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
 	useInfiniteQuery,
 	useMutation,
+	useQuery,
 	useQueryClient,
 } from "@tanstack/react-query";
 import {
@@ -23,8 +23,9 @@ import {
 	fetchVaccinationSummariesAPI,
 	type VaccinationCreateRequest,
 } from "@/api/vaccine";
-import { fetchHospitalDogsAPI, type HospitalDogResponse } from "@/api/dog";
+import { fetchHospitalDogsAPI } from "@/api/dog";
 import useCenterStore from "@/lib/store/centerStore";
+import { type AddressBook, fetchAddressBooks } from "@/api/center";
 
 // Helper function to format age
 const formatAge = (ageInMonths: number): string => {
@@ -39,7 +40,13 @@ const formatAge = (ageInMonths: number): string => {
 
 export default function DogDrugsPage() {
 	const [open, setOpen] = useState(false);
-	const { addressBook } = useManagerStore();
+	const centerId = useCenterStore().selectedCenter?.centerId;
+
+	const { data: addressBook } = useQuery<AddressBook[], Error>({
+		queryKey: ["addressBooks", centerId],
+		queryFn: () => fetchAddressBooks(centerId as string),
+		enabled: !!centerId,
+	});
 	const [selectedAddressIds, setSelectedAddressIds] = useState<number[]>([]);
 	const { selectedCenter } = useCenterStore();
 	const vaccinationObserverRef = useRef<HTMLDivElement | null>(null);
@@ -394,7 +401,7 @@ export default function DogDrugsPage() {
 			</div>
 
 			<Dialog open={open} onOpenChange={setOpen}>
-				<DialogContent className="sm:max-w-[425px] max-w-[90vw] rounded-2xl px-4 py-4 mx-auto bg-white shadow-xl border-0">
+				<DialogContent className="sm:max-w-[425px] max-w-[90vw] gap-0 sm:gap-2 rounded-2xl px-4 py-4 mx-auto bg-white shadow-xl border-0">
 					<DialogHeader className="pb-2">
 						<DialogTitle className="text-center text-xl font-bold text-male">
 							예방 접종 일정 등록
@@ -427,7 +434,7 @@ export default function DogDrugsPage() {
 							</Label>
 							<div className="sm:col-span-4 flex flex-col gap-2">
 								<div className="flex flex-wrap gap-2">
-									{addressBook.map((ab) => {
+									{addressBook?.map((ab) => {
 										const isSelected =
 											selectedAddressIds.includes(ab.id);
 										return (
