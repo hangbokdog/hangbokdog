@@ -3,19 +3,19 @@ package com.ssafy.hangbokdog.member.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.annotation.MaskApply;
 import com.ssafy.hangbokdog.common.dto.MaskRequest;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
-import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.request.MemberUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.response.CenterMemberPageResponseWithCount;
 import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
-import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -72,10 +72,11 @@ public class MemberService {
             .orElseThrow(() -> new BadRequestException((ErrorCode.MEMBER_NOT_FOUND)));
     }
 
-    public PageInfo<MemberResponse> findMembersInCenter(
+    public CenterMemberPageResponseWithCount findMembersInCenter(
             Long centerId,
             Member member,
-            String pageToken
+            String pageToken,
+            CenterGrade grade
     ) {
         var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
                 .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
@@ -84,7 +85,7 @@ public class MemberService {
             throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
         }
 
-        return memberRepository.findMembersInCenter(centerId, pageToken);
+        return memberRepository.findMembersInCenter(centerId, pageToken, grade);
     }
 
     public CenterMemberResponse findCenterMember(Long memberId, Member member, Long centerId) {

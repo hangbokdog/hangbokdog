@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
+import com.ssafy.hangbokdog.member.dto.response.CenterMemberPageResponseWithCount;
 import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
@@ -62,9 +64,12 @@ public class MemberRepository {
         return memberJpaRepository.getFcmTokenById(memberId);
     }
 
-    public PageInfo<MemberResponse> findMembersInCenter(Long centerId, String pageToken) {
-        var data = memberJpaRepository.findMembersInCenter(centerId, pageToken, DEFAULT_PAGE_SIZE);
-        return PageInfo.of(data, DEFAULT_PAGE_SIZE, MemberResponse::centerMemberId);
+    public CenterMemberPageResponseWithCount findMembersInCenter(Long centerId, String pageToken, CenterGrade grade) {
+        var data = memberJpaRepository.findMembersInCenter(centerId, pageToken, DEFAULT_PAGE_SIZE, grade);
+        //TODO Cache + Batch
+        int count = memberJpaRepository.countMembersInCenter(centerId, grade);
+        var pageData = PageInfo.of(data, DEFAULT_PAGE_SIZE, MemberResponse::centerMemberId);
+        return CenterMemberPageResponseWithCount.of(pageData, count);
     }
 
     public Optional<CenterMemberResponse> findByIdWithCenterInfo(Long memberId, Long centerId) {

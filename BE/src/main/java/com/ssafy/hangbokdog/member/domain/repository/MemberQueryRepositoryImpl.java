@@ -12,6 +12,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
@@ -97,7 +98,12 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 	}
 
 	@Override
-	public List<MemberResponse> findMembersInCenter(Long centerId, String pageToken, int pageSize) {
+	public List<MemberResponse> findMembersInCenter(
+			Long centerId,
+			String pageToken,
+			int pageSize,
+			CenterGrade grade
+	) {
 		return queryFactory.select(Projections.constructor(
 				MemberResponse.class,
 				member.id,
@@ -106,9 +112,9 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				member.profileImage,
 				centerMember.grade,
 				centerMember.id
-		)).from(centerMember)
-				.leftJoin(member).on(member.id.eq(centerMember.memberId))
-				.where(centerMember.centerId.eq(centerId), isInRange(pageToken))
+		)).from(member)
+				.leftJoin(centerMember).on(centerMember.memberId.eq(member.id))
+				.where(centerMember.centerId.eq(centerId), isInRange(pageToken), isGrade(grade))
 				.limit(pageSize + 1)
 				.fetch();
 	}
@@ -131,11 +137,28 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				.fetchOne());
 	}
 
+	@Override
+	public int countMembersInCenter(Long centerId, CenterGrade grade) {
+		return queryFactory.select(
+				centerMember.count().intValue().coalesce(0)
+		).from(centerMember)
+				.where(centerMember.centerId.eq(centerId), isGrade(grade))
+				.fetchOne();
+	}
+
 	private BooleanExpression isInRange(String pageToken) {
 		if (pageToken == null) {
 			return null;
 		}
 
 		return centerMember.id.lt(Long.valueOf(pageToken));
+	}
+
+	private BooleanExpression isGrade(CenterGrade grade) {
+		if (grade == null) {
+			return null;
+		}
+
+		return centerMember.grade.eq(grade);
 	}
 }

@@ -16,16 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.common.dto.MaskRequest;
-import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.application.MemberService;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.request.MemberUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.response.CenterMemberPageResponseWithCount;
 import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
-import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -48,12 +48,13 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<PageInfo<MemberResponse>> findMembersInCenter(
+    public ResponseEntity<CenterMemberPageResponseWithCount> findMembersInCenter(
             @RequestParam Long centerId,
             @AuthMember Member member,
-            @RequestParam(required = false) String pageToken
+            @RequestParam(required = false) String pageToken,
+            @RequestParam(required = false) CenterGrade grade
     ) {
-        return ResponseEntity.ok(memberService.findMembersInCenter(centerId, member, pageToken));
+        return ResponseEntity.ok(memberService.findMembersInCenter(centerId, member, pageToken, grade));
     }
 
     @GetMapping("/{memberId}")
