@@ -15,7 +15,8 @@ import type { MyCenter } from "@/types/center";
 export default function NaverCallback() {
 	const navigate = useNavigate();
 	const { setToken, setName, setTempToken, setUserInfo } = useAuthStore();
-	const { setSelectedCenter, setIsCenterMember } = useCenterStore();
+	const { setSelectedCenter, setIsCenterMember, setMyMainCenterId } =
+		useCenterStore();
 
 	useEffect(() => {
 		const handleNaverLogin = async () => {
@@ -68,6 +69,8 @@ export default function NaverCallback() {
 
 						const status = myMainCenterInfo.centerGrade;
 
+						setMyMainCenterId(myMainCenterInfo.centerId.toString());
+
 						setSelectedCenter({
 							centerId: myMainCenterInfo.centerId.toString(),
 							centerName: myMainCenterInfo.centerName,
@@ -94,6 +97,7 @@ export default function NaverCallback() {
 					navigate("/");
 				} else {
 					setTempToken(NaverLoginResponse.accessToken);
+					setMyMainCenterId("");
 					navigate("/signup");
 				}
 			} catch (error) {
@@ -111,6 +115,7 @@ export default function NaverCallback() {
 		setUserInfo,
 		setSelectedCenter,
 		setIsCenterMember,
+		setMyMainCenterId,
 	]);
 
 	return (

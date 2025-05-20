@@ -8,6 +8,7 @@ import type {
 import localAxios from "./http-commons";
 import axios from "axios";
 import useAuthStore from "@/lib/store/authStore";
+import type { MyCenter } from "@/types/center";
 
 export const NaverLoginAPI = async ({
 	code,
@@ -142,7 +143,7 @@ export const updateUserInfoAPI = async ({
 	return response.data;
 };
 
-export const getMyMainCenterInfoAPI = async () => {
-	const response = await localAxios.get("/centers/main");
+export const getMyMainCenterInfoAPI = async (): Promise<MyCenter> => {
+	const response = await localAxios.get<MyCenter>("/centers/main");
 	return response.data;
 };
