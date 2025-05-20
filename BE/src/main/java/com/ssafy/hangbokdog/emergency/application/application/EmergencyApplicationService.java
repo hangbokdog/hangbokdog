@@ -85,10 +85,6 @@ public class EmergencyApplicationService {
 						throw new BadRequestException(ErrorCode.EMERGENCY_ALREADY_FULL);
 					}
 
-					if (!emergencyApplicationRepository.existsByEmergencyId(emergency.getId())) {
-						throw new BadRequestException(ErrorCode.EMERGENCY_ALREADY_FULL);
-					}
-
 					emergencyApplication.approve();
 					emergency.recruited();
 					break;
