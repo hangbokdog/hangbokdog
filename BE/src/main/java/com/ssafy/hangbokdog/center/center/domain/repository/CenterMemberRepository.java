@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
@@ -57,5 +58,13 @@ public class CenterMemberRepository {
 
     public MainCenterResponse getMainCenter(Long memberId) {
         return centerMemberJpaRepository.getMainCenter(memberId);
+    }
+
+    public List<Long> getTargetIds(Long centerId, CenterGrade targetGrade) {
+        return centerMemberJpaRepository.getTargetIdsByCenterIdAndGrade(centerId, targetGrade);
+    }
+
+    public List<Long> getTargetAllIds(Long centerId) {
+        return centerMemberJpaRepository.getTargetAllIds(centerId);
     }
 }
