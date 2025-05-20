@@ -177,7 +177,8 @@ public class FosterJpaRepositoryCustomImpl implements FosterJpaRepositoryCustom 
 			.from(foster)
 			.leftJoin(dog).on(foster.dogId.eq(dog.id))
 			.leftJoin(member).on(foster.memberId.eq(member.id))
-			.where(dog.centerId.eq(centerId))
+			.where(dog.centerId.eq(centerId),
+				foster.status.eq(FosterStatus.FOSTERING))
 			.orderBy(foster.id.desc())
 			.fetch();
 	}

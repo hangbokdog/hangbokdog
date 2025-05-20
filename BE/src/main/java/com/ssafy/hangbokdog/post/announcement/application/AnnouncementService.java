@@ -55,8 +55,6 @@ public class AnnouncementService {
 	}
 
 	public AnnouncementDetailResponse getDetail(Long memberId, Long centerId, Long announcementId) {
-		CenterMember centerMember = getCenterMember(memberId, centerId);
-
 		return announcementRepository.getDetail(announcementId);
 	}
 

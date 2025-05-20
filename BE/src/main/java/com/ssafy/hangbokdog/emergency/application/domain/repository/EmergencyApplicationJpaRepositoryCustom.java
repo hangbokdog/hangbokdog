@@ -17,4 +17,6 @@ public interface EmergencyApplicationJpaRepositoryCustom {
 	List<AppliedEmergencies> getEmergencyApplicationsByMemberId(Long memberId);
 
 	List<AllEmergencyApplicationResponse> getEmergencyApplicationsByCenterId(Long centerId);
+
+	Boolean existsByMemberIdAndEmergencyId(Long memberId, Long emergencyId);
 }
