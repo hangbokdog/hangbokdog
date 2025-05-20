@@ -76,7 +76,8 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 				emergencyApplication.status
 			))
 			.from(emergencyApplication)
-			.where(emergencyApplication.applicantId.eq(memberId))
+			.where(emergencyApplication.applicantId.eq(memberId),
+				emergencyApplication.status.eq(EmergencyApplicationStatus.APPLIED))
 			.fetch();
 	}
 
@@ -106,4 +107,15 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 			.fetch();
 	}
 
+	@Override
+	public Boolean existsByMemberIdAndEmergencyId(Long memberId, Long emergencyId) {
+		return queryFactory
+			.selectOne()
+			.from(emergencyApplication)
+			.where(
+				emergencyApplication.applicantId.eq(memberId),
+				emergencyApplication.emergencyId.eq(emergencyId)
+			)
+			.fetchFirst() != null;
+	}
 }

@@ -66,4 +66,8 @@ public class EmergencyApplicationRepository {
 	public List<AllEmergencyApplicationResponse> getEmergencyApplicationsByCenterId(Long centerId) {
 		return emergencyApplicationJpaRepository.getEmergencyApplicationsByCenterId(centerId);
 	}
+
+	public Boolean existsByMemberIdAndEmergencyId(Long memberId, Long emergencyId) {
+		return emergencyApplicationJpaRepository.existsByMemberIdAndEmergencyId(memberId, emergencyId);
+	}
 }

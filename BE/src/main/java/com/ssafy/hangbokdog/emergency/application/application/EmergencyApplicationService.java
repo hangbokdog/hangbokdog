@@ -32,6 +32,10 @@ public class EmergencyApplicationService {
 	public EmergencyApplicationCreateResponse apply(Long memberId, Long centerId, Long emergencyId) {
 		CenterMember centerMember = getCenterMember(memberId, centerId);
 
+		if (emergencyApplicationRepository.existsByMemberIdAndEmergencyId(memberId, emergencyId)) {
+			throw new BadRequestException(ErrorCode.EMERGENCY_APPLICATION_ALREADY_EXISTS);
+		}
+
 		EmergencyApplication emergencyApplication = EmergencyApplication.builder()
 			.emergencyId(emergencyId)
 			.applicantId(memberId)
