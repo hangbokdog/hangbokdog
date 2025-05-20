@@ -19,7 +19,7 @@ public class NotificationJdbcRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	public void batchInsert(List<Notification> notifications) {
-		String sql = "INSERT INTO notification (title, content, receiverId, isRead, type,"
+		String sql = "INSERT INTO notification (title, content, receiver_id, is_read, type,"
 				+ "created_at, modified_at) "
 				+ "VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
@@ -42,7 +42,7 @@ public class NotificationJdbcRepository {
 	}
 
 	public void bulkUpdateIn(List<Long> notificationIds) {
-		String sql = "UPDATE notification SET isRead = true, modified_at = NOW() WHERE notification_id IN (?)";
+		String sql = "UPDATE notification SET is_read = true, modified_at = NOW() WHERE notification_id IN (?)";
 
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 			@Override
