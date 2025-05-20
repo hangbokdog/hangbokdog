@@ -13,6 +13,7 @@ import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.request.MemberUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
@@ -84,5 +85,17 @@ public class MemberService {
         }
 
         return memberRepository.findMembersInCenter(centerId, pageToken);
+    }
+
+    public CenterMemberResponse findCenterMember(Long memberId, Member member, Long centerId) {
+        var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+        if (!centerMember.isManager()) {
+            throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+        }
+
+        return memberRepository.findByIdWithCenterInfo(memberId, centerId)
+                .orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
     }
 }

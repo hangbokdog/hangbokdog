@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import com.ssafy.hangbokdog.member.application.MemberService;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.request.MemberUpdateRequest;
+import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
@@ -52,6 +54,15 @@ public class MemberController {
             @RequestParam(required = false) String pageToken
     ) {
         return ResponseEntity.ok(memberService.findMembersInCenter(centerId, member, pageToken));
+    }
+
+    @GetMapping("/{memberId}")
+    public ResponseEntity<CenterMemberResponse> findCenterMember(
+            @PathVariable Long memberId,
+            @AuthMember Member member,
+            @RequestParam Long centerId
+    ) {
+        return ResponseEntity.ok(memberService.findCenterMember(memberId, member, centerId));
     }
 
 

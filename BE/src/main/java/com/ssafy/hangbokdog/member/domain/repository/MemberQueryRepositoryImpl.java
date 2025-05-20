@@ -13,6 +13,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
+import com.ssafy.hangbokdog.member.dto.response.CenterMemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
@@ -110,6 +111,24 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				.where(centerMember.centerId.eq(centerId), isInRange(pageToken))
 				.limit(pageSize + 1)
 				.fetch();
+	}
+
+	@Override
+	public Optional<CenterMemberResponse> findByIdWithCenterInfo(Long memberId, Long centerId) {
+		return Optional.ofNullable(queryFactory.select(Projections.constructor(
+				CenterMemberResponse.class,
+				member.id,
+				member.profileImage,
+				member.name,
+				member.nickName,
+				centerMember.grade,
+				member.email,
+				member.phone,
+				centerMember.createdAt
+		)).from(member)
+				.leftJoin(centerMember).on(centerMember.memberId.eq(member.id))
+				.where(centerMember.centerId.eq(centerId))
+				.fetchOne());
 	}
 
 	private BooleanExpression isInRange(String pageToken) {
