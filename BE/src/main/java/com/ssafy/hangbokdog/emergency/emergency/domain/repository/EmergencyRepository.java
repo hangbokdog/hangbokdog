@@ -41,4 +41,8 @@ public class EmergencyRepository {
 	public Integer countEmergenciesByType(EmergencyType type, Long centerId) {
 		return emergencyJpaRepository.countEmergenciesByEmergencyType(type, centerId);
 	}
+
+	public void deleteEmergencyById(Long id) {
+		emergencyJpaRepository.deleteById(id);
+	}
 }
