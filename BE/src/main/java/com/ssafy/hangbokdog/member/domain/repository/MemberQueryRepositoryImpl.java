@@ -151,11 +151,11 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 	}
 
 	@Override
-	public int countMembersInCenter(Long centerId, CenterGrade grade) {
+	public int countMembersInCenter(Long centerId, CenterGrade grade, String word) {
 		return queryFactory.select(
 				centerMember.count().intValue().coalesce(0)
 		).from(centerMember)
-				.where(centerMember.centerId.eq(centerId), isGrade(grade))
+				.where(centerMember.centerId.eq(centerId), isGrade(grade), isContains(word))
 				.fetchOne();
 	}
 

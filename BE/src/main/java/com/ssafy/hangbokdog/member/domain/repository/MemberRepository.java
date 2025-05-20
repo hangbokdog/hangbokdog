@@ -72,7 +72,7 @@ public class MemberRepository {
     ) {
         var data = memberJpaRepository.findMembersInCenter(centerId, pageToken, DEFAULT_PAGE_SIZE, grade, searchWord);
         //TODO Cache + Batch
-        int count = memberJpaRepository.countMembersInCenter(centerId, grade);
+        int count = memberJpaRepository.countMembersInCenter(centerId, grade, searchWord);
         var pageData = PageInfo.of(data, DEFAULT_PAGE_SIZE, MemberResponse::centerMemberId);
         return CenterMemberPageResponseWithCount.of(pageData, count);
     }

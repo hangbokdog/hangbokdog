@@ -25,5 +25,6 @@ public interface MemberQueryRepository {
 
     Optional<CenterMemberResponse> findByIdWithCenterInfo(Long memberId, Long centerId);
 
-    int countMembersInCenter(Long centerId, CenterGrade grade);
+    //TODO 나중에 검색 분리
+    int countMembersInCenter(Long centerId, CenterGrade grade, String word);
 }

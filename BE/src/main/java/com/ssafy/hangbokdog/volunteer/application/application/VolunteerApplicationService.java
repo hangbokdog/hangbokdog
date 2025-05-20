@@ -4,9 +4,6 @@ import static com.ssafy.hangbokdog.common.exception.ErrorCode.AGE_REQUIREMENT_NO
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.DUPLICATE_APPLICATION;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.VOLUNTEER_NOT_FOUND;
 
-import com.ssafy.hangbokdog.fcm.domain.NotificationType;
-import com.ssafy.hangbokdog.notification.domain.Notification;
-import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -25,8 +22,11 @@ import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberReposito
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.fcm.domain.NotificationType;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.domain.repository.MemberRepository;
+import com.ssafy.hangbokdog.notification.domain.Notification;
+import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplication;
 import com.ssafy.hangbokdog.volunteer.application.domain.VolunteerApplicationStatus;
 import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
