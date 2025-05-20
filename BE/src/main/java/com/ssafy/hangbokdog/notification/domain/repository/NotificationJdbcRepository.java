@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NotificationJdbcRepository {
 
-	private JdbcTemplate jdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
 
 	public void batchInsert(List<Notification> notifications) {
 		String sql = "INSERT INTO notification (title, content, receiverId, isRead, type,"
