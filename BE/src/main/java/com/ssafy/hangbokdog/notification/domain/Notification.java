@@ -26,22 +26,26 @@ public class Notification extends BaseEntity {
 	@Column(name = "notification_id", nullable = false)
 	private Long id;
 
-	@Column(nullable = false, length = 100)
+	@Column(name = "title", nullable = false, length = 100)
 	private String title;
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Column(name = "content", nullable = false, length = 512)
 	private String content;
 
-	@Column(nullable = false)
+	@Column(name = "receiver_id", nullable = false)
 	private Long receiverId;
 
-	@Column(nullable = false)
+	@Column(name = "target_id", nullable = false)
+	private Long targetId;
+
+	@Column(name = "is_read", nullable = false)
 	private Boolean isRead = false;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type", nullable = false)
 	private NotificationType type;
 
+	//TODO:읽음처리 추가로직필요
 	public void isRead() {
 		this.isRead = true;
 	}
@@ -50,12 +54,14 @@ public class Notification extends BaseEntity {
 	public Notification(
 			String title,
 			String content,
+			Long targetId,
 			Long receiverId,
 			NotificationType type
 	) {
 		this.title = title;
 		this.content = content;
 		this.receiverId = receiverId;
+		this.targetId = targetId;
 		this.type = type;
 		this.isRead = false;
 	}
