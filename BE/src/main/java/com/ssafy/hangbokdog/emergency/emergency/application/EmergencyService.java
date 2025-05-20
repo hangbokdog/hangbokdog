@@ -170,6 +170,7 @@ public class EmergencyService {
 			Notification notification = Notification.builder()
 					.content(request.content())
 					.receiverId(targetId)
+					.targetId(emergency.getId())
 					.title(request.title())
 					.type(NotificationType.EMERGENCY)
 					.build();

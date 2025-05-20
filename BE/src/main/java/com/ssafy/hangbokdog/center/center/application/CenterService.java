@@ -148,6 +148,7 @@ public class CenterService {
 		Notification notification = Notification.builder()
 				.type(NotificationType.CENTER)
 				.receiverId(centerJoinRequest.getMemberId())
+				.targetId(centerJoinRequest.getCenterId())
 				.title(centerName)
 				.content(APPROVE_COMMENT)
 				.build();
@@ -179,6 +180,7 @@ public class CenterService {
 		Notification notification = Notification.builder()
 				.type(NotificationType.CENTER)
 				.receiverId(centerJoinRequest.getMemberId())
+				.targetId(centerJoinRequest.getCenterId())
 				.title(centerName)
 				.content(REFUSE_COMMENT)
 				.build();
