@@ -4,6 +4,9 @@ import static com.ssafy.hangbokdog.common.exception.ErrorCode.AGE_REQUIREMENT_NO
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.DUPLICATE_APPLICATION;
 import static com.ssafy.hangbokdog.common.exception.ErrorCode.VOLUNTEER_NOT_FOUND;
 
+import com.ssafy.hangbokdog.fcm.domain.NotificationType;
+import com.ssafy.hangbokdog.notification.domain.Notification;
+import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -46,7 +49,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class VolunteerApplicationService {
-
+    private static final String APPROVE_COMMENT = "봉사활동 신청이 승인됐습니다.";
+    private static final String REFUSE_COMMENT = "봉사활동 신청이 거절됐습니다.";
     private static final int VOLUNTEER_AGE_RESTRICTION = 20;
 
     private final VolunteerApplicationRepository volunteerApplicationRepository;
@@ -55,6 +59,7 @@ public class VolunteerApplicationService {
     private final MemberRepository memberRepository;
     private final CenterMemberRepository centerMemberRepository;
     private final ApplicationEventPublisher publisher;
+    private final NotificationRepository notificationRepository;
 
 
     public void apply(Long eventId, VolunteerApplicationCreateRequest request) {
@@ -179,8 +184,23 @@ public class VolunteerApplicationService {
         slot.decreaseAppliedCount();
         if (request.status().equals(VolunteerApplicationStatus.REJECTED)) {
             volunteerApplicationRepository.delete(application);
+            notificationRepository.insert(Notification.builder()
+                    .title(volunteerEvent.getTitle())
+                    .content(REFUSE_COMMENT)
+                    .type(NotificationType.VOLUNTEER)
+                    .receiverId(application.getMemberId())
+                    .targetId(volunteerEvent.getId())
+                    .build());
             return;
         }
+
+        notificationRepository.insert(Notification.builder()
+                .title(volunteerEvent.getTitle())
+                .content(APPROVE_COMMENT)
+                .type(NotificationType.VOLUNTEER)
+                .receiverId(application.getMemberId())
+                .targetId(volunteerEvent.getId())
+                .build());
 
         application.updateStatus(request.status());
 
