@@ -74,6 +74,8 @@ public class EmergencyService {
 			.emergencyType(EmergencyType.TRANSPORT)
 			.build();
 
+		Emergency createdEmergency = emergencyRepository.save(emergency);
+
 		List<Long> targetIds = new ArrayList<>();
 		if (request.targetGrade().equals(TargetGrade.ALL)) {
 			targetIds = centerMemberRepository.getTargetAllIds(centerId);
@@ -89,7 +91,7 @@ public class EmergencyService {
 			Notification notification = Notification.builder()
 					.content(request.content())
 					.receiverId(targetId)
-					.targetId(emergency.getId())
+					.targetId(createdEmergency.getId())
 					.title(request.title())
 					.type(NotificationType.EMERGENCY)
 					.build();
@@ -100,12 +102,12 @@ public class EmergencyService {
 
 		eventPublisher.publishEvent(
 			new EmergencyEvent(
-				emergency.getId(),
+					createdEmergency.getId(),
 				centerId,
-				emergency.getTitle(),
-				emergency.getContent(),
+					createdEmergency.getTitle(),
+					createdEmergency.getContent(),
 				centerName,
-				emergency.getTargetGrade()
+					createdEmergency.getTargetGrade()
 			)
 		);
 
@@ -138,6 +140,8 @@ public class EmergencyService {
 			.emergencyType(EmergencyType.VOLUNTEER)
 			.build();
 
+		Emergency createdEmergency = emergencyRepository.save(emergency);
+
 		List<Long> targetIds = new ArrayList<>();
 		if (request.targetGrade().equals(TargetGrade.ALL)) {
 			targetIds = centerMemberRepository.getTargetAllIds(centerId);
@@ -153,7 +157,7 @@ public class EmergencyService {
 			Notification notification = Notification.builder()
 					.content(request.content())
 					.receiverId(targetId)
-					.targetId(emergency.getId())
+					.targetId(createdEmergency.getId())
 					.title(request.title())
 					.type(NotificationType.EMERGENCY)
 					.build();
@@ -164,12 +168,12 @@ public class EmergencyService {
 
 		eventPublisher.publishEvent(
 			new EmergencyEvent(
-				emergency.getId(),
+					createdEmergency.getId(),
 				centerId,
-				emergency.getTitle(),
-				emergency.getContent(),
+					createdEmergency.getTitle(),
+					createdEmergency.getContent(),
 				centerName,
-				emergency.getTargetGrade()
+					createdEmergency.getTargetGrade()
 			)
 		);
 
@@ -202,6 +206,8 @@ public class EmergencyService {
 			.emergencyType(EmergencyType.DONATION)
 			.build();
 
+		Emergency createdEmergency = emergencyRepository.save(emergency);
+
 		//TODO: CenterGrade, TargetGrade 수정하고 이벤트에 타겟 이미 조회하니 같이 넘겨주기
 		List<Long> targetIds = new ArrayList<>();
 		if (request.targetGrade().equals(TargetGrade.ALL)) {
@@ -218,7 +224,7 @@ public class EmergencyService {
 			Notification notification = Notification.builder()
 					.content(request.content())
 					.receiverId(targetId)
-					.targetId(emergency.getId())
+					.targetId(createdEmergency.getId())
 					.title(request.title())
 					.type(NotificationType.EMERGENCY)
 					.build();
@@ -229,16 +235,16 @@ public class EmergencyService {
 
 		eventPublisher.publishEvent(
 			new EmergencyEvent(
-				emergency.getId(),
-				centerId,
-				emergency.getTitle(),
-				emergency.getContent(),
-				centerName,
-				emergency.getTargetGrade()
+					createdEmergency.getId(),
+					centerId,
+					createdEmergency.getTitle(),
+					createdEmergency.getContent(),
+					centerName,
+					createdEmergency.getTargetGrade()
 			)
 		);
 
-		return new EmergencyCreateResponse(emergencyRepository.save(emergency).getId());
+		return new EmergencyCreateResponse(createdEmergency.getId());
 	}
 
 	public List<EmergencyResponse> getEmergencyByCenter(Long centerId, EmergencyType type, Long memberId) {
