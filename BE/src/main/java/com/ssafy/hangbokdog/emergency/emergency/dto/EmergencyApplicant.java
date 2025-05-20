@@ -5,6 +5,7 @@ public record EmergencyApplicant(
 		String name,
 		String nickName,
 		String phone,
-		Long emergencyId
+		Long emergencyId,
+		String profileImage
 ) {
 }

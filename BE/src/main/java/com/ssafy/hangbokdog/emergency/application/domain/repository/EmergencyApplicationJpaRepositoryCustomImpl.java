@@ -125,7 +125,8 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 						member.name,
 						member.nickName,
 						member.phone,
-						emergencyApplication.emergencyId
+						emergencyApplication.emergencyId,
+					member.profileImage
 				))
 				.from(emergencyApplication)
 				.leftJoin(member).on(emergencyApplication.applicantId.eq(member.id))
