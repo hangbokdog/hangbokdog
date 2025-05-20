@@ -41,9 +41,12 @@ import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.dog.dog.domain.repository.DogRepository;
 import com.ssafy.hangbokdog.donation.domain.repository.DonationHistoryRepository;
+import com.ssafy.hangbokdog.fcm.domain.NotificationType;
 import com.ssafy.hangbokdog.fcm.dto.event.CenterMemberEvent;
 import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
+import com.ssafy.hangbokdog.notification.domain.Notification;
+import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,6 +55,9 @@ import lombok.RequiredArgsConstructor;
 public class CenterService {
 
 	private static final String CENTER_REDIS_KEY_PREFIX = "center:";
+	private static final String APPROVE_COMMENT = "센터 가입 승인되었습니다.";
+	private static final String REFUSE_COMMENT = "센터 가입 거절되었습니다.";
+
 	private final RedisTemplate<String, Object> redisTemplate;
 	private final ObjectMapper objectMapper;
 
@@ -64,6 +70,7 @@ public class CenterService {
 	private final FosterRepository fosterRepository;
 	private final AdoptionRepository adoptionRepository;
 	private final DonationHistoryRepository donationHistoryRepository;
+	private final NotificationRepository notificationRepository;
 
 	@Transactional
 	public Long createCenter(Member member, CenterCreateRequest request) {
@@ -138,6 +145,15 @@ public class CenterService {
 
 		String centerName = centerRepository.findNameById(centerId);
 
+		Notification notification = Notification.builder()
+				.type(NotificationType.CENTER)
+				.receiverId(centerJoinRequest.getMemberId())
+				.title(centerName)
+				.content(APPROVE_COMMENT)
+				.build();
+
+		notificationRepository.insert(notification);
+
 		eventPublisher.publishEvent(new CenterMemberEvent(
 				centerName,
 				centerJoinRequest.getMemberId(),
@@ -159,6 +175,15 @@ public class CenterService {
 		centerJoinRequestRepository.deleteById(centerJoinRequest.getId());
 
 		String centerName = centerRepository.findNameById(centerId);
+
+		Notification notification = Notification.builder()
+				.type(NotificationType.CENTER)
+				.receiverId(centerJoinRequest.getMemberId())
+				.title(centerName)
+				.content(REFUSE_COMMENT)
+				.build();
+
+		notificationRepository.insert(notification);
 
 		eventPublisher.publishEvent(new CenterMemberEvent(
 				centerName,
@@ -344,8 +369,6 @@ public class CenterService {
 
 		return response;
 	}
-
-
 
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
