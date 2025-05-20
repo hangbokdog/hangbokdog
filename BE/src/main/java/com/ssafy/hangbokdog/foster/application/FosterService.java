@@ -109,7 +109,7 @@ public class FosterService {
 		Long fosterId,
 		FosterStatus request
 	) {
-		CenterMember centerMember = checkCenterMember(centerId, memberId);
+		CenterMember centerMember = checkCenterMember(memberId, centerId);
 
 		if (!centerMember.isManager()) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
