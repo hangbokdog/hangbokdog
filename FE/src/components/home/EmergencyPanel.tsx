@@ -20,7 +20,7 @@ export default function EmergencyPanel() {
 
 	return (
 		<div className="flex flex-col mx-2.5 pb-4">
-			<div className="flex justify-between items-center mb-4">
+			<div className="flex justify-between items-center mb-2">
 				<div className="flex justify-between items-center">
 					<div className="flex items-center">
 						<div className="bg-red h-5 w-1 rounded-full mr-2" />

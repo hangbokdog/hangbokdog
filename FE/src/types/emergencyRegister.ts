@@ -1,3 +1,5 @@
+import type { EmergencyApplicationsStatus, EmergencyStatus } from "./emergency";
+
 export enum TargetGrade {
 	ALL = "ALL",
 	USER = "USER",
@@ -49,4 +51,6 @@ export interface EmergencyPost {
 	capacity?: number;
 	targetAmount?: number;
 	type: EmergencyType;
+	status?: EmergencyApplicationsStatus;
+	emergencyStatus?: EmergencyStatus;
 }

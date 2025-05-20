@@ -18,45 +18,54 @@ export default function ListPanel({ tabs, isHome = true }: ListPanelProps) {
 	const activeTab = tabs.find((tab) => tab.key === activeTabKey);
 
 	return (
-		<div className="flex flex-col mx-2.5">
+		<div className="flex flex-col">
 			<div
-				className={`flex flex-1 flex-col items-center p-3 gap-3 ${
+				className={`flex flex-1 flex-col items-center ${
 					isHome
-						? "rounded-xl bg-white shadow-[0_0_10px_0_rgba(50,100,200,0.1)] border border-gray-100"
+						? "rounded-xl bg-white shadow-custom-sm border border-gray-100 min-h-[280px]"
 						: ""
 				}`}
 			>
-				<div className="relative flex w-full justify-around mb-3">
+				<div className="relative flex w-full px-4 pt-4 pb-2">
 					{tabs.map((tab) => (
 						<button
 							key={tab.key}
 							type="button"
-							className={`flex-1 py-2.5 text-center font-bold rounded-full z-10 ${
+							className={`flex-1 py-2 text-center text-sm font-medium relative z-10 transition-all duration-200 ${
 								activeTabKey === tab.key
-									? "text-male"
-									: "text-gray-400"
-							} transition-colors duration-200`}
+									? "text-red-600"
+									: "text-gray-400 hover:text-gray-600"
+							}`}
 							onClick={() => setActiveTabKey(tab.key)}
 						>
 							{tab.label}
+							{activeTabKey === tab.key && (
+								<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-red-600 rounded-full" />
+							)}
 						</button>
 					))}
-
-					<div
-						className="absolute bottom-0 h-full bg-gradient-to-r from-blue-50 to-blue-100 rounded-full transition-all duration-300 shadow-sm"
-						style={{
-							width: `${100 / tabs.length}%`,
-							left: `${(activeIndex * 100) / tabs.length}%`,
-						}}
-					/>
 				</div>
 
-				<div className="flex flex-col w-full gap-2">
-					{activeTab?.data.map((item, index) => {
-						const Component = activeTab.component;
-						// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-						return <Component key={index} {...item} />;
-					})}
+				<div className="flex flex-col w-full">
+					<div className={isHome ? "divide-y divide-gray-100" : ""}>
+						{activeTab?.data.map((item, index) => {
+							const Component = activeTab.component;
+							return (
+								<div
+									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+									key={index}
+									className="active:bg-gray-50/50 transition-colors"
+								>
+									<Component {...item} />
+								</div>
+							);
+						})}
+					</div>
+					{activeTab?.data.length === 0 && (
+						<div className="flex flex-col items-center justify-center py-12 text-gray-400">
+							<p className="text-sm">데이터가 없습니다</p>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

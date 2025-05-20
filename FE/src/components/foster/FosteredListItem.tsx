@@ -39,11 +39,11 @@ export default function FosteredListItem({ data }: FosteredListItemProps) {
 				Number(selectedCenter?.centerId),
 			),
 		onSuccess: () => {
+			setIsDialogOpen(false);
 			queryClient.invalidateQueries({
 				queryKey: ["fosteredDogs", selectedCenter?.centerId],
 			});
 			toast.success("임시보호가 종료되었습니다.");
-			setIsDialogOpen(false);
 		},
 		onError: () => {
 			toast.error("임시보호 종료 중 오류가 발생했습니다.");
@@ -95,13 +95,23 @@ export default function FosteredListItem({ data }: FosteredListItemProps) {
 							<button
 								type="button"
 								className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+								aria-haspopup="true" // 명시적 역할 지정
 							>
 								<MoreHorizontal className="w-5 h-5 text-gray-500" />
 							</button>
 						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
+						<DropdownMenuContent
+							align="end"
+							onCloseAutoFocus={(e) => {
+								e.preventDefault();
+								e.stopPropagation();
+							}}
+						>
 							<DropdownMenuItem
-								onClick={() => setIsDialogOpen(true)}
+								onSelect={(e) => {
+									e.preventDefault();
+									setIsDialogOpen(true);
+								}}
 								className="text-red-500 focus:text-red-500 focus:bg-red-50"
 							>
 								임시보호 종료

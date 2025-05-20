@@ -2,12 +2,7 @@ import { useState } from "react";
 import { Search, PawPrint } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
 import { useQuery } from "@tanstack/react-query";
-import {
-	fetchFosterApplicationsAPI,
-	decideFosterApplicationAPI,
-	fetchFosteredDogsAPI,
-} from "@/api/foster";
-import type { FosterStatus } from "@/types/foster";
+import { fetchFosterApplicationsAPI, fetchFosteredDogsAPI } from "@/api/foster";
 import FosteredListItem from "@/components/foster/FosteredListItem";
 import FosterApplicationListItem from "@/components/foster/FosterApplicationListItem";
 
@@ -25,6 +20,8 @@ export default function FosterManagerMainPage() {
 		queryFn: () =>
 			fetchFosterApplicationsAPI(Number(selectedCenter?.centerId)),
 		enabled: !!selectedCenter?.centerId,
+		refetchOnMount: true,
+		staleTime: 0,
 	});
 
 	// 임시보호 중인 강아지 수 조회
@@ -34,6 +31,8 @@ export default function FosterManagerMainPage() {
 			queryFn: () =>
 				fetchFosteredDogsAPI(Number(selectedCenter?.centerId)),
 			enabled: !!selectedCenter?.centerId,
+			refetchOnMount: true,
+			staleTime: 0,
 		});
 
 	// count 속성에 안전하게 접근

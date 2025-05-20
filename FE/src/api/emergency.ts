@@ -72,7 +72,7 @@ export const fetchEmergencyApplicationsAPI = async (
 export const fetchMyEmergencyApplicationsAPI = async (
 	emergencyId: number,
 	centerId: number,
-): Promise<EmergencyApplicationResponse> => {
+): Promise<EmergencyApplicationResponse[]> => {
 	const response = await localAxios.get(
 		`/emergencies/${emergencyId}/applications/my`,
 		{
@@ -123,5 +123,29 @@ export const fetchAllEmergencyApplicationsAPI = async (
 		params: { centerId },
 	});
 
+	return response.data;
+};
+
+export interface EmergencyApplicant {
+	memberId: number;
+	name: string;
+	nickName: string;
+	phone: string;
+	emergencyId: number;
+}
+
+export interface RecruitedEmergencyResponse {
+	emergencyId: number;
+	applicants: EmergencyApplicant[];
+	emergencyDate: string;
+	dueDate: string;
+}
+
+export const fetchRecruitedEmergenciesAPI = async (
+	centerId: number,
+): Promise<RecruitedEmergencyResponse[]> => {
+	const response = await localAxios.get("/emergencies/recruited", {
+		params: { centerId },
+	});
 	return response.data;
 };

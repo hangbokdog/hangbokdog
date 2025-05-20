@@ -141,7 +141,7 @@ export default function EmergencyListItem({
 
 	return (
 		<>
-			<div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+			<div className="m-1.5 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
 				<button
 					type="button"
 					className={`w-full text-left flex items-center justify-between rounded-lg px-5 py-3 ${

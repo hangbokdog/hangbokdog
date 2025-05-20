@@ -4,6 +4,7 @@ import useCenterStore from "@/lib/store/centerStore";
 import { AlertTriangle, Plus } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import RecruiteEmergencyList from "@/components/common/emergency/RecruiteEmergencyList";
 
 export default function EmergencyPage() {
 	const { selectedCenter } = useCenterStore();
@@ -48,7 +49,7 @@ export default function EmergencyPage() {
 							}`}
 							onClick={() => setTab("list")}
 						>
-							긴급 목록
+							모집 중
 						</button>
 						<button
 							type="button"
@@ -59,7 +60,7 @@ export default function EmergencyPage() {
 							}`}
 							onClick={() => setTab("applications")}
 						>
-							신청 대기
+							모집 완료
 							{applicationCount > 0 && (
 								<span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs font-medium bg-red-100 text-red-600 rounded-full">
 									{applicationCount}
@@ -79,10 +80,7 @@ export default function EmergencyPage() {
 				{/* 신청 대기 탭 */}
 				{tab === "applications" && (
 					<div className="flex flex-col gap-2">
-						<EmergencyApplicationList
-							centerId={Number(selectedCenter?.centerId)}
-							onCountChange={setApplicationCount}
-						/>
+						<RecruiteEmergencyList />
 					</div>
 				)}
 			</div>

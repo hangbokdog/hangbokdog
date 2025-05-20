@@ -358,7 +358,7 @@ export default function PostListPage() {
 				</div>
 			</div>
 
-			<div className="flex-1 p-4 max-w-lg mx-auto w-full overflow-y-auto">
+			<div className="flex-1 py-2 max-w-lg mx-auto w-full overflow-y-auto">
 				{isLoading ? (
 					<div className="flex justify-center items-center h-64">
 						<Loader2 className="w-8 h-8 text-male animate-spin" />
