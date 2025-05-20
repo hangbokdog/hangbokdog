@@ -36,6 +36,11 @@ export default function VolunteerEditPage() {
 		"activityLog" | "info" | "precaution"
 	>("activityLog");
 
+	// 한글 입력 상태 관리
+	const [isActivityLogComposing, setIsActivityLogComposing] = useState(false);
+	const [isInfoComposing, setIsInfoComposing] = useState(false);
+	const [isPrecautionComposing, setPrecautionComposing] = useState(false);
+
 	// 각 에디터별 이미지 업로드 상태
 	const [activityLogImageUploading, setActivityLogImageUploading] =
 		useState(false);
@@ -211,6 +216,107 @@ export default function VolunteerEditPage() {
 		[createImageHandler],
 	);
 
+	// 한글 입력 이벤트 핸들러 설정
+	useEffect(() => {
+		// 에디터 DOM 요소들
+		let activityLogEditor: HTMLElement | null = null;
+		let infoEditor: HTMLElement | null = null;
+		let precautionEditor: HTMLElement | null = null;
+
+		// DOM이 준비되면 에디터 요소를 찾음
+		const setupEditors = () => {
+			activityLogEditor = document.querySelector(
+				'.ql-editor[data-tab="activityLog"]',
+			);
+			infoEditor = document.querySelector('.ql-editor[data-tab="info"]');
+			precautionEditor = document.querySelector(
+				'.ql-editor[data-tab="precaution"]',
+			);
+
+			// 이벤트 리스너 설정
+			if (activityLogEditor) {
+				activityLogEditor.addEventListener("compositionstart", () =>
+					setIsActivityLogComposing(true),
+				);
+				activityLogEditor.addEventListener("compositionend", () =>
+					setIsActivityLogComposing(false),
+				);
+			}
+
+			if (infoEditor) {
+				infoEditor.addEventListener("compositionstart", () =>
+					setIsInfoComposing(true),
+				);
+				infoEditor.addEventListener("compositionend", () =>
+					setIsInfoComposing(false),
+				);
+			}
+
+			if (precautionEditor) {
+				precautionEditor.addEventListener("compositionstart", () =>
+					setPrecautionComposing(true),
+				);
+				precautionEditor.addEventListener("compositionend", () =>
+					setPrecautionComposing(false),
+				);
+			}
+		};
+
+		// 초기 설정 및 탭 변경 시 재설정
+		const timer = setTimeout(setupEditors, 500);
+
+		return () => {
+			clearTimeout(timer);
+			// 이벤트 리스너 제거
+			if (activityLogEditor) {
+				activityLogEditor.removeEventListener("compositionstart", () =>
+					setIsActivityLogComposing(true),
+				);
+				activityLogEditor.removeEventListener("compositionend", () =>
+					setIsActivityLogComposing(false),
+				);
+			}
+
+			if (infoEditor) {
+				infoEditor.removeEventListener("compositionstart", () =>
+					setIsInfoComposing(true),
+				);
+				infoEditor.removeEventListener("compositionend", () =>
+					setIsInfoComposing(false),
+				);
+			}
+
+			if (precautionEditor) {
+				precautionEditor.removeEventListener("compositionstart", () =>
+					setPrecautionComposing(true),
+				);
+				precautionEditor.removeEventListener("compositionend", () =>
+					setPrecautionComposing(false),
+				);
+			}
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [activeTab]); // activeTab이 변경될 때마다 이벤트 리스너 재설정
+
+	// 각 에디터별 내용 변경 핸들러
+	const handleActivityLogChange = (content: string) => {
+		if (!isActivityLogComposing) {
+			setActivityLog(content);
+		}
+	};
+
+	const handleInfoChange = (content: string) => {
+		if (!isInfoComposing) {
+			setInfo(content);
+		}
+	};
+
+	const handlePrecautionChange = (content: string) => {
+		if (!isPrecautionComposing) {
+			setPrecaution(content);
+		}
+	};
+
 	// 폼 제출 핸들러
 	const handleSubmit = async () => {
 		if (!title) {
@@ -224,6 +330,7 @@ export default function VolunteerEditPage() {
 			// 요청 데이터
 			const updateData: VolunteerUpdateData = {
 				title,
+				content: activityLog, // content 필드에 activityLog 값 할당
 				activityLog,
 				precaution,
 				info,
@@ -342,86 +449,93 @@ export default function VolunteerEditPage() {
 
 					<div className="p-4">
 						{/* 내용 에디터 */}
-						{activeTab === "activityLog" && (
-							<div className="relative">
-								<div className="flex items-center justify-between mb-3">
-									<h3 className="font-medium text-lg">
-										내용 작성
-									</h3>
-								</div>
-								{activityLogImageUploading && (
-									<LoadingIndicator />
-								)}
-								<div className="min-h-[300px]">
-									<ReactQuill
-										ref={activityLogQuillRef}
-										theme="snow"
-										value={activityLog}
-										onChange={setActivityLog}
-										modules={createEditorModules(
-											"activityLog",
-										)}
-										placeholder="내용을 작성하세요."
-									/>
-								</div>
+						<div
+							className={`relative ${activeTab !== "activityLog" ? "hidden" : ""}`}
+						>
+							<div className="flex items-center justify-between mb-3">
+								<h3 className="font-medium text-lg">
+									내용 작성
+								</h3>
 							</div>
-						)}
+							{activityLogImageUploading && <LoadingIndicator />}
+							<div className="min-h-[300px]">
+								<ReactQuill
+									ref={activityLogQuillRef}
+									theme="snow"
+									value={activityLog}
+									onChange={handleActivityLogChange}
+									modules={createEditorModules("activityLog")}
+									placeholder="내용을 작성하세요."
+									className="ql-editor-wrapper"
+								>
+									<div
+										className="ql-editor"
+										data-tab="activityLog"
+									/>
+								</ReactQuill>
+							</div>
+						</div>
 
 						{/* 봉사 안내 에디터 */}
-						{activeTab === "info" && (
-							<div className="relative">
-								<div className="flex items-center justify-between mb-3">
-									<h3 className="font-medium text-lg flex items-center gap-2">
-										<Info
-											size={18}
-											className="text-blue-500"
-										/>
-										봉사 안내
-									</h3>
-								</div>
-								{infoImageUploading && <LoadingIndicator />}
-								<div className="min-h-[300px]">
-									<ReactQuill
-										ref={infoQuillRef}
-										theme="snow"
-										value={info}
-										onChange={setInfo}
-										modules={createEditorModules("info")}
-										placeholder="봉사 안내를 작성하세요."
-									/>
-								</div>
+						<div
+							className={`relative ${activeTab !== "info" ? "hidden" : ""}`}
+						>
+							<div className="flex items-center justify-between mb-3">
+								<h3 className="font-medium text-lg flex items-center gap-2">
+									<Info size={18} className="text-blue-500" />
+									봉사 안내
+								</h3>
 							</div>
-						)}
+							{infoImageUploading && <LoadingIndicator />}
+							<div className="min-h-[300px]">
+								<ReactQuill
+									ref={infoQuillRef}
+									theme="snow"
+									value={info}
+									onChange={handleInfoChange}
+									modules={createEditorModules("info")}
+									placeholder="봉사 안내를 작성하세요."
+									className="ql-editor-wrapper"
+								>
+									<div
+										className="ql-editor"
+										data-tab="info"
+									/>
+								</ReactQuill>
+							</div>
+						</div>
 
 						{/* 주의 사항 에디터 */}
-						{activeTab === "precaution" && (
-							<div className="relative">
-								<div className="flex items-center justify-between mb-3">
-									<h3 className="font-medium text-lg flex items-center gap-2">
-										<AlertTriangle
-											size={18}
-											className="text-red-500"
-										/>
-										주의 사항
-									</h3>
-								</div>
-								{precautionImageUploading && (
-									<LoadingIndicator />
-								)}
-								<div className="min-h-[300px]">
-									<ReactQuill
-										ref={precautionQuillRef}
-										theme="snow"
-										value={precaution}
-										onChange={setPrecaution}
-										modules={createEditorModules(
-											"precaution",
-										)}
-										placeholder="주의 사항을 작성하세요."
+						<div
+							className={`relative ${activeTab !== "precaution" ? "hidden" : ""}`}
+						>
+							<div className="flex items-center justify-between mb-3">
+								<h3 className="font-medium text-lg flex items-center gap-2">
+									<AlertTriangle
+										size={18}
+										className="text-red-500"
 									/>
-								</div>
+									주의 사항
+								</h3>
 							</div>
-						)}
+							{precautionImageUploading && <LoadingIndicator />}
+							<div className="min-h-[300px]">
+								<ReactQuill
+									ref={precautionQuillRef}
+									theme="snow"
+									value={precaution}
+									onChange={handlePrecautionChange}
+									modules={createEditorModules("precaution")}
+									placeholder="주의 사항을 작성하세요."
+									className="ql-editor-wrapper"
+								>
+									<div
+										className="ql-editor"
+										data-tab="precaution"
+									/>
+								</ReactQuill>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -56,7 +56,7 @@ export default function NaverCallback() {
 							userInfo.memberId,
 							userInfo.nickName,
 							userInfo.profileImage,
-							userInfo.notification,
+							// userInfo.notification,
 						);
 					} catch (error) {
 						console.error(

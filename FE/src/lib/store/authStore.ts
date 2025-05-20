@@ -7,7 +7,7 @@ interface User {
 	memberId: number | null;
 	nickName: string | null;
 	profileImage: string | null;
-	notification: boolean | null;
+	// notification: boolean | null;
 }
 
 interface AuthState {
@@ -19,7 +19,7 @@ interface AuthState {
 		memberId: number,
 		nickName: string,
 		profileImage: string,
-		notification: boolean,
+		// notification: boolean,
 	) => void;
 	clearAuth: () => void;
 }
@@ -34,9 +34,9 @@ const getStoredUser = (): User => {
 			: null,
 		nickName: sessionStorage.getItem("nickName"),
 		profileImage: sessionStorage.getItem("profileImage"),
-		notification: sessionStorage.getItem("notification")
-			? sessionStorage.getItem("notification") === "true"
-			: null,
+		// notification: sessionStorage.getItem("notification")
+		// 	? sessionStorage.getItem("notification") === "true"
+		// 	: null,
 	};
 };
 
@@ -63,19 +63,19 @@ const useAuthStore = create<AuthState>()((set) => ({
 		memberId: number,
 		nickName: string,
 		profileImage: string,
-		notification: boolean,
+		// notification: boolean,
 	) => {
 		sessionStorage.setItem("memberId", memberId.toString());
 		sessionStorage.setItem("nickName", nickName);
 		sessionStorage.setItem("profileImage", profileImage);
-		sessionStorage.setItem("notification", notification.toString());
+		// sessionStorage.setItem("notification", notification.toString());
 		set((state) => ({
 			user: {
 				...state.user,
 				memberId,
 				nickName,
 				profileImage,
-				notification,
+				// notification,
 			},
 		}));
 	},
@@ -85,7 +85,7 @@ const useAuthStore = create<AuthState>()((set) => ({
 		sessionStorage.removeItem("memberId");
 		sessionStorage.removeItem("nickName");
 		sessionStorage.removeItem("profileImage");
-		sessionStorage.removeItem("notification");
+		// sessionStorage.removeItem("notification");
 		set({
 			user: {
 				accessToken: null,
@@ -94,7 +94,7 @@ const useAuthStore = create<AuthState>()((set) => ({
 				memberId: null,
 				nickName: null,
 				profileImage: null,
-				notification: null,
+				// notification: null,
 			},
 		});
 	},

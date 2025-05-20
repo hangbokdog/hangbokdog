@@ -225,7 +225,7 @@ export default function FloatingNotificationIcon({
 											</button>
 											<button
 												type="button"
-												className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full transition-colors"
+												className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
 												onClick={(e) =>
 													handleDeleteNotification(
 														e,

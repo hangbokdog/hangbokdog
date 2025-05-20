@@ -287,7 +287,7 @@ export default function NoticePanel() {
 										</button>
 										<button
 											type="button"
-											className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full"
+											className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full"
 											onClick={(e) => {
 												e.stopPropagation();
 												handleDeleteNotice(notice.id);
