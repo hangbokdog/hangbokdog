@@ -155,6 +155,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 		return queryFactory.select(
 				centerMember.count().intValue().coalesce(0)
 		).from(centerMember)
+				.leftJoin(member).on(centerMember.memberId.eq(member.id))
 				.where(centerMember.centerId.eq(centerId), isGrade(grade), isContains(word))
 				.fetchOne();
 	}
