@@ -133,7 +133,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				centerMember.createdAt
 		)).from(member)
 				.leftJoin(centerMember).on(centerMember.memberId.eq(member.id))
-				.where(centerMember.centerId.eq(centerId))
+				.where(centerMember.centerId.eq(centerId).and(centerMember.memberId.eq(memberId)))
 				.fetchOne());
 	}
 
