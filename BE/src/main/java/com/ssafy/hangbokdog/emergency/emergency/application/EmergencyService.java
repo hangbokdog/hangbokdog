@@ -74,6 +74,30 @@ public class EmergencyService {
 			.emergencyType(EmergencyType.TRANSPORT)
 			.build();
 
+		List<Long> targetIds = new ArrayList<>();
+		if (request.targetGrade().equals(TargetGrade.ALL)) {
+			targetIds = centerMemberRepository.getTargetAllIds(centerId);
+		} else if (request.targetGrade().equals(TargetGrade.MANAGER)) {
+			targetIds = centerMemberRepository.getTargetIds(centerId, CenterGrade.MANAGER);
+		} else if (request.targetGrade().equals(TargetGrade.USER)) {
+			targetIds = centerMemberRepository.getTargetIds(centerId, CenterGrade.USER);
+		}
+
+		List<Notification> notifications = new ArrayList<>();
+
+		for (Long targetId : targetIds) {
+			Notification notification = Notification.builder()
+					.content(request.content())
+					.receiverId(targetId)
+					.targetId(emergency.getId())
+					.title(request.title())
+					.type(NotificationType.EMERGENCY)
+					.build();
+			notifications.add(notification);
+		}
+
+		notificationRepository.bulkInsert(notifications);
+
 		eventPublisher.publishEvent(
 			new EmergencyEvent(
 				emergency.getId(),
@@ -113,6 +137,30 @@ public class EmergencyService {
 			.targetGrade(request.targetGrade())
 			.emergencyType(EmergencyType.VOLUNTEER)
 			.build();
+
+		List<Long> targetIds = new ArrayList<>();
+		if (request.targetGrade().equals(TargetGrade.ALL)) {
+			targetIds = centerMemberRepository.getTargetAllIds(centerId);
+		} else if (request.targetGrade().equals(TargetGrade.MANAGER)) {
+			targetIds = centerMemberRepository.getTargetIds(centerId, CenterGrade.MANAGER);
+		} else if (request.targetGrade().equals(TargetGrade.USER)) {
+			targetIds = centerMemberRepository.getTargetIds(centerId, CenterGrade.USER);
+		}
+
+		List<Notification> notifications = new ArrayList<>();
+
+		for (Long targetId : targetIds) {
+			Notification notification = Notification.builder()
+					.content(request.content())
+					.receiverId(targetId)
+					.targetId(emergency.getId())
+					.title(request.title())
+					.type(NotificationType.EMERGENCY)
+					.build();
+			notifications.add(notification);
+		}
+
+		notificationRepository.bulkInsert(notifications);
 
 		eventPublisher.publishEvent(
 			new EmergencyEvent(
