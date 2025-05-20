@@ -90,3 +90,18 @@ export const getUnreadNotificationsCount = async (centerId?: string) => {
 		throw error;
 	}
 };
+
+// FCM 토큰 삭제 API
+export const deleteFCMToken = async (fcmToken: string) => {
+	try {
+		const response = await localAxios.delete("/members/fcm-token", {
+			data: {
+				fcmToken,
+			},
+		});
+		return response.data;
+	} catch (error) {
+		console.error("FCM 토큰 삭제 실패:", error);
+		throw error;
+	}
+};

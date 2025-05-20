@@ -8,6 +8,7 @@ import { MdLogout } from "react-icons/md";
 import { BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import NotificationToggle from "@/components/my/NotificationToggle";
 
 function handleEdit() {
 	//프로필 수정 로직
@@ -66,6 +67,9 @@ export default function My() {
 						>
 							변경하기
 						</button>
+					</div>
+					<div>
+						<NotificationToggle />
 					</div>
 					<button
 						type="button"
