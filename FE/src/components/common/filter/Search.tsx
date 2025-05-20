@@ -14,7 +14,6 @@ import {
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useRef } from "react";
 import type { DogSearchRequest } from "@/api/dog";
-import useManagerStore from "@/lib/store/managerStore";
 import BreedFilter from "./BreedFilter";
 import GenderFilter from "./GenderFilter";
 import AgeFilter from "./AgeFilter";

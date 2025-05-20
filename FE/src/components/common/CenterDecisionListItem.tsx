@@ -6,7 +6,6 @@ import {
 	registerCenterAPI,
 } from "@/api/center";
 import useCenterStore from "@/lib/store/centerStore";
-import useManagerStore from "@/lib/store/managerStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -39,7 +38,6 @@ export default function CenterDecisionListItem({
 }: CenterDecisionListItemProps) {
 	const { setSelectedCenter, setIsCenterMember, myMainCenterId } =
 		useCenterStore();
-	const { setAddressBook } = useManagerStore();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -122,10 +120,6 @@ export default function CenterDecisionListItem({
 		});
 
 		const { data } = await refetch();
-
-		if (data) {
-			setAddressBook(data);
-		}
 
 		if (status === "MANAGER" || status === "USER" || status === "MEMBER") {
 			setIsCenterMember(true);
