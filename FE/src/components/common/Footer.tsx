@@ -31,7 +31,7 @@ export default function Footer() {
 	];
 
 	return (
-		<footer className="fixed w-full max-w-[440px] h-14 bottom-0 px-10 z-10 mx-auto flex items-center justify-between bg-white rounded-t-[12px] border-t border-[#F4F4F4]">
+		<footer className="fixed w-full max-w-[440px] h-16 bottom-0 px-10 z-10 mx-auto flex items-center justify-between bg-white rounded-t-[12px] border-t border-[#F4F4F4]">
 			{footerItems.map((item) => (
 				<FooterItem
 					key={item.path}
