@@ -14,7 +14,7 @@ export default function CenterLayout() {
 	return (
 		<>
 			{showHeader ? <Header /> : <RouteBackHeader />}
-			<main className={showHeader ? "pb-14" : ""}>
+			<main className={showHeader ? "pb-16" : ""}>
 				<Outlet />
 			</main>
 			{showHeader && <Footer />}

@@ -1,4 +1,11 @@
-import type { CenterStatsResponse, Location } from "@/types/center";
+import type {
+	CenterMember,
+	CenterMemberThumb,
+	CenterMembersResponse,
+	CenterStatisticsResponse,
+	CenterStatsResponse,
+	Location,
+} from "@/types/center";
 import localAxios, { type PageInfo } from "./http-commons";
 
 export interface centerCreateRequest {
@@ -148,5 +155,91 @@ export const fetchCenterStatsAPI = async (
 
 export const addMainCenterIdAPI = async (centerId: string) => {
 	const response = await localAxios.patch(`/centers/${centerId}/main`);
+	return response.data;
+};
+
+export const fetchCenterMembersAPI = async (
+	centerId: string,
+	grade?: "MANAGER" | "USER",
+	searchWord?: string,
+	pageToken?: string | null,
+): Promise<CenterMembersResponse> => {
+	const params = {
+		centerId,
+		...(grade ? { grade } : {}),
+		...(searchWord ? { searchWord } : {}),
+		...(pageToken ? { pageToken } : {}),
+	};
+	const response = await localAxios.get<CenterMembersResponse>("/members", {
+		params,
+	});
+	return response.data;
+};
+
+export const fetchCenterMemberAPI = async (
+	centerId: string,
+	memberId: number,
+) => {
+	const response = await localAxios.get<CenterMember>(
+		`/members/${memberId}`,
+		{
+			params: { centerId },
+		},
+	);
+	return response.data;
+};
+
+export const updateMemberGradeAPI = async (
+	centerId: string,
+	memberId: number,
+	grade: "USER" | "MANAGER",
+) => {
+	const response = await localAxios.patch(
+		`/centers/${centerId}/members/${memberId}`,
+		{ grade },
+	);
+	return response.data;
+};
+
+export const deleteCenterMemberAPI = async (
+	centerId: string,
+	memberId: number,
+) => {
+	const response = await localAxios.delete(
+		`/centers/${centerId}/members/${memberId}`,
+	);
+	return response.data;
+};
+
+export const fetchCenterStatisticsAPI = async (
+	centerId: string,
+): Promise<CenterStatisticsResponse> => {
+	const response = await localAxios.get<CenterStatisticsResponse>(
+		`/centers/${centerId}/statistics`,
+	);
+	return response.data;
+};
+
+export const kickOutCenterMemberAPI = async (
+	centerId: string,
+	memberId: string,
+) => {
+	const response = await localAxios.delete(`/centers/${memberId}/kickOut`, {
+		params: { centerId },
+	});
+	return response.data;
+};
+
+export const promoteCenterMemberAPI = async (
+	centerId: string,
+	memberId: string,
+) => {
+	const response = await localAxios.post(
+		`/centers/${memberId}/promote`,
+		{},
+		{
+			params: { centerId },
+		},
+	);
 	return response.data;
 };

@@ -175,3 +175,41 @@ export interface MyCenter {
 	centerName: string;
 	centerGrade: string;
 }
+
+export interface CenterMemberThumb {
+	id: number;
+	name: string;
+	nickname: string;
+	profileImage: string | null;
+	centerGrade: "MANAGER" | "USER";
+}
+
+export interface MemberResponses {
+	data: CenterMemberThumb[];
+	pageToken: string | null;
+	hasNext: boolean;
+}
+
+export interface CenterMembersResponse {
+	memberResponses: MemberResponses;
+	count: number;
+}
+
+export interface CenterMember {
+	id: number;
+	profileImage: string | null;
+	name: string;
+	nickname: string;
+	grade: "MANAGER" | "USER";
+	email: string;
+	phone: string;
+	joinedAt: string;
+}
+
+export interface CenterStatisticsResponse {
+	totalMemberCount: number;
+	newMemberCount: number;
+	volunteerParticipantCount: number;
+	managerMemberCount: number;
+	normalMemberCount: number;
+}

@@ -115,7 +115,7 @@ export const VolunteerItem = ({
 												)}
 										</SheetTitle>
 										<SheetDescription>
-											<span className="text-lg font-medium text-primary">
+											<span className="text-lg font-medium text-primary line-clamp-2">
 												{volunteer.title}
 											</span>
 											<br />
