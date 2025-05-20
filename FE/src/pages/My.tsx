@@ -16,7 +16,8 @@ import { requestFCMToken } from "@/config/firebase";
 
 export default function My() {
 	const { user, setUserInfo, clearAuth } = useAuthStore();
-	const { selectedCenter, clearSelectedCenter } = useCenterStore();
+	const { selectedCenter, clearSelectedCenter, isCenterMember } =
+		useCenterStore();
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
@@ -40,7 +41,7 @@ export default function My() {
 					data.memberId,
 					data.nickName || "",
 					data.profileImage || "",
-					data.notification || false,
+					// data.notification || false,
 				);
 			}
 		}
@@ -72,7 +73,7 @@ export default function My() {
 					data.memberId,
 					data.nickName,
 					data.profileImage || "",
-					false,
+					// false,
 				);
 			}
 			queryClient.invalidateQueries({ queryKey: ["userInfo"] });
@@ -109,7 +110,7 @@ export default function My() {
 						data.memberId,
 						data.nickName,
 						data.profileImage || "",
-						true,
+						// true,
 					);
 				}
 				queryClient.invalidateQueries({ queryKey: ["userInfo"] });
@@ -222,7 +223,13 @@ export default function My() {
 					</button>
 				</div>
 			)}
-			<MyActivitiesPanel />
+			{isCenterMember ? (
+				<MyActivitiesPanel />
+			) : (
+				<div className="p-4 bg-red-50 text-center rounded-lg shadow-custom-xs mx-2.5">
+					센터 가입 후 활동 내역을 확인할 수 있습니다.
+				</div>
+			)}
 		</div>
 	);
 }

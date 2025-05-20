@@ -98,7 +98,7 @@ export default function SignUp() {
 				userInfo.memberId,
 				userInfo.nickName,
 				userInfo.profileImage,
-				isEmergencyAlertChecked, // 응급 알림 동의 상태에 따라 notification 값 설정
+				// isEmergencyAlertChecked, // 응급 알림 동의 상태에 따라 notification 값 설정
 			);
 
 			// 회원가입 성공 토스트
