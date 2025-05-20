@@ -368,7 +368,7 @@ export default function DogDetailPage() {
 							gender={data.gender as Gender}
 						/>
 					)}
-					<DogPostButton dogId={data.dogId} />
+
 					{selectedCenter?.status === "MANAGER" &&
 						(isEditing ? (
 							<button

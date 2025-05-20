@@ -311,3 +311,14 @@ export const fetchMyLikedPostsAPI = async (
 	});
 	return response.data;
 };
+
+export const fetchPostsByDogIdAPI = async (
+	dogId: number,
+	pageToken?: string,
+): Promise<PageInfo<PostSummaryResponse>> => {
+	const response = await localAxios.get(`/posts/dogs/${dogId}`, {
+		params: { pageToken },
+	});
+
+	return response.data;
+};
