@@ -2,6 +2,7 @@ package com.ssafy.hangbokdog.emergency.emergency.dto;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 
 public record EmergencyInfo(
@@ -15,6 +16,7 @@ public record EmergencyInfo(
 	LocalDateTime dueDate,
 	Integer capacity,
 	Integer targetAmount,
-	EmergencyType type
+	EmergencyType type,
+	EmergencyStatus emergencyStatus
 ) {
 }

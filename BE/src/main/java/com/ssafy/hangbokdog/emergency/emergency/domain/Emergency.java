@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import com.ssafy.hangbokdog.common.entity.BaseEntity;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.TargetGrade;
 
@@ -58,8 +59,20 @@ public class Emergency extends BaseEntity {
 	@Column(name = "emergency_type")
 	private EmergencyType emergencyType;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private EmergencyStatus status;
+
 	public boolean checkCapacity(int amount) {
 		return capacity > amount;
+	}
+
+	public void recruited() {
+		this.status = EmergencyStatus.RECRUITED;
+	}
+
+	public void complete() {
+		this.status = EmergencyStatus.COMPLETED;
 	}
 
 	@Builder
@@ -83,5 +96,6 @@ public class Emergency extends BaseEntity {
 		this.capacity = capacity;
 		this.targetAmount = targetAmount;
 		this.emergencyType = emergencyType;
+		this.status = EmergencyStatus.RECRUITING;
 	}
 }

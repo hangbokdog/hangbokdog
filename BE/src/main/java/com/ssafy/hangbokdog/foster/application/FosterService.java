@@ -56,10 +56,6 @@ public class FosterService {
 			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_EXISTS);
 		}
 
-		if (fosterRepository.checkDogFosterCount(dogId) >= 2) {
-			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_FULL);
-		}
-
 		if (!dogRepository.existsById(dogId)) {
 			throw new BadRequestException(ErrorCode.DOG_NOT_FOUND);
 		}

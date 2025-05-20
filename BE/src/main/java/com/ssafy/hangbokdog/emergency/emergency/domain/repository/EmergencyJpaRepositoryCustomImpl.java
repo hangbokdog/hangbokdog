@@ -11,9 +11,9 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
-import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,12 +38,14 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 						emergency.dueDate,
 						emergency.capacity,
 						emergency.targetAmount,
-						emergency.emergencyType
+						emergency.emergencyType,
+						emergency.status
 				))
 				.from(emergency)
 				.leftJoin(member).on(emergency.authorId.eq(member.id))
 				.where(
 						emergency.centerId.eq(centerId),
+						emergency.status.ne(EmergencyStatus.COMPLETED),
 						emergency.dueDate.goe(now),
 						isEmergencyType(type)
 				)
@@ -69,12 +71,14 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 						emergency.dueDate,
 						emergency.capacity,
 						emergency.targetAmount,
-						emergency.emergencyType
+						emergency.emergencyType,
+				emergency.status
 				))
 				.from(emergency)
 				.leftJoin(member).on(emergency.authorId.eq(member.id))
 				.where(
 						emergency.centerId.eq(centerId),
+						emergency.status.ne(EmergencyStatus.COMPLETED),
 						emergency.dueDate.goe(now),
 						isEmergencyType(type)
 				)
@@ -91,6 +95,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				.where(
 						emergency.centerId.eq(centerId),
 						emergency.emergencyType.eq(emergencyType),
+						emergency.status.ne(EmergencyStatus.COMPLETED),
 						emergency.dueDate.goe(LocalDateTime.now())
 				)
 				.fetchOne();

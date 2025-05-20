@@ -3,7 +3,6 @@ package com.ssafy.hangbokdog.emergency.application.application;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
@@ -17,6 +16,7 @@ import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyAppli
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationCreateResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
+import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.repository.EmergencyRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -80,18 +80,30 @@ public class EmergencyApplicationService {
 
 			switch (emergency.getEmergencyType()) {
 				case TRANSPORT:
+
+					if (emergency.getStatus().equals(EmergencyStatus.RECRUITED)) {
+						throw new BadRequestException(ErrorCode.EMERGENCY_ALREADY_FULL);
+					}
+
 					if (!emergencyApplicationRepository.existsByEmergencyId(emergency.getId())) {
 						throw new BadRequestException(ErrorCode.EMERGENCY_ALREADY_FULL);
 					}
 
 					emergencyApplication.approve();
+					emergency.recruited();
 					break;
 
 				case VOLUNTEER:
+
+					if (emergency.getStatus().equals(EmergencyStatus.RECRUITED)) {
+						throw new BadRequestException(ErrorCode.EMERGENCY_ALREADY_FULL);
+					}
+
 					int approvedAppliesCount = emergencyApplicationRepository
 						.getApprovedVolunteerApplicantsByEmergencyId(emergency.getId());
 
 					if (!emergency.checkCapacity(approvedAppliesCount)) {
+						emergency.recruited();
 						throw new BadRequestException(ErrorCode.EMERGENCY_ALREADY_FULL);
 					}
 
