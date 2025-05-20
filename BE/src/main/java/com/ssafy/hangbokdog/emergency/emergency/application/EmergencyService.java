@@ -223,7 +223,8 @@ public class EmergencyService {
 				emergencyInfo.capacity(),
 				emergencyInfo.targetAmount(),
 				emergencyInfo.type(),
-				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null)
+				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null),
+					emergencyInfo.emergencyStatus()
 			);
 			responses.add(response);
 		}
@@ -263,7 +264,8 @@ public class EmergencyService {
 				emergencyInfo.capacity(),
 				emergencyInfo.targetAmount(),
 				emergencyInfo.type(),
-				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null)
+				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null),
+					emergencyInfo.emergencyStatus()
 			);
 			responses.add(response);
 		}
