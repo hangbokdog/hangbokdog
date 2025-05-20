@@ -68,7 +68,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 						member.id,
 						member.name,
 						member.nickName,
-						member.profileImage
+						member.profileImage,
+						member.emergencyNotificationCheck
 				))
 				.from(member)
 				.where(member.id.eq(memberId))

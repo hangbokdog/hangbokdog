@@ -4,6 +4,7 @@ public record MemberProfileResponse(
 		Long memberId,
 		String name,
 		String nickName,
-		String profileImage
+		String profileImage,
+		Boolean notification
 ) {
 }
