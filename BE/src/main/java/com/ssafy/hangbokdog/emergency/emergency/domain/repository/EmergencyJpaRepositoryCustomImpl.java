@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.emergency.emergency.domain.repository;
 
+import static com.ssafy.hangbokdog.emergency.application.domain.QEmergencyApplication.*;
 import static com.ssafy.hangbokdog.emergency.emergency.domain.QEmergency.*;
 import static com.ssafy.hangbokdog.member.domain.QMember.*;
 
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQueryFactory;
+import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.ApprovedCount;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -37,7 +40,6 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 						member.profileImage,
 						emergency.dueDate,
 						emergency.capacity,
-						emergency.targetAmount,
 						emergency.emergencyType,
 						emergency.status
 				))
@@ -132,6 +134,21 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				)
 				.orderBy(emergency.dueDate.asc())
 				.fetch();
+	}
+
+	@Override
+	public List<ApprovedCount> getApprovedCountIn(List<Long> emergencyIds) {
+		return queryFactory
+			.select(Projections.constructor(
+				ApprovedCount.class,
+				emergencyApplication.emergencyId,
+				emergencyApplication.id.count().intValue()
+			))
+			.from(emergencyApplication)
+			.where(emergencyApplication.emergencyId.in(emergencyIds),
+				emergencyApplication.status.eq(EmergencyApplicationStatus.APPROVED))
+			.groupBy(emergencyApplication.emergencyId)
+			.fetch();
 	}
 
 	private BooleanExpression isEmergencyType(EmergencyType type) {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.ApprovedCount;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 
@@ -49,5 +50,9 @@ public class EmergencyRepository {
 
 	public List<EmergencyInfo> getRecruitedEmergencies(Long centerId) {
 		return emergencyJpaRepository.getRecruitedEmergencies(centerId);
+	}
+
+	public List<ApprovedCount> getApprovedCountIn(List<Long> emergencyIds) {
+		return emergencyJpaRepository.getApprovedCountIn(emergencyIds);
 	}
 }

@@ -15,7 +15,6 @@ public record EmergencyInfo(
 	String memberImage,
 	LocalDateTime dueDate,
 	Integer capacity,
-	Integer targetAmount,
 	EmergencyType type,
 	EmergencyStatus emergencyStatus
 ) {

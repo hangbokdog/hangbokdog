@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.ApprovedCount;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 
@@ -20,4 +21,6 @@ public interface EmergencyJpaRepositoryCustom {
 	Integer countEmergenciesByEmergencyType(EmergencyType emergencyType, Long centerId);
 
 	List<EmergencyInfo> getRecruitedEmergencies(Long centerId);
+
+	List<ApprovedCount> getApprovedCountIn(List<Long> emergencyIds);
 }

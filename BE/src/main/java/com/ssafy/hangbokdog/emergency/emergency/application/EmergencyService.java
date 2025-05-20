@@ -23,6 +23,7 @@ import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.TargetGrade;
 import com.ssafy.hangbokdog.emergency.emergency.domain.repository.EmergencyRepository;
 import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
+import com.ssafy.hangbokdog.emergency.emergency.dto.ApprovedCount;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyApplicant;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationRequest;
@@ -264,6 +265,18 @@ public class EmergencyService {
 		List<EmergencyInfo> emergencyInfos = emergencyRepository
 			.getEmergenciesByCenterId(centerId, type, LocalDateTime.now());
 
+		List<Long> emergencyIds = emergencyInfos.stream()
+			.map(EmergencyInfo::emergencyId)
+			.toList();
+
+		List<ApprovedCount> approvedCount = emergencyRepository.getApprovedCountIn(emergencyIds);
+
+		Map<Long, Integer> approvedCounts = approvedCount.stream()
+			.collect(Collectors.toMap(
+				ApprovedCount::emergencyId,
+				ApprovedCount::count
+			));
+
 		List<EmergencyResponse> responses = new ArrayList<>();
 
 		for (EmergencyInfo emergencyInfo : emergencyInfos) {
@@ -277,7 +290,7 @@ public class EmergencyService {
 				emergencyInfo.memberImage(),
 				emergencyInfo.dueDate(),
 				emergencyInfo.capacity(),
-				emergencyInfo.targetAmount(),
+				approvedCounts.getOrDefault(emergencyInfo.emergencyId(), 0),
 				emergencyInfo.type(),
 				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null),
 					emergencyInfo.emergencyStatus()
@@ -307,6 +320,18 @@ public class EmergencyService {
 
 		List<EmergencyResponse> responses = new ArrayList<>();
 
+		List<Long> emergencyIds = emergencyInfos.stream()
+			.map(EmergencyInfo::emergencyId)
+			.toList();
+
+		List<ApprovedCount> approvedCount = emergencyRepository.getApprovedCountIn(emergencyIds);
+
+		Map<Long, Integer> approvedCounts = approvedCount.stream()
+			.collect(Collectors.toMap(
+				ApprovedCount::emergencyId,
+				ApprovedCount::count
+			));
+
 		for (EmergencyInfo emergencyInfo : emergencyInfos) {
 			EmergencyResponse response = new EmergencyResponse(
 				emergencyInfo.emergencyId(),
@@ -318,7 +343,7 @@ public class EmergencyService {
 				emergencyInfo.memberImage(),
 				emergencyInfo.dueDate(),
 				emergencyInfo.capacity(),
-				emergencyInfo.targetAmount(),
+				approvedCounts.getOrDefault(emergencyInfo.emergencyId(), 0),
 				emergencyInfo.type(),
 				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null),
 					emergencyInfo.emergencyStatus()
