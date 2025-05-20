@@ -18,4 +18,6 @@ public interface EmergencyJpaRepositoryCustom {
 	);
 
 	Integer countEmergenciesByEmergencyType(EmergencyType emergencyType, Long centerId);
+
+	List<EmergencyInfo> getRecruitedEmergencies(Long centerId);
 }

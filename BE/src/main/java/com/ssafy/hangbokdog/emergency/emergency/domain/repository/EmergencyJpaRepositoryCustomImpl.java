@@ -45,6 +45,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				.leftJoin(member).on(emergency.authorId.eq(member.id))
 				.where(
 						emergency.centerId.eq(centerId),
+						emergency.status.ne(EmergencyStatus.RECRUITED),
 						emergency.status.ne(EmergencyStatus.COMPLETED),
 						emergency.dueDate.goe(now),
 						isEmergencyType(type)
@@ -78,6 +79,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				.leftJoin(member).on(emergency.authorId.eq(member.id))
 				.where(
 						emergency.centerId.eq(centerId),
+						emergency.status.ne(EmergencyStatus.RECRUITED),
 						emergency.status.ne(EmergencyStatus.COMPLETED),
 						emergency.dueDate.goe(now),
 						isEmergencyType(type)
@@ -95,10 +97,41 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				.where(
 						emergency.centerId.eq(centerId),
 						emergency.emergencyType.eq(emergencyType),
+						emergency.status.ne(EmergencyStatus.RECRUITED),
 						emergency.status.ne(EmergencyStatus.COMPLETED),
 						emergency.dueDate.goe(LocalDateTime.now())
 				)
 				.fetchOne();
+	}
+
+	@Override
+	public List<EmergencyInfo> getRecruitedEmergencies(Long centerId) {
+		LocalDateTime now = LocalDateTime.now();
+		return queryFactory
+				.select(Projections.constructor(
+						EmergencyInfo.class,
+						emergency.id,
+						emergency.centerId,
+						emergency.authorId,
+						member.nickName,
+						emergency.title,
+						emergency.content,
+						member.profileImage,
+						emergency.dueDate,
+						emergency.capacity,
+						emergency.targetAmount,
+						emergency.emergencyType,
+						emergency.status
+				))
+				.from(emergency)
+				.leftJoin(member).on(emergency.authorId.eq(member.id))
+				.where(
+						emergency.centerId.eq(centerId),
+						emergency.status.ne(EmergencyStatus.RECRUITED),
+						emergency.dueDate.goe(now)
+				)
+				.orderBy(emergency.dueDate.asc())
+				.fetch();
 	}
 
 	private BooleanExpression isEmergencyType(EmergencyType type) {

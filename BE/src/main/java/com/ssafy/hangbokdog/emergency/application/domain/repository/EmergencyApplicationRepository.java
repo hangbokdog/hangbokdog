@@ -10,6 +10,7 @@ import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicat
 import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyApplicant;
 
 import lombok.RequiredArgsConstructor;
 
@@ -63,5 +64,9 @@ public class EmergencyApplicationRepository {
 
 	public Boolean existsByMemberIdAndEmergencyId(Long memberId, Long emergencyId) {
 		return emergencyApplicationJpaRepository.existsByMemberIdAndEmergencyId(memberId, emergencyId);
+	}
+
+	public List<EmergencyApplicant> getApprovedApplicationsIn(List<Long> emergencyIds) {
+		return emergencyApplicationJpaRepository.getEmergencyApplicantsByIn(emergencyIds);
 	}
 }

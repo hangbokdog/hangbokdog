@@ -15,6 +15,7 @@ import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicat
 import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyApplicant;
 
 import lombok.RequiredArgsConstructor;
 
@@ -113,5 +114,25 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 				emergencyApplication.emergencyId.eq(emergencyId)
 			)
 			.fetchFirst() != null;
+	}
+
+	@Override
+	public List<EmergencyApplicant> getEmergencyApplicantsByIn(List<Long> emergencyIds) {
+		return queryFactory
+				.select(Projections.constructor(
+						EmergencyApplicant.class,
+						emergencyApplication.applicantId,
+						member.name,
+						member.nickName,
+						member.phone,
+						emergencyApplication.emergencyId
+				))
+				.from(emergencyApplication)
+				.leftJoin(member).on(emergencyApplication.applicantId.eq(member.id))
+				.leftJoin(emergency).on(emergencyApplication.emergencyId.eq(emergency.id))
+				.where(emergencyApplication.emergencyId.in(emergencyIds),
+						emergencyApplication.status.eq(EmergencyApplicationStatus.APPROVED))
+				.fetch();
+
 	}
 }

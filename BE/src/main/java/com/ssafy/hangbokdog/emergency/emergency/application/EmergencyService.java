@@ -23,6 +23,7 @@ import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.TargetGrade;
 import com.ssafy.hangbokdog.emergency.emergency.domain.repository.EmergencyRepository;
 import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyApplicant;
 import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyDonationRequest;
 import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyTransportRequest;
@@ -30,6 +31,7 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRe
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyLatestResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.RecruitedEmergencyResponse;
 import com.ssafy.hangbokdog.fcm.domain.NotificationType;
 import com.ssafy.hangbokdog.fcm.dto.event.EmergencyEvent;
 import com.ssafy.hangbokdog.member.domain.Member;
@@ -337,4 +339,32 @@ public class EmergencyService {
 
 		emergencyRepository.deleteEmergencyById(emergencyId);
 	}
+
+	public List<RecruitedEmergencyResponse> getRecruitedEmergencies(Long memberId, Long centerId) {
+		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		List<EmergencyInfo> emergencyInfos = emergencyRepository.getRecruitedEmergencies(centerId);
+		List<Long> emergencyIds = emergencyInfos.stream().map(EmergencyInfo::emergencyId).toList();
+		List<EmergencyApplicant> applicants = emergencyApplicationRepository.getApprovedApplicationsIn(emergencyIds);
+
+		Map<Long, List<EmergencyApplicant>> groupedApplicants = applicants.stream()
+				.collect(Collectors.groupingBy(EmergencyApplicant::emergencyId));
+
+		List<RecruitedEmergencyResponse> responses = emergencyInfos.stream()
+				.map(info -> new RecruitedEmergencyResponse(
+						info.emergencyId(),
+						groupedApplicants.getOrDefault(info.emergencyId(), List.of()),
+						info.dueDate().toLocalDate().toString(), // emergencyDate
+						info.dueDate()
+				))
+				.toList();
+
+		return responses;
+	}
+
 }

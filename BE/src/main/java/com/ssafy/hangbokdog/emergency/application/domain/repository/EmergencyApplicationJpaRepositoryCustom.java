@@ -5,6 +5,7 @@ import java.util.List;
 import com.ssafy.hangbokdog.emergency.application.dto.response.AllEmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyApplicant;
 
 public interface EmergencyApplicationJpaRepositoryCustom {
 	List<EmergencyApplicationResponse> getEmergencyApplicationsByEmergencyId(Long emergencyId);
@@ -16,4 +17,6 @@ public interface EmergencyApplicationJpaRepositoryCustom {
 	List<AllEmergencyApplicationResponse> getEmergencyApplicationsByCenterId(Long centerId);
 
 	Boolean existsByMemberIdAndEmergencyId(Long memberId, Long emergencyId);
+
+	List<EmergencyApplicant> getEmergencyApplicantsByIn(List<Long> emergencyIds);
 }

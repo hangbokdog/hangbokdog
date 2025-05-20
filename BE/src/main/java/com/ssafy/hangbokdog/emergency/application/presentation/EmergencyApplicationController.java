@@ -81,7 +81,10 @@ public class EmergencyApplicationController {
 		@AuthMember Member member,
 		@RequestParam Long centerId
 	) {
-		return ResponseEntity.ok().body(emergencyApplicationService.getMyEmergencyApplications(member.getId(), centerId));
+		return ResponseEntity.ok().body(emergencyApplicationService.getMyEmergencyApplications(
+				member.getId(),
+				centerId
+		));
 	}
 
 	@GetMapping("/applications")

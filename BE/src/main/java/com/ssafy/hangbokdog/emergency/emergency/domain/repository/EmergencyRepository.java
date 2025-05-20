@@ -46,4 +46,8 @@ public class EmergencyRepository {
 	public void deleteEmergencyById(Long id) {
 		emergencyJpaRepository.deleteById(id);
 	}
+
+	public List<EmergencyInfo> getRecruitedEmergencies(Long centerId) {
+		return emergencyJpaRepository.getRecruitedEmergencies(centerId);
+	}
 }

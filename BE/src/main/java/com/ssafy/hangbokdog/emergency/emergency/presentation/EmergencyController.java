@@ -21,6 +21,7 @@ import com.ssafy.hangbokdog.emergency.emergency.dto.request.EmergencyVolunteerRe
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyCreateResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyLatestResponse;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.response.RecruitedEmergencyResponse;
 import com.ssafy.hangbokdog.member.domain.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -89,5 +90,13 @@ public class EmergencyController {
 	) {
 		emergencyService.deleteEmergency(emergencyId, centerId, member.getId());
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/recruited")
+	public ResponseEntity<List<RecruitedEmergencyResponse>> getRecruitedEmergencies(
+			@AuthMember Member member,
+			@RequestParam Long centerId
+	) {
+		return ResponseEntity.ok().body(emergencyService.getRecruitedEmergencies(member.getId(), centerId));
 	}
 }
