@@ -33,7 +33,8 @@ public class NotificationJpaRepositoryCustomImpl implements NotificationJpaRepos
 						notification.type,
 						notification.title,
 						notification.content,
-						notification.createdAt
+						notification.createdAt,
+						notification.isRead
 				))
 				.from(notification)
 				.where(notification.receiverId.eq(memberId),

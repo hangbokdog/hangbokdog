@@ -40,4 +40,20 @@ public class NotificationJdbcRepository {
 			}
 		});
 	}
+
+	public void bulkUpdateIn(List<Long> notificationIds) {
+		String sql = "UPDATE notification SET isRead = true, modified_at = NOW() WHERE notification_id IN (?)";
+
+		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int idx) throws SQLException {
+				ps.setLong(1, notificationIds.get(idx));
+			}
+
+			@Override
+			public int getBatchSize() {
+				return notificationIds.size();
+			}
+		});
+	}
 }

@@ -32,4 +32,8 @@ public class NotificationRepository extends BaseEntity {
 		var data = notificationJpaRepository.getNotifications(memberId, pageToken, NOTIFICATION_PAGE_SIZE);
 		return PageInfo.of(data, NOTIFICATION_PAGE_SIZE, NotificationResponse::notificationId);
 	}
+
+	public void readNotification(List<Long> notificationIds) {
+		notificationJdbcRepository.bulkUpdateIn(notificationIds);
+	}
 }
