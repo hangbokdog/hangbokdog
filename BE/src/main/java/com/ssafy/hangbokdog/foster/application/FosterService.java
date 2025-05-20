@@ -136,9 +136,6 @@ public class FosterService {
 				break;
 
 			case FOSTERING:
-				if (!foster.checkAccepted()) {
-					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
-				}
 				foster.startFoster();
 				dog.goFoster();
 				break;
