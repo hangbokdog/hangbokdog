@@ -63,7 +63,7 @@ public class FosterController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@PatchMapping("/fosters/{fosterId}/application")
+	@PatchMapping("/fosters/{fosterId}/decide")
 	public ResponseEntity<Void> decideFosterApplication(
 		@AuthMember Member member,
 		@PathVariable Long fosterId,
