@@ -12,10 +12,12 @@ import { useFormatDate } from "@/lib/hooks/useFormatDate";
 import { registerFCMToken } from "@/api/notification";
 import { requestFCMToken } from "@/config/firebase";
 import type { UserInfoResponse } from "@/types/auth";
+import { useNotification } from "@/lib/hooks/useNotification";
 
 export default function SignUp() {
 	const navigate = useNavigate();
 	const { user, setToken, setTempToken, setUserInfo } = useAuthStore();
+	const { requestNotificationPermission } = useNotification();
 	const [nickname, setNickname] = useState<string>("");
 	const [phoneNumber, setPhoneNumber] = useState<string>("");
 	const [birthDate, setBirthDate] = useState<string>("");
@@ -40,7 +42,26 @@ export default function SignUp() {
 	// FCM 토큰을 요청하고 백엔드에 저장하는 함수
 	const handleFCMTokenSetup = useCallback(async () => {
 		try {
-			// FCM 토큰 요청
+			// 알림 권한 먼저 요청
+			const permissionResult = await requestNotificationPermission();
+			console.log("알림 권한 요청 결과:", permissionResult);
+
+			// 권한이 부여되지 않았다면 토큰 요청 중단
+			if (permissionResult !== "granted") {
+				console.warn(
+					"알림 권한이 거부되었습니다. FCM 토큰을 등록할 수 없습니다.",
+				);
+
+				// 사용자에게 권한이 거부되었음을 알림
+				if (permissionResult === "denied") {
+					toast.warning(
+						"알림 권한이 거부되었습니다. 알림을 받으려면 브라우저 설정에서 권한을 허용해주세요.",
+					);
+				}
+				return;
+			}
+
+			// 알림 권한이 부여되었다면 FCM 토큰 요청
 			const fcmToken = await requestFCMToken();
 
 			if (fcmToken) {
@@ -49,14 +70,20 @@ export default function SignUp() {
 				// 토큰을 백엔드에 저장
 				await registerFCMToken(fcmToken);
 				console.log("FCM 토큰 등록 성공");
+				toast.success("알림 설정이 완료되었습니다.");
 			} else {
 				console.warn("FCM 토큰을 가져올 수 없어 등록할 수 없습니다.");
+				toast.error(
+					"알림 설정에 실패했습니다. 나중에 마이페이지에서 다시 시도해주세요.",
+				);
 			}
 		} catch (error) {
 			console.error("FCM 토큰 처리 중 오류 발생:", error);
-			// FCM 토큰 등록 실패는 사용자 경험에 영향을 주지 않도록 처리
+			toast.error(
+				"알림 설정에 실패했습니다. 나중에 마이페이지에서 다시 시도해주세요.",
+			);
 		}
-	}, []);
+	}, [requestNotificationPermission]);
 
 	const signUpMutation = useMutation({
 		mutationFn: signUpAPI,
@@ -66,19 +93,23 @@ export default function SignUp() {
 				setTempToken("");
 			}
 
-			if (isEmergencyAlertChecked) {
-				handleFCMTokenSetup();
-			}
-
 			const userInfo: UserInfoResponse = await getUserInfoAPI();
 			setUserInfo(
 				userInfo.memberId,
 				userInfo.nickName,
 				userInfo.profileImage,
-				userInfo.notification,
+				isEmergencyAlertChecked, // 응급 알림 동의 상태에 따라 notification 값 설정
 			);
 
+			// 회원가입 성공 토스트
 			toast.success("회원가입에 성공했습니다!");
+
+			// 사용자가 알림을 허용했다면 FCM 토큰 설정 시도
+			if (isEmergencyAlertChecked) {
+				await handleFCMTokenSetup();
+			}
+
+			// 다음 페이지로 이동
 			navigate("/center-decision");
 		},
 		onError: () => {
