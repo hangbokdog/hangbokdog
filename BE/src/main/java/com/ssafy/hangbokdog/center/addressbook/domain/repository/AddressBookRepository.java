@@ -36,4 +36,8 @@ public class AddressBookRepository {
 	public List<LocationInfo> getLocationInfosIn(List<Long> locationIds) {
 		return addressBookJpaRepository.getLocationInfosIn(locationIds);
 	}
+
+	public List<Long> findAllVolunteerEventIdsByCenterId(Long centerId) {
+		return addressBookJpaRepository.findAllVolunteerEventIdsByCenterId(centerId);
+	}
 }

@@ -1,5 +1,6 @@
 package com.ssafy.hangbokdog.center.center.domain.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +67,17 @@ public class CenterMemberRepository {
 
     public List<Long> getTargetAllIds(Long centerId) {
         return centerMemberJpaRepository.getTargetAllIds(centerId);
+    }
+
+    public int getTotalCenterMemberCount(Long centerId) {
+        return centerMemberJpaRepository.getTotalMemberCountInCenter(centerId);
+    }
+
+    public int getCenterMemberCountAfterTime(Long centerId, LocalDateTime monthAgo) {
+        return centerMemberJpaRepository.getCenterMemberCountAfterTime(centerId, monthAgo);
+    }
+
+    public int getMemberCountByCenterIdAndGrade(Long centerId, CenterGrade centerGrade) {
+        return centerMemberJpaRepository.getMemberCountByCenterIdAndGrade(centerId, centerGrade);
     }
 }

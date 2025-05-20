@@ -225,6 +225,18 @@ public class VolunteerApplicationQueryRepositoryImpl implements VolunteerApplica
                 )).fetch();
     }
 
+    @Override
+    public int getTotalCompletedApplicationCountByVolunteerEventIdsIn(List<Long> volunteerEventIds) {
+        Integer result = queryFactory
+                .select(volunteerApplication.memberId.countDistinct().intValue())
+                .from(volunteerApplication)
+                .where(volunteerApplication.volunteerEventId.in(volunteerEventIds)
+                        .and(volunteerApplication.status.eq(VolunteerApplicationStatus.COMPLETED)))
+                .fetchOne();
+
+        return result != null ? result : 0;
+    }
+
     private BooleanExpression isInRange(String pageToken) {
         if (pageToken == null) {
             return null;

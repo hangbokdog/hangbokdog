@@ -32,4 +32,6 @@ public interface VolunteerApplicationQueryRepository {
     List<VolunteerSlotAppliedCount> findSlotsWithAppliedCountByIdIn(List<Long> volunteerSlotIds);
 
     List<MemberApplicationInfo> findAllMyApplications(Long memberId, VolunteerApplicationStatus status);
+
+    int getTotalCompletedApplicationCountByVolunteerEventIdsIn(List<Long> volunteerEventIds);
 }

@@ -89,4 +89,11 @@ public class VolunteerApplicationRepository {
     public List<MemberApplicationInfo> findAllMyApplications(Long memberId, VolunteerApplicationStatus status) {
         return volunteerApplicationJpaRepository.findAllMyApplications(memberId, status);
     }
+
+    public int getTotalCompletedApplicationCountByVolunteerEventIdsIn(List<Long> volunteerEventIds) {
+        return volunteerApplicationJpaRepository
+                .getTotalCompletedApplicationCountByVolunteerEventIdsIn(
+                        volunteerEventIds
+                );
+    }
 }

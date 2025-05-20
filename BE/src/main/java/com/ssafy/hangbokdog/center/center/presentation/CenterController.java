@@ -21,6 +21,7 @@ import com.ssafy.hangbokdog.center.center.dto.request.CenterCreateRequest;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterInformationResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterStatisticResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
@@ -46,6 +47,14 @@ public class CenterController {
 		Long centerId = centerService.createCenter(member, request);
 		return ResponseEntity.created(URI.create("/api/v1/centers/" + centerId))
 			.build();
+	}
+
+	@GetMapping("/{centerId}/statistics")
+	public ResponseEntity<CenterStatisticResponse> getStatistic(
+			@AuthMember Member member,
+			@PathVariable Long centerId
+	) {
+		return ResponseEntity.ok(centerService.getStatistic(member, centerId));
 	}
 
 	@GetMapping("/{centerId}/balance")

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.hangbokdog.adoption.domain.repository.AdoptionRepository;
+import com.ssafy.hangbokdog.center.addressbook.domain.repository.AddressBookRepository;
 import com.ssafy.hangbokdog.center.center.domain.Center;
 import com.ssafy.hangbokdog.center.center.domain.CenterJoinRequest;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
@@ -31,6 +32,7 @@ import com.ssafy.hangbokdog.center.center.dto.response.CenterInformationResponse
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinRequestResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterJoinResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.CenterSearchResponse;
+import com.ssafy.hangbokdog.center.center.dto.response.CenterStatisticResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.ExistingCityResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
@@ -47,6 +49,8 @@ import com.ssafy.hangbokdog.foster.domain.repository.FosterRepository;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.notification.domain.Notification;
 import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
+import com.ssafy.hangbokdog.volunteer.application.domain.repository.VolunteerApplicationRepository;
+import com.ssafy.hangbokdog.volunteer.event.domain.repository.VolunteerEventRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -71,6 +75,9 @@ public class CenterService {
 	private final AdoptionRepository adoptionRepository;
 	private final DonationHistoryRepository donationHistoryRepository;
 	private final NotificationRepository notificationRepository;
+	private final VolunteerEventRepository volunteerEventRepository;
+	private final AddressBookRepository addressBookRepository;
+	private final VolunteerApplicationRepository volunteerApplicationRepository;
 
 	@Transactional
 	public Long createCenter(Member member, CenterCreateRequest request) {
@@ -375,5 +382,37 @@ public class CenterService {
 	private CenterMember getCenterMember(Long memberId, Long centerId) {
 		return centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+	}
+
+	public CenterStatisticResponse getStatistic(Member member, Long centerId) {
+		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		int centerMemberCount = centerMemberRepository.getTotalCenterMemberCount(centerId);
+		int newCenterMemberCount = centerMemberRepository.getCenterMemberCountAfterTime(
+				centerId,
+				LocalDateTime.now().minusMonths(1)
+		);
+
+		var volunteerEventIds = addressBookRepository.findAllVolunteerEventIdsByCenterId(centerId);
+		int volunteerParticipantCount = volunteerApplicationRepository
+				.getTotalCompletedApplicationCountByVolunteerEventIdsIn(volunteerEventIds
+		);
+		int centerManagerMemberCount = centerMemberRepository.getMemberCountByCenterIdAndGrade(
+				centerId,
+				CenterGrade.MANAGER
+		);
+		int centerNormalMemberCount = centerMemberCount - centerManagerMemberCount;
+		return CenterStatisticResponse.of(
+				centerMemberCount,
+				newCenterMemberCount,
+				volunteerParticipantCount,
+				centerManagerMemberCount,
+				centerNormalMemberCount
+		);
 	}
 }

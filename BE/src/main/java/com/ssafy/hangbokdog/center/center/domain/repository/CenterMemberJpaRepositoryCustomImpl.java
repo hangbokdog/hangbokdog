@@ -3,12 +3,14 @@ package com.ssafy.hangbokdog.center.center.domain.repository;
 import static com.ssafy.hangbokdog.center.center.domain.QCenter.*;
 import static com.ssafy.hangbokdog.center.center.domain.QCenterMember.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.hangbokdog.center.center.domain.enums.CenterGrade;
 import com.ssafy.hangbokdog.center.center.dto.CenterSearchInfo;
 import com.ssafy.hangbokdog.center.center.dto.response.MainCenterResponse;
 import com.ssafy.hangbokdog.center.center.dto.response.MyCenterResponse;
@@ -77,6 +79,37 @@ public class CenterMemberJpaRepositoryCustomImpl implements CenterMemberJpaRepos
 				.leftJoin(center).on(centerMember.centerId.eq(center.id))
 				.where(centerMember.memberId.eq(memberId),
 						centerMember.main.isTrue())
+				.fetchOne();
+	}
+
+	@Override
+	public int getTotalMemberCountInCenter(Long centerId) {
+		return queryFactory.select(
+				centerMember.count().intValue().coalesce(0)
+		).from(centerMember)
+				.where(centerMember.centerId.eq(centerId))
+				.fetchOne();
+	}
+
+	@Override
+	public int getCenterMemberCountAfterTime(Long centerId, LocalDateTime monthAgo) {
+		return queryFactory.select(
+				centerMember.count().intValue().coalesce(0)
+		).from(centerMember)
+				.where(centerMember.centerId.eq(centerId).and(
+						centerMember.createdAt.after(monthAgo))
+				)
+				.fetchOne();
+	}
+
+	@Override
+	public int getMemberCountByCenterIdAndGrade(Long centerId, CenterGrade centerGrade) {
+		return queryFactory.select(
+				centerMember.count().intValue().coalesce(0))
+				.from(centerMember)
+				.where(centerMember.centerId.eq(centerId).and(
+						centerMember.grade.eq(centerGrade))
+				)
 				.fetchOne();
 	}
 }
