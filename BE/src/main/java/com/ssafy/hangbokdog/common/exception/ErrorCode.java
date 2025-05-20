@@ -109,7 +109,10 @@ public enum ErrorCode {
     EMERGENCY_ALREADY_FULL(22004, "신청자가 꽉 찼습니다."),
     EMERGENCY_APPLICATION_ALREADY_EXISTS(22005, "이미 존재하는 응급 신청입니다."),
 
-    MEDICAL_HISTORY_NOT_FOUND(22005, "존재하지 않는 의료기록입니다."),;
+    MEDICAL_HISTORY_NOT_FOUND(22005, "존재하지 않는 의료기록입니다."),
+
+    NOTIFICATION_NOT_FOUND(22006, "존재하지 않는 알림입니다."),
+    NOT_NOTIFICATION_RECIPIENT(22007, "해당 알림 수신자가 아닙니다."),;
 
     private final int code;
     private final String message;

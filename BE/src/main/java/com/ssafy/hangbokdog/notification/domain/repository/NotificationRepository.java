@@ -1,6 +1,7 @@
 package com.ssafy.hangbokdog.notification.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -35,5 +36,13 @@ public class NotificationRepository extends BaseEntity {
 
 	public void readNotification(List<Long> notificationIds) {
 		notificationJdbcRepository.bulkUpdateIn(notificationIds);
+	}
+
+	public Optional<Notification> getNotification(Long notificationId) {
+		return notificationJpaRepository.findById(notificationId);
+	}
+
+	public void delete(Long notificationId) {
+		notificationJpaRepository.deleteById(notificationId);
 	}
 }
