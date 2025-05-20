@@ -36,9 +36,10 @@ export const manageEmergencyApplicationAPI = async (
 	centerId: number,
 ) => {
 	const response = await localAxios.patch(
-		`/emergencies/${emergencyApplicationId}`,
+		`/emergencies/applications/${emergencyApplicationId}`,
+		null,
 		{
-			params: { centerId, request },
+			params: { request, centerId },
 		},
 	);
 	return response.data;

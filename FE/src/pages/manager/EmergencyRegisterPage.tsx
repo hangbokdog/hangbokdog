@@ -12,7 +12,7 @@ export default function EmergencyRegisterPage() {
 	return (
 		<div className="mx-2.5 space-y-2">
 			<div className="text-gray-700 mx-2.5 text-lg font-medium">
-				응급 상황
+				긴급 상황
 			</div>
 			<div className="mx-2.5 flex gap-2">
 				{(["MOVING", "VOLUNTEER", "DONATION"] as const).map((type) => (

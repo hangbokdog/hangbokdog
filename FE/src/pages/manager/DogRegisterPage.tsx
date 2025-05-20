@@ -17,6 +17,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import useCenterStore from "@/lib/store/centerStore";
 import axios from "axios";
 import { createDogAPI } from "@/api/dog";
@@ -28,6 +36,7 @@ import { type AddressBook, fetchAddressBooks } from "@/api/center";
 export default function DogRegisterPage() {
 	const [profilePreview, setProfilePreview] = useState<string | null>(null);
 	const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+	const [isDialogOpen, setIsDialogOpen] = useState(false);
 	const centerId = useCenterStore().selectedCenter?.centerId;
 
 	const { data: addressBook } = useQuery<AddressBook[], Error>({
@@ -90,6 +99,7 @@ export default function DogRegisterPage() {
 	});
 
 	const [updatedFields, setUpdatedFields] = useState<Set<string>>(new Set());
+	const [isLoading, setIsLoading] = useState(false);
 
 	const handleProfileImageChange = (
 		e: React.ChangeEvent<HTMLInputElement>,
@@ -146,11 +156,11 @@ export default function DogRegisterPage() {
 		const formData = new FormData();
 		formData.append("image", file);
 
-		toast("이미지를 분석중입니다...");
+		setIsLoading(true);
 
 		try {
 			const res = await axios.post(
-				`${import.meta.env.VITE_AI_URI}/ocr`,
+				`${import.meta.env.VITE_AI_URL_PRODUCT}/ocr`,
 				formData,
 			);
 			const data = res.data.data;
@@ -211,6 +221,8 @@ export default function DogRegisterPage() {
 		} catch (error) {
 			toast.error("이미지 분석 중 오류가 발생했습니다");
 			console.error("OCR 처리 오류:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -235,13 +247,16 @@ export default function DogRegisterPage() {
 					updatedFields.has("breedDetail")
 				);
 			case "birth":
-				return updatedFields.has("birth");
+				return updatedFields.has("birth") && form.birth !== "";
 			case "weight":
-				return updatedFields.has("weight");
+				return updatedFields.has("weight") && form.weight !== "";
 			case "features":
-				return updatedFields.has("features");
+				return updatedFields.has("features") && form.features !== "";
 			default:
-				return updatedFields.has(fieldName);
+				return (
+					updatedFields.has(fieldName) &&
+					form[fieldName as keyof typeof form] !== ""
+				);
 		}
 	};
 
@@ -343,6 +358,16 @@ export default function DogRegisterPage() {
 
 	return (
 		<div className="flex flex-col gap-6 p-4 text-base text-grayText bg-white max-w-md mx-auto pb-30">
+			{isLoading && (
+				<div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+					<div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center gap-3">
+						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-male" />
+						<p className="text-sm text-gray-600">
+							이미지를 분석중입니다...
+						</p>
+					</div>
+				</div>
+			)}
 			<h3 className="text-xl font-bold text-black">강아지 등록</h3>
 
 			<div className="flex flex-col gap-3">
@@ -362,7 +387,7 @@ export default function DogRegisterPage() {
 						<div className="flex flex-col items-center gap-2 text-gray-400">
 							<span className="text-4xl">＋</span>
 							<span className="text-sm flex gap-1">
-								사진 추가하기
+								아이 사진 추가하기
 								<span className="text-red-500">*</span>
 							</span>
 						</div>
@@ -374,37 +399,6 @@ export default function DogRegisterPage() {
 						className="hidden"
 					/>
 				</label>
-				<input
-					ref={ocrAutoInputRef}
-					type="file"
-					accept="image/*"
-					className="hidden"
-					onChange={handleOCRImageAuto}
-				/>
-				<button
-					type="button"
-					onClick={triggerAutoOCR}
-					className="w-full py-3 bg-green-600 text-white rounded-lg font-medium text-sm shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
-				>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						width="16"
-						height="16"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						strokeWidth="2"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-						className="text-white"
-						aria-hidden="true"
-					>
-						<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-						<polyline points="10 17 15 12 10 7" />
-						<line x1="15" x2="3" y1="12" y2="12" />
-					</svg>
-					이미지로 아이 정보 등록
-				</button>
 			</div>
 
 			<div className="flex flex-col gap-5">
@@ -414,6 +408,85 @@ export default function DogRegisterPage() {
 						* 필수 입력사항
 					</span>
 				</div>
+				<input
+					ref={ocrAutoInputRef}
+					type="file"
+					accept="image/*"
+					className="hidden"
+					onChange={handleOCRImageAuto}
+				/>
+				<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+					<DialogTrigger asChild>
+						<button
+							type="button"
+							className="w-full py-3 bg-gradient-to-r from-green-400 to-blue-800 text-white rounded-lg font-medium text-sm shadow-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="16"
+								height="16"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								className="text-white"
+								aria-hidden="true"
+							>
+								<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+								<polyline points="10 17 15 12 10 7" />
+								<line x1="15" x2="3" y1="12" y2="12" />
+							</svg>
+							AI 로 아이 정보 등록
+						</button>
+					</DialogTrigger>
+					<DialogContent className="sm:max-w-[425px]">
+						<DialogHeader className="text-start">
+							<DialogTitle>AI 이미지 분석 가이드</DialogTitle>
+							<DialogDescription>
+								아래 예시와 같이 아이의 정보가 담긴 사진을
+								등록하면 자동으로 정보를 분석해드립니다.
+							</DialogDescription>
+						</DialogHeader>
+						<div className="grid gap-4 pb-2">
+							<div className="space-y-2">
+								<h4 className="font-medium text-sm">
+									이미지 예시
+								</h4>
+								<div className="relative w-full overflow-hidden rounded-lg border bg-gray-100">
+									<img
+										src="/dog-ai-example.jpg"
+										alt="AI 분석 가이드 이미지"
+										className="object-cover w-full"
+									/>
+								</div>
+							</div>
+							<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+								<h4 className="font-medium text-sm text-yellow-800 mb-1">
+									주의사항
+								</h4>
+								<p className="text-sm text-yellow-700">
+									AI 분석의 정확도는 100%가 아닙니다. 분석되지
+									않은 정보나 잘못 분석된 정보는 직접
+									입력해주세요!
+								</p>
+							</div>
+						</div>
+						<div className="flex justify-end">
+							<button
+								type="button"
+								onClick={() => {
+									setIsDialogOpen(false);
+									triggerAutoOCR();
+								}}
+								className="bg-male text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-male/90 transition-colors"
+							>
+								이미지 선택하고 분석 시작하기
+							</button>
+						</div>
+					</DialogContent>
+				</Dialog>
 
 				<div className="flex flex-col gap-5">
 					<div className="flex flex-col gap-2">
@@ -436,12 +509,12 @@ export default function DogRegisterPage() {
 								)}
 								placeholder="이름을 입력하세요"
 							/>
-							<button
+							{/* <button
 								type="button"
 								className="px-3 py-2 bg-gradient-to-r from-green-400 to-blue-800 text-white rounded-lg text-xs whitespace-nowrap"
 							>
 								AI 생성
-							</button>
+							</button> */}
 						</div>
 					</div>
 

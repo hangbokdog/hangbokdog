@@ -144,6 +144,7 @@ export default function ManagerEmergencyPanel({
 						component: DonationListItem,
 					},
 				]}
+				isHome={isHome}
 			/>
 
 			{selectedPost && (

@@ -47,6 +47,7 @@ import CenterManagerProtectedRoute from "./components/auth/CenterManagerProtecte
 import VolunteerEditPage from "./pages/VolunteerEditPage";
 import FilteredPostListByDogId from "./components/dog/FilteredPostListByDogId";
 import SponsorManagerMainPage from "./pages/manager/SponsorManagerMainPage";
+import AllEmergencyPage from "./pages/AllEmergencyPage";
 
 const router = createBrowserRouter([
 	{
@@ -241,6 +242,11 @@ const router = createBrowserRouter([
 								element: <ClosedVolunteerListPage />,
 							},
 						],
+					},
+					{
+						path: "emergency",
+						element: <AllEmergencyPage />,
+						handle: { showHeader: false },
 					},
 				],
 			},

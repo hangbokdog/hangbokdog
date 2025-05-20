@@ -6,9 +6,6 @@ import {
 	Dog,
 	ChevronDown,
 	ChevronUp,
-	Home,
-	PawPrint,
-	Heart,
 } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
 import { useState } from "react";
@@ -53,37 +50,6 @@ export default function ManagerDashboardPanel() {
 		},
 	];
 
-	const additionalMenuItems = [
-		{
-			id: 5,
-			title: "입양관리",
-			icon: <Home className="w-5 h-5 text-blue-600" />,
-			color: "bg-gradient-to-br from-blue-100 to-blue-200",
-			hover: "hover:bg-blue-100",
-			path: "/manager/adoption",
-		},
-		{
-			id: 6,
-			title: "임보관리",
-			icon: <PawPrint className="w-5 h-5 text-orange-600" />,
-			color: "bg-gradient-to-br from-orange-100 to-orange-200",
-			hover: "hover:bg-orange-100",
-			path: "/manager/foster",
-		},
-		{
-			id: 7,
-			title: "결연관리",
-			icon: <Heart className="w-5 h-5 text-pink-600" />,
-			color: "bg-gradient-to-br from-pink-100 to-pink-200",
-			hover: "hover:bg-pink-100",
-			path: "/manager/sponsorship",
-		},
-	];
-
-	const toggleMoreMenu = () => {
-		setShowMoreMenu(!showMoreMenu);
-	};
-
 	return (
 		<div className="mx-2.5 py-4">
 			<div className="flex justify-between items-center mb-4">
@@ -115,63 +81,6 @@ export default function ManagerDashboardPanel() {
 						</span>
 					</button>
 				))}
-			</div>
-
-			{/* 애니메이션 적용된 컨테이너 */}
-			<div className="relative">
-				<div
-					className={`transition-all duration-500 ease-in-out ${
-						showMoreMenu
-							? "max-h-60 opacity-100 mb-3"
-							: "max-h-0 opacity-0 mb-0 overflow-hidden"
-					}`}
-				>
-					<div className="flex gap-3 pt-2">
-						{additionalMenuItems.map((item) => (
-							<button
-								type="button"
-								key={item.id}
-								onClick={() => navigate(item.path)}
-								className={`flex flex-col items-center justify-center p-2.5 rounded-xl ${item.hover} transition-all duration-200 hover:shadow-md hover:-translate-y-1 active:shadow-md active:-translate-y-1 touch-action-manipulation w-[calc(25%-9px)]`}
-							>
-								<div
-									className={`${item.color} rounded-full p-2.5 mb-1.5 shadow-sm`}
-								>
-									{item.icon}
-								</div>
-								<span className="text-xs font-medium text-gray-700">
-									{item.title}
-								</span>
-							</button>
-						))}
-					</div>
-				</div>
-
-				{/* 줄과 버튼 (함께 움직임) */}
-				<div
-					className={`flex justify-center transition-all duration-500 ease-in-out ${showMoreMenu ? "mt-0" : "mt-1 mb-2"}`}
-				>
-					<div className="relative w-full flex items-center justify-center">
-						{/* 가로선 */}
-						<div className="absolute inset-0 flex items-center">
-							<div className="w-full border-t border-gray-200" />
-						</div>
-
-						{/* 버튼 */}
-						<button
-							type="button"
-							onClick={toggleMoreMenu}
-							className="relative z-10 flex items-center justify-center py-1 px-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300"
-							aria-label={showMoreMenu ? "접기" : "더 보기"}
-						>
-							{showMoreMenu ? (
-								<ChevronUp className="w-5 h-5 text-gray-600" />
-							) : (
-								<ChevronDown className="w-5 h-5 text-gray-600" />
-							)}
-						</button>
-					</div>
-				</div>
 			</div>
 		</div>
 	);
