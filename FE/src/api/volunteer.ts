@@ -376,6 +376,8 @@ export const patchVolunteerAPI = async ({
 export interface MemberApplicationInfo {
 	volunteerEventId: number;
 	date: string;
+	startTime: string;
+	endTime: string;
 	title: string;
 	status: VolunteerApplicationStatus;
 }

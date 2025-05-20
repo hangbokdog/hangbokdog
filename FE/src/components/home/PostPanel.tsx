@@ -170,12 +170,12 @@ export default function PostPanel() {
 	};
 
 	const handlePostClick = (id: number) => {
-		navigate(`/posts/${id}`);
+		navigate(`/posts/${id}?type=${activeTab}`);
 	};
 
 	const handleViewAllClick = () => {
 		if (activeTab === "announcements") {
-			navigate("/posts");
+			navigate("/posts?type=announcements");
 		} else {
 			navigate(`/posts?type=${activeTab}`);
 		}

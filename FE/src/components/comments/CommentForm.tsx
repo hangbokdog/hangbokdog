@@ -2,6 +2,7 @@ import { MdSend } from "react-icons/md";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import img from "@/assets/logo.png";
 import useAuthStore from "@/lib/store/authStore";
+import { useState, useCallback } from "react";
 
 interface CommentFormProps {
 	commentValue: string;
@@ -15,10 +16,23 @@ export default function CommentForm({
 	handleCommentSubmit,
 }: CommentFormProps) {
 	const { user } = useAuthStore();
+	const [isSubmitting, setIsSubmitting] = useState(false);
+
+	const handleSubmit = useCallback(() => {
+		if (isSubmitting || !commentValue.trim()) return;
+
+		setIsSubmitting(true);
+		handleCommentSubmit();
+
+		// 1초 후에 다시 제출 가능하도록 설정
+		setTimeout(() => {
+			setIsSubmitting(false);
+		}, 1000);
+	}, [commentValue, handleCommentSubmit, isSubmitting]);
 
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === "Enter" && commentValue.trim()) {
-			handleCommentSubmit();
+		if (e.key === "Enter" && commentValue.trim() && !isSubmitting) {
+			handleSubmit();
 		}
 	};
 
@@ -28,7 +42,10 @@ export default function CommentForm({
 			style={{ zIndex: 10 }}
 		>
 			<Avatar className="w-8 h-8 flex justify-center items-center rounded-full">
-				<AvatarImage src={user.profileImage || img} />
+				<AvatarImage
+					src={user.profileImage || img}
+					className="object-cover"
+				/>
 				<AvatarFallback className="text-center bg-superLightGray text-grayText">
 					{user.nickName}
 				</AvatarFallback>
@@ -43,9 +60,9 @@ export default function CommentForm({
 			/>
 			<button
 				type="button"
-				className="text-superLightGray"
-				onClick={handleCommentSubmit}
-				disabled={!commentValue.trim()}
+				className={`text-superLightGray ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+				onClick={handleSubmit}
+				disabled={!commentValue.trim() || isSubmitting}
 			>
 				<MdSend className="size-5" />
 			</button>

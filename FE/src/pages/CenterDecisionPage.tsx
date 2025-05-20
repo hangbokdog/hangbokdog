@@ -677,7 +677,7 @@ export default function CenterDecisionPage() {
 									</div>
 
 									{/* 전체 지역 통계 카드 */}
-									{!isCitiesLoading &&
+									{/* {!isCitiesLoading &&
 										existingCenterCities && (
 											<motion.div
 												initial={{ opacity: 0, y: 10 }}
@@ -715,7 +715,7 @@ export default function CenterDecisionPage() {
 													</div>
 												</div>
 											</motion.div>
-										)}
+										)} */}
 								</>
 							)}
 
@@ -737,13 +737,13 @@ export default function CenterDecisionPage() {
 										<p className="text-gray-500 text-center text-sm mt-1">
 											새로운 센터를 만들어보세요
 										</p>
-										<button
+										{/* <button
 											type="button"
 											onClick={handleDummyCenterCreate}
 											className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-full text-sm"
 										>
 											테스트 센터 생성하기
-										</button>
+										</button> */}
 									</div>
 								)}
 						</motion.div>
@@ -961,7 +961,7 @@ export default function CenterDecisionPage() {
 				</AnimatePresence>
 
 				{/* Test center button */}
-				{activeTab === "search" && query.length === 0 ? (
+				{/* {activeTab === "search" && query.length === 0 ? (
 					<motion.button
 						onClick={handleDummyCenterCreate}
 						disabled={isCreating}
@@ -975,7 +975,7 @@ export default function CenterDecisionPage() {
 							<span className="ml-2 inline-block h-4 w-4 rounded-full border-2 border-t-transparent border-blue-500 animate-spin" />
 						)}
 					</motion.button>
-				) : null}
+				) : null} */}
 			</div>
 		</div>
 	);

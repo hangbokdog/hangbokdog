@@ -8,9 +8,6 @@ import { Link } from "react-router-dom";
 export default function EmergencyPage() {
 	const { selectedCenter } = useCenterStore();
 	const [tab, setTab] = useState<"list" | "applications">("list");
-	const [selectedEmergencyId, setSelectedEmergencyId] = useState<
-		number | null
-	>(null);
 	const [applicationCount, setApplicationCount] = useState(0);
 
 	return (
@@ -75,9 +72,7 @@ export default function EmergencyPage() {
 				{/* 긴급 목록 탭 */}
 				{tab === "list" && (
 					<div className="flex flex-col gap-2">
-						<EmergencyList
-							onSelectEmergency={setSelectedEmergencyId}
-						/>
+						<EmergencyList />
 					</div>
 				)}
 

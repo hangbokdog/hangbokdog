@@ -233,7 +233,7 @@ export default function PostDetailPage() {
 			} else {
 				await deletePostAPI(Number(id));
 			}
-			navigate("/posts");
+			navigate(-1);
 		} catch (err) {
 			console.error("Failed to delete post:", err);
 			alert("게시글 삭제에 실패했습니다.");
@@ -475,7 +475,10 @@ export default function PostDetailPage() {
 										"w-6 h-6 ring-2 ring-offset-1 ring-blue-50"
 									}
 								>
-									<AvatarImage src={getAuthorImage() || ""} />
+									<AvatarImage
+										src={getAuthorImage() || ""}
+										className="object-cover"
+									/>
 									<AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-600 text-white">
 										{getAuthorName()?.charAt(0) || "?"}
 									</AvatarFallback>

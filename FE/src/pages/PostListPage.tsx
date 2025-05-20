@@ -345,12 +345,15 @@ export default function PostListPage() {
 					</div>
 					<div className="px-1 pt-2 text-xl font-bold text-gray-800 flex justify-between items-center">
 						{getCurrentTypeTitle()}
-						<Link
-							to={getCreateLink()}
-							className="bg-male text-sm rounded-sm px-2 py-1 text-white"
-						>
-							글 작성
-						</Link>
+						{(currentType !== "announcements" ||
+							selectedCenter?.status === "MANAGER") && (
+							<Link
+								to={getCreateLink()}
+								className="bg-male text-sm rounded-sm px-2 py-1 text-white"
+							>
+								글 작성
+							</Link>
+						)}
 					</div>
 				</div>
 			</div>

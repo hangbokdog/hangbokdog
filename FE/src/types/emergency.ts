@@ -1,6 +1,6 @@
 export const EmergencyApplicationsStatus = {
 	APPLIED: "APPLIED",
-	APPROVE: "APPROVED",
+	APPROVED: "APPROVED",
 	REJECTED: "REJECTED",
 };
 

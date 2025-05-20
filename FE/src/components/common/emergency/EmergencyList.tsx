@@ -9,15 +9,10 @@ import { toast } from "sonner";
 import useCenterStore from "@/lib/store/centerStore";
 import { deleteEmergencyAPI } from "@/api/emergency";
 
-interface EmergencyListProps {
-	onSelectEmergency: (emergencyId: number) => void;
-}
-
-export default function EmergencyList({
-	onSelectEmergency,
-}: EmergencyListProps) {
+export default function EmergencyList() {
 	const [selectedId, setSelectedId] = useState<number | null>(null);
 	const [open, setOpen] = useState(false);
+	const [expandedId, setExpandedId] = useState<number | null>(null);
 	const queryClient = useQueryClient();
 	const { selectedCenter } = useCenterStore();
 
@@ -112,7 +107,10 @@ export default function EmergencyList({
 	const handleItemClick = (emergencyId: number) => {
 		setSelectedId(emergencyId);
 		setOpen(true);
-		onSelectEmergency(emergencyId);
+	};
+
+	const handleExpand = (emergencyId: number) => {
+		setExpandedId(expandedId === emergencyId ? null : emergencyId);
 	};
 
 	return (
@@ -132,6 +130,8 @@ export default function EmergencyList({
 							index: idx,
 							content: p.content ?? "",
 							onClick: handleItemClick,
+							expanded: expandedId === p.emergencyId,
+							onExpand: handleExpand,
 						})),
 						component: EmergencyListItem,
 					},
@@ -147,6 +147,8 @@ export default function EmergencyList({
 							index: idx,
 							content: p.content ?? "",
 							onClick: handleItemClick,
+							expanded: expandedId === p.emergencyId,
+							onExpand: handleExpand,
 						})),
 						component: EmergencyListItem,
 					},
@@ -163,6 +165,8 @@ export default function EmergencyList({
 							index: idx,
 							content: p.content ?? "",
 							onClick: handleItemClick,
+							expanded: expandedId === p.emergencyId,
+							onExpand: handleExpand,
 						})),
 						component: EmergencyListItem,
 					},

@@ -5,6 +5,7 @@ import CommentDropdown from "../common/CommentDropdown";
 import useCenterStore from "@/lib/store/centerStore";
 import { useState, useEffect } from "react";
 import type { CommentItemData } from "@/types/comment";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface CommentItemProps {
 	commentData: CommentItemData;
@@ -71,11 +72,15 @@ export default function CommentItem({
 	return (
 		<div className="py-3 border-b">
 			<div className="flex items-start gap-2">
-				<img
-					src={comment.author.profileImage}
-					alt={comment.author.nickName}
-					className="w-8 h-8 rounded-full flex-shrink-0"
-				/>
+				<Avatar className="w-8 h-8">
+					<AvatarImage
+						src={comment.author.profileImage}
+						className="object-cover"
+					/>
+					<AvatarFallback className="bg-superLightBlueGray">
+						{comment.author.nickName}
+					</AvatarFallback>
+				</Avatar>
 				<div className="flex-1">
 					<div className="flex items-center gap-2 justify-between">
 						<span className="font-bold text-sm">

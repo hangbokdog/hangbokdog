@@ -29,26 +29,23 @@ export default function AnnouncementItem({
 				<div
 					className={`flex items-center ${compact ? "text-xs" : "text-sm"} text-gray-500`}
 				>
-					<div className="flex items-center gap-2">
-						<Avatar className="w-6 h-6">
-							<AvatarImage
-								src={announcement.authorImage}
-								className="object-cover"
-							/>
-							<AvatarFallback className="bg-superLightBlueGray">
-								{announcement.authorName}
-							</AvatarFallback>
-						</Avatar>
-						<span className="text-grayText">
-							{announcement.authorName
-								? announcement.authorName
-								: "이름없음"}
-						</span>
-						<span
-							className={`${compact ? "mx-1" : "mx-2"} ${compact ? "" : "text-gray-300"}`}
-						>
-							{compact ? "•" : "|"}
-						</span>
+					<div className="flex w-full items-center justify-between">
+						<div className="flex items-center gap-2">
+							<Avatar className="w-6 h-6">
+								<AvatarImage
+									src={announcement.authorImage}
+									className="object-cover"
+								/>
+								<AvatarFallback className="bg-superLightBlueGray">
+									{announcement.authorName}
+								</AvatarFallback>
+							</Avatar>
+							<span className="text-grayText">
+								{announcement.authorName
+									? announcement.authorName
+									: "이름없음"}
+							</span>
+						</div>
 						<span>{formatDate(announcement.createdAt)}</span>
 					</div>
 				</div>
