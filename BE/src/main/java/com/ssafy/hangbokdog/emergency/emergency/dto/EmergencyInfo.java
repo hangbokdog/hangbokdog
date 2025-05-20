@@ -1,11 +1,10 @@
-package com.ssafy.hangbokdog.emergency.emergency.dto.response;
+package com.ssafy.hangbokdog.emergency.emergency.dto;
 
 import java.time.LocalDateTime;
 
-import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
 
-public record EmergencyResponse(
+public record EmergencyInfo(
 	Long emergencyId,
 	Long centerId,
 	Long authorId,
@@ -16,7 +15,6 @@ public record EmergencyResponse(
 	LocalDateTime dueDate,
 	Integer capacity,
 	Integer targetAmount,
-	EmergencyType type,
-	EmergencyApplicationStatus status
+	EmergencyType type
 ) {
 }

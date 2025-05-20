@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.ssafy.hangbokdog.emergency.emergency.domain.Emergency;
 import com.ssafy.hangbokdog.emergency.emergency.domain.enums.EmergencyType;
+import com.ssafy.hangbokdog.emergency.emergency.dto.EmergencyInfo;
 import com.ssafy.hangbokdog.emergency.emergency.dto.response.EmergencyResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class EmergencyRepository {
 		return emergencyJpaRepository.save(emergency);
 	}
 
-	public List<EmergencyResponse> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
+	public List<EmergencyInfo> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now) {
 		return emergencyJpaRepository.getEmergenciesByCenterId(centerId, type, now);
 	}
 

@@ -11,6 +11,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.emergency.application.domain.enums.EmergencyApplicationStatus;
 import com.ssafy.hangbokdog.emergency.application.dto.response.EmergencyApplicationResponse;
+import com.ssafy.hangbokdog.emergency.emergency.dto.AppliedEmergencies;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,6 +61,19 @@ public class EmergencyApplicationJpaRepositoryCustomImpl implements EmergencyApp
 			.leftJoin(member).on(emergencyApplication.applicantId.eq(member.id))
 			.where(emergencyApplication.emergencyId.eq(emergencyId),
 				emergencyApplication.applicantId.eq(memberId))
+			.fetch();
+	}
+
+	@Override
+	public List<AppliedEmergencies> getEmergencyApplicationsByMemberId(Long memberId) {
+		return queryFactory
+			.select(Projections.constructor(
+				AppliedEmergencies.class,
+				emergencyApplication.emergencyId,
+				emergencyApplication.status
+			))
+			.from(emergencyApplication)
+			.where(emergencyApplication.applicantId.eq(memberId))
 			.fetch();
 	}
 }
