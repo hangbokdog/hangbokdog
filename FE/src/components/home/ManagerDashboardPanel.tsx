@@ -8,6 +8,7 @@ import {
 	ChevronUp,
 	Home,
 	PawPrint,
+	Heart,
 } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
 import { useState } from "react";
@@ -24,7 +25,7 @@ export default function ManagerDashboardPanel() {
 			icon: <AlertTriangle className="w-5 h-5 text-red-600" />,
 			color: "bg-gradient-to-br from-red-100 to-red-200",
 			hover: "hover:bg-red-100",
-			path: "/emergency",
+			path: "/manager/emergency",
 		},
 		{
 			id: 2,
@@ -68,6 +69,14 @@ export default function ManagerDashboardPanel() {
 			color: "bg-gradient-to-br from-orange-100 to-orange-200",
 			hover: "hover:bg-orange-100",
 			path: "/manager/foster",
+		},
+		{
+			id: 7,
+			title: "결연관리",
+			icon: <Heart className="w-5 h-5 text-pink-600" />,
+			color: "bg-gradient-to-br from-pink-100 to-pink-200",
+			hover: "hover:bg-pink-100",
+			path: "/manager/sponsorship",
 		},
 	];
 

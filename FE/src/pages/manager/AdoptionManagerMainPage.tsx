@@ -39,7 +39,7 @@ export default function AdoptionManagerMainPage() {
 	return (
 		<div className="flex flex-col h-full bg-gray-50 pb-16">
 			{/* 헤더 */}
-			<div className="bg-white shadow-sm p-4 sticky top-0 z-10">
+			<div className="bg-white shadow-sm pb-4 pl-4 pr-4 sticky top-0 z-10">
 				<div className="max-w-lg mx-auto">
 					<div className="text-xl font-bold text-gray-800 mb-1 flex items-center">
 						<Home className="w-5 h-5 mr-2 text-blue-600" />

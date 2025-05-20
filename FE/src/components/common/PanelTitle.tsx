@@ -4,9 +4,15 @@ interface PanelTitleProps {
 	title: string;
 	link: string;
 	subTitle?: string;
+	noLink?: boolean;
 }
 
-export default function PanelTitle({ title, link, subTitle }: PanelTitleProps) {
+export default function PanelTitle({
+	title,
+	link,
+	subTitle,
+	noLink = false,
+}: PanelTitleProps) {
 	return (
 		<div className="flex p-2.5 justify-between items-center text-grayText">
 			<div className="flex items-end gap-2.5 text-lg">
@@ -15,9 +21,14 @@ export default function PanelTitle({ title, link, subTitle }: PanelTitleProps) {
 					<span className="text-blue font-semibold">{subTitle}</span>
 				)}
 			</div>
-			<Link to={link} className="text-xs border-b-1 border-b-grayText">
-				더보기
-			</Link>
+			{noLink && (
+				<Link
+					to={link}
+					className="text-xs border-b-1 border-b-grayText"
+				>
+					더보기
+				</Link>
+			)}
 		</div>
 	);
 }
