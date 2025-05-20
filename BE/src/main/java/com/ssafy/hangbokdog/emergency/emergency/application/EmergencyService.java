@@ -195,20 +195,50 @@ public class EmergencyService {
 				emergencyInfo.type(),
 				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null)
 			);
+			responses.add(response);
 		}
 
 		return responses;
 	}
 
-	public EmergencyLatestResponse getLatestEmergencyByCenter(Long centerId, EmergencyType type) {
+	public EmergencyLatestResponse getLatestEmergencyByCenter(Long memberId, Long centerId, EmergencyType type) {
 		Integer count = emergencyRepository.countEmergenciesByType(type, centerId);
-		List<EmergencyResponse> emergencies = emergencyRepository.getLatestEmergenciesByCenterId(
+
+		List<EmergencyInfo> emergencyInfos = emergencyRepository.getLatestEmergenciesByCenterId(
 				centerId,
 				type,
 				LocalDateTime.now()
 		);
 
-		return new EmergencyLatestResponse(count, emergencies);
+		Map<Long, EmergencyApplicationStatus> appliedEmergencies = emergencyApplicationRepository
+			.getEmergencyApplicationsByMemberId(memberId)
+			.stream()
+			.collect(Collectors.toMap(
+				AppliedEmergencies::emergencyId,
+				AppliedEmergencies::status
+			));
+
+		List<EmergencyResponse> responses = new ArrayList<>();
+
+		for (EmergencyInfo emergencyInfo : emergencyInfos) {
+			EmergencyResponse response = new EmergencyResponse(
+				emergencyInfo.emergencyId(),
+				emergencyInfo.centerId(),
+				emergencyInfo.authorId(),
+				emergencyInfo.name(),
+				emergencyInfo.title(),
+				emergencyInfo.content(),
+				emergencyInfo.memberImage(),
+				emergencyInfo.dueDate(),
+				emergencyInfo.capacity(),
+				emergencyInfo.targetAmount(),
+				emergencyInfo.type(),
+				appliedEmergencies.getOrDefault(emergencyInfo.emergencyId(), null)
+			);
+			responses.add(response);
+		}
+
+		return new EmergencyLatestResponse(count, responses);
 	}
 
 	public void deleteEmergency(Long emergencyId, Long centerId, Long memberId) {

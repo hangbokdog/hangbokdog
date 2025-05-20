@@ -74,7 +74,11 @@ public class EmergencyController {
 			@RequestParam Long centerId,
 			@RequestParam(required = false) EmergencyType type
 	) {
-		return ResponseEntity.ok().body(emergencyService.getLatestEmergencyByCenter(centerId, type));
+		return ResponseEntity.ok().body(emergencyService.getLatestEmergencyByCenter(
+			member.getId(),
+			centerId,
+			type
+		));
 	}
 
 	@DeleteMapping("/{emergencyId}")

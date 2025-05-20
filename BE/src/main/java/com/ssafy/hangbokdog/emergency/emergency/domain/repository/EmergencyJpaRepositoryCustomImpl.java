@@ -52,13 +52,13 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 	}
 
 	@Override
-	public List<EmergencyResponse> getLatestEmergenciesByCenterId(
+	public List<EmergencyInfo> getLatestEmergenciesByCenterId(
 			Long centerId,
 			EmergencyType type,
 			LocalDateTime now
 	) {
 		return queryFactory.select(Projections.constructor(
-						EmergencyResponse.class,
+						EmergencyInfo.class,
 						emergency.id,
 						emergency.centerId,
 						emergency.authorId,

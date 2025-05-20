@@ -11,7 +11,7 @@ public interface EmergencyJpaRepositoryCustom {
 
 	List<EmergencyInfo> getEmergenciesByCenterId(Long centerId, EmergencyType type, LocalDateTime now);
 
-	List<EmergencyResponse> getLatestEmergenciesByCenterId(
+	List<EmergencyInfo> getLatestEmergenciesByCenterId(
 			Long centerId,
 			EmergencyType type,
 			LocalDateTime now

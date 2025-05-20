@@ -12,8 +12,6 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationByDogResponse;
-import com.ssafy.hangbokdog.adoption.dto.response.AdoptionApplicationResponse;
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
 import com.ssafy.hangbokdog.center.center.domain.repository.CenterMemberRepository;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
@@ -141,9 +139,6 @@ public class FosterService {
 				break;
 
 			case COMPLETED, STOPPED:
-				if (!foster.checkFostering()) {
-					throw new BadRequestException(ErrorCode.NOT_VALID_FOSTER_APPLICATION);
-				}
 				foster.completeFoster();
 				dog.goProtected();
 				break;

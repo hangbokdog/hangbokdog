@@ -27,7 +27,7 @@ public class EmergencyRepository {
 		return emergencyJpaRepository.getEmergenciesByCenterId(centerId, type, now);
 	}
 
-	public List<EmergencyResponse> getLatestEmergenciesByCenterId(
+	public List<EmergencyInfo> getLatestEmergenciesByCenterId(
 			Long centerId,
 			EmergencyType type,
 			LocalDateTime now
