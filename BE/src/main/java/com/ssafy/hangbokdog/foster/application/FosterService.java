@@ -52,7 +52,7 @@ public class FosterService {
 	) {
 		CenterMember centerMember = checkCenterMember(memberId, centerId);
 
-		if (!fosterRepository.checkFosterExistByMemberIdAndDogId(memberId, dogId)) {
+		if (fosterRepository.checkFosterExistByMemberIdAndDogId(memberId, dogId)) {
 			throw new BadRequestException(ErrorCode.FOSTER_ALREADY_EXISTS);
 		}
 
