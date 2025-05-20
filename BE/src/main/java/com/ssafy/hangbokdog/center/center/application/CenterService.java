@@ -425,7 +425,7 @@ public class CenterService {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
 		}
 
-		var targetCenterMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+		var targetCenterMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
 
 		if (targetCenterMember.isManager()) {
