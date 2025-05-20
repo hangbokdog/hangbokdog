@@ -9,10 +9,12 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
+import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -91,5 +93,30 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				.from(member)
 				.where(member.id.in(allParticipantIds))
 				.fetch();
+	}
+
+	@Override
+	public List<MemberResponse> findMembersInCenter(Long centerId, String pageToken, int pageSize) {
+		return queryFactory.select(Projections.constructor(
+				MemberResponse.class,
+				member.id,
+				member.name,
+				member.nickName,
+				member.profileImage,
+				centerMember.grade,
+				centerMember.id
+		)).from(centerMember)
+				.leftJoin(member).on(member.id.eq(centerMember.memberId))
+				.where(centerMember.centerId.eq(centerId), isInRange(pageToken))
+				.limit(pageSize + 1)
+				.fetch();
+	}
+
+	private BooleanExpression isInRange(String pageToken) {
+		if (pageToken == null) {
+			return null;
+		}
+
+		return centerMember.id.lt(Long.valueOf(pageToken));
 	}
 }

@@ -16,12 +16,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.hangbokdog.auth.annotation.AuthMember;
 import com.ssafy.hangbokdog.common.dto.MaskRequest;
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.image.application.S3Service;
 import com.ssafy.hangbokdog.member.application.MemberService;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.dto.request.FcmTokenUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.request.MemberUpdateRequest;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
+import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,16 @@ public class MemberController {
         // disableMasking=false 로 넘기면 항상 마스킹
         return ResponseEntity.ok(memberService.findByNickname(new MaskRequest(false), nickname));
     }
+
+    @GetMapping
+    public ResponseEntity<PageInfo<MemberResponse>> findMembersInCenter(
+            @RequestParam Long centerId,
+            @AuthMember Member member,
+            @RequestParam(required = false) String pageToken
+    ) {
+        return ResponseEntity.ok(memberService.findMembersInCenter(centerId, member, pageToken));
+    }
+
 
     @PatchMapping("/fcm-token")
     public ResponseEntity<Void> saveFcmToken(

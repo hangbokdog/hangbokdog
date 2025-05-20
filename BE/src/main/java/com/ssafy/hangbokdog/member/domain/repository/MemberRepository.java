@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.hangbokdog.common.model.PageInfo;
 import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
+import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class MemberRepository {
+    private static final int DEFAULT_PAGE_SIZE = 20;
+
     private final MemberJpaRepository memberJpaRepository;
 
     public Optional<Member> findById(Long id) {
@@ -55,5 +59,10 @@ public class MemberRepository {
 
     public String getFcmTokenByMemberId(Long memberId) {
         return memberJpaRepository.getFcmTokenById(memberId);
+    }
+
+    public PageInfo<MemberResponse> findMembersInCenter(Long centerId, String pageToken) {
+        var data = memberJpaRepository.findMembersInCenter(centerId, pageToken, DEFAULT_PAGE_SIZE);
+        return PageInfo.of(data, DEFAULT_PAGE_SIZE, MemberResponse::centerMemberId);
     }
 }

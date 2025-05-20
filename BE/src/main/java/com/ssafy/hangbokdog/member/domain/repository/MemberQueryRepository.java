@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.ssafy.hangbokdog.member.dto.MemberAgeInfo;
 import com.ssafy.hangbokdog.member.dto.response.MemberProfileResponse;
+import com.ssafy.hangbokdog.member.dto.response.MemberResponse;
 import com.ssafy.hangbokdog.member.dto.response.MemberSearchNicknameResponse;
 
 public interface MemberQueryRepository {
@@ -16,4 +17,7 @@ public interface MemberQueryRepository {
     MemberProfileResponse getMemberProfile(Long memberId);
 
     List<MemberAgeInfo> findByIdWithAge(List<Long> allParticipantIds);
+
+    List<MemberResponse> findMembersInCenter(Long centerId, String pageToken, int pageSize);
+
 }
