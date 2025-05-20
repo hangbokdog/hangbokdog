@@ -20,7 +20,7 @@ export default function EmergencyPanel() {
 			<div className="flex justify-between items-center py-2">
 				<div className="flex items-center gap-1 font-bold text-grayText text-lg mx-2.5 my-1">
 					<MdEmergency className="text-red-500 w-5 h-5" />
-					응급 요청 목록
+					긴급 요청 목록
 				</div>
 				{isManager && (
 					<div>
@@ -31,7 +31,7 @@ export default function EmergencyPanel() {
 								navigate("/manager/emergency/register")
 							}
 						>
-							응급 추가
+							긴급 추가
 							<FaExclamationCircle className="text-xs" />
 						</button>
 					</div>

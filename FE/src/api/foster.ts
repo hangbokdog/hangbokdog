@@ -10,7 +10,9 @@ export const applyFosterAPI = async (dogId: number, centerId: number) => {
 };
 
 export const cancelFosterApplicationAPI = async (fosterId: number) => {
-	const response = await localAxios.delete(`/fosters/${fosterId}`);
+	const response = await localAxios.patch(
+		`/fosters/${fosterId}/application/cancel`,
+	);
 	return response.data;
 };
 
@@ -20,11 +22,12 @@ export const decideFosterApplicationAPI = async (
 	centerId: number,
 ) => {
 	const response = await localAxios.patch(
-		`/fosters/${fosterId}/application`,
+		`/fosters/${fosterId}/decide`,
+		null,
 		{
 			params: {
-				centerId,
 				request,
+				centerId,
 			},
 		},
 	);
@@ -41,13 +44,6 @@ export interface MyFosterResponse {
 
 export const fetchMyFostersAPI = async (): Promise<MyFosterResponse[]> => {
 	const response = await localAxios.get("/fosters/my");
-	return response.data;
-};
-
-export const fetchFosterApplicationAPI = async (): Promise<
-	MyFosterResponse[]
-> => {
-	const response = await localAxios.get("/fosters/applications");
 	return response.data;
 };
 
@@ -94,7 +90,7 @@ export interface FosterApplicationResponse {
 export const fetchFosterApplicationsAPI = async (
 	centerId: number,
 ): Promise<FosterApplicationResponse[]> => {
-	const response = await localAxios.get("/fosters/applications", {
+	const response = await localAxios.get("/fosters/applications-get", {
 		params: { centerId },
 	});
 	return response.data;
@@ -116,6 +112,26 @@ export const fetchFosterApplicationsByDogAPI = async (
 ): Promise<FosterApplicationByDogResponse[]> => {
 	const response = await localAxios.get(`/fosters/${dogId}/applications`, {
 		params: { centerId, name },
+	});
+	return response.data;
+};
+
+export interface FosteredDogResponse {
+	fosterId: number;
+	dogId: number;
+	dogName: string;
+	dogImage: string;
+	memberId: number;
+	memberName: string;
+	memberImage: string;
+	created_at: string;
+}
+
+export const fetchFosteredDogsAPI = async (
+	centerId: number,
+): Promise<FosteredDogResponse[]> => {
+	const response = await localAxios.get("/fosters/fostered", {
+		params: { centerId },
 	});
 	return response.data;
 };

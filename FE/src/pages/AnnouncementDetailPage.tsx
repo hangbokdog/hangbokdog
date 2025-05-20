@@ -38,6 +38,7 @@ import useAuthStore from "@/lib/store/authStore";
 import CommentList from "@/components/comments/CommentList";
 import CommentForm from "@/components/comments/CommentForm";
 import { DogBreedLabel } from "@/types/dog";
+import { calAge } from "@/utils/calAge";
 
 const formatDateWithDay = (dateString: string) => {
 	const date = new Date(dateString);
@@ -302,7 +303,7 @@ export default function PostDetailPage() {
 		if (!id) return;
 
 		if (isAnnouncement) {
-			navigate(`/announcements/edit/${id}`);
+			navigate(`/posts/edit/${id}?type=announcements`);
 		} else {
 			navigate(
 				`/posts/edit/${id}?type=${searchParams.get("type") || ""}`,
@@ -530,7 +531,7 @@ export default function PostDetailPage() {
 													}
 												</span>
 												<span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-800">
-													{dogInfo.age}살
+													{calAge(dogInfo.age)}
 												</span>
 												<span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-gray-800">
 													{dogInfo.gender === "MALE"

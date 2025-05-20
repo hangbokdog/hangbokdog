@@ -5,8 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import {
 	fetchFosterApplicationsAPI,
 	decideFosterApplicationAPI,
+	fetchFosteredDogsAPI,
 } from "@/api/foster";
 import type { FosterStatus } from "@/types/foster";
+import FosteredListItem from "@/components/foster/FosteredListItem";
+import FosterApplicationListItem from "@/components/foster/FosterApplicationListItem";
 
 export default function FosterManagerMainPage() {
 	const [tab, setTab] = useState<"pending" | "fostered">("pending");
@@ -29,29 +32,13 @@ export default function FosterManagerMainPage() {
 		useQuery({
 			queryKey: ["fosteredDogs", selectedCenter?.centerId],
 			queryFn: () =>
-				fetchFosterApplicationsAPI(Number(selectedCenter?.centerId)),
+				fetchFosteredDogsAPI(Number(selectedCenter?.centerId)),
 			enabled: !!selectedCenter?.centerId,
 		});
 
 	// count 속성에 안전하게 접근
 	const fosterApplicationsCount = fosterApplicationsData?.length || 0;
 	const fosteredDogsCount = fosteredDogsData?.length || 0;
-
-	// 임시보호 신청 승인/거절 처리
-	const handleFosterApplication = async (
-		fosterId: number,
-		status: FosterStatus,
-	) => {
-		try {
-			await decideFosterApplicationAPI(
-				fosterId,
-				status,
-				Number(selectedCenter?.centerId),
-			);
-		} catch (error) {
-			console.error("임시보호 신청 처리 중 오류 발생:", error);
-		}
-	};
 
 	return (
 		<div className="flex flex-col h-full bg-gray-50 pb-16">
@@ -132,26 +119,10 @@ export default function FosterManagerMainPage() {
 					{tab === "pending" && (
 						<div className="space-y-3">
 							{fosterApplicationsData?.map((application) => (
-								<div
+								<FosterApplicationListItem
 									key={application.dogId}
-									className="bg-white rounded-lg shadow-sm p-4"
-								>
-									<div className="flex items-center gap-3">
-										<img
-											src={application.dogImage}
-											alt={application.dogName}
-											className="w-16 h-16 rounded-lg object-cover"
-										/>
-										<div className="flex-1">
-											<h3 className="font-medium">
-												{application.dogName}
-											</h3>
-											<p className="text-sm text-gray-500">
-												신청자 {application.count}명
-											</p>
-										</div>
-									</div>
-								</div>
+									data={application}
+								/>
 							))}
 						</div>
 					)}
@@ -159,24 +130,11 @@ export default function FosterManagerMainPage() {
 					{/* 임시보호 중 탭 */}
 					{tab === "fostered" && (
 						<div className="space-y-3">
-							{fosteredDogsData?.map((dog) => (
-								<div
-									key={dog.dogId}
-									className="bg-white rounded-lg shadow-sm p-4"
-								>
-									<div className="flex items-center gap-3">
-										<img
-											src={dog.dogImage}
-											alt={dog.dogName}
-											className="w-16 h-16 rounded-lg object-cover"
-										/>
-										<div className="flex-1">
-											<h3 className="font-medium">
-												{dog.dogName}
-											</h3>
-										</div>
-									</div>
-								</div>
+							{fosteredDogsData?.map((data) => (
+								<FosteredListItem
+									key={data.dogId}
+									data={data}
+								/>
 							))}
 						</div>
 					)}

@@ -46,6 +46,7 @@ import PostEditPage from "./pages/PostEditPage";
 import CenterManagerProtectedRoute from "./components/auth/CenterManagerProtectedRoute";
 import VolunteerEditPage from "./pages/VolunteerEditPage";
 import FilteredPostListByDogId from "./components/dog/FilteredPostListByDogId";
+import SponsorManagerMainPage from "./pages/manager/SponsorManagerMainPage";
 
 const router = createBrowserRouter([
 	{
@@ -201,16 +202,6 @@ const router = createBrowserRouter([
 						],
 					},
 					{
-						path: "emergency",
-						children: [
-							{
-								index: true,
-								element: <EmergencyPage />,
-								handle: { showHeader: false },
-							},
-						],
-					},
-					{
 						path: "volunteer",
 						children: [
 							{
@@ -289,6 +280,11 @@ const router = createBrowserRouter([
 						handle: { showHeader: false },
 						children: [
 							{
+								index: true,
+								element: <EmergencyPage />,
+								handle: { showHeader: false },
+							},
+							{
 								path: "register",
 								element: (
 									<CenterMemberProtectedRoute>
@@ -342,6 +338,11 @@ const router = createBrowserRouter([
 					{
 						path: "foster",
 						element: <FosterManagerMainPage />,
+						handle: { showHeader: false },
+					},
+					{
+						path: "sponsorship",
+						element: <SponsorManagerMainPage />,
 						handle: { showHeader: false },
 					},
 				],
