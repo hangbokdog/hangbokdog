@@ -66,15 +66,19 @@ const router = createBrowserRouter([
 						index: true,
 						element: <Home />,
 					},
-
 					{
 						path: "my",
-						element: <My />,
-					},
-					{
-						path: "my/edit",
-						element: <ProfileEdit />,
-						handle: { showHeader: false },
+						children: [
+							{
+								index: true,
+								element: <My />,
+							},
+							{
+								path: "edit",
+								element: <ProfileEdit />,
+								handle: { showHeader: false },
+							},
+						],
 					},
 					{
 						path: "donations",

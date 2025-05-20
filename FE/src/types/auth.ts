@@ -13,6 +13,7 @@ export interface UserInfoResponse {
 	name: string;
 	nickName: string;
 	profileImage: string;
+	notification: boolean;
 }
 
 export interface NicknameSearchResponse {

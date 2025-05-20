@@ -11,6 +11,7 @@ import useAuthStore from "@/lib/store/authStore";
 import { useFormatDate } from "@/lib/hooks/useFormatDate";
 import { registerFCMToken } from "@/api/notification";
 import { requestFCMToken } from "@/config/firebase";
+import type { UserInfoResponse } from "@/types/auth";
 
 export default function SignUp() {
 	const navigate = useNavigate();
@@ -69,11 +70,12 @@ export default function SignUp() {
 				handleFCMTokenSetup();
 			}
 
-			const userInfo = await getUserInfoAPI();
+			const userInfo: UserInfoResponse = await getUserInfoAPI();
 			setUserInfo(
-				userInfo.memberId || 0,
-				userInfo.nickName || "",
-				userInfo.profileImage || "",
+				userInfo.memberId,
+				userInfo.nickName,
+				userInfo.profileImage,
+				userInfo.notification,
 			);
 
 			toast.success("회원가입에 성공했습니다!");

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function ProfileEdit() {
 	const queryClient = useQueryClient();
@@ -24,11 +25,11 @@ export default function ProfileEdit() {
 	const mutation = useMutation({
 		mutationFn: updateUserInfoAPI,
 		onSuccess: () => {
-			alert("프로필이 저장되었습니다.");
+			toast.success("프로필이 저장되었습니다.");
 			queryClient.invalidateQueries({ queryKey: ["userInfo"] });
 		},
 		onError: () => {
-			alert("프로필 저장에 실패했습니다.");
+			toast.error("프로필 저장에 실패했습니다.");
 		},
 	});
 
@@ -97,7 +98,7 @@ export default function ProfileEdit() {
 		return <div className="p-4">사용자 정보를 불러오지 못했습니다.</div>;
 
 	return (
-		<div className="flex flex-col items-center justify-center min-h-screen bg-white p-4">
+		<div className="flex flex-col items-center justify-center bg-white p-4">
 			<div className="w-full max-w-md flex flex-col items-center">
 				{/* 프로필 이미지 */}
 				<motion.div

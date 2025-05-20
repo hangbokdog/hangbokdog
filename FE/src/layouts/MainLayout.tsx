@@ -25,6 +25,14 @@ export default function MainLayout() {
 	useEffect(() => {
 		// 로그인 상태와 센터 선택 확인
 		if (user.accessToken && selectedCenter?.centerId) {
+			// 알림 설정이 비활성화되어 있으면 FCM 토큰 설정 건너뛰기
+			if (user.notification === false) {
+				console.log(
+					"알림이 비활성화되어 있어 FCM 토큰을 설정하지 않습니다.",
+				);
+				return;
+			}
+
 			// 알림 권한 확인 후 FCM 토큰 초기화
 			checkNotificationPermission().then((permission) => {
 				if (permission === "granted") {
@@ -39,12 +47,21 @@ export default function MainLayout() {
 		checkNotificationPermission,
 		setupFCM,
 		user.accessToken,
+		user.notification,
 		selectedCenter?.centerId,
 	]);
 
 	// FCM 포그라운드 메시지 리스너 설정
 	useEffect(() => {
 		if (!user.accessToken || !selectedCenter?.centerId) return;
+
+		// 알림 설정이 비활성화되어 있으면 FCM 메시지 리스너도 설정하지 않음
+		if (user.notification === false) {
+			console.log(
+				"알림이 비활성화되어 있어 FCM 메시지 리스너를 설정하지 않습니다.",
+			);
+			return;
+		}
 
 		// 포그라운드 메시지 리스너
 		let unsubscribe = () => {};
@@ -326,6 +343,7 @@ export default function MainLayout() {
 		};
 	}, [
 		user.accessToken,
+		user.notification,
 		selectedCenter?.centerId,
 		selectedCenter?.centerName,
 		addNotification,
