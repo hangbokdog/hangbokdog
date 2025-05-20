@@ -76,10 +76,9 @@ public class EmergencyApplicationController {
 		));
 	}
 
-	@GetMapping("/{emergencyId}/applications/my")
+	@GetMapping("/applications/my")
 	public ResponseEntity<List<EmergencyApplicationResponse>> getMyEmergencyApplications(
 		@AuthMember Member member,
-		@PathVariable Long emergencyId,
 		@RequestParam Long centerId
 	) {
 		return ResponseEntity.ok().body(emergencyApplicationService.getMyEmergencyApplications(member.getId(), centerId));
