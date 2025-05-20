@@ -49,6 +49,16 @@ public class CenterController {
 			.build();
 	}
 
+	@PostMapping("/{memberId}/promote")
+	public ResponseEntity<Void> promote(
+			@AuthMember Member member,
+			@PathVariable Long memberId,
+			@RequestParam Long centerId
+	) {
+		centerService.promote(member, memberId, centerId);
+		return ResponseEntity.noContent().build();
+	}
+
 	@GetMapping("/{centerId}/statistics")
 	public ResponseEntity<CenterStatisticResponse> getStatistic(
 			@AuthMember Member member,
@@ -109,6 +119,16 @@ public class CenterController {
 	) {
 		centerService.deleteCenterMember(member.getId(), centerId);
 		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{memberId}/kickOut")
+	public ResponseEntity<Void> kickOutCenterMember(
+			@AuthMember Member member,
+			@PathVariable Long memberId,
+			@RequestParam Long centerId
+	) {
+		centerService.kickOut(member, memberId, centerId);
+		return ResponseEntity.noContent().build();
 	}
 
 	@PatchMapping("/{centerId}/main")

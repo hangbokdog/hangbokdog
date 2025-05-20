@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.ssafy.hangbokdog.center.center.domain.CenterMember;
@@ -36,4 +37,8 @@ public interface CenterMemberJpaRepository extends JpaRepository<CenterMember, L
 		WHERE cm.centerId = :centerId
 		""")
 	List<Long> getTargetAllIds(Long centerId);
+
+	@Modifying
+	@Query("DELETE FROM CenterMember cm WHERE cm.memberId = :memberId AND cm.centerId = :centerId")
+    void deleteByMemberIdAndCenterId(Long memberId, Long centerId);
 }

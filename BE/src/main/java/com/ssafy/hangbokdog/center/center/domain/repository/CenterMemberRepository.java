@@ -80,4 +80,8 @@ public class CenterMemberRepository {
     public int getMemberCountByCenterIdAndGrade(Long centerId, CenterGrade centerGrade) {
         return centerMemberJpaRepository.getMemberCountByCenterIdAndGrade(centerId, centerGrade);
     }
+
+    public void deleteByMemberIdAndCenterId(Long memberId, Long centerId) {
+        centerMemberJpaRepository.deleteByMemberIdAndCenterId(memberId, centerId);
+    }
 }

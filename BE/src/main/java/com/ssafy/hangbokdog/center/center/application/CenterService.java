@@ -415,4 +415,35 @@ public class CenterService {
 				centerNormalMemberCount
 		);
 	}
+
+	@Transactional
+	public void promote(Member member, Long memberId, Long centerId) {
+		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		var targetCenterMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (targetCenterMember.isManager()) {
+			throw new BadRequestException(ErrorCode.ALREADY_MANAGER_MEMBER);
+		}
+
+		targetCenterMember.promote();
+	}
+
+	@Transactional
+	public void kickOut(Member member, Long memberId, Long centerId) {
+		var centerMember = centerMemberRepository.findByMemberIdAndCenterId(member.getId(), centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_MEMBER_NOT_FOUND));
+
+		if (!centerMember.isManager()) {
+			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
+		}
+
+		centerMemberRepository.deleteByMemberIdAndCenterId(memberId, centerId);
+	}
 }
