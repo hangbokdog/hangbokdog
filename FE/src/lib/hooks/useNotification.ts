@@ -12,6 +12,7 @@ import {
 	registerFCMToken,
 	type NotificationResponse,
 	type NotificationItem,
+	deleteAllNotifications,
 } from "@/api/notification";
 import { requestFCMToken, onForegroundMessage } from "@/config/firebase";
 import useNotificationStore from "@/lib/store/notificationStore";
@@ -221,19 +222,10 @@ export const useNotification = () => {
 
 	// 알림 패널을 닫을 때 읽지 않은 알림 일괄 처리
 	const closeNotificationPanel = useCallback(() => {
-		// 읽지 않은 알림 ID들을 수집
-		const unreadNotificationIds = notifications
-			.filter((notification) => !notification.isRead)
-			.map((notification) => notification.notificationId);
-
-		// 읽지 않은 알림이 있으면 읽음 처리
-		if (unreadNotificationIds.length > 0) {
-			markAsReadMutation(unreadNotificationIds);
-		}
-
+		// 읽지 않은 알림을 자동으로 읽음 처리하지 않음
 		// 스토어의 패널 닫기 함수 호출
 		storeCloseNotificationPanel();
-	}, [notifications, markAsReadMutation, storeCloseNotificationPanel]);
+	}, [storeCloseNotificationPanel]);
 
 	// 알림 삭제 처리
 	const removeNotification = useCallback(
@@ -243,13 +235,46 @@ export const useNotification = () => {
 		[deleteMutation],
 	);
 
-	// 모든 알림 삭제 처리 (UI만 적용, 실제 API 호출은 향후 구현)
+	// 모든 알림을 읽음 처리하는 함수
+	const markAllAsRead = useCallback(() => {
+		// 읽지 않은 알림 ID들을 수집
+		const unreadNotificationIds = notifications
+			.filter((notification) => !notification.isRead)
+			.map((notification) => notification.notificationId);
+
+		// 읽지 않은 알림이 있으면 읽음 처리
+		if (unreadNotificationIds.length > 0) {
+			markAsReadMutation(unreadNotificationIds);
+			toast.success("모든 알림을 읽음 처리했습니다.");
+		} else {
+			toast.info("읽지 않은 알림이 없습니다.");
+		}
+	}, [notifications, markAsReadMutation]);
+
+	// 모든 알림 삭제 처리
 	const clearAllNotifications = useCallback(() => {
-		// TODO: 실제 모든 알림 삭제 API 호출 구현 예정
-		toast.error("모든 알림 삭제 기능은 아직 지원되지 않습니다.");
-		// 알림 데이터 다시 불러오기
-		refetchNotifications();
-	}, [refetchNotifications]);
+		if (notifications.length === 0) {
+			toast.info("삭제할 알림이 없습니다.");
+			return;
+		}
+
+		try {
+			// deleteAllNotifications API 호출
+			deleteAllNotifications()
+				.then(() => {
+					toast.success("모든 알림이 삭제되었습니다.");
+					// 알림 데이터 다시 불러오기
+					refetchNotifications();
+				})
+				.catch((error) => {
+					console.error("알림 일괄 삭제 실패:", error);
+					toast.error("알림 삭제에 실패했습니다.");
+				});
+		} catch (error) {
+			console.error("알림 일괄 삭제 중 오류 발생:", error);
+			toast.error("알림 삭제에 실패했습니다.");
+		}
+	}, [notifications, refetchNotifications]);
 
 	// 알림 클릭 핸들러
 	const handleNotificationClick = useCallback(
@@ -523,6 +548,32 @@ export const useNotification = () => {
 		user.accessToken,
 	]);
 
+	// 페이지 가시성 변경 감지하여 백그라운드에서 포그라운드로 전환 시 알림 목록 갱신
+	useEffect(() => {
+		// 로그인 상태 확인
+		if (!user.accessToken) return;
+
+		// 페이지 가시성 변경 이벤트 핸들러
+		const handleVisibilityChange = () => {
+			// 페이지가 다시 보이게 되었을 때 알림 목록 갱신
+			if (document.visibilityState === "visible") {
+				console.log("앱이 활성화되어 알림 목록을 갱신합니다.");
+				refetchNotifications();
+			}
+		};
+
+		// 이벤트 리스너 등록
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+
+		// 컴포넌트 언마운트 시 이벤트 리스너 제거
+		return () => {
+			document.removeEventListener(
+				"visibilitychange",
+				handleVisibilityChange,
+			);
+		};
+	}, [user.accessToken, refetchNotifications]);
+
 	return {
 		notifications,
 		unreadCount,
@@ -541,5 +592,6 @@ export const useNotification = () => {
 		removeNotification,
 		setupFCM,
 		refetchNotifications,
+		markAllAsRead,
 	};
 };
