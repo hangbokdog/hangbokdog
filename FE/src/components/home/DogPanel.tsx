@@ -1,7 +1,9 @@
 import DogCard from "@/components/common/DogCard";
 import type { DogSummary } from "@/types/dog";
 import { ChevronRight } from "lucide-react";
+import { MdPets } from "react-icons/md";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 interface DogPanelProps {
 	count: number;
@@ -42,12 +44,63 @@ export default function DogPanel({ count, dogSummaries }: DogPanelProps) {
 				))}
 				<Link
 					to="/dogs"
-					className="w-[160px] sm:w-[170px] md:w-[180px] flex-shrink-0 bg-gray-600/70 rounded-lg flex flex-col items-center justify-center h-full min-h-[240px] border border-gray-300 hover:bg-gray-700/80 transition-colors"
+					className="w-[160px] sm:w-[170px] md:w-[180px] flex-shrink-0 rounded-lg relative overflow-hidden h-full min-h-[240px] shadow-md"
 				>
-					<span className="text-gray-900  font-medium text-center">
-						아이들 더 보러 가기
-					</span>
-					<ChevronRight className="w-5 h-5 mt-2 text-gray-900" />
+					<div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-600" />
+					<motion.div
+						className="absolute inset-0 flex flex-col items-center justify-center p-4"
+						whileTap={{ scale: 0.98 }}
+						initial={{ opacity: 0.9 }}
+						whileHover={{ opacity: 1 }}
+					>
+						<div className="bg-white/20 rounded-full p-3 backdrop-blur-md mb-3 shadow-inner">
+							<MdPets className="w-7 h-7 text-white" />
+						</div>
+						<h3 className="text-white font-bold text-lg text-center mb-1 drop-shadow-md">
+							더 많은 아이들
+						</h3>
+						<p className="text-white/90 text-sm text-center mb-3">
+							새로운 친구들을 만나보세요
+						</p>
+						<motion.div
+							className="bg-white/30 rounded-full py-1.5 px-3 backdrop-blur-sm flex items-center"
+							whileHover={{
+								backgroundColor: "rgba(255,255,255,0.4)",
+							}}
+						>
+							<span className="text-white text-sm font-medium mr-1">
+								더 보기
+							</span>
+							<ChevronRight className="w-4 h-4 text-white" />
+						</motion.div>
+
+						{/* 배경 장식 요소 */}
+						<motion.div
+							className="absolute -bottom-6 -right-6 w-24 h-24 rounded-full bg-white/10"
+							animate={{
+								scale: [1, 1.05, 1],
+								opacity: [0.3, 0.4, 0.3],
+							}}
+							transition={{
+								repeat: Number.POSITIVE_INFINITY,
+								duration: 3,
+								ease: "easeInOut",
+							}}
+						/>
+						<motion.div
+							className="absolute -top-10 -left-10 w-20 h-20 rounded-full bg-white/10"
+							animate={{
+								scale: [1, 1.1, 1],
+								opacity: [0.2, 0.3, 0.2],
+							}}
+							transition={{
+								repeat: Number.POSITIVE_INFINITY,
+								duration: 4,
+								ease: "easeInOut",
+								delay: 1,
+							}}
+						/>
+					</motion.div>
 				</Link>
 			</div>
 		</div>
