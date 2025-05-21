@@ -1,8 +1,9 @@
-import { PawPrint, PlusCircle, Pill, HeartHandshake, Home } from "lucide-react";
+import { PawPrint, PlusCircle, Pill, Home, Dog } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useState, type ReactNode } from "react";
 import MainPanel from "@/components/manager/dogs/MainPanel";
 import SmallPanel from "@/components/manager/dogs/SmallPanel";
+import useCenterStore from "@/lib/store/centerStore";
 
 type ColorScheme = {
 	bg: string;
@@ -44,7 +45,7 @@ const AnimatedContainer = ({ children }: { children: ReactNode }) => {
 
 	return (
 		<motion.div
-			className="flex flex-col gap-4 max-w-md mx-auto"
+			className="flex flex-col gap-4"
 			variants={containerVariants}
 			initial="hidden"
 			animate={isLoaded ? "visible" : "hidden"}
@@ -163,22 +164,37 @@ const usePanelData = () => {
 
 export default function DogManageMainPage() {
 	const panels = usePanelData();
+	const { selectedCenter } = useCenterStore();
 
 	return (
-		<div className="p-2.5">
-			<AnimatedContainer>
-				<MainPanel panel={panels[0]} />
-
-				<div className="grid grid-cols-2 gap-4">
-					{panels.slice(1, 5).map((panel, index) => (
-						<SmallPanel
-							key={panel.title}
-							panel={panel}
-							index={index}
-						/>
-					))}
+		<div className="flex flex-col h-full bg-gray-50">
+			<div className="bg-white shadow-sm pb-4 pl-4 pr-4 sticky top-0 z-10">
+				<div className="max-w-lg mx-auto">
+					<div className="text-xl font-bold gap-2 text-gray-800 mb-1 flex items-center">
+						<Dog className="w-5 h-5 text-amber-600" />
+						아이들 관리
+					</div>
+					<p className="text-sm text-gray-600">
+						{selectedCenter?.centerName || "센터"}의 아이들을
+						관리하세요
+					</p>
 				</div>
-			</AnimatedContainer>
+			</div>
+			<div className="flex flex-col p-2.5">
+				<AnimatedContainer>
+					<MainPanel panel={panels[0]} />
+
+					<div className="grid grid-cols-2 gap-4">
+						{panels.slice(1, 5).map((panel, index) => (
+							<SmallPanel
+								key={panel.title}
+								panel={panel}
+								index={index}
+							/>
+						))}
+					</div>
+				</AnimatedContainer>
+			</div>
 		</div>
 	);
 }

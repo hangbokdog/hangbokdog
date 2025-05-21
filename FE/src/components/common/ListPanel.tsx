@@ -46,7 +46,7 @@ export default function ListPanel({ tabs, isHome = true }: ListPanelProps) {
 					))}
 				</div>
 
-				<div className="flex flex-col w-full">
+				<div className="flex flex-col w-full h-full flex-1">
 					<div className={isHome ? "divide-y divide-gray-100" : ""}>
 						{activeTab?.data.map((item, index) => {
 							const Component = activeTab.component;
@@ -62,7 +62,7 @@ export default function ListPanel({ tabs, isHome = true }: ListPanelProps) {
 						})}
 					</div>
 					{activeTab?.data.length === 0 && (
-						<div className="flex flex-col items-center justify-center py-12 text-gray-400">
+						<div className="flex flex-col h-full flex-1 items-center justify-center py-12 text-gray-400">
 							<p className="text-sm">데이터가 없습니다</p>
 						</div>
 					)}

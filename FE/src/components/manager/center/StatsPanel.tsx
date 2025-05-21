@@ -10,7 +10,7 @@ import {
 	PointElement,
 	LineElement,
 } from "chart.js";
-import { Doughnut, Line } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 import {
 	MdOutlinePets,
 	MdVolunteerActivism,
@@ -20,12 +20,10 @@ import {
 	MdPeople,
 	MdPersonAdd,
 	MdWorkspaces,
-	MdCardMembership,
 	MdAnalytics,
 	MdSupervisorAccount,
 	MdPerson,
 } from "react-icons/md";
-import { FaMoneyBillWave } from "react-icons/fa";
 import useCenterStore from "@/lib/store/centerStore";
 import { useState, useEffect, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -35,6 +33,7 @@ import type {
 	CenterStatisticsResponse,
 	CenterStatsResponse,
 } from "@/types/center";
+import { BuildingIcon } from "lucide-react";
 
 // Chart.js 컴포넌트 등록
 ChartJS.register(
@@ -139,15 +138,15 @@ export default function StatsPanel() {
 
 	// 개 상태 차트 데이터
 	const dogStatusData = {
-		labels: ["보호 중", "입양 완료", "치료 중"],
+		labels: ["보호 중", "임시보호 중", "입양 완료"],
 		datasets: [
 			{
 				data: [
 					data?.protectedDog || 0,
+					data?.fosterCount || 0,
 					data?.adoptionCount || 0,
-					data?.hospitalCount || 0,
 				],
-				backgroundColor: ["#4dabf7", "#51cf66", "#ff8787"],
+				backgroundColor: ["#4dabf7", "#51cf66", "#ff637e"],
 				borderColor: ["#ffffff", "#ffffff", "#ffffff"],
 				borderWidth: 2,
 				borderRadius: 5,
@@ -245,10 +244,9 @@ export default function StatsPanel() {
 
 	// 추세 텍스트 계산 함수
 	const calculateTrendText = (current: number, previous: number): string => {
-		if (previous === 0) return "N/A";
-		const percent = Math.round(((current - previous) / previous) * 100);
-		if (percent > 0) return `+${percent}%`;
-		if (percent < 0) return `${percent}%`;
+		const difference = current - previous;
+		if (difference > 0) return `+${difference}`;
+		if (difference < 0) return `${difference}`;
 		return "유지";
 	};
 
@@ -277,7 +275,7 @@ export default function StatsPanel() {
 								: "bg-white text-gray-600 hover:bg-gray-50"
 						}`}
 					>
-						<MdOutlinePets className="mr-2" size={18} />
+						<BuildingIcon className="mr-2" size={18} />
 						센터 현황
 					</button>
 					<button
@@ -338,15 +336,15 @@ export default function StatsPanel() {
 							trend="neutral"
 							trendValue="유지"
 							icon={
-								<MdFavorite className="size-5 text-amber-600" />
+								<MdFavorite className="size-5 text-rose-600" />
 							}
-							color="bg-amber-50"
+							color="bg-rose-50"
 						/>
 						<StatCard
 							title="이번 달 봉사횟수"
-							value="24회"
-							trend="up"
-							trendValue="+12%" // 더미 데이터
+							value={data?.monthlyVolunteerParticipantCount || 0}
+							trend="neutral"
+							trendValue="유지"
 							icon={
 								<MdWorkspaces className="size-5 text-teal-600" />
 							}
@@ -419,33 +417,33 @@ export default function StatsPanel() {
 								</div>
 								<div className="flex justify-between items-center">
 									<span className="text-sm text-blue-700 font-medium">
-										입양 완료
-									</span>
-									<span className="text-sm text-blue-900 font-bold">
-										{data?.adoptionCount || 0}마리
-									</span>
-								</div>
-								<div className="flex justify-between items-center">
-									<span className="text-sm text-blue-700 font-medium">
-										치료 중
-									</span>
-									<span className="text-sm text-blue-900 font-bold">
-										{data?.hospitalCount || 0}마리
-									</span>
-								</div>
-								<div className="flex justify-between items-center">
-									<span className="text-sm text-blue-700 font-medium">
 										임시보호 중
 									</span>
 									<span className="text-sm text-blue-900 font-bold">
 										{data?.fosterCount || 0}마리
 									</span>
 								</div>
+								<div className="flex justify-between items-center">
+									<span className="text-sm text-blue-700 font-medium">
+										입양 완료
+									</span>
+									<span className="text-sm text-blue-900 font-bold">
+										{data?.adoptionCount || 0}마리
+									</span>
+								</div>
+								{/* <div className="flex justify-between items-center">
+									<span className="text-sm text-blue-700 font-medium">
+										치료 중
+									</span>
+									<span className="text-sm text-blue-900 font-bold">
+										{data?.hospitalCount || 0}마리
+									</span>
+								</div> */}
 							</div>
 						</div>
 
 						{/* 센터 정보 안내 메시지 */}
-						<div className="mt-4 bg-gray-50 rounded-lg p-3">
+						{/* <div className="mt-4 bg-gray-50 rounded-lg p-3">
 							<h4 className="font-medium text-sm text-gray-700 mb-2 flex items-center">
 								<MdShowChart className="mr-1" /> 센터 관리 팁
 							</h4>
@@ -453,7 +451,7 @@ export default function StatsPanel() {
 								센터 관리 페이지에서 더 자세한 센터 정보를
 								확인하고 관리할 수 있습니다.
 							</p>
-						</div>
+						</div> */}
 					</div>
 				</>
 			)}
@@ -621,19 +619,16 @@ export default function StatsPanel() {
 									</span>
 								</div>
 
-								{(centerStatistics?.volunteerParticipantCount ||
-									0) > 0 && (
-									<div className="flex justify-between items-center">
-										<span className="text-sm text-blue-700 font-medium">
-											봉사 참여자
-										</span>
-										<span className="text-sm text-blue-900 font-bold">
-											{centerStatistics?.volunteerParticipantCount ||
-												0}
-											명
-										</span>
-									</div>
-								)}
+								<div className="flex justify-between items-center">
+									<span className="text-sm text-blue-700 font-medium">
+										봉사 참여자
+									</span>
+									<span className="text-sm text-blue-900 font-bold">
+										{centerStatistics?.volunteerParticipantCount ||
+											0}
+										명
+									</span>
+								</div>
 							</div>
 						</div>
 
