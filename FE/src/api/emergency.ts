@@ -132,6 +132,7 @@ export interface EmergencyApplicant {
 	nickName: string;
 	phone: string;
 	emergencyId: number;
+	profileImage: string;
 }
 
 export interface RecruitedEmergencyResponse {

@@ -7,6 +7,8 @@ import {
 	fetchRecruitedEmergenciesAPI,
 } from "@/api/emergency";
 import { ChevronDown, ChevronUp, Trash2, Users } from "lucide-react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { AvatarFallback } from "@radix-ui/react-avatar";
 
 export default function RecruiteEmergencyList() {
 	const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -53,7 +55,7 @@ export default function RecruiteEmergencyList() {
 	}
 
 	return (
-		<div className="flex flex-col w-full py-4">
+		<div className="flex flex-col rounded-xl px-2 shadow-custom-sm bg-white w-full py-4">
 			{recruitedData.length === 0 ? (
 				<div className="flex flex-col items-center justify-center py-12 text-gray-400">
 					<p className="text-sm">데이터가 없습니다</p>
@@ -114,6 +116,21 @@ export default function RecruiteEmergencyList() {
 														key={applicant.memberId}
 														className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-colors"
 													>
+														<span>
+															<Avatar className="w-6 h-6">
+																<AvatarImage
+																	src={
+																		applicant.profileImage
+																	}
+																	className="object-cover"
+																/>
+																<AvatarFallback>
+																	{
+																		applicant.name
+																	}
+																</AvatarFallback>
+															</Avatar>
+														</span>
 														<div className="flex flex-col">
 															<span className="font-medium text-gray-900">
 																{
