@@ -35,7 +35,7 @@ public interface VolunteerApplicationJpaRepository
         UPDATE volunteer_application va
           JOIN volunteer_slot vs ON va.volunteer_slot_id = vs.volunteer_slot_id
            SET va.status = 'COMPLETED'
-         WHERE va.status = 'PENDING'
+         WHERE va.status = 'APPROVED'
            AND vs.volunteer_date < CURRENT_DATE()
         """, nativeQuery = true)
     void updatePassedApplicationToComplete();
