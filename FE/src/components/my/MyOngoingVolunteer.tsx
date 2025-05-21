@@ -3,8 +3,6 @@ import VolunteerTag from "./VolunteerTag";
 import { useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-const ITEMS_PER_PAGE = 1;
-
 export default function MyOngoingVolunteer() {
 	const { data, isLoading, error } = useAllVolunteerApplications();
 	const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,7 +11,8 @@ export default function MyOngoingVolunteer() {
 	if (error || !data)
 		return <div className="p-4">신청 내역을 불러올 수 없습니다.</div>;
 
-	const flatList = data.flatMap(({ data }) => data);
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	const flatList = data.flatMap(({ data }: any) => data);
 	const total = flatList.length;
 
 	const handlePrev = () => {
@@ -41,7 +40,8 @@ export default function MyOngoingVolunteer() {
 							transform: `translateX(-${currentIndex * 100}%)`,
 						}}
 					>
-						{flatList.map((item) => (
+						{/* biome-ignore lint/suspicious/noExplicitAny: <explanation> */}
+						{flatList.map((item: any) => (
 							<div
 								key={item.volunteerEventId}
 								className="w-full flex-shrink-0 px-1"

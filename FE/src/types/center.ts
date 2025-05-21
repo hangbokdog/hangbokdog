@@ -168,6 +168,7 @@ export interface CenterStatsResponse {
 	hospitalCount: number;
 	protectedDog: number;
 	centerMileageAmount: number;
+	monthlyVolunteerParticipantCount: number;
 }
 
 export interface MyCenter {

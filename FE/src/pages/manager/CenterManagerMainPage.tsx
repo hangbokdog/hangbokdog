@@ -5,10 +5,12 @@ import MembersPanel from "@/components/manager/center/MembersPanel";
 import { IoStatsChart, IoLocation, IoPeople, IoPerson } from "react-icons/io5";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-
+import { Settings } from "lucide-react";
+import useCenterStore from "@/lib/store/centerStore";
 type TabType = "stats" | "location" | "requests" | "members";
 
 export default function CenterManagerMainPage() {
+	const { selectedCenter } = useCenterStore();
 	const [activeTab, setActiveTab] = useState<TabType>("stats");
 
 	const tabs = [
@@ -36,6 +38,17 @@ export default function CenterManagerMainPage() {
 
 	return (
 		<div className="flex flex-col h-full bg-gray-50">
+			<div className="bg-white shadow-sm pb-4 pl-4 pr-4 sticky top-0 z-10">
+				<div className="max-w-lg mx-auto">
+					<div className="text-xl font-bold gap-2 text-gray-800 mb-1 flex items-center">
+						<Settings className="w-5 h-5 text-purple-600" />
+						센터 관리
+					</div>
+					<p className="text-sm text-gray-600">
+						{selectedCenter?.centerName || "센터"}을 관리하세요
+					</p>
+				</div>
+			</div>
 			{/* 모바일 탭 바 */}
 			<div className="sticky top-0 px-1 py-1.5 z-10 bg-white shadow-sm">
 				<div className="grid grid-cols-4 gap-1 mx-auto max-w-lg">
