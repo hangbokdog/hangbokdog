@@ -354,9 +354,6 @@ public class CenterService {
 		Integer fosterCount = dogRepository.getFosteredDogCount(centerId);
 		Integer lastMonthFosterCount = fosterRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
 		Integer adoptionCount = adoptionRepository.getAdoptionCount(centerId);
-
-
-
 		Integer hospitalCount = dogRepository.getHospitalDogCount(centerId);
 		Integer protectedCount = dogRepository.getProtectedDogCount(centerId);
 		Long centerMileageAmount = donationAccountRepository.getDonationAccountBalance(centerId);
