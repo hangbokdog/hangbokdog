@@ -267,10 +267,10 @@ export default function Search({
 	};
 
 	return (
-		<div className="flex flex-col gap-2">
-			<div className="flex bg-white rounded-3xl shadow-custom-sm px-3 py-2 transition-all duration-200 hover:shadow-md">
+		<div className="flex flex-col gap-2 w-full">
+			<div className="flex bg-white rounded-3xl w-full shadow-custom-sm px-3 py-2 transition-all duration-200 hover:shadow-md gap-1.5">
 				<input
-					className="flex-1 outline-none"
+					className="flex-1 outline-none w-full border-r border-grayText"
 					type="text"
 					placeholder={placeholder}
 					maxLength={maxLength}
@@ -278,7 +278,7 @@ export default function Search({
 					onChange={onChange}
 					onKeyDown={handleKeyDown}
 				/>
-				<div className="flex items-center justify-center ml-2 border-l border-grayText pl-2 gap-1">
+				<div className="flex items-center justify-center  gap-1">
 					<MdSearch className="text-grayText size-5 hover:text-primary transition-colors cursor-pointer" />
 					{filter && (
 						<Drawer>

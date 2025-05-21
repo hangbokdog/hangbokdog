@@ -45,7 +45,7 @@ export default function ClosedVolunteerCard({
 				<div className="w-24 h-24 flex-shrink-0">
 					<OngoingVolunteerImage src={imageUrl} alt="dog1" />
 				</div>
-				<div className="absolute inset-0 cursor-not-allowed z-20" />
+				<div className="absolute inset-0 z-20" />
 			</div>
 		</Link>
 	);
