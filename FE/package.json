@@ -37,7 +37,7 @@
 		"embla-carousel-autoplay": "^8.6.0",
 		"embla-carousel-react": "^8.6.0",
 		"firebase": "^11.7.3",
-		"framer-motion": "^12.10.4",
+		"framer-motion": "^12.12.1",
 		"html-react-parser": "^5.2.3",
 		"lodash": "^4.17.21",
 		"lucide-react": "^0.476.0",
