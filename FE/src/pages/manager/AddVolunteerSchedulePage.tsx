@@ -69,9 +69,9 @@ export default function AddVolunteerSchedulePage() {
 	const [morningCapacity, setMorningCapacity] = useState<number>(6);
 	const [afternoonCapacity, setAfternoonCapacity] = useState<number>(6);
 	const [morningStartTime, setMorningStartTime] = useState("10:00");
-	const [morningEndTime, setMorningEndTime] = useState("14:00");
-	const [afternoonStartTime, setAfternoonStartTime] = useState("15:00");
-	const [afternoonEndTime, setAfternoonEndTime] = useState("18:00");
+	const [morningEndTime, setMorningEndTime] = useState("13:00");
+	const [afternoonStartTime, setAfternoonStartTime] = useState("14:00");
+	const [afternoonEndTime, setAfternoonEndTime] = useState("17:00");
 
 	// 각 에디터별 이미지 업로드 상태
 	const [activityLogImageUploading, setActivityLogImageUploading] =
