@@ -21,6 +21,9 @@ def extract_info(texts: List[str]) -> Dict[str, str]:
             subType = t.replace("[고양이]", "").strip()
             break
 
+    if subType in ["믹스견", "막스견", "믹스", "막스"]:
+        subType = "믹스"
+
     info_line = next((t for t in texts if any(x in t for x in ["수컷", "암컷"])), "")
     parts = [p.strip() for p in info_line.split("/")]
 
@@ -48,9 +51,9 @@ def extract_info(texts: List[str]) -> Dict[str, str]:
                 neutered = "X"
 
         for color_key, color_value in color_mapping.items():
-                    if color_key in part:
-                        color = color_value
-                        break
+            if color_key in part:
+                color = color_value
+                break
 
         if "년생" in part:
             birthYear = part.replace("(년생)", "").strip()
