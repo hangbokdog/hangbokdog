@@ -1,5 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
 	DogStatus,
 	Gender,
@@ -32,12 +34,43 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { type AddressBook, fetchAddressBooks } from "@/api/center";
+import { fetchNameSuggestionsAPI } from "@/api/ai";
 
 export default function DogRegisterPage() {
 	const [profilePreview, setProfilePreview] = useState<string | null>(null);
 	const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
 	const [isDialogOpen, setIsDialogOpen] = useState(false);
-	const centerId = useCenterStore().selectedCenter?.centerId;
+	const { selectedCenter } = useCenterStore();
+	const centerId = selectedCenter?.centerId;
+	const [suggestedNames, setSuggestedNames] = useState<string[]>([]);
+	const [isLoadingNames, setIsLoadingNames] = useState(false);
+	const lastRequestTimeRef = useRef<number>(0);
+
+	const handleSuggestNames = async () => {
+		const now = Date.now();
+		if (now - lastRequestTimeRef.current < 1000) {
+			return; // 1.5초 이내 재요청 방지
+		}
+
+		if (!selectedCenter?.centerId) {
+			toast("센터를 먼저 선택해주세요");
+			return;
+		}
+
+		lastRequestTimeRef.current = now;
+		setIsLoadingNames(true);
+		setSuggestedNames([]);
+		try {
+			const names = await fetchNameSuggestionsAPI(
+				Number(selectedCenter?.centerId),
+			);
+			setSuggestedNames(names);
+		} catch (e) {
+			toast.error("이름 추천 중 오류 발생");
+		} finally {
+			setIsLoadingNames(false);
+		}
+	};
 
 	const { data: addressBook } = useQuery<AddressBook[], Error>({
 		queryKey: ["addressBooks", centerId],
@@ -45,8 +78,6 @@ export default function DogRegisterPage() {
 		enabled: !!centerId,
 	});
 	const navigate = useNavigate();
-
-	const { selectedCenter } = useCenterStore();
 
 	const [ocrDetectedFields, setOcrDetectedFields] = useState<{
 		gender?: Gender;
@@ -496,7 +527,7 @@ export default function DogRegisterPage() {
 						>
 							아이 이름 <span className="text-red-500">*</span>
 						</label>
-						<div className="flex items-center gap-2">
+						<div className="flex flex-col w-full items-center gap-2">
 							<input
 								id="dog-name"
 								value={form.name}
@@ -504,17 +535,47 @@ export default function DogRegisterPage() {
 									setForm({ ...form, name: e.target.value })
 								}
 								className={cn(
-									"border text-grayText bg-white px-3 py-2 flex-1 rounded-lg text-base",
+									"w-full border text-grayText bg-white px-3 py-2 flex-1 rounded-lg text-base",
 									getHighlightClass("name"),
 								)}
 								placeholder="이름을 입력하세요"
 							/>
-							{/* <button
-								type="button"
-								className="px-3 py-2 bg-gradient-to-r from-green-400 to-blue-800 text-white rounded-lg text-xs whitespace-nowrap"
-							>
-								AI 생성
-							</button> */}
+							<span className="flex justify-start w-full gap-2">
+								<button
+									type="button"
+									onClick={handleSuggestNames}
+									className="px-3 py-2 bg-male text-white rounded-lg text-xs whitespace-nowrap disabled:opacity-50 flex items-center gap-1.5"
+									disabled={isLoadingNames}
+								>
+									이름 추천
+								</button>
+								<div className="flex gap-2 flex-wrap">
+									<AnimatePresence>
+										{suggestedNames.map((name, index) => (
+											<motion.button
+												key={name}
+												type="button"
+												onClick={() =>
+													setForm({ ...form, name })
+												}
+												className="px-3 py-1.5 bg-blue-100 rounded-md hover:bg-blue-200 text-sm transition-all"
+												initial={{ y: 10, opacity: 0 }}
+												animate={{ y: 0, opacity: 1 }}
+												transition={{
+													duration: 0.3,
+													delay: index * 0.1,
+													ease: "easeOut",
+												}}
+											>
+												{name}
+											</motion.button>
+										))}
+									</AnimatePresence>
+								</div>
+							</span>
+							<p className="text-xs text-gray-500 w-full flex items-center gap-1.5">
+								센터내 중복되지 않는 이름을 추천해드립니다
+							</p>
 						</div>
 					</div>
 

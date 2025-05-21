@@ -134,7 +134,11 @@ export default function EmergencyListItem({
 
 	const renderProgress = () => {
 		if (type === EmergencyType.VOLUNTEER && target) {
-			return <div className="flex-1 text-center">{target} 명</div>;
+			return (
+				<div className="flex items-center flex-1 text-center text-sm text-male">
+					{target} 명 모집
+				</div>
+			);
 		}
 		return null;
 	};
