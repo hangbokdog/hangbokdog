@@ -63,6 +63,29 @@ const formatDate = (dateStr: string): string => {
 	return new Date(dateStr).toISOString().split("T")[0];
 };
 
+// URL을 감지하고 링크로 변환하는 함수
+const convertUrlsToLinks = (text: string) => {
+	const urlRegex = /(https?:\/\/[^\s]+)/g;
+	const parts = text.split(urlRegex);
+
+	return parts.map((part, index) => {
+		if (part.match(urlRegex)) {
+			return (
+				<a
+					key={index}
+					href={part}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-blue-600 hover:text-blue-800 underline"
+				>
+					{part}
+				</a>
+			);
+		}
+		return part;
+	});
+};
+
 const formatAge = (age: number | null | undefined): string => {
 	if (age == null || Number.isNaN(age) || age < 0) return "알 수 없음";
 	if (age >= 12) return `${Math.floor(age / 12)}살`;
@@ -554,7 +577,9 @@ export default function DogDetailPage() {
 									}
 								/>
 							) : (
-								data.description
+								<div className="whitespace-pre-wrap">
+									{convertUrlsToLinks(data.description)}
+								</div>
 							)
 						}
 					/>
