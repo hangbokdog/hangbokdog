@@ -32,9 +32,9 @@ export default function RouteBackHeader({
 			{sub && (
 				<span className="text-sm font-medium text-blueGray">{sub}</span>
 			)}
-			<div className="absolute right-2.5">
+			{/* <div className="absolute right-2.5">
 				<FloatingNotificationIcon isHeader={true} />
-			</div>
+			</div> */}
 		</header>
 	);
 }
