@@ -12,4 +12,6 @@ public interface AddressBookJpaRepositoryCustom {
 	List<LocationInfo> getLocationInfosIn(List<Long> locationIds);
 
     List<Long> findAllVolunteerEventIdsByCenterId(Long centerId);
+
+	List<Long> findMonthlyVolunteerEventIdsByCenterId(Long centerId);
 }

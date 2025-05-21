@@ -3,6 +3,7 @@ package com.ssafy.hangbokdog.center.addressbook.domain.repository;
 import static com.ssafy.hangbokdog.center.addressbook.domain.QAddressBook.*;
 import static com.ssafy.hangbokdog.volunteer.event.domain.QVolunteerEvent.volunteerEvent;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -56,6 +57,18 @@ public class AddressBookJpaRepositoryCustomImpl implements AddressBookJpaReposit
 		).from(addressBook)
 				.innerJoin(volunteerEvent).on(volunteerEvent.addressBookId.eq(addressBook.id))
 				.where(addressBook.centerId.eq(centerId))
+				.fetch();
+	}
+
+	@Override
+	public List<Long> findMonthlyVolunteerEventIdsByCenterId(Long centerId) {
+		return queryFactory.select(
+						volunteerEvent.id
+				).from(addressBook)
+				.innerJoin(volunteerEvent).on(volunteerEvent.addressBookId.eq(addressBook.id))
+				.where(addressBook.centerId.eq(centerId).and(
+						volunteerEvent.createdAt.after(LocalDateTime.now().minusMonths(1)))
+				)
 				.fetch();
 	}
 }

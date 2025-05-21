@@ -40,4 +40,8 @@ public class AddressBookRepository {
 	public List<Long> findAllVolunteerEventIdsByCenterId(Long centerId) {
 		return addressBookJpaRepository.findAllVolunteerEventIdsByCenterId(centerId);
 	}
+
+	public List<Long> findMonthlyVolunteerEventIdsByCenterId(Long centerId) {
+		return addressBookJpaRepository.findMonthlyVolunteerEventIdsByCenterId(centerId);
+	}
 }

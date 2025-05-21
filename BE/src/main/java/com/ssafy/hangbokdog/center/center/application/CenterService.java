@@ -345,19 +345,18 @@ public class CenterService {
 				.withDayOfMonth(LocalDate.now().minusMonths(1).lengthOfMonth())
 				.atTime(23, 59, 59);
 
-		LocalDateTime monthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
-		LocalDateTime monthEnd = LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()).atTime(23, 59, 59);
+		var volunteerEventIds = addressBookRepository.findMonthlyVolunteerEventIdsByCenterId(centerId);
+		int volunteerParticipantCount = volunteerApplicationRepository
+				.getTotalCompletedApplicationCountByVolunteerEventIdsIn(volunteerEventIds);
 
 		Integer totalDogCount = dogRepository.getDogCount(centerId);
 		Integer lastMonthDogCount = dogRepository.getLastMonthDogCount(centerId, lastMonthEnd);
 		Integer fosterCount = dogRepository.getFosteredDogCount(centerId);
 		Integer lastMonthFosterCount = fosterRepository.getLastMonthFosterCount(centerId, lastMonthEnd);
 		Integer adoptionCount = adoptionRepository.getAdoptionCount(centerId);
-		Long monthlyDonationAmount = donationHistoryRepository.getMonthlyDonationAmountByCenterId(
-				centerId,
-				monthStart,
-				monthEnd
-		);
+
+
+
 		Integer hospitalCount = dogRepository.getHospitalDogCount(centerId);
 		Integer protectedCount = dogRepository.getProtectedDogCount(centerId);
 		Long centerMileageAmount = donationAccountRepository.getDonationAccountBalance(centerId);
@@ -368,7 +367,7 @@ public class CenterService {
 				fosterCount,
 				lastMonthFosterCount,
 				adoptionCount,
-				monthlyDonationAmount,
+				volunteerParticipantCount,
 				hospitalCount,
 				protectedCount,
 				centerMileageAmount

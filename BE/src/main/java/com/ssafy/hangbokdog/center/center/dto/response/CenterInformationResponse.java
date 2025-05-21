@@ -6,7 +6,7 @@ public record CenterInformationResponse(
 	Integer fosterCount,
 	Integer lastMonthFosterCount,
 	Integer adoptionCount,
-	Long monthlyDonationAmount,
+	Integer monthlyVolunteerParticipantCount,
 	Integer hospitalCount,
 	Integer protectedDog,
 	Long centerMileageAmount
