@@ -112,6 +112,17 @@ export const deleteNotification = async (notificationId: number) => {
 	}
 };
 
+// 모든 알림을 삭제하는 API
+export const deleteAllNotifications = async () => {
+	try {
+		const response = await localAxios.delete("/notifications");
+		return response.data;
+	} catch (error) {
+		console.error("모든 알림 삭제 실패:", error);
+		throw error;
+	}
+};
+
 // 이전 API 함수들 (추후 삭제 예정)
 
 // 이전 알림 목록을 가져오는 API
