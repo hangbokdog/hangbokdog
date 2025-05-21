@@ -1,7 +1,13 @@
 import logo from "@/assets/logo.png";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { BuildingIcon, ChevronRightIcon, X, Trash2 } from "lucide-react";
+import {
+	BuildingIcon,
+	ChevronRightIcon,
+	X,
+	Trash2,
+	CheckCircle,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "@/lib/store/authStore";
 import useCenterStore from "@/lib/store/centerStore";
@@ -43,6 +49,7 @@ export default function Header() {
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
+		markAllAsRead,
 	} = useNotification();
 
 	const { mutate: registerCenter } = useMutation({
@@ -318,6 +325,11 @@ export default function Header() {
 		localStorage.setItem("notification_permission_requested", "true");
 	};
 
+	// 전체 알림 읽음 처리 함수
+	const handleMarkAllAsRead = () => {
+		markAllAsRead();
+	};
+
 	return (
 		<>
 			<header className="w-full bg-white/95 backdrop-blur-sm shadow-sm z-30 safe-top">
@@ -425,16 +437,30 @@ export default function Header() {
 										</h3>
 										<div className="flex items-center gap-2">
 											{notifications.length > 0 && (
-												<button
-													type="button"
-													className="p-1 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100"
-													onClick={
-														handleClearAllNotifications
-													}
-													title="전체 삭제"
-												>
-													<Trash2 size={16} />
-												</button>
+												<>
+													<button
+														type="button"
+														className="p-1 text-gray-500 hover:text-blue-500 rounded-full hover:bg-gray-100"
+														onClick={
+															handleMarkAllAsRead
+														}
+														title="모두 읽음"
+													>
+														<CheckCircle
+															size={16}
+														/>
+													</button>
+													<button
+														type="button"
+														className="p-1 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100"
+														onClick={
+															handleClearAllNotifications
+														}
+														title="전체 삭제"
+													>
+														<Trash2 size={16} />
+													</button>
+												</>
 											)}
 											<button
 												type="button"
@@ -479,11 +505,13 @@ export default function Header() {
 																	)
 																}
 															>
-																<div
-																	className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(notification.type)}`}
-																/>
+																{notification.isRead ? (
+																	<div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" />
+																) : (
+																	<div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
+																)}
 																<div className="flex-1 min-w-0">
-																	<h4 className="font-medium text-gray-900 text-sm">
+																	<h4 className="font-medium text-gray-900 text-sm line-clamp-1">
 																		{
 																			notification.title
 																		}
@@ -503,7 +531,14 @@ export default function Header() {
 																		notification.type ===
 																			"EMERGENCY") && (
 																		<div className="mt-1.5">
-																			<span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+																			<span
+																				className={`text-xs ${
+																					notification.type ===
+																					"VOLUNTEER"
+																						? "bg-green-600"
+																						: "bg-red"
+																				} text-white px-2 py-0.5 rounded-full`}
+																			>
 																				{notification.type ===
 																				"VOLUNTEER"
 																					? "봉사활동"
@@ -522,7 +557,7 @@ export default function Header() {
 															</button>
 															<button
 																type="button"
-																className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
+																className="absolute right-2 bottom-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
 																onClick={(e) =>
 																	handleDeleteNotification(
 																		e,

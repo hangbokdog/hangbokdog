@@ -2,7 +2,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { useNotification } from "@/lib/hooks/useNotification";
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
-import { X, Trash2 } from "lucide-react";
+import { X, Trash2, CheckCircle } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useMatches, useNavigate } from "react-router-dom";
@@ -28,6 +28,7 @@ export default function FloatingNotificationIcon({
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
+		markAllAsRead,
 	} = useNotification();
 	const [showFloatingIcon, setShowFloatingIcon] = useState(false);
 	const matches = useMatches();
@@ -99,6 +100,11 @@ export default function FloatingNotificationIcon({
 		toast.success("모든 알림이 삭제되었습니다.");
 	};
 
+	// 전체 알림 읽음 처리 함수
+	const handleMarkAllAsRead = () => {
+		markAllAsRead();
+	};
+
 	// 무한 스크롤 처리 함수
 	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
 		const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
@@ -154,14 +160,26 @@ export default function FloatingNotificationIcon({
 							<h3 className="font-medium text-gray-900">알림</h3>
 							<div className="flex items-center gap-2">
 								{notifications.length > 0 && (
-									<button
-										type="button"
-										className="p-1 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100"
-										onClick={handleClearAllNotifications}
-										title="전체 삭제"
-									>
-										<Trash2 size={16} />
-									</button>
+									<>
+										<button
+											type="button"
+											className="p-1 text-gray-500 hover:text-blue-500 rounded-full hover:bg-gray-100"
+											onClick={handleMarkAllAsRead}
+											title="모두 읽음"
+										>
+											<CheckCircle size={16} />
+										</button>
+										<button
+											type="button"
+											className="p-1 text-gray-500 hover:text-red-500 rounded-full hover:bg-gray-100"
+											onClick={
+												handleClearAllNotifications
+											}
+											title="전체 삭제"
+										>
+											<Trash2 size={16} />
+										</button>
+									</>
 								)}
 								<button
 									type="button"
@@ -204,11 +222,13 @@ export default function FloatingNotificationIcon({
 														)
 													}
 												>
-													<div
-														className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${getNotificationBadgeColor(notification.type)}`}
-													/>
+													{notification.isRead ? (
+														<div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" />
+													) : (
+														<div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 bg-red-500" />
+													)}
 													<div className="flex-1 min-w-0">
-														<h4 className="font-medium text-gray-900 text-sm">
+														<h4 className="font-medium text-gray-900 text-sm line-clamp-1">
 															{notification.title}
 														</h4>
 														<p className="text-gray-600 text-xs mt-1 line-clamp-2">
@@ -226,7 +246,14 @@ export default function FloatingNotificationIcon({
 															notification.type ===
 																"EMERGENCY") && (
 															<div className="mt-1.5">
-																<span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full">
+																<span
+																	className={`text-xs ${
+																		notification.type ===
+																		"VOLUNTEER"
+																			? "bg-green-600"
+																			: "bg-red"
+																	} text-white px-2 py-0.5 rounded-full`}
+																>
 																	{notification.type ===
 																	"VOLUNTEER"
 																		? "봉사활동"
@@ -245,7 +272,7 @@ export default function FloatingNotificationIcon({
 												</button>
 												<button
 													type="button"
-													className="absolute right-2 top-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
+													className="absolute right-2 bottom-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-gray-200 bg-gray-100 rounded-full transition-colors"
 													onClick={(e) =>
 														handleDeleteNotification(
 															e,
