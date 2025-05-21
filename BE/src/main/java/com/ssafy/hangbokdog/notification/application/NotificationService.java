@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.hangbokdog.common.exception.BadRequestException;
 import com.ssafy.hangbokdog.common.exception.ErrorCode;
 import com.ssafy.hangbokdog.common.model.PageInfo;
+import com.ssafy.hangbokdog.member.domain.Member;
 import com.ssafy.hangbokdog.notification.domain.Notification;
 import com.ssafy.hangbokdog.notification.domain.repository.NotificationRepository;
 import com.ssafy.hangbokdog.notification.dto.request.NotificationReadRequest;
@@ -37,5 +38,10 @@ public class NotificationService {
 		}
 
 		notificationRepository.delete(notificationId);
+	}
+
+	@Transactional
+	public void deleteNotifications(Member member) {
+		notificationRepository.deleteNotificationsByReceiverId(member.getId());
 	}
 }

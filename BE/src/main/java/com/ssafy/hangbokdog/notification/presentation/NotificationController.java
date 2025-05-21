@@ -51,4 +51,12 @@ public class NotificationController {
 		notificationService.deleteNotification(member.getId(), notificationId);
 		return ResponseEntity.noContent().build();
 	}
+
+	@DeleteMapping
+	public ResponseEntity<Void> deleteNotifications(
+			@AuthMember Member member
+	) {
+		notificationService.deleteNotifications(member);
+		return ResponseEntity.noContent().build();
+	}
 }

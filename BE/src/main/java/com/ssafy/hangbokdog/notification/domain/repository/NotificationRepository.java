@@ -45,4 +45,8 @@ public class NotificationRepository extends BaseEntity {
 	public void delete(Long notificationId) {
 		notificationJpaRepository.deleteById(notificationId);
 	}
+
+	public void deleteNotificationsByReceiverId(Long memberId) {
+		notificationJpaRepository.deleteAllByReceiverId(memberId);
+	}
 }
