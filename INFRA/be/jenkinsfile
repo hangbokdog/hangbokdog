@@ -1,0 +1,120 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = credentials('docker-registry-credentials')
+        APPLICATION_YML = credentials('application-yml')
+        ENV_FILE = credentials('env-file')
+        JAVA_HOME = '/opt/java/openjdk'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Setup Environment') {
+            steps {
+                dir('BE') {
+                    withCredentials([
+                    file(credentialsId: 'application-yml', variable: 'APPLICATION_YML'),
+                    file(credentialsId: 'fcm-json', variable: 'FCM_JSON')
+                    ]) {
+                        sh '''
+                          mkdir -p src/main/resources
+                          chmod -R 700 src/main/resources
+                          cp $FCM_JSON src/main/resources/hangbokfog-firebase-adminsdk-fbsvc-86cdf23c75.json
+                          cp $APPLICATION_YML src/main/resources/application.yml
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('BE') {
+                    sh '''
+                        chmod +x ./gradlew
+                        ./gradlew clean build
+                    '''
+                }
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                dir('BE') {
+                    script {
+                        def dockerImage = "${DOCKER_REGISTRY_USR}/backend:${BUILD_NUMBER}"
+                        withCredentials([usernamePassword(
+                            credentialsId: 'docker-registry-credentials',
+                            usernameVariable: 'DOCKER_USER',
+                            passwordVariable: 'DOCKER_PASS'
+                        )]) {
+                        def imageTag = "mjinsu/backend:${BUILD_NUMBER}"
+                        sh """
+                            echo '$DOCKER_PASS' | docker login -u '$DOCKER_USER' --password-stdin
+                            docker build -t ${imageTag} -f docker/Dockerfile .
+                            docker push ${imageTag}
+
+                        """
+                    }
+                }
+            }
+        }
+      }
+
+        stage('Deploy') {
+            steps {
+                dir('BE') {
+                    withCredentials([file(credentialsId: 'env-file', variable: 'ENV_FILE')]) {
+                        sh """
+                            mkdir -p docker
+                            chmod 755 docker
+
+                            cp \$ENV_FILE docker/.env
+                            chmod 644 docker/.env
+
+                            cd docker
+                            docker-compose -f docker-compose.yml down
+
+                            BUILD_NUMBER=${BUILD_NUMBER} docker-compose -f docker-compose.yml up -d
+
+                            docker-compose ps backend1
+                            docker-compose ps backend2
+                            docker-compose ps backend3
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Docker Test') {
+            steps {
+                sh '''
+                    docker --version
+                    docker ps
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            dir('BE') {
+                sh '''
+                    rm -f src/main/resources/application-prod.yml
+                    rm -f src/main/resources/application-oauth.yml
+                    rm -f docker/.env
+
+                    docker container prune -f
+
+                    docker image prune -f
+                '''
+            }
+        }
+    }
+}

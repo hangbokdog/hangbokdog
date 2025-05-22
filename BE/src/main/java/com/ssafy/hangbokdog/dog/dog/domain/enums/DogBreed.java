@@ -1,0 +1,22 @@
+package com.ssafy.hangbokdog.dog.dog.domain.enums;
+
+public enum DogBreed {
+	JINDO,
+	POODLE,
+	MALTESE,
+	SHIH_TZU,
+	GOLDEN_RETRIEVER,
+	LABRADOR,
+	BEAGLE,
+	BICHON,
+	MIXED,
+	DACHSHUND,
+	SCHNAUZER,
+	SPITZ,
+	YORKSHIRE_TERRIER,
+	COCKER_SPANIEL,
+	PEKINGESE,
+	POMERANIAN,
+	CHIHUAHUA,
+	OTHER
+}
