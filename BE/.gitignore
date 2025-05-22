@@ -39,3 +39,5 @@ out/
 *.yml
 .env
 hangbokfog-firebase-adminsdk-fbsvc-86cdf23c75.json
+src/main/resources/hangbokfog-firebase-adminsdk-fbsvc-86cdf23c75.json
+
