@@ -7,10 +7,18 @@ import {
 	type EmergencyApplicant,
 	fetchRecruitedEmergenciesAPI,
 } from "@/api/emergency";
-import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, Loader2 } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
 import { memo } from "react";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
 const ApplicantItem = memo(
 	({ applicant }: { applicant: EmergencyApplicant }) => (
@@ -36,6 +44,10 @@ const ApplicantItem = memo(
 
 export default function RecruiteEmergencyList() {
 	const [expandedId, setExpandedId] = useState<number | null>(null);
+	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [emergencyToDelete, setEmergencyToDelete] = useState<number | null>(
+		null,
+	);
 	const queryClient = useQueryClient();
 	const { selectedCenter } = useCenterStore();
 
@@ -44,8 +56,7 @@ export default function RecruiteEmergencyList() {
 		queryFn: () =>
 			fetchRecruitedEmergenciesAPI(Number(selectedCenter?.centerId)),
 		enabled: !!selectedCenter?.centerId,
-		refetchOnMount: true,
-		staleTime: 5 * 60 * 1000, // 5 minutes
+		refetchOnWindowFocus: true,
 	});
 	useEffect(() => {
 		for (const emergency of recruitedData) {
@@ -56,7 +67,7 @@ export default function RecruiteEmergencyList() {
 		}
 	}, [recruitedData]);
 
-	const { mutate: deletePost } = useMutation({
+	const { mutate: deletePost, isPending: isDeleting } = useMutation({
 		mutationFn: (emergencyId: number) =>
 			deleteEmergencyAPI(emergencyId, Number(selectedCenter?.centerId)),
 		onSuccess: () => {
@@ -64,6 +75,8 @@ export default function RecruiteEmergencyList() {
 				queryKey: ["recruited-emergency-posts"],
 			});
 			toast.success("긴급 요청이 삭제되었습니다.");
+			setShowDeleteDialog(false);
+			setEmergencyToDelete(null);
 		},
 		onError: () => {
 			toast.error("긴급 요청 삭제 중 오류가 발생했습니다.");
@@ -71,7 +84,14 @@ export default function RecruiteEmergencyList() {
 	});
 
 	const handleDelete = (emergencyId: number) => {
-		deletePost(emergencyId);
+		setEmergencyToDelete(emergencyId);
+		setShowDeleteDialog(true);
+	};
+
+	const confirmDelete = () => {
+		if (emergencyToDelete) {
+			deletePost(emergencyToDelete);
+		}
 	};
 
 	const handleExpand = (emergencyId: number) => {
@@ -87,100 +107,143 @@ export default function RecruiteEmergencyList() {
 	}
 
 	return (
-		<div className="flex flex-col rounded-xl px-2 shadow-custom-sm bg-white w-full py-4">
-			{recruitedData.length === 0 ? (
-				<div className="flex flex-col items-center justify-center py-12 text-gray-400">
-					<p className="text-sm">데이터가 없습니다</p>
-				</div>
-			) : (
-				<div className="space-y-3">
-					{recruitedData.map((emergency) => (
-						<div
-							key={emergency.emergencyId}
-							className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-						>
-							<button
-								type="button"
-								className="w-full flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 text-left transition-colors"
-								onClick={() =>
-									handleExpand(emergency.emergencyId)
-								}
-							>
-								<div className="flex items-center gap-4">
-									<div className="flex flex-col">
-										<span className="font-semibold text-gray-900">
-											{emergency.title}
-										</span>
-										<div className="flex items-center gap-2 mt-0.5">
-											<span className="text-sm text-gray-500">
-												신청자{" "}
-												{emergency.applicants.length}명
-											</span>
-											<span className="text-gray-300">
-												•
-											</span>
-											<span className="text-sm text-gray-500">
-												{new Date(
-													emergency.emergencyDate,
-												).toLocaleDateString()}
-											</span>
-										</div>
-									</div>
-								</div>
-								<div className="flex items-center gap-3">
-									<DdayTag
-										dday={calculateDDay(emergency.dueDate)}
-									/>
-									{expandedId === emergency.emergencyId ? (
-										<ChevronUp className="w-5 h-5 text-gray-400" />
-									) : (
-										<ChevronDown className="w-5 h-5 text-gray-400" />
-									)}
-								</div>
-							</button>
+		<>
+			<div className="flex flex-col rounded-xl px-2 shadow-custom-sm bg-white w-full py-4">
+				{recruitedData.length === 0 ? (
+					<div className="flex flex-col items-center justify-center py-12 text-gray-400">
+						<p className="text-sm">데이터가 없습니다</p>
+					</div>
+				) : (
+					<div className="space-y-3">
+						{recruitedData.map((emergency) => (
 							<div
-								className={`border-t border-gray-200 bg-white overflow-hidden transition-all duration-300 ${
-									expandedId === emergency.emergencyId
-										? "max-h-[1000px]"
-										: "max-h-0"
-								}`}
+								key={emergency.emergencyId}
+								className="border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
 							>
-								<div className="p-4">
-									<div className="flex min-h-20 border-b pb-2 mb-2">
-										<div className="flex-1 text-base text-grayText border-gray-200">
-											{emergency.content}
-										</div>
-										<div className="flex items-start justify-end">
-											<button
-												type="button"
-												onClick={() =>
-													handleDelete(
-														emergency.emergencyId,
-													)
-												}
-												className="flex items-center text-sm font-medium text-blueGray hover:bg-red-50 rounded-lg transition-colors"
-											>
-												<Trash2 className="w-4 h-4" />
-											</button>
+								<button
+									type="button"
+									className="w-full flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 text-left transition-colors"
+									onClick={() =>
+										handleExpand(emergency.emergencyId)
+									}
+								>
+									<div className="flex items-center gap-4">
+										<div className="flex flex-col">
+											<span className="font-semibold text-gray-900">
+												{emergency.title}
+											</span>
+											<div className="flex items-center gap-2 mt-0.5">
+												<span className="text-sm text-gray-500">
+													신청자{" "}
+													{
+														emergency.applicants
+															.length
+													}
+													명
+												</span>
+												<span className="text-gray-300">
+													•
+												</span>
+												<span className="text-sm text-gray-500">
+													{new Date(
+														emergency.emergencyDate,
+													).toLocaleDateString()}
+												</span>
+											</div>
 										</div>
 									</div>
-									<div className="space-y-2">
-										{emergency.applicants.map(
-											(applicant) => (
-												<ApplicantItem
-													key={applicant.memberId}
-													applicant={applicant}
-												/>
-											),
+									<div className="flex items-center gap-3">
+										<DdayTag
+											dday={calculateDDay(
+												emergency.dueDate,
+											)}
+										/>
+										{expandedId ===
+										emergency.emergencyId ? (
+											<ChevronUp className="w-5 h-5 text-gray-400" />
+										) : (
+											<ChevronDown className="w-5 h-5 text-gray-400" />
 										)}
+									</div>
+								</button>
+								<div
+									className={`border-t border-gray-200 bg-white overflow-hidden transition-all duration-300 ${
+										expandedId === emergency.emergencyId
+											? "max-h-[1000px]"
+											: "max-h-0"
+									}`}
+								>
+									<div className="p-4">
+										<div className="flex min-h-20 border-b pb-2 mb-2">
+											<div className="flex-1 text-base text-grayText border-gray-200">
+												{emergency.content}
+											</div>
+											<div className="flex items-start justify-end">
+												<button
+													type="button"
+													onClick={() =>
+														handleDelete(
+															emergency.emergencyId,
+														)
+													}
+													className="flex items-center text-sm font-medium text-blueGray hover:bg-red-50 rounded-lg transition-colors"
+												>
+													<Trash2 className="w-4 h-4" />
+												</button>
+											</div>
+										</div>
+										<div className="space-y-2">
+											{emergency.applicants.map(
+												(applicant) => (
+													<ApplicantItem
+														key={applicant.memberId}
+														applicant={applicant}
+													/>
+												),
+											)}
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					))}
-				</div>
-			)}
-		</div>
+						))}
+					</div>
+				)}
+			</div>
+
+			<Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>긴급 요청 삭제</DialogTitle>
+						<DialogDescription>
+							정말로 이 긴급 요청을 삭제하시겠습니까?
+							<br />
+							삭제된 긴급 요청은 복구할 수 없습니다.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<button
+							type="button"
+							className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+							onClick={() => setShowDeleteDialog(false)}
+						>
+							취소
+						</button>
+						<button
+							type="button"
+							className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+							onClick={confirmDelete}
+							disabled={isDeleting}
+						>
+							{isDeleting ? (
+								<Loader2 className="w-4 h-4 animate-spin" />
+							) : (
+								"삭제"
+							)}
+						</button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</>
 	);
 }
 
