@@ -9,6 +9,8 @@ public record RecruitedEmergencyResponse(
 		Long emergencyId,
 		List<EmergencyApplicant> applicants,
 		String emergencyDate,
-		LocalDateTime dueDate
+		LocalDateTime dueDate,
+		String title,
+		String content
 ) {
 }

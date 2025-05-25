@@ -385,7 +385,9 @@ public class EmergencyService {
 						info.emergencyId(),
 						groupedApplicants.getOrDefault(info.emergencyId(), List.of()),
 						info.dueDate().toLocalDate().toString(), // emergencyDate
-						info.dueDate()
+						info.dueDate(),
+						info.title(),
+						info.content()
 				))
 				.toList();
 
