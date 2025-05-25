@@ -127,7 +127,7 @@ public class EmergencyJpaRepositoryCustomImpl implements EmergencyJpaRepositoryC
 				.leftJoin(member).on(emergency.authorId.eq(member.id))
 				.where(
 						emergency.centerId.eq(centerId),
-						emergency.status.ne(EmergencyStatus.RECRUITED),
+						emergency.status.eq(EmergencyStatus.RECRUITED),
 						emergency.dueDate.goe(now)
 				)
 				.orderBy(emergency.dueDate.asc())
