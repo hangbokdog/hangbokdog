@@ -163,3 +163,14 @@ export const VolunteerApplicationStatus = {
 
 export type VolunteerApplicationStatus =
 	(typeof VolunteerApplicationStatus)[keyof typeof VolunteerApplicationStatus];
+
+export interface SlotProps {
+	id: number;
+	date: string;
+	slotType: "MORNING" | "AFTERNOON";
+	startTime: string;
+	endTime: string;
+	volunteerDate: string;
+	capacity: number;
+	applicationCount: number;
+}
