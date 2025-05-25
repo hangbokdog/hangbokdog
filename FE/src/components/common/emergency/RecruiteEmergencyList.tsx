@@ -1,14 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import useCenterStore from "@/lib/store/centerStore";
 import {
 	deleteEmergencyAPI,
+	type EmergencyApplicant,
 	fetchRecruitedEmergenciesAPI,
 } from "@/api/emergency";
-import { ChevronDown, ChevronUp, Trash2, Users } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
+import { memo } from "react";
+
+const ApplicantItem = memo(
+	({ applicant }: { applicant: EmergencyApplicant }) => (
+		<div className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-colors">
+			<span>
+				<Avatar className="w-6 h-6">
+					<AvatarImage
+						src={applicant.profileImage}
+						className="object-cover"
+					/>
+					<AvatarFallback>{applicant.name}</AvatarFallback>
+				</Avatar>
+			</span>
+			<div className="flex flex-col">
+				<span className="font-medium text-gray-900">
+					{applicant.nickName}
+				</span>
+				<span className="text-sm text-gray-500">{applicant.phone}</span>
+			</div>
+		</div>
+	),
+);
 
 export default function RecruiteEmergencyList() {
 	const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -21,8 +45,16 @@ export default function RecruiteEmergencyList() {
 			fetchRecruitedEmergenciesAPI(Number(selectedCenter?.centerId)),
 		enabled: !!selectedCenter?.centerId,
 		refetchOnMount: true,
-		staleTime: 0,
+		staleTime: 5 * 60 * 1000, // 5 minutes
 	});
+	useEffect(() => {
+		for (const emergency of recruitedData) {
+			for (const applicant of emergency.applicants) {
+				const img = new Image();
+				img.src = applicant.profileImage;
+			}
+		}
+	}, [recruitedData]);
 
 	const { mutate: deletePost } = useMutation({
 		mutationFn: (emergencyId: number) =>
@@ -77,7 +109,7 @@ export default function RecruiteEmergencyList() {
 								<div className="flex items-center gap-4">
 									<div className="flex flex-col">
 										<span className="font-semibold text-gray-900">
-											긴급 요청 #{emergency.emergencyId}
+											{emergency.title}
 										</span>
 										<div className="flex items-center gap-2 mt-0.5">
 											<span className="text-sm text-gray-500">
@@ -106,48 +138,19 @@ export default function RecruiteEmergencyList() {
 									)}
 								</div>
 							</button>
-							{expandedId === emergency.emergencyId && (
-								<div className="border-t border-gray-200 bg-gray-50">
-									<div className="p-4">
-										<div className="space-y-2">
-											{emergency.applicants.map(
-												(applicant) => (
-													<div
-														key={applicant.memberId}
-														className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-100 hover:border-gray-200 transition-colors"
-													>
-														<span>
-															<Avatar className="w-6 h-6">
-																<AvatarImage
-																	src={
-																		applicant.profileImage
-																	}
-																	className="object-cover"
-																/>
-																<AvatarFallback>
-																	{
-																		applicant.name
-																	}
-																</AvatarFallback>
-															</Avatar>
-														</span>
-														<div className="flex flex-col">
-															<span className="font-medium text-gray-900">
-																{
-																	applicant.nickName
-																}
-															</span>
-															<span className="text-sm text-gray-500">
-																{
-																	applicant.phone
-																}
-															</span>
-														</div>
-													</div>
-												),
-											)}
+							<div
+								className={`border-t border-gray-200 bg-white overflow-hidden transition-all duration-300 ${
+									expandedId === emergency.emergencyId
+										? "max-h-[1000px]"
+										: "max-h-0"
+								}`}
+							>
+								<div className="p-4">
+									<div className="flex min-h-20 border-b pb-2 mb-2">
+										<div className="flex-1 text-base text-grayText border-gray-200">
+											{emergency.content}
 										</div>
-										<div className="mt-4 flex justify-end">
+										<div className="flex items-start justify-end">
 											<button
 												type="button"
 												onClick={() =>
@@ -155,15 +158,24 @@ export default function RecruiteEmergencyList() {
 														emergency.emergencyId,
 													)
 												}
-												className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+												className="flex items-center text-sm font-medium text-blueGray hover:bg-red-50 rounded-lg transition-colors"
 											>
 												<Trash2 className="w-4 h-4" />
-												삭제
 											</button>
 										</div>
 									</div>
+									<div className="space-y-2">
+										{emergency.applicants.map(
+											(applicant) => (
+												<ApplicantItem
+													key={applicant.memberId}
+													applicant={applicant}
+												/>
+											),
+										)}
+									</div>
 								</div>
-							)}
+							</div>
 						</div>
 					))}
 				</div>

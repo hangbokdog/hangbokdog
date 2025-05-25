@@ -140,6 +140,8 @@ export interface RecruitedEmergencyResponse {
 	applicants: EmergencyApplicant[];
 	emergencyDate: string;
 	dueDate: string;
+	title: string;
+	content: string;
 }
 
 export const fetchRecruitedEmergenciesAPI = async (

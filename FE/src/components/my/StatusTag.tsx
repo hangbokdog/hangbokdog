@@ -7,7 +7,8 @@ interface StatusTagProps {
 		| "APPLIED"
 		| "UNDER_REVIEW"
 		| "REJECTED"
-		| "ACCEPTED";
+		| "ACCEPTED"
+		| "FOSTERING";
 	className?: string;
 }
 
@@ -20,6 +21,7 @@ export default function StatusTag({ status, className = "" }: StatusTagProps) {
 		APPLIED: { text: "신청완료", bgColor: "bg-blue-500" },
 		UNDER_REVIEW: { text: "검토중", bgColor: "bg-blue-500" },
 		ACCEPTED: { text: "입양완료", bgColor: "bg-green-500" },
+		FOSTERING: { text: "입양중", bgColor: "bg-green-500" },
 	} as const;
 
 	const { text, bgColor } = statusConfig[status];

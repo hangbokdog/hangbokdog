@@ -61,11 +61,6 @@ export default function EmergencyPage() {
 							onClick={() => setTab("applications")}
 						>
 							모집 완료
-							{applicationCount > 0 && (
-								<span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs font-medium bg-red-100 text-red-600 rounded-full">
-									{applicationCount}
-								</span>
-							)}
 						</button>
 					</div>
 				</div>
