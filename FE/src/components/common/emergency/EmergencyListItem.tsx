@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
 	ChevronUp,
 	ChevronDown,
@@ -7,6 +7,7 @@ import {
 	Check,
 	X,
 	Trash2,
+	CheckCircle2,
 } from "lucide-react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
@@ -16,7 +17,7 @@ import {
 	deleteEmergencyAPI,
 } from "@/api/emergency";
 import useCenterStore from "@/lib/store/centerStore";
-import { EmergencyType } from "@/types/emergencyRegister";
+import type { EmergencyType } from "@/types/emergencyRegister";
 import { toast } from "sonner";
 import {
 	Dialog,
@@ -56,8 +57,15 @@ export default function EmergencyListItem({
 	onExpand,
 }: EmergencyListItemProps) {
 	const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+	const [isCompleted, setIsCompleted] = useState(false);
 	const { selectedCenter } = useCenterStore();
 	const queryClient = useQueryClient();
+
+	useEffect(() => {
+		if (target !== undefined && current !== undefined) {
+			setIsCompleted(current >= target);
+		}
+	}, [current, target]);
 
 	const {
 		data: applications = [],
@@ -85,6 +93,16 @@ export default function EmergencyListItem({
 			queryClient.invalidateQueries({
 				queryKey: ["emergency-applications", emergencyId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["emergency-posts"],
+			});
+			if (
+				target !== undefined &&
+				current !== undefined &&
+				current + 1 >= target
+			) {
+				onExpand(emergencyId);
+			}
 		},
 	});
 
@@ -133,10 +151,10 @@ export default function EmergencyListItem({
 	};
 
 	const renderProgress = () => {
-		if (type === EmergencyType.VOLUNTEER && target) {
+		if (target !== undefined && target !== 0) {
 			return (
 				<div className="flex items-center flex-1 text-center text-sm text-male">
-					{target} 명 모집
+					{current} / {target} 명 모집
 				</div>
 			);
 		}
@@ -145,7 +163,11 @@ export default function EmergencyListItem({
 
 	return (
 		<>
-			<div className="m-1.5 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+			<div
+				className={`m-1.5 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden transition-colors duration-300 ${
+					isCompleted ? "bg-green-50" : ""
+				}`}
+			>
 				<button
 					type="button"
 					className={`w-full text-left flex items-center justify-between rounded-lg px-5 py-3 ${
@@ -153,7 +175,15 @@ export default function EmergencyListItem({
 					} text-grayText text-base font-medium`}
 					onClick={toggleExpand}
 				>
-					<div className="flex-1 truncate">{title}</div>
+					<div className="flex items-center gap-2 flex-1 truncate">
+						{isCompleted && (
+							<span className="flex items-center gap-1 text-green-600 text-sm font-medium">
+								<CheckCircle2 className="w-4 h-4" />
+								완료
+							</span>
+						)}
+						<span className="truncate">{title}</span>
+					</div>
 					{renderProgress()}
 					<div className="flex items-center gap-2">
 						<div className="w-16 text-right font-light text-[var(--color-blueGray)]">
@@ -167,7 +197,7 @@ export default function EmergencyListItem({
 					</div>
 				</button>
 
-				{expanded && (
+				{expanded && !isCompleted && (
 					<div className="pt-2 px-4 pb-4 border-t border-gray-100 animate-fadeIn">
 						<div className="flex items-center justify-between mb-4">
 							<h4 className="text-sm font-medium text-gray-700 bg-superLightBlueGray px-2 py-1 rounded-full">

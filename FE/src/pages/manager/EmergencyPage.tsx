@@ -5,11 +5,22 @@ import { AlertTriangle, Plus } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import RecruiteEmergencyList from "@/components/common/emergency/RecruiteEmergencyList";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function EmergencyPage() {
 	const { selectedCenter } = useCenterStore();
 	const [tab, setTab] = useState<"list" | "applications">("list");
 	const [applicationCount, setApplicationCount] = useState(0);
+	const queryClient = useQueryClient();
+
+	const handleTabChange = (newTab: "list" | "applications") => {
+		setTab(newTab);
+		if (newTab === "applications") {
+			queryClient.invalidateQueries({
+				queryKey: ["recruited-emergency-posts"],
+			});
+		}
+	};
 
 	return (
 		<div className="flex flex-col h-full bg-gray-50 pb-16">
@@ -47,7 +58,7 @@ export default function EmergencyPage() {
 									? "text-red-600 border-b-2 border-red-600"
 									: "text-gray-500"
 							}`}
-							onClick={() => setTab("list")}
+							onClick={() => handleTabChange("list")}
 						>
 							모집 중
 						</button>
@@ -58,9 +69,14 @@ export default function EmergencyPage() {
 									? "text-red-600 border-b-2 border-red-600"
 									: "text-gray-500"
 							}`}
-							onClick={() => setTab("applications")}
+							onClick={() => handleTabChange("applications")}
 						>
 							모집 완료
+							{applicationCount > 0 && (
+								<span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs font-medium bg-red-100 text-red-600 rounded-full">
+									{applicationCount}
+								</span>
+							)}
 						</button>
 					</div>
 				</div>
