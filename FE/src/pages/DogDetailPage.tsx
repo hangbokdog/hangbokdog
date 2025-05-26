@@ -72,7 +72,6 @@ const convertUrlsToLinks = (text: string) => {
 		if (part.match(urlRegex)) {
 			return (
 				<a
-					// biome-ignore lint/suspicious/noArrayIndexKey: index
 					key={index}
 					href={part}
 					target="_blank"
@@ -211,6 +210,10 @@ export default function DogDetailPage() {
 		enabled:
 			!!id && !Number.isNaN(Number(id)) && !!selectedCenter?.centerId,
 	});
+
+	useEffect(() => {
+		if (data) console.log(data);
+	}, [data]);
 
 	const [form, setForm] = useState({
 		imageFile: null as File | null,

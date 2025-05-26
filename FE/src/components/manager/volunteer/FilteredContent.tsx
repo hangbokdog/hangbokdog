@@ -63,10 +63,18 @@ export default function FilteredContent({
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.3, delay: 0.2 }}
 					>
+						{/* <div className="p-4 bg-white border-b border-gray-100 flex items-center gap-2">
+							<Calendar size={18} className="text-indigo-500" />
+							<h3 className="font-medium text-gray-700">
+								봉사활동 일정 관리
+							</h3>
+						</div> */}
+						{/* <div className="p-4"> */}
 						<VolunteerScheduleManager
 							address={selectedAddress}
 							refetchAddresses={refetchAddresses}
 						/>
+						{/* </div> */}
 					</motion.div>
 				</>
 			) : (

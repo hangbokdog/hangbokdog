@@ -153,6 +153,7 @@ export const useNotification = () => {
 			if (token) {
 				try {
 					await registerFCMToken(token, selectedCenter.centerId);
+					console.log("FCM 토큰 등록 성공");
 				} catch (registerError) {
 					console.error("FCM 토큰 서버 등록 실패:", registerError);
 				}
@@ -556,6 +557,7 @@ export const useNotification = () => {
 		const handleVisibilityChange = () => {
 			// 페이지가 다시 보이게 되었을 때 알림 목록 갱신
 			if (document.visibilityState === "visible") {
+				console.log("앱이 활성화되어 알림 목록을 갱신합니다.");
 				refetchNotifications();
 			}
 		};

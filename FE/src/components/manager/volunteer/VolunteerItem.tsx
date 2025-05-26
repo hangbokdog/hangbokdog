@@ -212,6 +212,17 @@ export const VolunteerItem = ({
 							{volunteer.content}
 						</p>
 						<div className="flex items-center gap-2">
+							{/* {typeof volunteer.appliedCount === "number" &&
+								volunteer.appliedCount > 0 && (
+									<motion.div
+										initial={{ opacity: 0, scale: 0.8 }}
+										animate={{ opacity: 1, scale: 1 }}
+										className="hidden sm:flex items-center px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs"
+									>
+										<Users className="w-3 h-3 mr-1" />
+										신청자 {volunteer.appliedCount}명
+									</motion.div>
+								)} */}
 							<Link to={`/volunteer/${volunteer.id}`}>
 								<Button
 									className="rounded-full bg-white hover:bg-gray-200 h-8 w-8"

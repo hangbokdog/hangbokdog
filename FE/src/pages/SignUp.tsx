@@ -44,6 +44,7 @@ export default function SignUp() {
 		try {
 			// 알림 권한 먼저 요청
 			const permissionResult = await requestNotificationPermission();
+			console.log("알림 권한 요청 결과:", permissionResult);
 
 			// 권한이 부여되지 않았다면 토큰 요청 중단
 			if (permissionResult !== "granted") {
@@ -64,8 +65,11 @@ export default function SignUp() {
 			const fcmToken = await requestFCMToken();
 
 			if (fcmToken) {
+				console.log("FCM 토큰 등록 시작:", fcmToken);
+
 				// 토큰을 백엔드에 저장
 				await registerFCMToken(fcmToken);
+				console.log("FCM 토큰 등록 성공");
 				toast.success("알림 설정이 완료되었습니다.");
 			} else {
 				console.warn("FCM 토큰을 가져올 수 없어 등록할 수 없습니다.");

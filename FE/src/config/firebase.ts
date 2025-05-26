@@ -34,6 +34,7 @@ const initMessaging = async () => {
 
 		if (isFCMSupported) {
 			messaging = getMessaging(app);
+			console.log("Firebase 메시징 초기화 성공");
 			return true;
 		}
 
@@ -55,6 +56,8 @@ initMessaging().catch((error) => {
 // FCM 토큰 요청 함수
 export const requestFCMToken = async () => {
 	try {
+		console.log("FCM 토큰 요청 시작");
+
 		// 메시징이 초기화되지 않은 경우 초기화 시도
 		if (!messaging) {
 			const initialized = await initMessaging();
@@ -70,14 +73,18 @@ export const requestFCMToken = async () => {
 		let permission: NotificationPermission;
 		try {
 			permission = await Notification.requestPermission();
+			console.log("FCM 권한 요청 결과:", permission);
 		} catch (permissionError) {
 			console.error("FCM 권한 요청 중 오류:", permissionError);
 			return null;
 		}
 
 		if (permission !== "granted") {
+			console.log("알림 권한이 거부되었습니다.");
 			return null;
 		}
+
+		console.log("FCM 토큰 요청 시작");
 
 		// 토큰 생성
 		try {
@@ -88,12 +95,20 @@ export const requestFCMToken = async () => {
 
 			// 토큰을 서버에 저장하는 로직 추가
 			if (!token) {
+				console.log("FCM 토큰을 생성할 수 없습니다.");
 				return null;
 			}
 
 			return token;
 		} catch (tokenError) {
 			console.error("FCM 토큰 생성 중 오류:", tokenError);
+
+			// 개발 환경에서 서비스 워커 문제가 발생했지만 테스트를 위해 가짜 토큰 반환
+			if (process.env.NODE_ENV === "development") {
+				const fakeToken = `fake-fcm-token-${Date.now()}`;
+				console.log("개발 환경에서 가짜 FCM 토큰 생성:", fakeToken);
+				return fakeToken;
+			}
 
 			return null;
 		}

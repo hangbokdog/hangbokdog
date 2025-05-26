@@ -125,6 +125,11 @@ export const updateUserInfoAPI = async ({
 		formData.append("files", profileImageFile);
 	}
 
+	// 디버깅 출력
+	for (const [key, value] of formData.entries()) {
+		console.log("🧾 FormData:", key, value);
+	}
+
 	const response = await localAxios.patch<UserInfoResponse>(
 		"members/my",
 		formData,
