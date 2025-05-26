@@ -181,12 +181,10 @@ export default function AddVolunteerSchedulePage() {
 				// 에디터에 S3 이미지 URL 삽입
 				if (range && editor) {
 					// 이미지 삽입
-					console.log(`이미지 삽입 시도: 위치=${range.index}`);
 					editor.insertEmbed(range.index, "image", s3ImageUrl);
 
 					// 이미지 후에 커서 이동
 					editor.setSelection(range.index + 1, 0);
-					console.log("이미지 삽입 완료");
 				} else if (editor) {
 					console.error("에디터 선택 범위를 가져올 수 없습니다");
 					// 위치를 명시적으로 지정해서 시도
@@ -700,7 +698,7 @@ export default function AddVolunteerSchedulePage() {
 						);
 					}
 				} catch (error) {
-					console.log("에디터가 아직 초기화되지 않았습니다.");
+					console.error("에디터가 아직 초기화되지 않았습니다.");
 				}
 			}
 		}

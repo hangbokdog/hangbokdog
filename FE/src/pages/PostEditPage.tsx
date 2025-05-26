@@ -193,11 +193,9 @@ export default function PostEditPage() {
 
 		try {
 			setImageUploading(true);
-			console.log("이미지 업로드 시작:", file.name);
 
 			// 이미지 업로드 API 호출 - S3에 업로드
 			const s3ImageUrl = await uploadImageAPI(file);
-			console.log("S3 업로드 성공. URL:", s3ImageUrl);
 
 			// 에디터 선택 정보 가져오기
 			const editor = quillRef.current?.getEditor();
@@ -209,12 +207,10 @@ export default function PostEditPage() {
 			// 에디터에 S3 이미지 URL 삽입
 			if (range && editor) {
 				// 이미지 삽입
-				console.log(`이미지 삽입 시도: 위치=${range.index}`);
 				editor.insertEmbed(range.index, "image", s3ImageUrl);
 
 				// 이미지 후에 커서 이동
 				editor.setSelection(range.index + 1, 0);
-				console.log("이미지 삽입 완료");
 			} else if (editor) {
 				console.error("에디터 선택 범위를 가져올 수 없습니다");
 				// 위치를 명시적으로 지정해서 시도

@@ -1,19 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import {
-	Settings,
-	AlertTriangle,
-	Calendar,
-	Dog,
-	ChevronDown,
-	ChevronUp,
-} from "lucide-react";
+import { Settings, AlertTriangle, Calendar, Dog } from "lucide-react";
 import useCenterStore from "@/lib/store/centerStore";
-import { useState } from "react";
 
 export default function ManagerDashboardPanel() {
 	const navigate = useNavigate();
 	const { selectedCenter } = useCenterStore();
-	const [showMoreMenu, setShowMoreMenu] = useState(false);
 
 	const menuItems = [
 		{
@@ -26,19 +17,19 @@ export default function ManagerDashboardPanel() {
 		},
 		{
 			id: 2,
-			title: "봉사관리",
-			icon: <Calendar className="w-5 h-5 text-green-600" />,
-			color: "bg-gradient-to-br from-green-100 to-green-200",
-			hover: "hover:bg-green-100",
-			path: "/manager/volunteer",
-		},
-		{
-			id: 3,
 			title: "아이관리",
 			icon: <Dog className="w-5 h-5 text-amber-600" />,
 			color: "bg-gradient-to-br from-amber-100 to-amber-200",
 			hover: "hover:bg-amber-100",
 			path: "/manager/dog-management",
+		},
+		{
+			id: 3,
+			title: "봉사관리",
+			icon: <Calendar className="w-5 h-5 text-green-600" />,
+			color: "bg-gradient-to-br from-green-100 to-green-200",
+			hover: "hover:bg-green-100",
+			path: "/manager/volunteer",
 		},
 		{
 			id: 4,

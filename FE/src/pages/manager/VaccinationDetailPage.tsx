@@ -218,7 +218,7 @@ export default function VaccinationDetailPage() {
 			});
 		},
 		onError: (error, _, context) => {
-			console.log("error:", error);
+			console.error("error:", error);
 			if (context?.previousData) {
 				queryClient.setQueryData(
 					["vaccinationDetail", vaccinationId],

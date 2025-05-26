@@ -408,25 +408,16 @@ export default function Search({
 											)}
 									</div>
 									<DrawerFooter className="flex-row justify-end gap-2">
-										<DrawerClose>
+										<DrawerClose asChild>
 											<button
 												onClick={handleFilterReset}
-												onKeyDown={(e) => {
-													if (
-														e.key === "Enter" ||
-														e.key === " "
-													) {
-														handleFilterReset();
-													}
-												}}
-												tabIndex={0}
 												type="button"
 												className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer"
 											>
 												초기화
 											</button>
 										</DrawerClose>
-										<DrawerClose>
+										<DrawerClose asChild>
 											<button
 												type="button"
 												onClick={handleFilterApply}

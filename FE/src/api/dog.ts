@@ -376,7 +376,6 @@ export const fetchDogsAPI: QueryFunction<
 			params: serializedParams,
 		},
 	);
-	console.log("response", response.data);
 	return response.data;
 };
 
