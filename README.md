@@ -204,14 +204,10 @@
 
 ![image](https://github.com/user-attachments/assets/78aaf1ee-5e20-4fc6-95d4-476c544cf0cc)
 
-# 와이어프레임
-
-# ERD
-
 # 팀원 소개
 
 | <img alt="profile" src ="https://github.com/jinsu868.png" width ="100px"> | <img alt="profile" src ="https://github.com/freeftr.png" width ="100px"> | <img alt="profile" src ="https://github.com/beak1sin.png" width ="100px"> | <img alt="profile" src ="https://github.com/raonrabbit.png" width ="100px"> |
 | --- | --- | --- | --- |
 | 문진수 (팀장) | 박종하 | 이재백 | 최준혁 |
 | Backend | Backend | Frontend | Frontend |
-| [column-wise](https://github.com/jinsu868) | [freeftr](https://github.com/freeftr) | [beak1sin](https://github.com/beak1sin) | [raonrabbit](https://github.com/raonrabbit) |
+| [jinsu868](https://github.com/jinsu868) | [freeftr](https://github.com/freeftr) | [beak1sin](https://github.com/beak1sin) | [raonrabbit](https://github.com/raonrabbit) |
