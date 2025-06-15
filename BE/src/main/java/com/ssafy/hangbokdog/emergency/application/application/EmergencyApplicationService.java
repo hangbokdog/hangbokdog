@@ -62,6 +62,7 @@ public class EmergencyApplicationService {
 		Long memberId,
 		Long centerId,
 		Long emergencyApplicationId,
+		Long emergencyId,
 		EmergencyApplicationStatus request
 	) {
 		CenterMember centerMember = getCenterMember(memberId, centerId);

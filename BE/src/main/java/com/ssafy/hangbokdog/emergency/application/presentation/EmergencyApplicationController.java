@@ -51,6 +51,7 @@ public class EmergencyApplicationController {
 	public ResponseEntity<Void> manageEmergencyApplication(
 		@AuthMember Member member,
 		@PathVariable Long emergencyApplicationId,
+		@PathVariable Long emergencyId,
 		@RequestParam EmergencyApplicationStatus request,
 		@RequestParam Long centerId
 	) {
@@ -58,6 +59,7 @@ public class EmergencyApplicationController {
 			member.getId(),
 			centerId,
 			emergencyApplicationId,
+			emergencyId,
 			request
 		);
 		return ResponseEntity.noContent().build();
