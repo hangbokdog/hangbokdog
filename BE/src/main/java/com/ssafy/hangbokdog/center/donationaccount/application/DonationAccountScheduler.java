@@ -13,7 +13,7 @@ public class DonationAccountScheduler {
 
 	private final DonationAccountService donationAccountService;
 
-	@Scheduled(fixedRate = 300000)
+	@Scheduled(fixedDelay = 300000)
 	@SchedulerLock(name = "donationAccountScheduler", lockAtLeastFor = "290s", lockAtMostFor = "299s")
 	public void applyTransactionsToDonationAccount() {
 		donationAccountService.applyTransactionsToDonationAccount();
