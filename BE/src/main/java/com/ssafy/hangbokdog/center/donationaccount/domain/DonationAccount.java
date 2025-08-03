@@ -28,12 +28,8 @@ public class DonationAccount extends BaseEntity {
 	@Column(name = "balance", nullable = false)
 	private Long balance;
 
-	@Column(name = "last_updated_key")
-	private Long lastUpdatedKey;
-
-	public Long updateBalance(long amount, Long newLastUpdatedKey) {
+	public Long updateBalance(Long amount) {
 		this.balance += amount;
-		this.lastUpdatedKey = newLastUpdatedKey;
 		return balance;
 	}
 
@@ -53,6 +49,5 @@ public class DonationAccount extends BaseEntity {
 	) {
 		this.centerId = centerId;
 		this.balance = balance;
-		this.lastUpdatedKey = 0L;
 	}
 }
