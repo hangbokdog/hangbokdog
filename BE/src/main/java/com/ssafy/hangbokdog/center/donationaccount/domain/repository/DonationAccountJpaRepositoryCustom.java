@@ -8,7 +8,5 @@ import com.ssafy.hangbokdog.transaction.dto.TransactionInfo;
 
 public interface DonationAccountJpaRepositoryCustom {
 
-	List<CenterKeyInfo> getCenterKeyInfos();
-
 	void bulkUpdateDonationAccounts(Map<Long, TransactionInfo> transactionInfos);
 }

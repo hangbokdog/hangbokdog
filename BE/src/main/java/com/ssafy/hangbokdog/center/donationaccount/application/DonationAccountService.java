@@ -3,6 +3,8 @@ package com.ssafy.hangbokdog.center.donationaccount.application;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.hangbokdog.center.center.domain.Center;
+import com.ssafy.hangbokdog.center.center.domain.repository.CenterRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,11 +29,15 @@ public class DonationAccountService {
 	private final DonationAccountRepository donationAccountRepository;
 	private final TransactionRepository transactionRepository;
 	private final CenterMemberRepository centerMemberRepository;
+	private final CenterRepository centerRepository;
 
 	public DonationAccountBalanceResponse getBalance(Long memberId, Long centerId) {
 
 		CenterMember centerMember = centerMemberRepository.findByMemberIdAndCenterId(memberId, centerId)
 			.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
+
+		Center center = centerRepository.findById(centerId)
+				.orElseThrow(() -> new BadRequestException(ErrorCode.CENTER_NOT_FOUND));
 
 		if (!centerMember.getGrade().equals(CenterGrade.MANAGER)) {
 			throw new BadRequestException(ErrorCode.NOT_MANAGER_MEMBER);
@@ -39,7 +45,13 @@ public class DonationAccountService {
 
 		DonationAccount donationAccount = getDonationAccount(centerId);
 
-		return new DonationAccountBalanceResponse(donationAccount.getBalance());
+		Long initialBalance = donationAccount.getBalance();
+
+		Long lastUpdatedKey = donationAccountRepository.getLastUpdatedKey(centerId);
+
+		int additionalUpdateAmounts = transactionRepository.getRecentTransactionSumAfterBatch(centerId, lastUpdatedKey);
+
+		return new DonationAccountBalanceResponse(initialBalance + additionalUpdateAmounts);
 	}
 
 	@Transactional

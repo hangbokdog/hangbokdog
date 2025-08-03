@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class DonationAccountRepository {
 
 	private final DonationAccountJpaRepository donationAccountJpaRepository;
+	private final DonationAccountBatchCursorJpaRepository donationAccountBatchCursorJpaRepository;
 
 	public DonationAccount createDonationAccount(DonationAccount donationAccount) {
 		return donationAccountJpaRepository.save(donationAccount);
@@ -31,10 +32,15 @@ public class DonationAccountRepository {
 	}
 
 	public List<CenterKeyInfo> getCenterKeyInfos() {
-		return donationAccountJpaRepository.getCenterKeyInfos();
+		return donationAccountBatchCursorJpaRepository.getCenterKeyInfos();
 	}
 
 	public void bulkUpdateDonationAccounts(Map<Long, TransactionInfo> transactionInfos) {
 		donationAccountJpaRepository.bulkUpdateDonationAccounts(transactionInfos);
+		donationAccountBatchCursorJpaRepository.bulkUpdateLastUpdatedKeys(transactionInfos);
+	}
+
+	public Long getLastUpdatedKey(Long centerId) {
+		return donationAccountBatchCursorJpaRepository.getLastUpdatedKey(centerId);
 	}
 }
